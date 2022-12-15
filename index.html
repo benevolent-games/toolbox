@@ -1,0 +1,45 @@
+<!doctype html>
+<head>
+	<html>
+	<meta charset="utf-8"/>
+	<meta name=viewport content="width=device-width, initial-scale=1"/>
+	<meta name=darkreader content="dark"/>
+	<title>toolbox</title>
+
+	<link rel=stylesheet href="/index.css"/>
+	<script
+		type=importmap-shim
+		src=/x/importmap.json
+		defer
+	></script>
+	<script
+		type=module-shim
+		src=/x/tests.test.js
+		defer
+	></script>
+	<script defer type=module-shim>
+		import {test} from "cynic"
+		import suite from "/x/tests.test.js"
+
+		// run the test suite
+		const {report, ...stats} = await test("example suite", suite)
+
+		// emit the report text to console
+		console.log(report)
+
+		// handle results programmatically
+		if (stats.failed === 0) console.log("done")
+		else console.log("failed!")
+
+		// returns stats about the test run results
+		console.log(stats)
+	</script>
+	<script
+		src="/node_modules/es-module-shims/dist/es-module-shims.wasm.js"
+		defer
+	></script>
+</head>
+<body>
+	toolbox
+</body>
+</html>

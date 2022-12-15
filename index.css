@@ -1,0 +1,67 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Gentium+Book+Basic:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:not(:defined) {
+	display: none;
+}
+
+html {
+	font-family: "Gentium Book Basic", serif;
+	background: fixed linear-gradient(180deg, #1b2941, #0c0511);
+	color: whitesmoke;
+	font-size: 16px;
+}
+
+header {
+	text-align: center;
+	max-width: max-content;
+	margin: 1rem auto;
+}
+
+header > p {
+	margin-left: 1.5rem;
+	color: whitesmoke;
+}
+
+header a {
+	color: #d695ff;
+}
+
+h1 {
+	font-size: 3rem;
+	text-shadow: 4px 6px 1px #0003;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: -5px;
+}
+
+.side-by-side {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	gap: 1em;
+}
+
+nub-visualizer, nub-editor {
+	background: #0004;
+	border: 2px solid #fff8;
+}
+
+nub-stick {
+	width: 8em;
+	height: 8em;
+}
+
+nub-editor {
+	max-width: 38em;
+	margin: auto;
+	margin-top: 1em;
+}
