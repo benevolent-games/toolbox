@@ -1,36 +1,15 @@
 
-import {Matrix, Vector2, Vector3, Vector4} from "@babylonjs/core/Maths/index.js"
-
-type BoundingBox3 = {
-	start: Vector3
-	end: Vector3
-}
-
-type BoundingBox2 = {
-	start: Vector2
-	end: Vector2
-}
-
-type Group = {
-	boundingBox: BoundingBox3
-	points: Vector3[]
-}
+import {Vector3} from "@babylonjs/core/Maths/index.js"
+import {BoxSelectOptions} from "./box-select/types/box-select-options.js"
+import {filterForPointsWithinBox} from "./box-select/filter-for-points-within-box.js"
 
 export function boxSelect({
-		groups, box, projection,
-	}: {
-		groups: Group[]
-		box: BoundingBox2
-		projection: Matrix
-	}): Group[] {
+		box,
+		points,
+		transform,
+	}: BoxSelectOptions): Vector3[] {
 
-	return groups.filter(group => {
-		const somePointsAreWithinFrustum = group.points.some(point => {
-			const {x, y, z} = Vector4.TransformCoordinates(point, projection)
-			const xWithinBox = x >= box.start.x && x <= box.end.x
-			const yWithinBox = y >= box.start.y && y <= box.end.y
-			debugger
-			return xWithinBox && yWithinBox
-		})
-	})
+	return points.filter(
+		filterForPointsWithinBox(box, transform)
+	)
 }
