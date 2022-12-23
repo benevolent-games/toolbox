@@ -1,6 +1,6 @@
 
-import {SetupBehaviors} from "../ecs.js"
 import {Components} from "./components.js"
+import {SetupBehaviors} from "../ecs/types/setup-behaviors.js"
 
 export const behaviors: SetupBehaviors<Components> = behavior => [
 
@@ -45,14 +45,14 @@ export const behaviors: SetupBehaviors<Components> = behavior => [
 	behavior({
 		name: "death",
 		needs: ["mortality"],
-		action: ({mortality, death}, {write}) => {
+		action: ({mortality, death}, controls) => {
 			if (!death) {
 				for (const [condition, cause] of [
 						[mortality.blood <= 0, "blood loss"],
 						[mortality.heartrate <= 0, "cardiac arrest"],
 					] as const) {
 					if (condition)
-						return write({
+						return controls.write({
 							death: {cause},
 							mortality: undefined,
 							biology: undefined,

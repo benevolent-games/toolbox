@@ -16,14 +16,16 @@ const e = ecs<Components>(behaviors)
 timer_init.report()
 
 const t1 = timer("setup")
+const stopclock = e.timekeep.clocks.setup
 const make = makers(randomly)
-repeat(1_000, () => e.add(make.person()))
+repeat(1000, () => e.add(make.person()))
 e.add(make.hut())
 e.add(make.hut())
+stopclock()
 t1.report()
 
 const t2 = timer("system execution")
-repeat(1_000, () => e.execute())
+repeat(1000, () => e.execute())
 t2.report()
 
 const t3 = timer("queries")
@@ -39,8 +41,7 @@ const peopleWithAHome = people
 	.filter(([id, {home}]) => !!home?.structureId)
 t3.report()
 
-e.timers.matching.report()
-e.timers.executing.report()
+e.timekeep.report()
 
 console.log(`alive ${alive.length}`)
 console.log(`dead ${dead.length}`)
