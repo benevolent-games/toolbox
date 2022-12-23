@@ -17,7 +17,7 @@ timer_init.report()
 
 const t1 = timer("setup")
 const make = makers(randomly)
-repeat(100, () => e.add(make.person()))
+repeat(1_000, () => e.add(make.person()))
 e.add(make.hut())
 e.add(make.hut())
 t1.report()
