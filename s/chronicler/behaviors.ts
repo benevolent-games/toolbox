@@ -1,14 +1,10 @@
 
-import {Behavior, ecs} from "../ecs.js"
+import {SetupBehaviors} from "../ecs.js"
 import {Components} from "./components.js"
-import {Randomly} from "../utils/randomly.js"
 
-export const behaviors = (
-		e: ReturnType<typeof ecs<Components>>,
-		randomly: Randomly,
-	): Behavior[] => [
+export const behaviors: SetupBehaviors<Components> = behavior => [
 
-	// e.behavior({
+	// behavior({
 	// 	name: "homeless people claim homes",
 	// 	needs: ["home"],
 	// 	action({home, identity}, {write, query}) {
@@ -23,19 +19,19 @@ export const behaviors = (
 	// 	},
 	// }),
 
-	// e.behavior({
-	// 	name: "thirst and hunger lowers heartrate",
-	// 	needs: ["biology", "mortality"],
-	// 	action: ({biology, mortality}) => {
-	// 		const heartIsBeating = mortality.heartrate > 0
-	// 		const dyingOfThirst = biology.hydration <= 0
-	// 		const dyingOfHunger = biology.nourishment <= 0
-	// 		if (heartIsBeating && (dyingOfThirst || dyingOfHunger))
-	// 			mortality.heartrate -= 0.001
-	// 	},
-	// }),
+	behavior({
+		name: "thirst and hunger lowers heartrate",
+		needs: ["biology", "mortality"],
+		action: ({biology, mortality}) => {
+			const heartIsBeating = mortality.heartrate > 0
+			const dyingOfThirst = biology.hydration <= 0
+			const dyingOfHunger = biology.nourishment <= 0
+			if (heartIsBeating && (dyingOfThirst || dyingOfHunger))
+				mortality.heartrate -= 0.001
+		},
+	}),
 
-	e.behavior({
+	behavior({
 		name: "bleeding",
 		needs: ["mortality"],
 		action: ({mortality}) => {
@@ -46,7 +42,7 @@ export const behaviors = (
 		},
 	}),
 
-	e.behavior({
+	behavior({
 		name: "death",
 		needs: ["mortality"],
 		action: ({mortality, death}, {write}) => {

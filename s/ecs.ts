@@ -1,14 +1,28 @@
 
 import {timeAccumulator, timer} from "./utils/timer.js"
 
-export type Behavior = {
-	execute(): void
+export interface Behavior<C extends {}, A extends keyof C> {
+	name: string
+	needs: A[]
+	action: (
+		c: {[P in A]: C[P]} & Partial<C>,
+		controls: any
+	) => void
 }
 
-export function ecs<xComponents extends {[key: string]: {}}>() {
+export type SetupBehaviors<C extends {}> = (
+	(behavior: <A extends keyof C>(b: Behavior<C, A>) => Behavior<C, A>) => Behavior<C, keyof C>[]
+)
+
+export function ecs<xComponents extends {[key: string]: {}}>(
+		setup: SetupBehaviors<xComponents>
+	) {
+
+	const behaviors = setup(x => x)
+
 	let count = 0
-	// const entities: [string, Partial<xComponents>]
 	const map = new Map<number, Partial<xComponents>>()
+	const index = new Map<string[], Set<number>>()
 	const timers = {
 		matching: timeAccumulator("matching"),
 		executing: timeAccumulator("executing"),
@@ -41,9 +55,31 @@ export function ecs<xComponents extends {[key: string]: {}}>() {
 		}
 	}
 
+	function getMatchingEntitiesForBehavior(
+			behavior: Behavior<xComponents, keyof xComponents>
+		) {
+		timers.matching.start()
+		const matching: [number, Partial<xComponents>][] = []
+		for (const entry of map.entries())
+			if (behavior.needs.every(key => entry[1].hasOwnProperty(key)))
+				matching.push(entry)
+		timers.matching.stop()
+		return matching
+	}
+
 	return {
 		map,
 		timers,
+
+		execute() {
+			for (const behavior of behaviors) {
+				const matching = getMatchingEntitiesForBehavior(behavior)
+				timers.executing.start()
+				for (const [id, components] of matching)
+					behavior.action(<any>components, entityControls(id))
+				timers.executing.stop()
+			}
+		},
 
 		query(fun: (components: Partial<xComponents>) => boolean) {
 			return [...map.entries()]
@@ -60,36 +96,37 @@ export function ecs<xComponents extends {[key: string]: {}}>() {
 			map.delete(id)
 		},
 
-		behavior<A extends keyof xComponents>({name, needs, action}: {
-				name: string
-				needs: A[]
-				action: (
-					c: {[P in A]: xComponents[P]} & Partial<xComponents>,
-					controls: ReturnType<typeof entityControls>,
-				) => void
-			}): Behavior {
+		// behavior<A extends keyof xComponents>({name, needs, action}: {
+		// 		name: string
+		// 		needs: A[]
+		// 		action: (
+		// 			c: {[P in A]: xComponents[P]} & Partial<xComponents>,
+		// 			controls: ReturnType<typeof entityControls>,
+		// 		) => void
+		// 	}): Behavior {
 
-			function getMatchingEntities() {
-				timers.matching.start()
-				const matching: [number, Partial<xComponents>][] = []
-				for (const entry of map.entries())
-					if (needs.every(key => entry[1].hasOwnProperty(key)))
-						matching.push(entry)
-				timers.matching.stop()
-				return matching
-			}
+		// 	function getMatchingEntities() {
+		// 		timers.matching.start()
+		// 		const matching: [number, Partial<xComponents>][] = []
+		// 		for (const entry of map.entries())
+		// 			if (needs.every(key => entry[1].hasOwnProperty(key)))
+		// 				matching.push(entry)
+		// 		timers.matching.stop()
+		// 		return matching
+		// 	}
 
-			return {
-				execute() {
-					const matching = getMatchingEntities()
-					timers.executing.start()
-					matching
-						.forEach(([id, components]) =>
-							action(<any>components, entityControls(id))
-						)
-					timers.executing.stop()
-				},
-			}
-		},
+		// 	return {
+		// 		execute() {
+		// 			const matching = getMatchingEntities()
+		// 			timers.executing.start()
+		// 			matching
+		// 				.forEach(([id, components]) =>
+		// 					action(<any>components, entityControls(id))
+		// 				)
+		// 			timers.executing.stop()
+		// 		},
+		// 	}
+		// },
+
 	}
 }

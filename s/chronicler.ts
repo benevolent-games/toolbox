@@ -12,8 +12,7 @@ const bigtimer = timer("everything")
 const timer_init = timer("init")
 const random = seed(1)
 const randomly = r(random)
-const e = ecs<Components>()
-const systems = behaviors(e, randomly)
+const e = ecs<Components>(behaviors)
 timer_init.report()
 
 const t1 = timer("setup")
@@ -24,10 +23,7 @@ e.add(make.hut())
 t1.report()
 
 const t2 = timer("system execution")
-repeat(10_000, () => {
-	for (const system of systems)
-		system.execute()
-})
+repeat(1_000, () => e.execute())
 t2.report()
 
 const t3 = timer("queries")
