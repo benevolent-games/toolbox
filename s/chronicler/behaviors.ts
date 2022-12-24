@@ -4,29 +4,43 @@ import {SetupBehaviors} from "../ecs/types/setup-behaviors.js"
 
 export const behaviors: SetupBehaviors<Components> = behavior => [
 
-	// behavior({
-	// 	name: "homeless people claim homes",
-	// 	needs: ["home"],
-	// 	action({home, identity}, {write, query}) {
-	// 		if (!home.structureId) {
-	// 			const structures = query(c => !!c.structure)
-	// 			const vacant = structures
-	// 				.filter(([structureId, {structure}]) => {
-	// 					const occupants = query(c => c?.home?.structureId === structureId)
-	// 					return occupants.length < structure!.capacity
-	// 				})
-	// 		}
-	// 	},
-	// }),
+	behavior({
+		name: "homeless people claim or build homes",
+		needs: ["identity"],
+		action({identity}, {id, write, select}) {
+			const shelters = select(["shelter"])
+			const home = shelters
+				.find(([,c]) => c.shelter.residents.includes(id))
+			if (!home) {
+				const vacancies = shelters
+			}
+		},
+	}),
 
 	behavior({
-		name: "thirst and hunger lowers heartrate",
+		name: "thirst",
+		needs: ["biology"],
+		action({biology}) {
+			biology.hydration -= 0.001
+		},
+	}),
+
+	behavior({
+		name: "hunger",
+		needs: ["biology"],
+		action({biology}) {
+			biology.nourishment -= 0.001
+		},
+	}),
+
+	behavior({
+		name: "extreme thirst or hunger lowers heartrate",
 		needs: ["biology", "mortality"],
 		action: ({biology, mortality}) => {
 			const heartIsBeating = mortality.heartrate > 0
-			const dyingOfThirst = biology.hydration <= 0
-			const dyingOfHunger = biology.nourishment <= 0
-			if (heartIsBeating && (dyingOfThirst || dyingOfHunger))
+			const extremeThirst = biology.hydration <= 0
+			const extremeHunger = biology.nourishment <= 0
+			if (heartIsBeating && (extremeThirst || extremeHunger))
 				mortality.heartrate -= 0.001
 		},
 	}),
@@ -45,14 +59,14 @@ export const behaviors: SetupBehaviors<Components> = behavior => [
 	behavior({
 		name: "death",
 		needs: ["mortality"],
-		action: ({mortality, death}, controls) => {
+		action: ({mortality, death}, {id, write}) => {
 			if (!death) {
 				for (const [condition, cause] of [
 						[mortality.blood <= 0, "blood loss"],
 						[mortality.heartrate <= 0, "cardiac arrest"],
 					] as const) {
 					if (condition)
-						return controls.write({
+						return write(id, {
 							death: {cause},
 							mortality: undefined,
 							biology: undefined,

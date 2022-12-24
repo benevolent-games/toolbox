@@ -1,28 +1,42 @@
 
+import {Controls} from "./ecs/types/controls.js"
 import {timekeeper} from "./utils/timekeeper.js"
-import {EntityControls} from "./ecs/entity-controls.js"
+import {setupSelectacon} from "./ecs/selectacon.js"
 import {SetupBehaviors} from "./ecs/types/setup-behaviors.js"
 import {behaviorEntityCorrelator} from "./ecs/behavior-entity-correlator.js"
 
-export function ecs<xComponents extends {[key: string]: {}}>(
-		setup: SetupBehaviors<xComponents>
+export function ecs<C extends {[key: string]: {}}>(
+		setup: SetupBehaviors<C>
 	) {
 
 	let count = 0
 	const timekeep = timekeeper()
 	const behaviors = setup(x => x)
-	const map = new Map<number, Partial<xComponents>>()
 
+	const entities = new Map<number, Partial<C>>()
+	const selectacon = setupSelectacon(entities)
 	const correlator = behaviorEntityCorrelator(
 		behaviors,
-		id => map.get(id)!,
+		id => entities.get(id)!,
 	)
 
-	const entityControlCache = EntityControls
-		.setupCache(map, correlator)
+	const controlsCache = new Map<number, Controls<C>>()
+
+	function write(id: number, changes: Partial<C>) {
+		const components: Partial<C> = entities.get(id) ?? {}
+		for (const [key, value] of Object.entries(changes)) {
+			if (value === undefined)
+				delete components[key]
+			else
+				components[key as keyof Partial<C>] = value
+		}
+		entities.set(id, components)
+		correlator.update(id, components)
+		selectacon.entityWasAddedOrUpdated(id, components)
+	}
 
 	return {
-		map,
+		entities,
 		timekeep,
 
 		execute() {
@@ -36,29 +50,38 @@ export function ecs<xComponents extends {[key: string]: {}}>(
 				for (const [id, components] of matching)
 					behavior.action(
 						<any>components,
-						entityControlCache.get(id),
+						controlsCache.get(id)!,
 					)
 				clock_executing()
 			}
 		},
 
-		query(fun: (components: Partial<xComponents>) => boolean) {
-			return [...map.entries()]
-				.filter(([id, components]) => fun(components))
-		},
+		select: selectacon.select,
 
-		add(components: Partial<xComponents>) {
+		add(components: Partial<C>) {
+			const clock_adding = timekeep.clocks.adding
+
 			const id = count++
-			map.set(id, components)
+			entities.set(id, components)
 			correlator.update(id, components)
-			entityControlCache.entityWasAdded(id)
+			selectacon.entityWasAddedOrUpdated(id, components)
+			controlsCache.set(id, {
+				id,
+				write,
+				select: selectacon.select,
+			})
+
+			clock_adding()
 			return id
 		},
 
-		remove(id: number) {
-			map.delete(id)
+		delete(id: number) {
+			const clock_deleting = timekeep.clocks.deleting
+			entities.delete(id)
 			correlator.delete(id)
-			entityControlCache.entityWasDeleted(id)
+			controlsCache.delete(id)
+			selectacon.entityWasDeleted(id)
+			clock_deleting()
 		},
 
 	}

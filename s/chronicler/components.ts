@@ -69,7 +69,7 @@ export type Components = {
 		amount: number
 	}
 
-	flammability: {
+	flammable: {
 		fire: number
 		fuel: number
 		burned: number
@@ -77,15 +77,31 @@ export type Components = {
 
 	structure: {
 		integrity: number
-		capacity: number
+		strength: number
 	}
 
-	home: {
-		structureId: number | undefined
+	shelter: {
+		occupants: number[]
+		residents: number[]
 	}
 
-	minable: {
+	choppable: {
+		integrity: number
+	}
+
+	unlimited: {
+		water?: true
+	}
+
+	exploitable: {
+		water?: number
+		food?: number
+		wood?: number
+	}
+
+	buildingPlan: {
+		owner: number
 		wood: number
-		difficulty: number
+		labor: number
 	}
 }

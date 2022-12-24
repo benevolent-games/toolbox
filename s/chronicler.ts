@@ -29,7 +29,7 @@ repeat(1000, () => e.execute())
 t2.report()
 
 const t3 = timer("queries")
-const people = e.query(c => !!c.identity)
+const people = e.select(["identity"])
 
 const alive = people
 	.filter(([id, components]) => !components.death)
@@ -37,18 +37,18 @@ const alive = people
 const dead = people
 	.filter(([id, components]) => !!components.death)
 
-const peopleWithAHome = people
-	.filter(([id, {home}]) => !!home?.structureId)
+// const peopleWithAHome = people
+// 	.filter(([id, {home}]) => !!home?.structureId)
 t3.report()
 
 e.timekeep.report()
 
 console.log(`alive ${alive.length}`)
 console.log(`dead ${dead.length}`)
-console.log(`homed ${peopleWithAHome.length}`)
+// console.log(`homed ${peopleWithAHome.length}`)
 
-for (const [,{death, identity}] of dead)
-	console.log(` - "${identity?.birthname}", cause of death: ${death?.cause}`)
+// for (const [,{death, identity}] of dead)
+// 	console.log(` - "${identity?.birthname}", cause of death: ${death?.cause}`)
 
 
 bigtimer.report()

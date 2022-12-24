@@ -10,18 +10,49 @@ export function makers(randomly: Randomly) {
 	return {
 
 		tree: () => ({
-			minable: {
+			exploitable: {
 				wood: 11 + Math.floor(random() * 10),
-				difficulty: random(),
 			},
-		} satisfies Partial<Components>),
-
-		hut: () => ({
 			structure: {
 				integrity: 1,
-				capacity: 4,
+				strength: 0.8,
 			},
-		} satisfies Partial<Components>),
+			choppable: {
+				integrity: 1,
+			},
+		}),
+
+		well: () => ({
+			unlimited: {
+				water: true,
+			},
+			structure: {
+				integrity: 1,
+				strength: 0.9,
+			},
+		}),
+
+		berries: () => ({
+			exploitable: {
+				food: 0.5,
+			},
+		}),
+
+		hut: () => ({
+			shelter: {
+				occupants: [],
+				residents: [],
+			},
+			structure: {
+				integrity: 1,
+				strength: 0.5,
+			},
+			flammable: {
+				fire: 0,
+				fuel: 1,
+				burned: 0,
+			},
+		}),
 
 		person: () => ({
 			identity: {
@@ -31,9 +62,6 @@ export function makers(randomly: Randomly) {
 			alignment: {
 				good: random(),
 				lawful: random(),
-			},
-			home: {
-				structureId: undefined,
 			},
 			biology: {
 				hydration: random(),
@@ -81,7 +109,7 @@ export function makers(randomly: Randomly) {
 				neuroticism: random(),
 				openness: random(),
 			},
-		} satisfies Partial<Components>),
+		}),
 
-	}
+	} satisfies {[key: string]: () => Partial<Components>}
 }
