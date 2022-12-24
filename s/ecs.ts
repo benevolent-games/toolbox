@@ -20,7 +20,8 @@ export function ecs<C extends {[key: string]: {}}>(
 		id => entities.get(id)!,
 	)
 
-	const controlsCache = new Map<number, Controls<C>>()
+	// const controlsCache = new Map<number, Controls<C>>()
+	const {select} = selectacon
 
 	function write(id: number, changes: Partial<C>) {
 		const components: Partial<C> = entities.get(id) ?? {}
@@ -39,7 +40,7 @@ export function ecs<C extends {[key: string]: {}}>(
 		entities,
 		timekeep,
 
-		execute() {
+		execute({time}: {time: number}) {
 			for (const behavior of behaviors) {
 
 				const clock_matching = timekeep.clocks.matching
@@ -50,7 +51,8 @@ export function ecs<C extends {[key: string]: {}}>(
 				for (const [id, components] of matching)
 					behavior.action(
 						<any>components,
-						controlsCache.get(id)!,
+						{id, time, write, select},
+						// controlsCache.get(id)!,
 					)
 				clock_executing()
 			}
@@ -65,11 +67,11 @@ export function ecs<C extends {[key: string]: {}}>(
 			entities.set(id, components)
 			correlator.update(id, components)
 			selectacon.entityWasAddedOrUpdated(id, components)
-			controlsCache.set(id, {
-				id,
-				write,
-				select: selectacon.select,
-			})
+			// controlsCache.set(id, {
+			// 	id,
+			// 	write,
+			// 	select: selectacon.select,
+			// })
 
 			clock_adding()
 			return id
@@ -79,7 +81,7 @@ export function ecs<C extends {[key: string]: {}}>(
 			const clock_deleting = timekeep.clocks.deleting
 			entities.delete(id)
 			correlator.delete(id)
-			controlsCache.delete(id)
+			// controlsCache.delete(id)
 			selectacon.entityWasDeleted(id)
 			clock_deleting()
 		},

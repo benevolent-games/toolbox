@@ -3,29 +3,29 @@ import {ecs} from "./ecs.js"
 import {timer} from "./utils/timer.js"
 import {repeat} from "./utils/repeat.js"
 import {r, seed} from "./utils/randomly.js"
-import {makers} from "./chronicler/makers.js"
+import {Traits} from "./chronicler/traits.js"
 import {behaviors} from "./chronicler/behaviors.js"
-import {Components} from "./chronicler/components.js"
+import {archetypes} from "./chronicler/archetypes.js"
 
 const bigtimer = timer("everything")
 
 const timer_init = timer("init")
 const random = seed(1)
 const randomly = r(random)
-const e = ecs<Components>(behaviors)
+const e = ecs<Traits>(behaviors)
 timer_init.report()
 
 const t1 = timer("setup")
 const stopclock = e.timekeep.clocks.setup
-const make = makers(randomly)
+const make = archetypes({randomly})
 repeat(1000, () => e.add(make.person()))
 e.add(make.hut())
 e.add(make.hut())
 stopclock()
 t1.report()
 
-const t2 = timer("system execution")
-repeat(1000, () => e.execute())
+const t2 = timer("simulate behaviors")
+repeat(1000, () => e.execute({time: 1}))
 t2.report()
 
 const t3 = timer("queries")
