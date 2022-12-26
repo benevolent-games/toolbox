@@ -1,8 +1,10 @@
 
+import {Gametime} from "../../chronicler/utils/gametime.js"
+
 export interface Controls<C extends {}> {
 
 	readonly id: number
-	readonly time: number
+	readonly gametime: Gametime
 
 	write: (id: number, changes: Partial<C>) => void
 

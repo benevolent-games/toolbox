@@ -8,7 +8,7 @@ export const metaphysical: SetupBehaviors<Traits> = behavior => [
 		name: "time waits for no man",
 		needs: ["time"],
 		action({time}, {id, write, select}) {
-			time.clock += 1
+			
 		},
 	})
 

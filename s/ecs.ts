@@ -1,12 +1,13 @@
 
-import {Controls} from "./ecs/types/controls.js"
 import {timekeeper} from "./utils/timekeeper.js"
 import {setupSelectacon} from "./ecs/selectacon.js"
 import {SetupBehaviors} from "./ecs/types/setup-behaviors.js"
+import {Gametime, setupTimeline, Timeline} from "./chronicler/utils/gametime.js"
 import {behaviorEntityCorrelator} from "./ecs/behavior-entity-correlator.js"
 
 export function ecs<C extends {[key: string]: {}}>(
-		setup: SetupBehaviors<C>
+		setup: SetupBehaviors<C>,
+		timeline: Timeline,
 	) {
 
 	let count = 0
@@ -40,7 +41,8 @@ export function ecs<C extends {[key: string]: {}}>(
 		entities,
 		timekeep,
 
-		execute({time}: {time: number}) {
+		execute({timeDelta}: {timeDelta: number}) {
+			const gametime = timeline.makeGametime(timeDelta)
 			for (const behavior of behaviors) {
 
 				const clock_matching = timekeep.clocks.matching
@@ -51,7 +53,7 @@ export function ecs<C extends {[key: string]: {}}>(
 				for (const [id, components] of matching)
 					behavior.action(
 						<any>components,
-						{id, time, write, select},
+						{id, write, select, gametime},
 						// controlsCache.get(id)!,
 					)
 				clock_executing()

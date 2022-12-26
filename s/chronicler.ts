@@ -6,13 +6,14 @@ import {r, seed} from "./utils/randomly.js"
 import {Traits} from "./chronicler/traits.js"
 import {behaviors} from "./chronicler/behaviors.js"
 import {archetypes} from "./chronicler/archetypes.js"
+import {setupTimeline} from "./chronicler/utils/gametime.js"
 
 const bigtimer = timer("everything")
 
 const timer_init = timer("init")
 const random = seed(1)
 const randomly = r(random)
-const e = ecs<Traits>(behaviors)
+const e = ecs<Traits>(behaviors, setupTimeline(compactTime))
 timer_init.report()
 
 const t1 = timer("setup")
@@ -25,7 +26,7 @@ stopclock()
 t1.report()
 
 const t2 = timer("simulate behaviors")
-repeat(1000, () => e.execute({time: 1}))
+repeat(1000, () => e.execute({timeDelta: 1}))
 t2.report()
 
 const t3 = timer("queries")
