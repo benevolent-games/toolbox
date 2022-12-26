@@ -7,6 +7,7 @@ export const biological: SetupBehaviors<Traits> = behavior => [
 	behavior({
 		name: "thirst",
 		needs: ["biology"],
+		frequency: duration => duration.minutes(1),
 		action({biology}, {gametime}) {
 			biology.hydration -= gametime.in.days(3)
 		},
@@ -24,6 +25,7 @@ export const biological: SetupBehaviors<Traits> = behavior => [
 	behavior({
 		name: "extreme thirst or hunger lowers heartrate",
 		needs: ["biology", "mortality"],
+		frequency: duration => duration.minutes(1),
 		action({biology, mortality}, {gametime}) {
 			const heartIsBeating = mortality.heartrate > 0
 			const extremeThirst = biology.hydration <= 0
@@ -36,17 +38,19 @@ export const biological: SetupBehaviors<Traits> = behavior => [
 	behavior({
 		name: "bleeding",
 		needs: ["mortality"],
-		action: ({mortality}) => {
+		frequency: duration => duration.seconds(1),
+		action: ({mortality}, {gametime}) => {
 			mortality.blood -= mortality.bleed
 			mortality.bleed = mortality.bleed <= 0
 				? 0
-				: mortality.bleed - 0.001
+				: mortality.bleed - gametime.in.days(1)
 		},
 	}),
 
 	behavior({
 		name: "death",
 		needs: ["mortality"],
+		frequency: duration => duration.seconds(0.5),
 		action: ({mortality, death}, {id, write}) => {
 			if (!death) {
 				for (const [condition, cause] of [

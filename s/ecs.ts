@@ -1,8 +1,9 @@
 
 import {timekeeper} from "./utils/timekeeper.js"
+import {Behavior} from "./ecs/types/behavior.js"
 import {setupSelectacon} from "./ecs/selectacon.js"
+import {Timeline} from "./chronicler/utils/gametime.js"
 import {SetupBehaviors} from "./ecs/types/setup-behaviors.js"
-import {Gametime, setupTimeline, Timeline} from "./chronicler/utils/gametime.js"
 import {behaviorEntityCorrelator} from "./ecs/behavior-entity-correlator.js"
 
 export function ecs<C extends {[key: string]: {}}>(
@@ -21,7 +22,6 @@ export function ecs<C extends {[key: string]: {}}>(
 		id => entities.get(id)!,
 	)
 
-	// const controlsCache = new Map<number, Controls<C>>()
 	const {select} = selectacon
 
 	function write(id: number, changes: Partial<C>) {
@@ -37,14 +37,29 @@ export function ecs<C extends {[key: string]: {}}>(
 		selectacon.entityWasAddedOrUpdated(id, components)
 	}
 
+	const timeSinceBehaviorExecution = new WeakMap<Behavior<C, keyof C>, number>()
+
 	return {
 		entities,
 		timekeep,
 
 		execute({timeDelta}: {timeDelta: number}) {
 			const gametime = timeline.makeGametime(timeDelta)
-			for (const behavior of behaviors) {
 
+			function isBehaviorReadyToExecute(behavior: Behavior<C, keyof C>) {
+				const behaviorTime = timeSinceBehaviorExecution.get(behavior) ?? 0
+				const updatedTime = behaviorTime + timeDelta
+				const frequency = behavior.frequency(gametime.duration)
+				const ready = updatedTime > frequency
+				timeSinceBehaviorExecution.set(behavior, ready ? 0 : updatedTime)
+				return ready
+			}
+
+			const clock_frequency = timekeep.clocks.frequency
+			const readyBehaviors = behaviors.filter(isBehaviorReadyToExecute)
+			clock_frequency()
+
+			for (const behavior of readyBehaviors) {
 				const clock_matching = timekeep.clocks.matching
 				const matching = correlator.get(behavior)
 				clock_matching()
@@ -54,7 +69,6 @@ export function ecs<C extends {[key: string]: {}}>(
 					behavior.action(
 						<any>components,
 						{id, write, select, gametime},
-						// controlsCache.get(id)!,
 					)
 				clock_executing()
 			}
@@ -69,11 +83,6 @@ export function ecs<C extends {[key: string]: {}}>(
 			entities.set(id, components)
 			correlator.update(id, components)
 			selectacon.entityWasAddedOrUpdated(id, components)
-			// controlsCache.set(id, {
-			// 	id,
-			// 	write,
-			// 	select: selectacon.select,
-			// })
 
 			clock_adding()
 			return id
@@ -83,7 +92,6 @@ export function ecs<C extends {[key: string]: {}}>(
 			const clock_deleting = timekeep.clocks.deleting
 			entities.delete(id)
 			correlator.delete(id)
-			// controlsCache.delete(id)
 			selectacon.entityWasDeleted(id)
 			clock_deleting()
 		},

@@ -1,12 +1,5 @@
-import {obtool} from "@chasemoskal/magical"
 
-const g_second = 1000
-const g_minute = g_second * 60
-const g_hour = g_minute * 10
-const g_day = g_hour * 6
-const g_week = g_day * 7
-const g_season = g_week * 2
-const g_year = g_season * 4
+import {obtool} from "@chasemoskal/magical"
 
 export type Timeline = ReturnType<typeof setupTimeline>
 export type Gametime = ReturnType<Timeline["makeGametime"]>
@@ -38,6 +31,7 @@ export function setupTimeline(spec: DurationSpecification) {
 	const duration = setupDuration(spec)
 
 	return {
+		duration,
 		makeGametime(delta: number) {
 			totalElapsedGameTime += delta
 

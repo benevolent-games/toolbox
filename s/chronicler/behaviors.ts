@@ -10,6 +10,7 @@ export const behaviors: SetupBehaviors<Traits> = behavior => [
 	behavior({
 		name: "homeless people claim or build homes",
 		needs: ["identity"],
+		frequency: duration => duration.minutes(1),
 		action({identity}, {id, write, select}) {
 			const shelters = select(["shelter"])
 			const home = shelters
