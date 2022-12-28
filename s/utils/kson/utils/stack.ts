@@ -1,5 +1,5 @@
 
-export class Stack<T> {
+export class Stack<T = any> {
 
 	#memory: T[] = []
 

@@ -9,3 +9,21 @@ export const controls = {
 	itemsep: unicodes.record_separator,
 	pairsep: unicodes.unit_separator,
 }
+
+/*
+
+{DATA}
+
+(openarray)
+	(openobject)
+		{ID}(pairsep){DATA}
+			(itemsep)
+		{ID}(pairsep)(openarray)
+			{DATA}
+				(itemsep)
+			{DATA}
+		(close)
+	(close)
+(close)
+
+*/
