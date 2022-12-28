@@ -1,8 +1,12 @@
 
-import {obtool} from "@chasemoskal/magical"
-
+import {Ast} from "./types/ast.js"
+import {type} from "./utils/type.js"
+import {Stack} from "./utils/stack.js"
 import {controls} from "./text/controls.js"
+import {packValue} from "./utils/pack-value.js"
 import {setupKeyMap} from "./utils/setup-key-map.js"
+import {controlSymbols} from "./text/control-symbols.js"
+import {getControlBySymbol} from "./text/get-control-by-symbol.js"
 
 /*
 
@@ -22,131 +26,18 @@ import {setupKeyMap} from "./utils/setup-key-map.js"
 
 */
 
-export function trampoline<T>(fun: (...args: any[]) => T) {
-	return (...args: any[]) => {
-		let result = fun(...args)
-
-		while (typeof result === "function")
-			result = result()
-
-		return result
-	}
-}
-
-
-export function type(data: any): Ast.Type {
-	const isArray = Array.isArray(data)
-	const isObject = typeof data === "object" && !!data
-
-	return isObject
-		? isArray
-			? Ast.Type.Array
-			: Ast.Type.Object
-		: Ast.Type.Primitive
-}
-
-export namespace Ast {
-	export enum Type {
-		Primitive,
-		Array,
-		Object,
-	}
-
-	export enum Control {
-		Open,
-		Close,
-		Primitive,
-	}
-
-	export interface Base {
-		control: Control
-	}
-
-	export interface Primitive extends Base {
-		control: Control.Primitive
-		value: any
-	}
-
-	export interface Open extends Base {
-		control: Control.Open
-		type: Type
-	}
-
-	export interface Close extends Base {
-		control: Control.Close
-		type: Type
-	}
-
-	export type Token = Primitive | Open | Close
-}
-
-export function makeStack<T>() {
-	let memory: T[] = []
-
-	return {
-
-		push(...t: T[]) {
-			memory.push(...t)
-		},
-
-		pushReverse(...t: T[]) {
-			t.reverse()
-			memory.push(...t)
-		},
-
-		pop() {
-			return memory.pop()
-		},
-
-		clear() {
-			memory = []
-		},
-
-		get size() {
-			return memory.length
-		},
-
-		get memory() {
-			return [...memory]
-		},
-	}
-}
-
-const controlSymbols = (
-	obtool(controls)
-		.map(() => Symbol())
-)
-
-function getControl(symbol: symbol) {
-	const known = (
-		Object
-			.entries(controlSymbols)
-			.find(([,value]) => value === symbol)
-	)
-
-	if (!known)
-		throw new Error("unknown symbol")
-
-	const [name] = known
-	return controls[<keyof typeof controls>name]
-}
-
-export function packValue(x: any) {
-	return JSON.stringify(x)
-}
-
 export function serialize(root: any) {
 	const results: string[] = []
 
 	const {getKeyId, getKeyMapEntries} = setupKeyMap()
-	const stack = makeStack<any>()
+	const stack = new Stack<any>()
 	stack.push(root)
 
 	while (stack.size > 0) {
 		const node = stack.pop()
 
 		if (typeof node === "symbol")
-			results.push(getControl(node))
+			results.push(getControlBySymbol(node))
 
 		else {
 			switch (type(node)) {
