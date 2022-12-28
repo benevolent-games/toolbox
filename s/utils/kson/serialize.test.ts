@@ -1,8 +1,9 @@
 
-import {expect, Suite} from "cynic"
+import {assert, expect, Suite} from "cynic"
 
 import {range} from "../range.js"
 import {serialize} from "./serialize.js"
+import {visualize} from "./utils/visualize.js"
 
 const testData = {
 	entities: (n: number) => range(n).map(() => ({
@@ -22,11 +23,12 @@ const testData = {
 
 export default <Suite>{
 	async "serialize some data"() {
-		const data = testData.entities(1000)
+		const data = testData.entities(100)
 		const text = serialize(data)
 		const json = JSON.stringify(data)
 		// const vis = visualize(text)
-		expect(text.length > 1).ok()
-		expect(text.length < json.length).ok()
+		// debugger
+		assert(text.length > 1, "text has length")
+		assert(text.length < json.length, "smaller than json")
 	},
 }

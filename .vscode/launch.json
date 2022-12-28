@@ -5,9 +5,9 @@
 			"type": "node",
 			"request": "launch",
 			"name": "debug",
-			"program": "${workspaceFolder}/x/chronicler.js",
-			// "program": "${workspaceFolder}/node_modules/cynic/dist/cli.js",
-			// "args": ["node", "x/utils/kson/serialize.test.js"],
+			// "program": "${workspaceFolder}/x/chronicler.js",
+			"program": "${workspaceFolder}/node_modules/cynic/dist/cli.js",
+			"args": ["node", "x/utils/kson/serialize.test.js"],
 			"stopOnEntry": false
 		}
 	]

@@ -11,7 +11,7 @@ import {durationSpec} from "./chronicler/durations.js"
 import {setupTimeline} from "./chronicler/utils/gametime.js"
 
 const config = {
-	people: 500,
+	people: 10_000,
 	steps: 10,
 }
 
@@ -56,11 +56,17 @@ console.log(`dead ${dead.length}`)
 const payload = [...e.entities.entries()]
 const json = JSON.stringify(payload)
 const kson = serialize(payload)
+
 function megabytes(bytes: number) {
 	return `${bytes / 1_000_000} MB`
 }
 
+function percent(fraction: number) {
+	return `${(fraction * 100).toFixed(0)}%`
+}
+
 console.log("json", megabytes(json.length))
 console.log("kson", megabytes(kson.length))
+console.log("savings", percent(1 - (kson.length / json.length)))
 
 bigtimer.report()
