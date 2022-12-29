@@ -1,9 +1,10 @@
 
+import {type} from "./type.js"
 import {Ast} from "../types/ast.js"
 import {Stack} from "../utils/stack.js"
-import {type} from "./type.js"
 import {packValue} from "./pack-value.js"
 import {processArray} from "./process-array.js"
+import {Clocks} from "../../utils/timekeep.js"
 import {Dictionary} from "../utils/dictionary.js"
 import {processObject} from "./process-object.js"
 
@@ -12,20 +13,27 @@ export function processNode(
 		stack: Stack,
 		dictionary: Dictionary,
 		pushResult: (r: string) => void,
+		clocks: Clocks,
 	) {
 
 	switch (type(node)) {
 
 		case Ast.Type.Primitive:
-			pushResult(packValue(node))
+			clocks.primitives(() => {
+				pushResult(packValue(node))
+			})
 			break
 
 		case Ast.Type.Array:
-			processArray(stack, node)
+			clocks.arrays(() => {
+				processArray(stack, node)
+			})
 			break
 
 		case Ast.Type.Object:
-			processObject(stack, dictionary, node)
+			clocks.objects(() => {
+				processObject(stack, dictionary, node)
+			})
 			break
 
 		default:

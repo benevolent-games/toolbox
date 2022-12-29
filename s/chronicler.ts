@@ -4,8 +4,8 @@ import {human} from "./utils/human.js"
 import {repeat} from "./utils/repeat.js"
 import {r, seed} from "./utils/randomly.js"
 import {Traits} from "./chronicler/traits.js"
-import {timekeeper} from "./utils/timekeeper.js"
 import {serialize} from "./kson/serialize.js"
+import {Timekeep} from "./utils/timekeep.js"
 import {behaviors} from "./chronicler/behaviors.js"
 import {archetypes} from "./chronicler/archetypes.js"
 import {durationSpec} from "./chronicler/durations.js"
@@ -16,50 +16,52 @@ const config = {
 	steps: 60,
 }
 
-const {clocks, report} = timekeeper()
+const timekeepAll = new Timekeep("👐")
+const TIMER_CHRONICLER = timekeepAll.timers.chronicler
+const timekeep = new Timekeep("📜")
 
-const clock_init = clocks.init
+const TIMER_INIT = timekeep.timers.init
 const random = seed(1)
 const randomly = r(random)
 const timeline = setupTimeline(durationSpec)
 const e = ecs<Traits>(behaviors, timeline)
-clock_init()
+TIMER_INIT()
 
-const clock_setup = clocks.setup
+const TIMER_SETUP = timekeep.timers.setup
 const make = archetypes({randomly})
 repeat(config.people, () => e.add(make.person()))
 e.add(make.hut())
 e.add(make.hut())
-clock_setup()
+TIMER_SETUP()
 
-const clock_simulation = clocks.simulation
+const TIMER_SIMULATION = timekeep.timers.simulation
 repeat(
 	config.steps,
 	() => e.execute({timeDelta: timeline.duration.seconds(1)}),
 )
-clock_simulation()
+TIMER_SIMULATION()
 
-const clock_queries = clocks.queries
+const TIMER_QUERIES = timekeep.timers.queries
 const people = e.select(["identity"])
 const alive = people
 	.filter(([id, components]) => !components.death)
 const dead = people
 	.filter(([id, components]) => !!components.death)
-clock_queries()
+TIMER_QUERIES()
 
 
 console.log(`alive ${alive.length}`)
 console.log(`dead ${dead.length}`)
 
-const clock_arrayize = clocks.arrayize
+const TIMER_ARRAYIZE = timekeep.timers.arrayize
 const payload = [...e.entities.entries()]
-clock_arrayize()
+TIMER_ARRAYIZE()
 
-const clock_json = clocks.json
+const TIMER_JSON = timekeep.timers.json
 const json = JSON.stringify(payload)
-clock_json()
+TIMER_JSON()
 
-const clock_kson = clocks.kson
+const TIMER_KSON = timekeep.timers.kson
 const kson = await serialize(payload, {
 	onProgress(stats) {
 		const megs = human.megabytes(stats.bytes)
@@ -67,11 +69,15 @@ const kson = await serialize(payload, {
 		console.log(`serialize - ${megs}, cycles ${mill}`)
 	}
 })
-clock_kson()
+TIMER_KSON()
 
 console.log("json", human.megabytes(json.length))
 console.log("kson", human.megabytes(kson.length))
 console.log("savings", human.percent(1 - (kson.length / json.length)))
 
-e.timekeep.report()
-report()
+TIMER_CHRONICLER()
+timekeep.report()
+timekeepAll.report()
+
+// e.timekeep.report()
+// report()

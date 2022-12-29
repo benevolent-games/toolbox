@@ -1,5 +1,5 @@
 
-import {timekeeper} from "./utils/timekeeper.js"
+import {Timekeep} from "./utils/timekeep.js"
 import {Behavior} from "./ecs/types/behavior.js"
 import {setupSelectacon} from "./ecs/selectacon.js"
 import {Timeline} from "./chronicler/utils/gametime.js"
@@ -12,7 +12,7 @@ export function ecs<C extends {[key: string]: {}}>(
 	) {
 
 	let count = 0
-	const timekeep = timekeeper()
+	const timekeep = new Timekeep()
 	const behaviors = setup(x => x)
 
 	const entities = new Map<number, Partial<C>>()
@@ -55,45 +55,45 @@ export function ecs<C extends {[key: string]: {}}>(
 				return ready
 			}
 
-			const clock_frequency = timekeep.clocks.frequency
+			const TIMER_FREQUENCY = timekeep.timers.frequency
 			const readyBehaviors = behaviors.filter(isBehaviorReadyToExecute)
-			clock_frequency()
+			TIMER_FREQUENCY()
 
 			for (const behavior of readyBehaviors) {
-				const clock_matching = timekeep.clocks.matching
+				const TIMER_MATCHING = timekeep.timers.matching
 				const matching = correlator.get(behavior)
-				clock_matching()
+				TIMER_MATCHING()
 
-				const clock_executing = timekeep.clocks.executing
+				const TIMER_EXECUTING = timekeep.timers.executing
 				for (const [id, components] of matching)
 					behavior.action(
 						<any>components,
 						{id, write, select, gametime},
 					)
-				clock_executing()
+				TIMER_EXECUTING()
 			}
 		},
 
 		select: selectacon.select,
 
 		add(components: Partial<C>) {
-			const clock_adding = timekeep.clocks.adding
+			const TIMER_ADDING = timekeep.timers.adding
 
 			const id = count++
 			entities.set(id, components)
 			correlator.update(id, components)
 			selectacon.entityWasAddedOrUpdated(id, components)
 
-			clock_adding()
+			TIMER_ADDING()
 			return id
 		},
 
 		delete(id: number) {
-			const clock_deleting = timekeep.clocks.deleting
+			const TIMER_DELETING = timekeep.timers.deleting
 			entities.delete(id)
 			correlator.delete(id)
 			selectacon.entityWasDeleted(id)
-			clock_deleting()
+			TIMER_DELETING()
 		},
 
 	}
