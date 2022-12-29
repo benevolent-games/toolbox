@@ -4,7 +4,7 @@
 		"rootDir": "s",
 		"outDir": "x",
 		"target": "es2019",
-		"lib": ["esnext", "dom"],
+		"lib": ["esnext", "dom", "webworker"],
 		"module": "esnext",
 		"moduleResolution": "node",
 		"experimentalDecorators": true,

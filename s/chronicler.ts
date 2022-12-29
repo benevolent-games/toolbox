@@ -3,9 +3,9 @@ import {ecs} from "./ecs.js"
 import {human} from "./utils/human.js"
 import {repeat} from "./utils/repeat.js"
 import {r, seed} from "./utils/randomly.js"
-import {Traits} from "./chronicler/traits.js"
-import {serialize} from "./kson/serialize.js"
 import {Timekeep} from "./utils/timekeep.js"
+import {Traits} from "./chronicler/traits.js"
+import {makeSerializer, Serializer} from "./kson/serialize.js"
 import {behaviors} from "./chronicler/behaviors.js"
 import {archetypes} from "./chronicler/archetypes.js"
 import {durationSpec} from "./chronicler/durations.js"
@@ -61,14 +61,20 @@ const TIMER_JSON = timekeep.timers.json
 const json = JSON.stringify(payload)
 TIMER_JSON()
 
+const serializer = await makeSerializer()
+// const serializer = new Serializer()
+
 const TIMER_KSON = timekeep.timers.kson
-const kson = await serialize(payload, {
-	onProgress(stats) {
-		const megs = human.megabytes(stats.bytes)
-		const mill = human.millions(stats.cycles)
-		console.log(`serialize - ${megs}, cycles ${mill}`)
-	}
-})
+// const kson = serialize(payload, {
+// 	onProgress({bytes, cycles}) {
+// 		const megs = human.megabytes(bytes)
+// 		const mill = `${cycles} (${human.millions(cycles)})`
+// 		console.log(`serialize - ${megs}, cycles ${mill}`)
+// 	}
+// })
+// const kson = oldSerializer(payload)
+const kson = await serializer.serialize(payload)
+serializer.terminate()
 TIMER_KSON()
 
 console.log("json", human.megabytes(json.length))
@@ -78,6 +84,8 @@ console.log("savings", human.percent(1 - (kson.length / json.length)))
 TIMER_CHRONICLER()
 timekeep.report()
 timekeepAll.report()
+
+// console.log((kson))
 
 // e.timekeep.report()
 // report()

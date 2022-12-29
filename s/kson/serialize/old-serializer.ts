@@ -7,10 +7,10 @@ import {generateKeySpec} from "./generate-key-spec.js"
 import {getControlBySymbol} from "../text/get-control-by-symbol.js"
 
 export function oldSerializer(root: any) {
-	const results: string[] = []
+	let results = ""
 	const dictionary = new Dictionary()
 	const stack = new Stack<any>([root])
-	const pushResult = (r: string) => results.push(r)
+	const pushResult = (r: string) => results += r
 
 	while (stack.size > 0) {
 		const node = stack.pop()
@@ -29,5 +29,5 @@ export function oldSerializer(root: any) {
 
 	return generateKeySpec(dictionary)
 		+ controls.payloadsep
-		+ results.join("")
+		+ results
 }

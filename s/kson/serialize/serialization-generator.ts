@@ -21,7 +21,7 @@ export function *serializationGenerator(root: any) {
 	})
 
 	while (stack.size > 0) {
-		if (cycles++ % 10_000 === 0)
+		if (cycles++ % 100_000 === 0)
 			yield report()
 
 		const node = stack.pop()
