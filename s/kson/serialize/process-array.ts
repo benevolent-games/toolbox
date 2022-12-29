@@ -1,4 +1,5 @@
 
+import {notLast} from "./not-last.js"
 import {Stack} from "../utils/stack.js"
 import {controlSymbols} from "../text/control-symbols.js"
 
@@ -7,16 +8,14 @@ export function processArray(
 		array: any[],
 	) {
 
-	const stuff = array.flatMap((item, index) => [
-		item,
-		...(index < (array.length - 1))
-			? [controlSymbols.itemsep]
-			: [],
-	])
+	const toStack: any[] = [controlSymbols.openarray]
 
-	stack.pushReverse([
-		controlSymbols.openarray,
-		...stuff,
-		controlSymbols.close,
-	])
+	array.forEach((item, index) => {
+		toStack.push(item)
+		if (notLast(index, array.length))
+			toStack.push(controlSymbols.itemsep)
+	})
+
+	toStack.push(controlSymbols.close)
+	stack.pushReverse(toStack)
 }

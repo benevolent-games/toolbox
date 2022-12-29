@@ -10,10 +10,8 @@ export function processObject(
 		obj: any,
 	) {
 
-	const toStack: any[] = []
+	const toStack: any[] = [controlSymbols.openobject]
 	const entries = Object.entries(obj)
-
-	toStack.push(controlSymbols.openobject)
 
 	entries.forEach(([key, value], index) => {
 		toStack.push(
@@ -21,9 +19,11 @@ export function processObject(
 			controlSymbols.pairsep,
 			value,
 		)
+
 		if (notLast(index, entries.length))
 			toStack.push(controlSymbols.itemsep)
 	})
 
+	toStack.push(controlSymbols.close)
 	stack.pushReverse(toStack)
 }

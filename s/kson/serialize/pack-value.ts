@@ -1,4 +1,6 @@
 
 export function packValue(x: any) {
-	return JSON.stringify(x)
+	return (x === undefined)
+		? "undefined"
+		: JSON.stringify(x)
 }
