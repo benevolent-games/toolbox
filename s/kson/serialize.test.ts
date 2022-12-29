@@ -1,7 +1,7 @@
 
 import {assert, Suite} from "cynic"
 
-import {range} from "../range.js"
+import {range} from "../utils/range.js"
 import {serialize} from "./serialize.js"
 
 const testData = {

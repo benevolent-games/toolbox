@@ -1,5 +1,5 @@
 
-import {nap} from "../nap.js"
+import {nap} from "../utils/nap.js"
 import {Options} from "./serialize/types/options.js"
 import {serializationGenerator} from "./serialize/serialization-generator.js"
 
