@@ -1,36 +1,35 @@
 
-import {Stack} from "./utils/stack.js"
-import {controls} from "./text/controls.js"
-import {Dictionary} from "./utils/dictionary.js"
-import {processNode} from "./utils/process-node.js"
-import {generateKeySpec} from "./utils/generate-key-spec.js"
-import {getControlBySymbol} from "./text/get-control-by-symbol.js"
+import {nap} from "../nap.js"
+import {serializationGenerator} from "./utils/serialization-generator.js"
 
-export function serialize(root: any) {
-	const results: string[] = []
-	const dictionary = new Dictionary()
-	const stack = new Stack<any>()
-	stack.push([root])
+export async function serialize(
+		root: any,
+		{
+			onProgress = () => {},
+		}: {
+			onProgress?({}: {
+				bytes: number,
+				iterations: number,
+				cycles: number,
+			}): void
+		} = {}
+	) {
 
-	while (stack.size > 0) {
-		const node = stack.pop()
+	let results: string = ""
+	let iterations = 0
 
-		if (typeof node === "symbol")
-			results.push(getControlBySymbol(node))
+	for (const {cycles, bytes, chunk} of serializationGenerator(root)) {
+		if (chunk)
+			results += chunk
 
-		else
-			processNode(
-				node,
-				stack,
-				dictionary,
-				r => results.push(r),
-			)
+		onProgress({
+			bytes,
+			cycles,
+			iterations: iterations++,
+		})
+
+		await nap()
 	}
 
-	const payload = results.join("")
-	const keySpec = generateKeySpec(dictionary)
-
-	return keySpec
-		+ controls.payloadsep
-		+ payload
+	return results
 }

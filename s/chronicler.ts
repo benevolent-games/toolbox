@@ -1,9 +1,10 @@
 
 import {ecs} from "./ecs.js"
-import {timer} from "./utils/timer.js"
+import {human} from "./utils/human.js"
 import {repeat} from "./utils/repeat.js"
 import {r, seed} from "./utils/randomly.js"
 import {Traits} from "./chronicler/traits.js"
+import {timekeeper} from "./utils/timekeeper.js"
 import {serialize} from "./utils/kson/serialize.js"
 import {behaviors} from "./chronicler/behaviors.js"
 import {archetypes} from "./chronicler/archetypes.js"
@@ -12,61 +13,65 @@ import {setupTimeline} from "./chronicler/utils/gametime.js"
 
 const config = {
 	people: 10_000,
-	steps: 10,
+	steps: 60,
 }
 
-const bigtimer = timer("everything")
+const {clocks, report} = timekeeper()
 
-const timer_init = timer("init")
+const clock_init = clocks.init
 const random = seed(1)
 const randomly = r(random)
 const timeline = setupTimeline(durationSpec)
 const e = ecs<Traits>(behaviors, timeline)
-timer_init.report()
+clock_init()
 
-const t1 = timer("setup")
-const stopclock = e.timekeep.clocks.setup
+const clock_setup = clocks.setup
 const make = archetypes({randomly})
 repeat(config.people, () => e.add(make.person()))
 e.add(make.hut())
 e.add(make.hut())
-stopclock()
-t1.report()
+clock_setup()
 
-const t2 = timer("simulate behaviors")
-repeat(config.steps, () => e.execute({timeDelta: timeline.duration.seconds(1)}))
-t2.report()
+const clock_simulation = clocks.simulation
+repeat(
+	config.steps,
+	() => e.execute({timeDelta: timeline.duration.seconds(1)}),
+)
+clock_simulation()
 
-const t3 = timer("queries")
+const clock_queries = clocks.queries
 const people = e.select(["identity"])
-
 const alive = people
 	.filter(([id, components]) => !components.death)
-
 const dead = people
 	.filter(([id, components]) => !!components.death)
+clock_queries()
 
-t3.report()
-
-e.timekeep.report()
 
 console.log(`alive ${alive.length}`)
 console.log(`dead ${dead.length}`)
 
+const clock_arrayize = clocks.arrayize
 const payload = [...e.entities.entries()]
+clock_arrayize()
+
+const clock_json = clocks.json
 const json = JSON.stringify(payload)
-const kson = serialize(payload)
+clock_json()
 
-function megabytes(bytes: number) {
-	return `${(bytes / 1_000_000).toFixed(2)} MB`
-}
+const clock_kson = clocks.kson
+const kson = await serialize(payload, {
+	onProgress(stats) {
+		const megs = human.megabytes(stats.bytes)
+		const mill = human.millions(stats.cycles)
+		console.log(`serialize - ${megs}, cycles ${mill}`)
+	}
+})
+clock_kson()
 
-function percent(fraction: number) {
-	return `${(fraction * 100).toFixed(0)}%`
-}
+console.log("json", human.megabytes(json.length))
+console.log("kson", human.megabytes(kson.length))
+console.log("savings", human.percent(1 - (kson.length / json.length)))
 
-console.log("json", megabytes(json.length))
-console.log("kson", megabytes(kson.length))
-console.log("savings", percent(1 - (kson.length / json.length)))
-
-bigtimer.report()
+e.timekeep.report()
+report()

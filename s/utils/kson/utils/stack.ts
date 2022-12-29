@@ -3,6 +3,11 @@ export class Stack<T = any> {
 
 	#memory: T[] = []
 
+	constructor(t?: T[]) {
+		if (t)
+			this.push(t)
+	}
+
 	get size() {
 		return this.#memory.length
 	}
