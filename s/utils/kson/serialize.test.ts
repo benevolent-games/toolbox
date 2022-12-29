@@ -24,8 +24,8 @@ const testData = {
 export default <Suite>{
 	async "serialize some data"() {
 		const data = testData.entities(100)
-		const text = serialize(data)
 		const json = JSON.stringify(data)
+		const text = serialize(data)
 		// const vis = visualize(text)
 		// debugger
 		assert(text.length > 1, "text has length")

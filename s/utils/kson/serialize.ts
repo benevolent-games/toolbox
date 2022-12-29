@@ -10,7 +10,7 @@ export function serialize(root: any) {
 	const results: string[] = []
 	const dictionary = new Dictionary()
 	const stack = new Stack<any>()
-	stack.push(root)
+	stack.push([root])
 
 	while (stack.size > 0) {
 		const node = stack.pop()

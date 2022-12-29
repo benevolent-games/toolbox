@@ -20,9 +20,9 @@ export function processObject(
 			: []
 	])
 
-	stack.pushReverse(
+	stack.pushReverse([
 		controlSymbols.openobject,
 		...stuff,
 		controlSymbols.close,
-	)
+	])
 }

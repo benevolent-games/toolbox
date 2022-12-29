@@ -58,7 +58,7 @@ const json = JSON.stringify(payload)
 const kson = serialize(payload)
 
 function megabytes(bytes: number) {
-	return `${bytes / 1_000_000} MB`
+	return `${(bytes / 1_000_000).toFixed(2)} MB`
 }
 
 function percent(fraction: number) {

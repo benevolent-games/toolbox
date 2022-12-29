@@ -14,9 +14,9 @@ export function processArray(
 			: [],
 	])
 
-	stack.pushReverse(
+	stack.pushReverse([
 		controlSymbols.openarray,
 		...stuff,
 		controlSymbols.close,
-	)
+	])
 }

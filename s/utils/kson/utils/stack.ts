@@ -11,13 +11,14 @@ export class Stack<T = any> {
 		return [...this.#memory]
 	}
 
-	push(...t: T[]) {
-		this.#memory.push(...t)
+	push(t: T[]) {
+		for (const item of t)
+			this.#memory.push(item)
 	}
 
-	pushReverse(...t: T[]) {
-		t.reverse()
-		this.#memory.push(...t)
+	pushReverse(t: T[]) {
+		const reversed = <T[]>t.slice().reverse()
+		this.push(reversed)
 	}
 
 	pop() {
