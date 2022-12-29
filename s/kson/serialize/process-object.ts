@@ -1,4 +1,5 @@
 
+import {notLast} from "./not-last.js"
 import {Stack} from "../utils/stack.js"
 import {Dictionary} from "../utils/dictionary.js"
 import {controlSymbols} from "../text/control-symbols.js"
@@ -9,20 +10,20 @@ export function processObject(
 		obj: any,
 	) {
 
-	const entries = [...Object.entries(obj)]
+	const toStack: any[] = []
+	const entries = Object.entries(obj)
 
-	const stuff = entries.flatMap(([key, value], index) => [
-		dictionary.getKeyId(key),
-		controlSymbols.pairsep,
-		value,
-		...(index < (entries.length - 1))
-			? [controlSymbols.itemsep]
-			: []
-	])
+	toStack.push(controlSymbols.openobject)
 
-	stack.pushReverse([
-		controlSymbols.openobject,
-		...stuff,
-		controlSymbols.close,
-	])
+	entries.forEach(([key, value], index) => {
+		toStack.push(
+			dictionary.getKeyId(key),
+			controlSymbols.pairsep,
+			value,
+		)
+		if (notLast(index, entries.length))
+			toStack.push(controlSymbols.itemsep)
+	})
+
+	stack.pushReverse(toStack)
 }
