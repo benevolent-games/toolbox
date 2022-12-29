@@ -9,10 +9,12 @@ export class Dictionary {
 
 	getKeyId(key: string) {
 		let id = this.#keyMap.get(key)
+
 		if (id === null || id === undefined) {
 			id = this.#count++
 			this.#keyMap.set(key, id)
 		}
+
 		return id
 	}
 }

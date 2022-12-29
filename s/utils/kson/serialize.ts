@@ -1,18 +1,11 @@
 
 import {nap} from "../nap.js"
-import {serializationGenerator} from "./utils/serialization-generator.js"
+import {Options} from "./serialize/types/options.js"
+import {serializationGenerator} from "./serialize/serialization-generator.js"
 
 export async function serialize(
 		root: any,
-		{
-			onProgress = () => {},
-		}: {
-			onProgress?({}: {
-				bytes: number,
-				iterations: number,
-				cycles: number,
-			}): void
-		} = {}
+		{onProgress = () => {}}: Options = {}
 	) {
 
 	let results: string = ""

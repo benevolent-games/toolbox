@@ -1,10 +1,10 @@
 
-import {type} from "./type.js"
-import {Stack} from "./stack.js"
 import {Ast} from "../types/ast.js"
+import {Stack} from "../utils/stack.js"
+import {type} from "./type.js"
 import {packValue} from "./pack-value.js"
-import {Dictionary} from "./dictionary.js"
 import {processArray} from "./process-array.js"
+import {Dictionary} from "../utils/dictionary.js"
 import {processObject} from "./process-object.js"
 
 export function processNode(

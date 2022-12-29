@@ -1,5 +1,5 @@
 
-import {Stack} from "./stack.js"
+import {Stack} from "../utils/stack.js"
 import {controlSymbols} from "../text/control-symbols.js"
 
 export function processArray(

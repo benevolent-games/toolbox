@@ -1,6 +1,6 @@
 
-import {Stack} from "./stack.js"
-import {Dictionary} from "./dictionary.js"
+import {Stack} from "../utils/stack.js"
+import {Dictionary} from "../utils/dictionary.js"
 import {controlSymbols} from "../text/control-symbols.js"
 
 export function processObject(

@@ -1,6 +1,6 @@
 
-import {Stack} from "./stack.js"
-import {Dictionary} from "./dictionary.js"
+import {Stack} from "../utils/stack.js"
+import {Dictionary} from "../utils/dictionary.js"
 import {controls} from "../text/controls.js"
 import {processNode} from "./process-node.js"
 import {generateKeySpec} from "./generate-key-spec.js"

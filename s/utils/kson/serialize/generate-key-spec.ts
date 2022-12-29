@@ -1,5 +1,5 @@
 
-import {Dictionary} from "./dictionary.js"
+import {Dictionary} from "../utils/dictionary.js"
 import {controls} from "../text/controls.js"
 
 export function generateKeySpec(
