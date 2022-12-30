@@ -2,9 +2,9 @@
 import {Stack} from "../utils/stack.js"
 import {Report} from "./types/report.js"
 import {controls} from "../text/controls.js"
-import {processNode} from "./process-node.js"
 import {Dictionary} from "../utils/dictionary.js"
-import {generateKeySpec} from "./generate-key-spec.js"
+import {processNode} from "./utils/process-node.js"
+import {generateKeySpec} from "./utils/generate-key-spec.js"
 import {getControlBySymbol} from "../text/get-control-by-symbol.js"
 
 export function *serializationGenerator(root: any) {

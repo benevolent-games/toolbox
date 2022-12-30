@@ -1,13 +1,9 @@
 
-const GLOBAL = typeof window !== "undefined"
-	? window
-	: global
+import {isNode} from "./is-node.js"
 
-export const isNode = !("Worker" in GLOBAL)
+export type RelativeUrl = (path: string, importMetaUrl: string) => string
 
-export type Relurl = (path: string, importMetaUrl: string) => string
-
-export const relurl = await (async(): Promise<Relurl> => {
+export const relativeUrl = await (async(): Promise<RelativeUrl> => {
 
 	if (isNode) {
 		const {dirname, normalize} = await import("path")

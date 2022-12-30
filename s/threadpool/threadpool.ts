@@ -1,15 +1,18 @@
 
-import {isNode} from "./utils/is-node.js"
 import {Request} from "./types/request.js"
+import {isNode} from "../utils/is-node.js"
 import {Response} from "./types/response.js"
+import {relativeUrl} from "../utils/relative-url.js"
 import {promiseParts} from "../utils/promise-parts.js"
 
-export async function pool<P, R>(
-		threadModuleUrl: string,
+export async function threadpool<P, R>(
+		path: string,
+		importMetaUrl: string,
 	) {
 
-	let id = 0
+	const url = relativeUrl(path, importMetaUrl)
 	const jobs = new Map<number, (result: R) => void>()
+	let id = 0
 
 	function handleResponse({jobId, result}: Response<R>) {
 		const resolve = jobs.get(jobId)
@@ -26,7 +29,7 @@ export async function pool<P, R>(
 
 	if (isNode) {
 		const {Worker} = await import("node:worker_threads")
-		const worker = new Worker(threadModuleUrl)
+		const worker = new Worker(url)
 
 		worker.on("message", handleResponse)
 		worker.on("error", err => console.error(err))
@@ -47,7 +50,7 @@ export async function pool<P, R>(
 	}
 
 	else {
-		const worker = new Worker(threadModuleUrl)
+		const worker = new Worker(url)
 
 		worker.onmessage = (
 			({data: response}: MessageEvent<Response<R>>) =>

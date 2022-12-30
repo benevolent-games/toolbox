@@ -1,6 +1,6 @@
 
-import {Dictionary} from "../utils/dictionary.js"
-import {controls} from "../text/controls.js"
+import {controls} from "../../text/controls.js"
+import {Dictionary} from "../../utils/dictionary.js"
 
 export function generateKeySpec(
 		dictionary: Dictionary

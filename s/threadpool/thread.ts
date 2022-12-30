@@ -1,6 +1,6 @@
 
 import {Parcel} from "./types/parcel.js"
-import {isNode} from "./utils/is-node.js"
+import {isNode} from "../utils/is-node.js"
 import {Request} from "./types/request.js"
 import {Response} from "./types/response.js"
 

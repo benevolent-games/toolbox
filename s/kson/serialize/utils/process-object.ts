@@ -1,8 +1,8 @@
 
 import {notLast} from "./not-last.js"
-import {Stack} from "../utils/stack.js"
-import {Dictionary} from "../utils/dictionary.js"
-import {controlSymbols} from "../text/control-symbols.js"
+import {Stack} from "../../utils/stack.js"
+import {Dictionary} from "../../utils/dictionary.js"
+import {controlSymbols} from "../../text/control-symbols.js"
 
 export function processObject(
 		stack: Stack,

@@ -5,11 +5,11 @@ import {repeat} from "./utils/repeat.js"
 import {r, seed} from "./utils/randomly.js"
 import {Timekeep} from "./utils/timekeep.js"
 import {Traits} from "./chronicler/traits.js"
-import {makeSerializer, Serializer} from "./kson/serialize.js"
 import {behaviors} from "./chronicler/behaviors.js"
 import {archetypes} from "./chronicler/archetypes.js"
 import {durationSpec} from "./chronicler/durations.js"
 import {setupTimeline} from "./chronicler/utils/gametime.js"
+import {threadedSerializer} from "./kson/threaded-serializer.js"
 
 const config = {
 	people: 10_000,
@@ -61,7 +61,7 @@ const TIMER_JSON = timekeep.timers.json
 const json = JSON.stringify(payload)
 TIMER_JSON()
 
-const serializer = await makeSerializer()
+const serializer = await threadedSerializer()
 // const serializer = new Serializer()
 
 const TIMER_KSON = timekeep.timers.kson
