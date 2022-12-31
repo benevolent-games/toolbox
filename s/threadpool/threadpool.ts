@@ -2,15 +2,9 @@
 import {Request} from "./types/request.js"
 import {isNode} from "../utils/is-node.js"
 import {Response} from "./types/response.js"
-import {relativeUrl} from "../utils/relative-url.js"
 import {promiseParts} from "../utils/promise-parts.js"
 
-export async function threadpool<P, R>(
-		path: string,
-		importMetaUrl: string,
-	) {
-
-	const url = relativeUrl(path, importMetaUrl)
+export async function threadpool<P, R>(url: URL) {
 	const jobs = new Map<number, (result: R) => void>()
 	let id = 0
 
@@ -29,7 +23,11 @@ export async function threadpool<P, R>(
 
 	if (isNode) {
 		const {Worker} = await import("node:worker_threads")
-		const worker = new Worker(url)
+		const worker = new Worker(url, {
+			env: {
+				NODE_OPTIONS: process.env.NODE_OPTIONS,
+			},
+		})
 
 		worker.on("message", handleResponse)
 		worker.on("error", err => console.error(err))

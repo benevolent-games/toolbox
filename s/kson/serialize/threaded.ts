@@ -5,8 +5,7 @@ export async function threadedSerializer() {
 
 	const {request, terminate} = (
 		await threadpool<any, Uint8Array>(
-			"./serialize/serialize.worker.js",
-			import.meta.url,
+			new URL("./worker.js", import.meta.url),
 		)
 	)
 

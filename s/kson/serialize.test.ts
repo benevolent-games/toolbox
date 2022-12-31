@@ -2,6 +2,8 @@
 import {assert, Suite} from "cynic"
 
 import {range} from "../utils/range.js"
+import {threadedSerializer} from "./serialize/threaded.js"
+import {serializeBlockingly} from "./serialize/blocking.js"
 import {serializeProgressively} from "./serialize/progressive.js"
 
 const testData = {
@@ -21,13 +23,24 @@ const testData = {
 }
 
 export default <Suite>{
-	async "serialize some data"() {
+	async "serialize data"() {
 		const data = testData.entities(100)
 		const json = JSON.stringify(data)
-		const text = serializeProgressively(data)
-		// const vis = visualize(text)
-		// debugger
-		assert(text.length > 1, "text has length")
-		assert(text.length < json.length, "smaller than json")
+
+		function assertions(text: string) {
+			assert(text.length > 1, "text has length")
+			assert(text.length < json.length, "smaller than json")
+		}
+
+		return {
+			blocking: async() => assertions(serializeBlockingly(data)),
+			progressive: async() => assertions(serializeProgressively(data)),
+			threaded: async() => {
+				const serializer = await threadedSerializer()
+				const text = await serializer.serialize(data)
+				serializer.terminate()
+				assertions(text)
+			},
+		}
 	},
 }
