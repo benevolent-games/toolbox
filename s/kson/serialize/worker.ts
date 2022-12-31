@@ -1,9 +1,9 @@
 
 import {thread} from "../../threadpool/thread.js"
-import {progressiveSerialize} from "./progressive-serialize.js"
+import {serializeProgressively} from "./progressive.js"
 
 thread(async(data: any) => {
-	const string = progressiveSerialize(data)
+	const string = serializeProgressively(data)
 	const encoder = new TextEncoder()
 	const result = encoder.encode(string)
 	const transfer = [result]

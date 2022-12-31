@@ -1,5 +1,5 @@
 
-import {threadpool} from "../threadpool/threadpool.js"
+import {threadpool} from "../../threadpool/threadpool.js"
 
 export async function threadedSerializer() {
 

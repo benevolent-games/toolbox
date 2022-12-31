@@ -1,8 +1,8 @@
 
 import {Options} from "./types/options.js"
-import {serializationGenerator} from "./serialization-generator.js"
+import {serializationGenerator} from "./generator.js"
 
-export function progressiveSerialize(
+export function serializeProgressively(
 		root: any,
 		{onProgress = () => {}}: Options = {},
 	) {

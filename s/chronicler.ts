@@ -9,7 +9,7 @@ import {behaviors} from "./chronicler/behaviors.js"
 import {archetypes} from "./chronicler/archetypes.js"
 import {durationSpec} from "./chronicler/durations.js"
 import {setupTimeline} from "./chronicler/utils/gametime.js"
-import {threadedSerializer} from "./kson/threaded-serializer.js"
+import {threadedSerializer} from "./kson/serialize/threaded.js"
 
 const config = {
 	people: 10_000,

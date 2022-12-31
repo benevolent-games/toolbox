@@ -2,7 +2,7 @@
 import {assert, Suite} from "cynic"
 
 import {range} from "../utils/range.js"
-import {progressiveSerialize} from "./serialize/progressive-serialize.js"
+import {serializeProgressively} from "./serialize/progressive.js"
 
 const testData = {
 	entities: (n: number) => range(n).map(() => ({
@@ -24,7 +24,7 @@ export default <Suite>{
 	async "serialize some data"() {
 		const data = testData.entities(100)
 		const json = JSON.stringify(data)
-		const text = progressiveSerialize(data)
+		const text = serializeProgressively(data)
 		// const vis = visualize(text)
 		// debugger
 		assert(text.length > 1, "text has length")

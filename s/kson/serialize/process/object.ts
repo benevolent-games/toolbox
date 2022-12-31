@@ -1,6 +1,6 @@
 
-import {notLast} from "./not-last.js"
 import {Stack} from "../../utils/stack.js"
+import {notLast} from "../utils/not-last.js"
 import {Dictionary} from "../../utils/dictionary.js"
 import {controlSymbols} from "../../text/control-symbols.js"
 

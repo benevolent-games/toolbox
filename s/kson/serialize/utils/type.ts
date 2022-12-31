@@ -1,5 +1,5 @@
 
-import {Ast} from "../types/ast.js"
+import {Ast} from "../../types/ast.js"
 
 export function type(data: any): Ast.Type {
 	const isArray = Array.isArray(data)

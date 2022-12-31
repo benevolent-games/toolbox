@@ -1,5 +1,5 @@
 
-import {notLast} from "./not-last.js"
+import {notLast} from "../utils/not-last.js"
 import {Stack} from "../../utils/stack.js"
 import {controlSymbols} from "../../text/control-symbols.js"
 
