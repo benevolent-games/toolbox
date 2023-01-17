@@ -16,7 +16,9 @@
 		"http": "http-server",
 		"clean": "rimraf x && mkdirp x",
 		"importly": "importly --host=node_modules < package-lock.json > x/importmap.json",
-		"compile": "tsc",
+		"compile": "run-s typescript web",
+		"typescript": "tsc",
+		"web": "node x/web/build.js",
 		"watch": "tsc -w",
 		"test": "cynic puppeteer x/tests.test.js"
 	},
@@ -26,7 +28,8 @@
 		"@chasemoskal/magical": "^0.1.2",
 		"cynic": "^0.1.0-dev.16",
 		"lit": "^2.4.1",
-		"simplex-noise": "^4.0.1"
+		"simplex-noise": "^4.0.1",
+		"xiome": "^0.0.37"
 	},
 	"devDependencies": {
 		"es-module-shims": "^1.6.2",
