@@ -13,13 +13,20 @@
 	"scripts": {
 		"build": "run-s clean && run-p importly compile",
 		"start": "run-p http watch",
-		"http": "http-server",
+		"http": "http-server x",
 		"clean": "rimraf x && mkdirp x",
 		"importly": "importly --host=node_modules < package-lock.json > x/importmap.json",
-		"compile": "run-s typescript web",
+		"links": "run-s link-s link-modules",
+		"link-s": "ln -s $(realpath s) x/s",
+		"link-modules": "ln -s $(realpath node_modules) x/node_modules",
+		"compile": "run-p links sass && run-s typescript web",
 		"typescript": "tsc",
+		"sass": "sass s/web/templates/:x/",
 		"web": "node x/web/build.js",
-		"watch": "tsc -w",
+		"watch-typescript": "tsc -w",
+		"watch-sass": "npm run sass -s -- --watch",
+		"watch-web": "chokidar \"x/web/**/*\" -c \"npm run web -s && echo 'rebuilt web'\"",
+		"watch": "run-p watch-sass watch-typescript watch-web",
 		"test": "cynic puppeteer x/tests.test.js"
 	},
 	"dependencies": {
@@ -32,6 +39,8 @@
 		"xiome": "^0.0.37"
 	},
 	"devDependencies": {
+		"chokidar": "^3.5.3",
+		"chokidar-cli": "^3.0.0",
 		"es-module-shims": "^1.6.2",
 		"http-server": "^14.1.1",
 		"importly": "^0.2.0",
@@ -39,6 +48,7 @@
 		"npm-run-all": "^4.1.5",
 		"puppeteer": "^19.4.1",
 		"rimraf": "^3.0.2",
+		"sass": "^1.57.1",
 		"typescript": "^4.9.3"
 	},
 	"keywords": [

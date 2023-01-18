@@ -1,0 +1,19 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Gentium+Book+Basic:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:not(:defined) {
+	display: none;
+}
+
+html {
+	font-family: "Gentium Book Basic", serif;
+	background: fixed linear-gradient(180deg, #1b2941, #0c0511);
+	color: whitesmoke;
+	font-size: 16px;
+}
