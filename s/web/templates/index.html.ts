@@ -1,17 +1,12 @@
 
 import {html} from "xiome/x/toolbox/hamster-html/html.js"
+import {WebsiteContext} from "xiome/x/toolbox/hamster-html/website/build-website-types.js"
 
-export default () => html`
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content="width=device-width,initial-scale=1"/>
-		<meta name="darkreader" content="dark"/>
-		<title>toolbox</title>
-	</head>
-	<body>
+import pageHtml from "../partials/page.html.js"
+
+export default (context: WebsiteContext) => pageHtml({
+	...context,
+	mainContent: html`
 		<h1>toobox</h1>
-	</body>
-<html>
-`
+	`
+})
