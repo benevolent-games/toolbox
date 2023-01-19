@@ -1,6 +1,8 @@
 
 import {html, LitElement} from "lit"
 import {property} from "lit/decorators.js"
+import {ValueChangeEvent} from "../events/value-change-event.js"
+
 import rangeSliderStyles from "./index.css.js"
 
 export class RangeSlider extends LitElement {
@@ -38,6 +40,7 @@ export class RangeSlider extends LitElement {
 	#handleInputChange = (event: Event) => {
 		const input = event.target as HTMLInputElement
 		this.inputValue = input.value
+		this.dispatchEvent(new ValueChangeEvent(this.inputValue))
 	}
 
 	firstUpdated(): void {
