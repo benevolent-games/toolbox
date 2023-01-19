@@ -1,3 +1,5 @@
-import {RangeSlider} from "./editor-ui/range-slider/element.js"
 
-customElements.define("range-slider", RangeSlider)
+import { registerElements } from "@chasemoskal/magical"
+import {getElements} from "./main.js"
+
+registerElements(getElements())
