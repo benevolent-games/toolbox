@@ -21,6 +21,11 @@ export default ({title, v}: WebsiteContext & {title: string}) => html`
 	src="${v("/tests.test.js")}"
 	defer
 ></script>
+<script
+	type=module-shim
+	src="${v("/html.js")}"
+	defer
+></script>
 <script defer type=module-shim>
 	import {test} from "cynic"
 	import suite from "/tests.test.js"

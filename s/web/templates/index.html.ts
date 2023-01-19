@@ -8,5 +8,8 @@ export default (context: WebsiteContext) => pageHtml({
 	...context,
 	mainContent: html`
 		<h1>toobox</h1>
+		<range-slider
+			label="Range slider"
+		></range-slider>
 	`
 })
