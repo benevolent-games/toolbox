@@ -37,7 +37,11 @@
 		"@babylonjs/core": "^5.43.0",
 		"@babylonjs/loaders": "^5.43.0",
 		"@chasemoskal/magical": "^0.1.2",
-		"lit": "^2.4.1"
+		"lit": "^2.4.1",
+		"@benev/nubs": "^0.0.7",
+		"cynic": "^0.1.0-dev.16",
+		"simplex-noise": "^4.0.1",
+		"xiome": "^0.0.37"
 	},
 	"devDependencies": {
 		"chokidar": "^3.5.3",
