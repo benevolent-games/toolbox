@@ -31,17 +31,15 @@
 		"test-wip": "cynic puppeteer x/tests.test.js"
 	},
 	"dependencies": {
-		"simplex-noise": "^4.0.1"
+		"simplex-noise": "^4.0.1",
+		"@benev/nubs": "^0.0.7",
+		"@chasemoskal/magical": "^0.1.2",
+		"lit": "^2.4.1",
+		"xiome": "^0.0.40"
 	},
 	"peerDependencies": {
 		"@babylonjs/core": "^5.43.1",
-		"@babylonjs/loaders": "^5.43.1",
-		"@benev/nubs": "^0.0.7",
-		"@chasemoskal/magical": "^0.1.2",
-		"cynic": "^0.1.0-dev.16",
-		"lit": "^2.4.1",
-		"simplex-noise": "^4.0.1",
-		"xiome": "^0.0.40"
+		"@babylonjs/loaders": "^5.43.1"
 	},
 	"devDependencies": {
 		"chokidar": "^3.5.3",
@@ -55,8 +53,7 @@
 		"puppeteer": "^19.6.0",
 		"rimraf": "^4.1.1",
 		"sass": "^1.57.1",
-		"typescript": "^4.9.3",
-		"xiome": "^0.0.40"
+		"typescript": "^4.9.3"
 	},
 	"keywords": [
 		"web-games",
