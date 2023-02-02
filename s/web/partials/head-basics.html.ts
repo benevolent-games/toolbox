@@ -18,11 +18,6 @@ export default ({title, v}: WebsiteContext & {title: string}) => html`
 ></script>
 <script
 	type=module-shim
-	src="${v("/tests.test.js")}"
-	defer
-></script>
-<script
-	type=module-shim
 	src="${v("/html.js")}"
 	defer
 ></script>

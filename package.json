@@ -31,10 +31,11 @@
 		"test-wip": "cynic puppeteer x/tests.test.js"
 	},
 	"dependencies": {
-		"simplex-noise": "^4.0.1",
 		"@benev/nubs": "^0.0.7",
 		"@chasemoskal/magical": "^0.1.2",
+		"@chasemoskal/snapstate": "^0.0.9",
 		"lit": "^2.4.1",
+		"simplex-noise": "^4.0.1",
 		"xiome": "^0.0.40"
 	},
 	"peerDependencies": {

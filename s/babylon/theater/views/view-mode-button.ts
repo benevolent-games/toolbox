@@ -25,16 +25,16 @@ export const ViewModeButton = view({}, use => ({
 	}
 
 	return html`
-		<div class="view-mode">
+		<div class=view-mode>
 
 			<div @click=${togglePanel}>
 				View mode(${viewMode})
 			</div>
 
 			<div
-				class="mode-panel"
+				class=mode-panel
 				@click=${handleModeClick}
-				data-opened=${isPanelOpen}>
+				?data-opened=${isPanelOpen}>
 				<span data-view-mode=fullscreen>fullscreen</span>
 				<span data-view-mode=embed>embed</span>
 				<span data-view-mode=cinema>cinema</span>

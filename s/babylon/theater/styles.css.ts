@@ -1,63 +1,56 @@
 
-
 import {css} from "@chasemoskal/magical"
 export const styles = css`
-*,
-*::after,
-*::before {
+
+* {
 	margin: 0;
+	padding: 0;
 	box-sizing: border-box;
 }
 
 :host {
 	display: block;
+	position: relative;
 }
 
 :host([view-mode="cinema"]) {
-	--canvas-width: 100vw;
-	--canvas-height: 100vh;
-	overflow: hidden;
+	width: 100vw;
+	height: 100vh;
 }
 
 :host([view-mode="fullscreen"]) {
-	--canvas-width: 100vw;
-	--canvas-height: 100vh;
+	width: 100vw;
+	height: 100vh;
 }
 
 :host([view-mode="embed"]) {
-	--canvas-width: 50vw;
-	--canvas-height: 70vh;
+	width: 100%;
+	max-width: 40em;
+	aspect-ratio: 16 / 9;
 }
 
-::slotted(canvas) {
-	width: var(--canvas-width, 60vw);
-	height: var(--canvas-height, 60vh)
-}
-
-:host {
-	width: fit-content;
-	position: relative;
+canvas {
+	width: 100%;
+	height: 100%;
+	background: #0004;
 }
 
 .button_bar {
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	gap: 0.5em;
 
 	position: absolute;
 	top: 0;
 	right: 0;
-}
-
-.view-mode {
-	font-size: 0.8rem;
+	left: 0;
 }
 
 .mode-panel {
 	display: none;
 }
 
-.mode-panel[data-opened=true] {
+.mode-panel[data-opened] {
 	display: flex;
 	flex-direction: column;
 }

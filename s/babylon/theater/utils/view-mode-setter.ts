@@ -1,20 +1,25 @@
 
-import {BenevTheater} from "../element.js"
+import {Settings} from "../types/settings.js"
 import {ViewMode} from "../types/view-mode.js"
 
-export function viewModeSetter({theater, onViewModeChange}: {
-		theater: BenevTheater,
-		onViewModeChange: () => void,
+export function viewModeSetter({
+		settings,
+		enterFullscreen,
+		onViewModeChange,
+	}: {
+		settings: Settings
+		enterFullscreen: () => void
+		onViewModeChange: () => void
 	}) {
 
 	return (mode: ViewMode) => {
-		theater["view-mode"] = mode
+		settings.viewMode = mode
 
 		const isCurrentlyFullscreen = !!document.fullscreenElement
 
 		if (mode === "fullscreen") {
 			if (!isCurrentlyFullscreen)
-				theater.requestFullscreen()
+				enterFullscreen()
 		}
 		else {
 			if (isCurrentlyFullscreen)
