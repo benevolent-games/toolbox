@@ -13,6 +13,12 @@ export const styles = css`
 	display: block;
 }
 
+:host([view-mode="cinema"]) {}
+
+:host([view-mode="fullscreen"]) {}
+
+:host([view-mode="embed"]) {}
+
 .theater__wrapper {
 	width: fit-content;
 	position: relative;
@@ -22,5 +28,12 @@ export const styles = css`
 	position: absolute;
 	top: 0;
 	right: 0;
+}
+
+.view-mode {
+	position: absolute;
+	top: 0;
+	font-size: 0.8rem;
+	right: 7%;
 }
 `
