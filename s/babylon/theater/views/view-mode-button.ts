@@ -1,13 +1,17 @@
 
 import {view} from "@chasemoskal/magical"
 import {html} from "lit"
-import { ViewMode } from "../element"
+import {BenevTheater, ViewMode} from "../element"
 
 export const ViewModeButton = view({}, use => (
 	viewMode: ViewMode,
-	setViewMode: (mode: ViewMode) => void) => {
-	
+	setViewMode: (mode: ViewMode) => void,
+	theater: BenevTheater) => {
+
 	const [viewModePanel, setViewModePanel] = use.state(false)
+	if (viewMode == "fullscreen") theater.requestFullscreen()
+		else document.exitFullscreen()
+
 	return html`
 		<div class="view-mode">
 			<div @click=${() => {setViewModePanel(!viewModePanel)}}>View mode(${viewMode})</div>

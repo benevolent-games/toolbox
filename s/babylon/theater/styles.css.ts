@@ -14,15 +14,24 @@ export const styles = css`
 }
 
 :host([view-mode="cinema"]) {
-	--canvas-width: 90vw;
+	--canvas-width: 100vw;
+	--canvas-height: 100vh;
+	overflow: hidden;
 }
 
-:host([view-mode="fullscreen"]) {}
+:host([view-mode="fullscreen"]) {
+	--canvas-width: 100vw;
+	--canvas-height: 100vh;
+}
 
-:host([view-mode="embed"]) {}
+:host([view-mode="embed"]) {
+	--canvas-width: 50vw;
+	--canvas-height: 70vh;
+}
 
 ::slotted(canvas) {
 	width: var(--canvas-width, 60vw);
+	height: var(--canvas-height, 60vh)
 }
 
 .theater__wrapper {
