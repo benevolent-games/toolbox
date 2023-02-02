@@ -21,12 +21,10 @@ export class BenevTheater extends MagicElement {
 	realize(use: UseElement<typeof this>) {
 		return html`
 			<div class="theater__wrapper">
-				<slot></slot>
-				<div class"buttonbar">
-					${ViewModeButton(this["view-mode"], this.#setViewMode)}
-				</div>
-				<div class="panel">
+				<slot ></slot>
+				<div class="button_bar">
 					<p>60</p>
+					${ViewModeButton(this["view-mode"], this.#setViewMode)}
 				</div>
 			</div>
 		`

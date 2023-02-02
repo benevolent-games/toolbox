@@ -13,27 +13,35 @@ export const styles = css`
 	display: block;
 }
 
-:host([view-mode="cinema"]) {}
+:host([view-mode="cinema"]) {
+	--canvas-width: 90vw;
+}
 
 :host([view-mode="fullscreen"]) {}
 
 :host([view-mode="embed"]) {}
+
+::slotted(canvas) {
+	width: var(--canvas-width, 60vw);
+}
 
 .theater__wrapper {
 	width: fit-content;
 	position: relative;
 }
 
-.panel {
+.button_bar {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 0.5em;
+
 	position: absolute;
 	top: 0;
 	right: 0;
 }
 
 .view-mode {
-	position: absolute;
-	top: 0;
 	font-size: 0.8rem;
-	right: 7%;
 }
+
 `
