@@ -44,4 +44,13 @@ export const styles = css`
 	font-size: 0.8rem;
 }
 
+.mode-panel {
+	display: none;
+}
+
+.mode-panel[data-opened=true] {
+	display: flex;
+	flex-direction: column;
+}
+
 `
