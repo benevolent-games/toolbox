@@ -34,7 +34,7 @@ export const styles = css`
 	height: var(--canvas-height, 60vh)
 }
 
-.theater__wrapper {
+:host {
 	width: fit-content;
 	position: relative;
 }

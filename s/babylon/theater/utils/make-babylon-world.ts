@@ -2,34 +2,27 @@
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color4} from "@babylonjs/core/Maths/math.color.js"
-import {makeElement} from "./element.js"
 
-export type Theater = ReturnType<typeof makeTheater>
+import {BabylonWorld} from "../types/babylon-world.js"
 
-export function makeTheater() {
+export function makeBabylonWorld(): BabylonWorld {
 	const canvas = document.createElement("canvas")
-	canvas.className = "theater"
-
 	const engine = new Engine(canvas, true)
-
 	const scene = new Scene(engine, {
 		useGeometryUniqueIdsMap: true,
 		useMaterialMeshMap: true,
 	})
 
 	scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
-	;(<any>window).engine = engine
 
 	const renderLoop = new Set<() => void>()
 
-	const element = makeElement(canvas)
-
 	return {
-		scene,
+		canvas,
 		engine,
-		element,
+		scene,
 		renderLoop,
-		onresize() {
+		resize() {
 			const {width, height} = canvas.getBoundingClientRect()
 			canvas.width = width
 			canvas.height = height

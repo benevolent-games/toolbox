@@ -1,30 +1,45 @@
 
-import {view} from "@chasemoskal/magical"
 import {html} from "lit"
-import {BenevTheater, ViewMode} from "../element"
+import {view} from "@chasemoskal/magical"
 
-export const ViewModeButton = view({}, use => (
-	viewMode: ViewMode,
-	setViewMode: (mode: ViewMode) => void,
-	theater: BenevTheater) => {
+import {ViewMode} from "../types/view-mode.js"
 
-	const [viewModePanel, setViewModePanel] = use.state(false)
-	if (viewMode == "fullscreen") theater.requestFullscreen()
-		else document.exitFullscreen()
+export const ViewModeButton = view({}, use => ({
+		viewMode,
+		setViewMode,
+	}: {
+		viewMode: ViewMode
+		setViewMode: (mode: ViewMode) => void
+	}) => {
+
+	const [isPanelOpen, setPanelOpen] = use.state(false)
+
+	function togglePanel() {
+		setPanelOpen(!isPanelOpen)
+	}
+
+	function handleModeClick(e: PointerEvent) {
+		const target = <HTMLElement>e.target
+		const mode = target.getAttribute("data-view-mode") as ViewMode
+		setViewMode(mode)
+	}
 
 	return html`
 		<div class="view-mode">
-			<div @click=${() => {setViewModePanel(!viewModePanel)}}>View mode(${viewMode})</div>
-				<div @click=${(e: PointerEvent) => {
-					const target = <HTMLElement>e.target
-					const content = <ViewMode>target.textContent
-					setViewMode(content)
-				}} 
-					data-opened=${viewModePanel} class="mode-panel">
-					<span>fullscreen</span>
-					<span>embed</span>
-					<span>cinema</span>
-				</div>
+
+			<div @click=${togglePanel}>
+				View mode(${viewMode})
+			</div>
+
+			<div
+				class="mode-panel"
+				@click=${handleModeClick}
+				data-opened=${isPanelOpen}>
+				<span data-view-mode=fullscreen>fullscreen</span>
+				<span data-view-mode=embed>embed</span>
+				<span data-view-mode=cinema>cinema</span>
+			</div>
+
 		</div>
 	`
 })

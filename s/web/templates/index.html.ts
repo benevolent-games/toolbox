@@ -7,9 +7,14 @@ import pageHtml from "../partials/page.html.js"
 export default (context: WebsiteContext) => pageHtml({
 	...context,
 	mainContent: html`
+
 		<h1>toobox</h1>
+
 		<range-slider
 			label="Range slider"
 		></range-slider>
+
+		<benev-theater></benev-theater>
+
 	`
 })

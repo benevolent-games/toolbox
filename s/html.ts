@@ -1,11 +1,5 @@
 
-import {getElements} from "./main.js"
 import {registerElements} from "@chasemoskal/magical"
-import {makeTheater} from "./babylon/theater/make-theater.js"
+import {getElements as theaterElements} from "./babylon/theater/get-elements.js"
 
-registerElements(getElements())
-
-const theater = makeTheater()
-
-document.body.appendChild(theater.element)
-theater.start()
+registerElements(theaterElements())

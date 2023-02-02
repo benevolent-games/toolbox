@@ -1,38 +1,48 @@
 
 import {html} from "lit"
-import {styles} from "./styles.css.js"
-import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {MagicElement, mixinCss, UseElement} from "@chasemoskal/magical"
-import {ViewModeButton} from "./views/view-mode-button.js"
+
+import {styles} from "./styles.css.js"
 import {property} from "lit/decorators.js"
+import {ViewMode} from "./types/view-mode.js"
+import {setupListener} from "./utils/setup-listener.js"
+import {viewModeSetter} from "./utils/view-mode-setter.js"
+import {SettingsButton} from "./views/settings-button.js"
+import {ViewModeButton} from "./views/view-mode-button.js"
+import {FramerateDisplay} from "./views/frame-rate-display.js"
+import {makeBabylonWorld} from "./utils/make-babylon-world.js"
+import {setupFullscreenListener} from "./utils/setup-fullscreen-listener.js"
 
-
-export type ViewMode = "embed" | "cinema" | "fullscreen"
 @mixinCss(styles)
 export class BenevTheater extends MagicElement {
+
+	babylon = makeBabylonWorld()
+
+	#setViewMode = viewModeSetter({
+		theater: this,
+		onViewModeChange: () => this.babylon.resize,
+	})
 
 	@property({reflect: true})
 	["view-mode"]: ViewMode = "embed"
 
-	#setViewMode = (mode: ViewMode) => {
-		this["view-mode"] = mode
-	}
-
 	realize(use: UseElement<typeof this>) {
+		use.setup(setupFullscreenListener(this))
+		use.setup(setupListener(window, "resize", this.babylon.resize))
+
 		return html`
-			<div class="theater__wrapper">
-				<slot></slot>
-				<div class="button_bar">
-					<p>60</p>
-					${ViewModeButton(this["view-mode"], this.#setViewMode, this)}
-				</div>
+			${this.babylon.canvas}
+
+			<div class="button_bar">
+				${ViewModeButton({
+					viewMode: this["view-mode"],
+					setViewMode: this.#setViewMode,
+				})}
+				${SettingsButton({})}
+				${FramerateDisplay({
+					getFramerate: () => this.babylon.engine.getFps(),
+				})}
 			</div>
 		`
 	}
-}
-
-export function makeElement(canvas: HTMLElement) {
-	const element = document.createElement("benev-theater")
-	element.appendChild(canvas)
-	return element
 }

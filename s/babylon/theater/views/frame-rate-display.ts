@@ -2,7 +2,10 @@
 import {html} from "lit"
 import {view} from "@chasemoskal/magical"
 
-export const makeFramerateDisplay = view({}, use => ({
+import {setupInterval} from "../utils/setup-interval.js"
+import {formatFramerate} from "../utils/format-framerate.js"
+
+export const FramerateDisplay = view({}, use => ({
 		getFramerate
 	}: {
 		getFramerate: () => number
@@ -10,12 +13,11 @@ export const makeFramerateDisplay = view({}, use => ({
 
 	const [framerate, setFramerate] = use.state("---")
 
-	setInterval(
-		() => setFramerate(getFramerate()
-			.toFixed(0)
-			.padStart(3, "X")
-			.replaceAll("X", "&nbsp;")),
-		100
+	use.setup(
+		setupInterval(
+			100,
+			() => setFramerate(formatFramerate(getFramerate())),
+		)
 	)
 
 	return html`
