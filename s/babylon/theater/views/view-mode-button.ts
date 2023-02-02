@@ -22,6 +22,7 @@ export const ViewModeButton = view({}, use => ({
 		const target = <HTMLElement>e.target
 		const mode = target.getAttribute("data-view-mode") as ViewMode
 		setViewMode(mode)
+		setPanelOpen(false)
 	}
 
 	return html`

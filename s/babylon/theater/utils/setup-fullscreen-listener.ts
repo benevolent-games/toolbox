@@ -1,12 +1,12 @@
 
-import {BenevTheater} from "../element.js"
+import {Settings} from "../types/settings.js"
 
-export function setupFullscreenListener(theater: BenevTheater) {
+export function setupFullscreenListener(settings: Settings) {
 
 	return () => {
 		const listener = () => {
 			const isCurrentlyFullscreen = !!document.fullscreenElement
-			theater["view-mode"] = isCurrentlyFullscreen
+			settings.viewMode = isCurrentlyFullscreen
 				? "fullscreen"
 				: "embed"
 		}

@@ -44,7 +44,7 @@ export class BenevTheater extends MagicElement {
 	})
 
 	realize(use: UseElement<typeof this>) {
-		use.setup(setupFullscreenListener(this))
+		use.setup(setupFullscreenListener(this.settings))
 		use.setup(setupListener(window, "resize", this.babylon.resize))
 
 		return html`
