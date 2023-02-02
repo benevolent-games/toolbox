@@ -11,7 +11,7 @@ export type ViewMode = "embed" | "cinema" | "fullscreen"
 @mixinCss(styles)
 export class BenevTheater extends MagicElement {
 
-	@property({type: String})
+	@property()
 	["view-mode"]: ViewMode = "embed"
 
 	#setViewMode = (mode: ViewMode) => {
