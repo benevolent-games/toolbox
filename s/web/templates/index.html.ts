@@ -9,7 +9,7 @@ export default (context: WebsiteContext) => pageHtml({
 	mainContent: html`
 
 		<h1><span>🧰</span> toolbox</h1>
-		<h3>centralized collection of essential tools</h3>
+		<h4>centralized collection of essential tools</h4>
 			<benev-theater></benev-theater>
 				<range-slider
 				label="Range slider"

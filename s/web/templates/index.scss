@@ -30,7 +30,7 @@ range-slider {
 	margin-top: 1em;
 }
 
-h1, h3 {
+h1, h4 {
 	text-align: center;
 }
 
@@ -39,9 +39,12 @@ h1 {
 	align-items: center;
 }
 
-h3 {
+h4 {
 	color: #9f3847;
 	margin-bottom: 1em;
+	position: relative;
+	top: -8px;
+	font-size: 0.7em;
 }
 
 span {
