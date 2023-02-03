@@ -66,7 +66,11 @@ canvas {
 	backdrop-filter: blur(3px);
 }
 
-.mode-panel, .profile-panel {
+.mode-panel, .profile-panel { 
+	display: none; 
+	flex-direction: column;
+}
+
 .view-mode {
 	margin-left: 0.5em;
 }
