@@ -13,12 +13,38 @@
 
 html {
 	font-family: "Gentium Book Basic", serif;
-	background: fixed linear-gradient(180deg, #1b2941, #0c0511);
+	background: fixed linear-gradient(0deg, rgb(132 87 44 / 75%) 0%, rgba(255, 149, 0, 0.94) 100%);
 	color: whitesmoke;
 	font-size: 16px;
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
 }
 
 range-slider {
 	width: fit-content;
 	margin-top: 1em;
+}
+
+h1, h3 {
+	text-align: center;
+}
+
+h1 {
+	display: flex;
+	align-items: center;
+}
+
+h3 {
+	color: #9f3847;
+	margin-bottom: 1em;
+}
+
+span {
+	font-size: 31px;
+	margin-bottom: 10px;
 }

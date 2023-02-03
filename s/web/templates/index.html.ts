@@ -8,13 +8,12 @@ export default (context: WebsiteContext) => pageHtml({
 	...context,
 	mainContent: html`
 
-		<h1>toobox</h1>
-
-		<range-slider
-			label="Range slider"
-		></range-slider>
-
-		<benev-theater></benev-theater>
+		<h1><span>🧰</span> toolbox</h1>
+		<h3>centralized collection of essential tools</h3>
+			<benev-theater></benev-theater>
+				<range-slider
+				label="Range slider"
+			></range-slider>
 
 	`
 })
