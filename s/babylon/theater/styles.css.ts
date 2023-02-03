@@ -67,12 +67,53 @@ canvas {
 }
 
 .mode-panel, .profile-panel {
+.view-mode {
+	margin-left: 0.5em;
+}
+
+.toggle {
+	display: flex;
+	width: 32px;
+	padding: 0.2em 0;
+	background-color: #0000003d;
+	justify-content: center;
+	align-items: center;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.toggle[data-opened] {
+	border-radius: 0px;
+}
+
+.mode-panel {
 	display: none;
 }
 
 .mode-panel[data-opened] {
 	display: flex;
 	flex-direction: column;
+	padding: 0.5em;
+	border-radius: 10px;
+	border-top-left-radius: 0px;
+	background-color: #0000003d;
+}
+
+.mode-panel span {
+	display: flex;
+	align-items: center;
+}
+
+.mode-panel span[data-selected] {
+	filter: opacity(0.5);
+}
+
+.mode-panel svg {
+	pointer-events: none;
+}
+
+.separator {
+	margin: 0 0.5rem;
 }
 
 .profile-panel[data-opened] {
