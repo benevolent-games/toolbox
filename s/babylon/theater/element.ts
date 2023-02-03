@@ -6,6 +6,7 @@ import {MagicElement, mixinCss, UseElement} from "@chasemoskal/magical"
 
 import {styles} from "./styles.css.js"
 import {ViewMode} from "./types/view-mode.js"
+import {Profiling} from "./views/profiling.js"
 import {setupListener} from "./utils/setup-listener.js"
 import {SettingsButton} from "./views/settings-button.js"
 import {viewModeSetter} from "./utils/view-mode-setter.js"
@@ -58,6 +59,10 @@ export class BenevTheater extends MagicElement {
 				${SettingsButton({})}
 				${FramerateDisplay({
 					getFramerate: () => this.babylon.engine.getFps(),
+				})}
+				${Profiling({
+					sceneInstrumentation: this.babylon.sceneInstrumentation,
+					engineInstrumentation: this.babylon.engineInstrumentation,
 				})}
 			</div>
 		`
