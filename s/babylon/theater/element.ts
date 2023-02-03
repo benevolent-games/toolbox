@@ -56,13 +56,13 @@ export class BenevTheater extends MagicElement {
 					viewMode: this.settings.viewMode,
 					setViewMode: this.#setViewMode,
 				})}
-				${SettingsButton({})}
-				${FramerateDisplay({
-					getFramerate: () => this.babylon.engine.getFps(),
-				})}
 				${Profiling({
 					sceneInstrumentation: this.babylon.sceneInstrumentation,
 					engineInstrumentation: this.babylon.engineInstrumentation,
+				})}
+				${SettingsButton({})}
+				${FramerateDisplay({
+					getFramerate: () => this.babylon.engine.getFps(),
 				})}
 			</div>
 		`

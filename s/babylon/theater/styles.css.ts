@@ -29,6 +29,14 @@ export const styles = css`
 	aspect-ratio: 16 / 9;
 }
 
+button {
+	display: flex;
+	background: none;
+	border: none;
+	font-size: inherit;
+	color: inherit;
+}
+
 canvas {
 	width: 100%;
 	height: 100%;
@@ -38,21 +46,46 @@ canvas {
 .button_bar {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 	gap: 0.5em;
 
 	position: absolute;
 	top: 0;
 	right: 0;
 	left: 0;
+
+	color: white;
 }
 
-.mode-panel {
+.profile-info {
+	position: relative;
+}
+
+.profile-info[data-opened] {
+	background: rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(3px);
+}
+
+.mode-panel, .profile-panel {
 	display: none;
 }
 
 .mode-panel[data-opened] {
 	display: flex;
 	flex-direction: column;
+}
+
+.profile-panel[data-opened] {
+	display: flex;
+	flex-direction: column;
+
+	position: absolute;
+	width: max-content;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(3px);
+	padding: 0.5em;
+	border-radius: 0 8px 8px;
+	opacity: .7;
 }
 
 `
