@@ -66,7 +66,7 @@ canvas {
 	backdrop-filter: blur(3px);
 }
 
-.mode-panel, .profile-panel { 
+.mode-panel, .profile-panel, nub-editor { 
 	display: none; 
 	flex-direction: column;
 }
@@ -140,6 +140,11 @@ canvas {
 	padding: 0.5em;
 	border-radius: 0 8px 8px;
 	opacity: .7;
+}
+
+nub-editor[data-opened] {
+	display: block;
+	position: absolute;
 }
 
 `
