@@ -35,6 +35,8 @@ button {
 	border: none;
 	font-size: inherit;
 	color: inherit;
+	padding: 0.2em 0.4em;
+	cursor: pointer;
 }
 
 canvas {
@@ -62,8 +64,8 @@ canvas {
 }
 
 .profile-info[data-opened] {
-	background: rgba(0, 0, 0, 0.3);
-	backdrop-filter: blur(3px);
+	background: rgba(0, 0, 0, 0.24);
+	backdrop-filter: blur(2px);
 }
 
 .mode-panel, .profile-panel, nub-editor { 
@@ -129,17 +131,37 @@ canvas {
 	margin: 0 0.5rem;
 }
 
-.profile-panel[data-opened] {
+.profile-panel[data-opened],
+.settings-panel[data-opened] {
 	display: flex;
 	flex-direction: column;
 
 	position: absolute;
 	width: max-content;
-	background: rgba(0, 0, 0, 0.5);
-	backdrop-filter: blur(3px);
+	background: rgba(0, 0, 0, 0.24);
+	backdrop-filter: blur(2px);
 	padding: 0.5em;
 	border-radius: 0 8px 8px;
-	opacity: .7;
+	align-items: flex-start;
+}
+
+.settings {
+	position: relative
+}
+
+.settings[data-opened] {
+	background: rgba(0, 0, 0, 0.24);
+	backdrop-filter: blur(2px);
+}
+
+.settings-panel {
+	display: none;
+}
+
+.settings-panel > label {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 0.5em;
 }
 
 nub-editor[data-opened] {

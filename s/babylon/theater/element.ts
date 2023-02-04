@@ -41,11 +41,23 @@ export class BenevTheater extends MagicElement {
 		})
 	}
 
+	get settingState() {
+		return this.settingsSnap.readable
+	}
+
 	#setViewMode = viewModeSetter({
 		settings: this.settings,
 		enterFullscreen: () => this.requestFullscreen(),
 		onViewModeChange: () => this.babylon.resize,
 	})
+
+	#setShowFramerate = (showFramerate: boolean) => {
+		this.settings.framerate = showFramerate
+	}
+
+	#setShowProfiling = (showProfiling: boolean) => {
+		this.settings.profiling = showProfiling
+	}
 
 	realize(use: UseElement<typeof this>) {
 		use.setup(setupFullscreenListener(this.settings))
@@ -59,15 +71,26 @@ export class BenevTheater extends MagicElement {
 					viewMode: this.settings.viewMode,
 					setViewMode: this.#setViewMode,
 				})}
-				${Profiling({
-					sceneInstrumentation: this.babylon.sceneInstrumentation,
-					engineInstrumentation: this.babylon.engineInstrumentation,
-				})}
-				${SettingsButton({})}
-				${FramerateDisplay({
-					getFramerate: () => this.babylon.engine.getFps(),
+				${SettingsButton({
+					showFramerate: this.settingState.framerate,
+					showProfiling: this.settingState.profiling,
+					setShowFramerate: this.#setShowFramerate,
+					setShowProfiling: this.#setShowProfiling,
 				})}
 				${NubsButton({})}
+				${this.settingState.profiling
+					? Profiling({
+							sceneInstrumentation: this.babylon.sceneInstrumentation,
+							engineInstrumentation: this.babylon.engineInstrumentation,
+						})
+					: null
+				}
+				${this.settingState.framerate
+					? FramerateDisplay({
+							getFramerate: () => this.babylon.engine.getFps(),
+						})
+					: null
+				}
 			</div>
 		`
 	}
