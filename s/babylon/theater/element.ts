@@ -5,13 +5,13 @@ import {snapstate} from "@chasemoskal/snapstate"
 import {MagicElement, mixinCss, UseElement} from "@chasemoskal/magical"
 
 import {styles} from "./styles.css.js"
-import {ViewMode} from "./types/view-mode.js"
 import {Profiling} from "./views/profiling.js"
 import {setupListener} from "./utils/setup-listener.js"
 import {SettingsButton} from "./views/settings-button.js"
 import {viewModeSetter} from "./utils/view-mode-setter.js"
 import {ViewModeButton} from "./views/view-mode-button.js"
 import {defaultSettings} from "./utils/default-settings.js"
+import {ViewMode} from "./utils/view-selector/view-modes.js"
 import {FramerateDisplay} from "./views/frame-rate-display.js"
 import {makeBabylonWorld} from "./utils/make-babylon-world.js"
 import {setupFullscreenListener} from "./utils/setup-fullscreen-listener.js"
@@ -22,7 +22,7 @@ export class BenevTheater extends MagicElement {
 	babylon = makeBabylonWorld()
 
 	@property({reflect: true})
-	["view-mode"]: ViewMode = "embed"
+	["view-mode"]: ViewMode = "small"
 
 	settingsSnap = snapstate(defaultSettings())
 	get settings() {

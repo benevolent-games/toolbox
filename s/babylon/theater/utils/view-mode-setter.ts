@@ -1,6 +1,6 @@
 
 import {Settings} from "../types/settings.js"
-import {ViewMode} from "../types/view-mode.js"
+import {ViewMode} from "./view-selector/view-modes.js"
 
 export function viewModeSetter({
 		settings,

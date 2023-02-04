@@ -23,7 +23,7 @@ export const styles = css`
 	height: 100vh;
 }
 
-:host([view-mode="embed"]) {
+:host([view-mode="small"]) {
 	width: 100%;
 	max-width: 40em;
 	aspect-ratio: 16 / 9;
