@@ -1,83 +1,48 @@
 
 import {html} from "lit"
 import {view} from "@chasemoskal/magical"
+
 import {setupInterval} from "../utils/setup-interval.js"
-import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrumentation.js"
-import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
+import {Instrumentation} from "../utils/profiling/instrumentation.js"
+import {gatherProfilingInfo} from "../utils/profiling/gather-profiling-info.js"
+import {defaultProfilingInfo} from "../utils/profiling/default-profiling-info.js"
 
 import bugReport from "../../../icons/material-design-icons/bug-report.js"
 
-export const Profiling = view({}, use => ({
-		sceneInstrumentation,
-		engineInstrumentation,
-	}: {
-		sceneInstrumentation: SceneInstrumentation,
-		engineInstrumentation: EngineInstrumentation,
-	}) => {
-
+export const Profiling = view({}, use => (instrumentation: Instrumentation) => {
 	const [isPanelOpen, setPanelOpen] = use.state(false)
+	const [profilingInfo, setProfilingInfo] = use.state(defaultProfilingInfo)
 
-	const [gpuTime, setGpuTime] = use.state("0")
-	const [drawTime, setDrawTime] = use.state("0")
-	const [frameTime, setFrameTime] = use.state("0")
-	const [physicsTime, setPhysicsTime] = use.state("0")
-	const [interFrameTime, setInterFrameTime] = use.state("0")
-	const [cameraRenderTime, setCameraRenderTime] = use.state("0")
-	const [activeMeshesEvaluationTime, setActiveMeshesEvaluationTime] = use.state("0")
-
-	use.setup(
-		setupInterval(
-			100,
-			() => {
-				setGpuTime(
-					(engineInstrumentation.gpuFrameTimeCounter.current * 0.000001)
-						.toFixed(2)
-				)
-				setDrawTime(
-					(sceneInstrumentation.drawCallsCounter.current).toFixed(2)
-				)
-				setFrameTime(
-					(sceneInstrumentation.frameTimeCounter.current).toFixed(2)
-				)
-				setPhysicsTime(
-					(sceneInstrumentation.physicsTimeCounter.current).toFixed(2)
-				)
-				setInterFrameTime(
-					(sceneInstrumentation.interFrameTimeCounter.current).toFixed(2)
-				)
-				setCameraRenderTime(
-					(sceneInstrumentation.cameraRenderTimeCounter.current).toFixed(2)
-				)
-				setActiveMeshesEvaluationTime(
-					(sceneInstrumentation.activeMeshesEvaluationTimeCounter.current)
-						.toFixed(2)
-				)
-			}
-		),
-	)
+	use.setup(setupInterval(
+		100,
+		() => setProfilingInfo(gatherProfilingInfo(instrumentation)),
+	))
 
 	function togglePanel() {
 		setPanelOpen(!isPanelOpen)
+	}
+
+	function renderTime([profileKey, time]: [string, number]) {
+		return html`
+			<p>${profileKey}: ${time.toFixed(2)} ms</p>
+		`
 	}
 
 	return html`
 		<div
 			class="profile-info"
 			?data-opened=${isPanelOpen}>
+
 			<button @click=${togglePanel}>
 				${bugReport}
 			</button>
-			
+
 			<div 
 				class="profile-panel"
 				?data-opened=${isPanelOpen}>
-				<p>${`draw time: ${drawTime}ms`}</p>
-				<p>${`gpu frame time: ${gpuTime}ms`}</p>
-				<p>${`physics time: ${physicsTime}ms`}</p>
-				<p>${`inner frame time: ${interFrameTime}ms`}</p>
-				<p>${`camera render time: ${cameraRenderTime}ms`}</p>
-				<p>${`frame time: ${frameTime}ms`}</p>
-				<p>${`active mesh evaluation time: ${activeMeshesEvaluationTime}ms`}</p>
+				${Object
+					.entries(profilingInfo)
+					.map(renderTime)}
 			</div>
 		</div>
 	`
