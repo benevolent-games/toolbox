@@ -3,6 +3,7 @@ import {html} from "lit"
 import {view} from "@chasemoskal/magical"
 
 import {ViewMode, ViewModeData, viewModes} from "../utils/view-selector/view-modes.js"
+import {setupListener} from "../utils/setup-listener.js"
 
 export const ViewModeButton = view({}, use => ({
 		viewMode,
@@ -26,6 +27,12 @@ export const ViewModeButton = view({}, use => ({
 		setViewMode(mode)
 		setPanelOpen(false)
 	}
+
+	use.setup(setupListener(window, "pointerdown", (e) => {
+		const modePanel = e.composedPath().find((element: HTMLElement) =>
+			element.className == "mode-panel")
+		if(!modePanel) {setPanelOpen(false)}
+	}))
 
 	function renderViewModeItem([mode, {icon}]: [string, ViewModeData]) {
 		return html`

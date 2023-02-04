@@ -2,7 +2,7 @@
 export function setupListener(
 		target: EventTarget,
 		eventName: string,
-		listener: () => void,
+		listener: (e: any) => void,
 	) {
 
 	return () => {
