@@ -84,6 +84,7 @@ canvas {
 	align-items: center;
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
+	cursor: pointer;
 }
 
 .toggle[data-opened] {
@@ -101,15 +102,23 @@ canvas {
 	border-radius: 10px;
 	border-top-left-radius: 0px;
 	background-color: #0000003d;
+	position: absolute;
 }
 
 .mode-panel span {
 	display: flex;
 	align-items: center;
+	padding: 0 0.1em;
 }
 
 .mode-panel span[data-selected] {
 	filter: opacity(0.5);
+}
+
+.mode-panel span:not([data-selected]):hover {
+	background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+	border-radius: 5px;
 }
 
 .mode-panel svg {
