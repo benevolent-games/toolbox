@@ -169,4 +169,9 @@ nub-editor[data-opened] {
 	position: absolute;
 }
 
+.nubs-button {
+	display: flex;
+	cursor: pointer;
+}
+
 `

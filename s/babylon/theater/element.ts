@@ -22,7 +22,6 @@ import {NubsButton} from "./views/nubs-button.js"
 export class BenevTheater extends MagicElement {
 
 	babylon = makeBabylonWorld()
-	nubs = installNubs()
 
 	@property({reflect: true})
 	["view-mode"]: ViewMode = "small"

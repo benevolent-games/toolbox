@@ -10,11 +10,13 @@ const [isPanelOpen, setPanelOpen] = use.state(false)
 		setPanelOpen(!isPanelOpen)
 	}
 	return html`
-		<nub-context>
-			<div class=nubs-button @click=${togglePanel}>
-				${alignLeftSvg}
-			</div>
-			<nub-editor ?data-opened=${isPanelOpen}></nub-editor>
-		</nub-context>
+		<div class=editor>
+			<nub-context>
+				<div class=nubs-button @click=${togglePanel}>
+					${alignLeftSvg}
+				</div>
+				<nub-editor ?data-opened=${isPanelOpen}></nub-editor>
+			</nub-context>
+		</div>
 	`
 })
