@@ -20,15 +20,18 @@ export const ViewModeButton = view({}, use => ({
 	}
 
 	function handleModeClick(e: MouseEvent) {
-		const target = <HTMLElement>e.target
-		const mode = target.getAttribute("data-view-mode") as ViewMode
+		const target = e.target as HTMLElement
+		const viewModeItem = target.closest<HTMLElement>(".view-mode-item")!
+		const mode = viewModeItem.getAttribute("data-view-mode") as ViewMode
 		setViewMode(mode)
 		setPanelOpen(false)
 	}
 
-	function renderViewModeListing([mode, {icon}]: [string, ViewModeData]) {
+	function renderViewModeItem([mode, {icon}]: [string, ViewModeData]) {
 		return html`
 			<span
+				class="view-mode-item"
+				@click="${handleModeClick}"
 				data-view-mode="${mode}"
 				?data-selected="${mode === viewMode}">
 
@@ -51,11 +54,10 @@ export const ViewModeButton = view({}, use => ({
 
 			<div
 				class=mode-panel
-				@click=${handleModeClick}
 				?data-opened=${isPanelOpen}>
 				${Object
 					.entries(viewModes)
-					.map(renderViewModeListing)}
+					.map(renderViewModeItem)}
 			</div>
 
 		</div>
