@@ -1,7 +1,6 @@
 
 import {html} from "lit"
 import {view} from "@chasemoskal/magical"
-import settingsSvg from "../../../icons/material-design-icons/settings.svg.js"
 
 import settingSvg from "../../../icons/iconscout/setting-svg.js"
 
