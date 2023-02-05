@@ -68,7 +68,7 @@ canvas {
 	backdrop-filter: blur(2px);
 }
 
-.mode-panel, .profile-panel, nub-editor { 
+.profile-panel, nub-editor { 
 	display: none; 
 	flex-direction: column;
 }
@@ -81,23 +81,16 @@ canvas {
 	display: flex;
 	width: 32px;
 	padding: 0.2em 0;
-	background-color: #0000003d;
 	justify-content: center;
 	align-items: center;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
 	cursor: pointer;
 }
 
 .toggle[data-opened] {
-	border-radius: 0px;
+	background-color: #0000003d;
 }
 
 .mode-panel {
-	display: none;
-}
-
-.mode-panel[data-opened] {
 	display: flex;
 	flex-direction: column;
 	padding: 0.5em;
