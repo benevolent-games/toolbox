@@ -1,25 +1,20 @@
 
 import {html} from "lit"
-import {view} from "@chasemoskal/magical"
 
 import settingSvg from "../../../icons/iconscout/setting-svg.js"
+import { buttonPanelView } from "./button-panel-view.js"
 
-export const SettingsButton = view({}, use => ({
+export const SettingsButton = buttonPanelView(use => ({
 		showFramerate,
 		showProfiling,
 		setShowFramerate,
-		setShowProfiling,
+		setShowProfiling
 	}: {
 		showFramerate: boolean
 		showProfiling: boolean
 		setShowFramerate: (showFramerate: boolean) => void
 		setShowProfiling: (showProfiling: boolean) => void
 	}) => {
-	const [isPanelOpen, setPanelOpen] = use.state(false)
-
-	function togglePanel() {
-		setPanelOpen(!isPanelOpen)
-	}
 
 	function handleShowFramerateChange(event: Event) {
 		const input = <HTMLInputElement>event.target
@@ -30,20 +25,11 @@ export const SettingsButton = view({}, use => ({
 		const input = <HTMLInputElement>event.target
 		setShowProfiling(input.checked)
 	}
-
-	return html`
-		<div
-			class="settings"
-			?data-opened=${isPanelOpen}>
-
-			<button @click=${togglePanel}>
-				${settingSvg}
-			</button>
-
-			<div
-				class="settings-panel"
-				?data-opened=${isPanelOpen}>
-
+	return {
+		name: "settings",
+		button: () => settingSvg,
+		panel: () => html`
+			<div class="settings-panel">
 				<label>
 					show framerate
 					<input
@@ -58,7 +44,6 @@ export const SettingsButton = view({}, use => ({
 						?checked=${showProfiling}
 						@input=${handleShowProfilingChange} />
 				</label>
-			</div>
-		</div>
-	`
+			</div>`
+	}
 })

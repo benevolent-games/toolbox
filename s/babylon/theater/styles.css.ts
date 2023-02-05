@@ -68,7 +68,7 @@ canvas {
 	backdrop-filter: blur(2px);
 }
 
-.profile-panel, nub-editor { 
+nub-editor { 
 	display: none; 
 	flex-direction: column;
 }
@@ -124,8 +124,8 @@ canvas {
 	margin: 0 0.5rem;
 }
 
-.profile-panel[data-opened],
-.settings-panel[data-opened] {
+.profile-panel,
+.settings-panel {
 	display: flex;
 	flex-direction: column;
 
@@ -145,10 +145,6 @@ canvas {
 .settings[data-opened] {
 	background: rgba(0, 0, 0, 0.24);
 	backdrop-filter: blur(2px);
-}
-
-.settings-panel {
-	display: none;
 }
 
 .settings-panel > label {

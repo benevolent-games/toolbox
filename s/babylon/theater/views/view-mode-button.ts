@@ -4,9 +4,13 @@ import {html} from "lit"
 import {ViewMode, ViewModeData, viewModes} from "../utils/view-selector/view-modes.js"
 import {buttonPanelView} from "./button-panel-view.js"
 
-export const ViewModeButton = buttonPanelView(use => (
-	{viewMode, setViewMode}:
-	{viewMode: ViewMode, setViewMode: (mode: ViewMode) => void}) => {
+export const ViewModeButton = buttonPanelView(use => ({
+		viewMode,
+		setViewMode
+}: {
+		viewMode: ViewMode,
+		setViewMode: (mode: ViewMode) => void
+	}) => {
 
 	const {icon} = viewModes[viewMode]
 
