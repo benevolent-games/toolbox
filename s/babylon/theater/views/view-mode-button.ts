@@ -2,7 +2,6 @@
 import {html} from "lit"
 
 import {ViewMode, ViewModeData, viewModes} from "../utils/view-selector/view-modes.js"
-import {setupListener} from "../utils/setup-listener.js"
 import {buttonPanelView} from "./button-panel-view.js"
 
 export const ViewModeButton = buttonPanelView(use => (
@@ -33,6 +32,7 @@ export const ViewModeButton = buttonPanelView(use => (
 	}
 
 	return {
+		name: "view-mode",
 		button: () => icon,
 		panel: () => html`
 			<div class=mode-panel>
@@ -43,11 +43,3 @@ export const ViewModeButton = buttonPanelView(use => (
 		`
 	}
 })
-
-// 	use.setup(setupListener(window, "pointerdown", (e) => {
-// 		const modePanel = e.composedPath().find((element: HTMLElement) =>
-// 			element.className == "mode-panel")
-// 		if(!modePanel) {setPanelOpen(false)}
-// 	}))
-
-
