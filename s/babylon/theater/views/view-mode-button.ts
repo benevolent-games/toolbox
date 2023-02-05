@@ -7,7 +7,7 @@ import {buttonPanelView} from "./button-panel-view.js"
 export const ViewModeButton = buttonPanelView(use => ({
 		viewMode,
 		setViewMode
-}: {
+	}: {
 		viewMode: ViewMode,
 		setViewMode: (mode: ViewMode) => void
 	}) => {

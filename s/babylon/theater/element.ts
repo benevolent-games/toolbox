@@ -15,7 +15,6 @@ import {ViewMode} from "./utils/view-selector/view-modes.js"
 import {FramerateDisplay} from "./views/frame-rate-display.js"
 import {makeBabylonWorld} from "./utils/make-babylon-world.js"
 import {setupFullscreenListener} from "./utils/setup-fullscreen-listener.js"
-import {installNubs} from "../../utils/install-nubs.js"
 import {NubsButton} from "./views/nubs-button.js"
 
 @mixinCss(styles)
