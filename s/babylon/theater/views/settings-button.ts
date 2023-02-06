@@ -22,12 +22,12 @@ export const SettingsButton = buttonPanelView(use => ({
 		panel: () => html`
 			<div class="settings-panel">
 				<benev-checkbox
-					@change=${(checked: boolean) => setShowFramerate(checked)}
+					@change=${({detail}: CustomEvent<boolean>) => {setShowFramerate(detail)}}
 					?checked=${showFramerate}>
 					show framerate
 				</benev-checkbox>
 				<benev-checkbox
-					@change=${(checked: boolean) => setShowProfiling(checked)}
+					@change=${({detail}: CustomEvent<boolean>) => {setShowProfiling(detail)}}
 					?checked=${showProfiling}>
 					show profile info
 				</benev-checkbox>
