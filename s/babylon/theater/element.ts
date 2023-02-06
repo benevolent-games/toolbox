@@ -16,6 +16,7 @@ import {FramerateDisplay} from "./views/frame-rate-display.js"
 import {makeBabylonWorld} from "./utils/make-babylon-world.js"
 import {setupFullscreenListener} from "./utils/setup-fullscreen-listener.js"
 import {NubsButton} from "./views/nubs-button.js"
+import {MobileControls} from "./views/mobile-controls.js"
 
 @mixinCss(styles)
 export class BenevTheater extends MagicElement {
@@ -67,7 +68,7 @@ export class BenevTheater extends MagicElement {
 		return html`
 			<nub-context>
 				${this.babylon.canvas}
-
+				${MobileControls()}
 				<div class="button_bar">
 					${ViewModeButton({
 						viewMode: this.settings.viewMode,

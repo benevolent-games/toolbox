@@ -163,4 +163,20 @@ nub-editor {
 	cursor: pointer;
 }
 
+.mobile-controls {
+	display: flex;
+	position: absolute;
+	bottom: 0px;
+	height: 100%;
+	width: 100%;
+	justify-content: space-around;
+	align-items: flex-end;
+}
+
+nub-stick {
+	width: 80px;
+	height: 80px;
+	margin-bottom: 5%;
+}
+
 `
