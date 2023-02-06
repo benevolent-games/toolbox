@@ -10,7 +10,7 @@ import {setupListener} from "./utils/setup-listener.js"
 import {SettingsButton} from "./views/settings-button.js"
 import {viewModeSetter} from "./utils/view-mode-setter.js"
 import {ViewModeButton} from "./views/view-mode-button.js"
-import {defaultSettings} from "./utils/default-settings.js"
+import {defaultSettings, Renderer} from "./utils/default-settings.js"
 import {ViewMode} from "./utils/view-selector/view-modes.js"
 import {FramerateDisplay} from "./views/frame-rate-display.js"
 import {makeBabylonWorld} from "./utils/make-babylon-world.js"
@@ -25,7 +25,10 @@ export class BenevTheater extends MagicElement {
 	@property({reflect: true})
 	["view-mode"]: ViewMode = "small"
 
-	settingsSnap = snapstate(defaultSettings())
+	@property()
+	renderers: Renderer[] = []
+
+	settingsSnap = snapstate(defaultSettings(this.renderers))
 	get settings() {
 		return this.settingsSnap.writable
 	}
@@ -74,6 +77,7 @@ export class BenevTheater extends MagicElement {
 					showProfiling: this.settingState.profiling,
 					setShowFramerate: this.#setShowFramerate,
 					setShowProfiling: this.#setShowProfiling,
+					additionalSettings: this.renderers
 				})}
 				${NubsButton({})}
 				${this.settingState.profiling
