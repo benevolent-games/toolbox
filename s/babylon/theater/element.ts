@@ -65,35 +65,37 @@ export class BenevTheater extends MagicElement {
 		use.setup(setupListener(window, "resize", this.babylon.resize))
 
 		return html`
-			${this.babylon.canvas}
+			<nub-context>
+				${this.babylon.canvas}
 
-			<div class="button_bar">
-				${ViewModeButton({
-					viewMode: this.settings.viewMode,
-					setViewMode: this.#setViewMode,
-				})}
-				${SettingsButton({
-					showFramerate: this.settingState.framerate,
-					showProfiling: this.settingState.profiling,
-					setShowFramerate: this.#setShowFramerate,
-					setShowProfiling: this.#setShowProfiling,
-					additionalSettings: this.renderers
-				})}
-				${NubsButton({})}
-				${this.settingState.profiling
-					? Profiling({
-							sceneInstrumentation: this.babylon.sceneInstrumentation,
-							engineInstrumentation: this.babylon.engineInstrumentation,
-						})
-					: null
-				}
-				${this.settingState.framerate
-					? FramerateDisplay({
-							getFramerate: () => this.babylon.engine.getFps(),
-						})
-					: null
-				}
-			</div>
+				<div class="button_bar">
+					${ViewModeButton({
+						viewMode: this.settings.viewMode,
+						setViewMode: this.#setViewMode,
+					})}
+					${SettingsButton({
+						showFramerate: this.settingState.framerate,
+						showProfiling: this.settingState.profiling,
+						setShowFramerate: this.#setShowFramerate,
+						setShowProfiling: this.#setShowProfiling,
+						additionalSettings: this.renderers
+					})}
+					${NubsButton()}
+					${this.settingState.profiling
+						? Profiling({
+								sceneInstrumentation: this.babylon.sceneInstrumentation,
+								engineInstrumentation: this.babylon.engineInstrumentation,
+							})
+						: null
+					}
+					${this.settingState.framerate
+						? FramerateDisplay({
+								getFramerate: () => this.babylon.engine.getFps(),
+							})
+						: null
+					}
+				</div>
+			</nub-context>
 		`
 	}
 }

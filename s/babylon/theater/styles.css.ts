@@ -153,7 +153,7 @@ nub-editor {
 	gap: 0.5em;
 }
 
-nub-editor[data-opened] {
+nub-editor {
 	display: block;
 	position: absolute;
 }
