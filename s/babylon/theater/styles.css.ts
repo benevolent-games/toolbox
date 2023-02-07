@@ -14,13 +14,8 @@ export const styles = css`
 }
 
 :host([view-mode="cinema"]) {
-	width: 100vw;
-	height: 100vh;
-}
-
-:host([view-mode="fullscreen"]) {
-	width: 100vw;
-	height: 100vh;
+	position: fixed;
+	inset: 0;
 }
 
 :host([view-mode="small"]) {
@@ -57,6 +52,17 @@ canvas {
 	left: 0;
 
 	color: white;
+}
+
+.blanket {
+	position: fixed;
+	inset: 0;
+	background: transparent;
+	z-index: 1;
+}
+
+.z-2 {
+	z-index: 2;
 }
 
 .profile-info {

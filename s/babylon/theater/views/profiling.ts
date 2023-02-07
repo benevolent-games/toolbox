@@ -24,7 +24,7 @@ export const Profiling = buttonPanelView(use => (instrumentation: Instrumentatio
 		name: "profile-info",
 		button: () => bugReport,
 		panel: () => html`
-			<div class="profile-panel">
+			<div class="profile-panel z-2">
 				${Object
 					.entries(profilingInfo)
 					.map(renderTime)}

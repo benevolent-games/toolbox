@@ -19,22 +19,22 @@ export function buttonPanelView<P extends any[]>(f: ButtonPanelFunc<P>) {
 		const [isOpen, setOpen] = use.state(false)
 		const toggle = () => setOpen(!isOpen)
 
-		use.setup(setupListener(window, "pointerdown", (e) => {
-		const modePanel = e.composedPath().find((element: HTMLElement) =>
-			element.className == name)
-		if(!modePanel) {setOpen(false)}
-		}))
-
 		return html`
 			<div class=${name}>
-				<button 
+				<button
 					class=toggle
 					?data-opened=${isOpen}
 					@click=${toggle}>
 					${button()}
 				</button>
 				${isOpen
-					? panel()
+					? html`
+						<div
+							class="blanket"
+							@click=${toggle}>
+						</div>
+						${panel()}
+					`
 					: null}
 			</div>
 		`
