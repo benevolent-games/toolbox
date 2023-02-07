@@ -66,7 +66,6 @@ export class BenevTheater extends MagicElement {
 		use.setup(setupListener(window, "resize", this.babylon.resize))
 
 		return html`
-			<nub-context>
 				${this.babylon.canvas}
 				${MobileControls()}
 				<div class="button_bar">
@@ -96,7 +95,6 @@ export class BenevTheater extends MagicElement {
 						: null
 					}
 				</div>
-			</nub-context>
 		`
 	}
 }
