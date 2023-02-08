@@ -30,9 +30,4 @@ export default ({title, v}: WebsiteContext & {title: string}) => html`
 	src="/node_modules/es-module-shims/dist/es-module-shims.wasm.js"
 	defer
 ></script>
-<script
-  type=module-shim
-  src="https://unpkg.com/@benev/nubs/x/html.js"
-  defer
-></script>
 `

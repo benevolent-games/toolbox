@@ -1,22 +1,23 @@
 
 import {html} from "lit"
-import {property} from "lit/decorators.js"
+import {NubContext} from "@benev/nubs"
+import {property, query} from "lit/decorators.js"
 import {snapstate} from "@chasemoskal/snapstate"
 import {MagicElement, mixinCss, UseElement} from "@chasemoskal/magical"
 
 import {styles} from "./styles.css.js"
 import {Profiling} from "./views/profiling.js"
+import {NubsButton} from "./views/nubs-button.js"
 import {setupListener} from "./utils/setup-listener.js"
+import {MobileControls} from "./views/mobile-controls.js"
 import {SettingsButton} from "./views/settings-button.js"
 import {viewModeSetter} from "./utils/view-mode-setter.js"
 import {ViewModeButton} from "./views/view-mode-button.js"
-import {defaultSettings, Renderer} from "./utils/default-settings.js"
 import {ViewMode} from "./utils/view-selector/view-modes.js"
 import {FramerateDisplay} from "./views/frame-rate-display.js"
 import {makeBabylonWorld} from "./utils/make-babylon-world.js"
+import {defaultSettings, Renderer} from "./utils/default-settings.js"
 import {setupFullscreenListener} from "./utils/setup-fullscreen-listener.js"
-import {NubsButton} from "./views/nubs-button.js"
-import {MobileControls} from "./views/mobile-controls.js"
 
 @mixinCss(styles)
 export class BenevTheater extends MagicElement {
@@ -43,6 +44,9 @@ export class BenevTheater extends MagicElement {
 		})
 	}
 
+	@query("nub-context")
+	nubContext: NubContext | undefined
+
 	get settingState() {
 		return this.settingsSnap.readable
 	}
@@ -66,8 +70,29 @@ export class BenevTheater extends MagicElement {
 		use.setup(setupListener(window, "resize", this.babylon.resize))
 
 		return html`
+			<nub-context default-bindings="
+				👼 Cool Default Bindings
+				🖱 look :: lookmouse
+				🕹️ look :: lookstick
+				🕹️ move :: movestick
+				*️⃣ forward :: KeyW ArrowUp
+				*️⃣ backward :: KeyS ArrowDown
+				*️⃣ leftward :: KeyA ArrowLeft
+				*️⃣ rightward :: KeyD ArrowRight
+				*️⃣ jump :: Space
+				*️⃣ use :: KeyF Mouse3
+				*️⃣ primary :: Mouse1
+				*️⃣ secondary :: Mouse2
+				">
+
 				${this.babylon.canvas}
+
+				<nub-visualizer></nub-visualizer>
+				<nub-real-keyboard></nub-real-keyboard>
+				<nub-real-mouse name=lookmouse></nub-real-mouse>
+
 				${MobileControls()}
+
 				<div class="button_bar">
 					${ViewModeButton({
 						viewMode: this.settings.viewMode,
@@ -95,6 +120,7 @@ export class BenevTheater extends MagicElement {
 						: null
 					}
 				</div>
+			</nub-context>
 		`
 	}
 }

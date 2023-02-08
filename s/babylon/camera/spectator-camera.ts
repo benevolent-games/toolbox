@@ -11,14 +11,14 @@ import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {walker} from "./walker.js"
 import {V2, v2} from "../../utils/v2.js"
 import {cap} from "../../utils/numpty.js"
-import {installNubs} from "../../utils/install-nubs.js"
 
 export function makeSpectatorCamera({
-		walk, scene, engine, renderLoop, lookSensitivity
+		walk, scene, engine, nubContext, renderLoop, lookSensitivity
 	}: {
 		walk: number
 		scene: Scene
 		engine: Engine
+		nubContext: NubContext
 		renderLoop: Set<() => void>
 		lookSensitivity: {
 			stick: number
@@ -70,11 +70,6 @@ export function makeSpectatorCamera({
 		)
 		transformA.position.addInPlace(newPosition)
 	}
-
-	installNubs()
-
-	type NubContext = InstanceType <typeof NubContext>
-	const nubContext: NubContext = document.querySelector("nub-context")!
 
 	NubActionEvent
 		.target(nubContext)
