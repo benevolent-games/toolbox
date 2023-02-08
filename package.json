@@ -11,10 +11,9 @@
 		"s"
 	],
 	"scripts": {
-		"prepare": "run-s hack-babylon",
+		"prepare": "rimraf node_modules/@babylonjs/core/index.d.ts node_modules/@babylonjs/core/index.js",
 		"build": "run-s clean && run-p importly compile",
 		"start": "run-p http watch",
-		"hack-babylon": "rimraf node_modules/@babylonjs/core/index.d.ts node_modules/@babylonjs/core/index.js",
 		"http": "http-server x",
 		"clean": "rimraf x && mkdirp x",
 		"importly": "importly --host=node_modules < package-lock.json > x/importmap.json",
