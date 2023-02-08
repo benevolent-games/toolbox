@@ -11,7 +11,7 @@
 		"s"
 	],
 	"scripts": {
-		"prepare": "rimraf node_modules/@babylonjs/core/index.d.ts node_modules/@babylonjs/core/index.js",
+		"prepare": "rm -rf node_modules/@babylonjs/core/index.d.ts node_modules/@babylonjs/core/index.js",
 		"build": "run-s clean && run-p importly compile",
 		"start": "run-p http watch",
 		"http": "http-server x",
