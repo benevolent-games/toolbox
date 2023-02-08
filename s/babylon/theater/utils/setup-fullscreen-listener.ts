@@ -8,7 +8,7 @@ export function setupFullscreenListener(settings: Settings) {
 			const isCurrentlyFullscreen = !!document.fullscreenElement
 			settings.viewMode = isCurrentlyFullscreen
 				? "fullscreen"
-				: "small"
+				: settings.viewMode
 		}
 
 		window.addEventListener("fullscreenchange", listener)
