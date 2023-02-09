@@ -54,17 +54,6 @@ canvas {
 	color: white;
 }
 
-.blanket {
-	position: fixed;
-	inset: 0;
-	background: transparent;
-	z-index: 1;
-}
-
-.z-2 {
-	z-index: 2;
-}
-
 .profile-info {
 	position: relative;
 }

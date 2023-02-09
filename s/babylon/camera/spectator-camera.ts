@@ -87,15 +87,13 @@ export function makeSpectatorCamera({
 		if (target instanceof HTMLElement) {
 			const notAlreadyPointerLocked = !document.pointerLockElement
 
+			const notWithinButtonsBar = !target.closest(".button_bar")
+
 			const notWithinStick =
 				!(target instanceof NubStick) &&
 				!target.closest("nub-stick")
 
-			const notWithinEditor =
-				!(target instanceof NubEditor) &&
-				!target.closest("nub-bindings-editor")
-
-			if (notAlreadyPointerLocked && notWithinStick && notWithinEditor)
+			if (notAlreadyPointerLocked && notWithinStick && notWithinButtonsBar)
 				engine.enterPointerlock()
 		}
 	})

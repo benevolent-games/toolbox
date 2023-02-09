@@ -39,7 +39,7 @@ export const ViewModeButton = buttonPanelView(use => ({
 		name: "view-mode",
 		button: () => icon,
 		panel: () => html`
-			<div class="mode-panel z-2">
+			<div class="mode-panel">
 				${Object
 					.entries(viewModes)
 					.map(renderViewModeItem)}

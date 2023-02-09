@@ -23,7 +23,7 @@ export const SettingsButton = buttonPanelView(use => ({
 		name: "settings",
 		button: () => settingSvg,
 		panel: () => html`
-			<div class="settings-panel z-2">
+			<div class="settings-panel">
 				<benev-checkbox
 					@change=${({detail}: CustomEvent<boolean>) => {setShowFramerate(detail)}}
 					?checked=${showFramerate}>
