@@ -158,21 +158,36 @@ nub-editor {
 	cursor: pointer;
 }
 
+:host([view-mode="fullscreen"]) .mobile-controls {
+	--font-size: 2rem;
+	--bottom: 4%;
+}
+
+:host([view-mode="cinema"]) .mobile-controls {
+	--font-size: 1.5rem;
+	--bottom: 2%;
+}
+
+:host([view-mode="small"]) .mobile-controls {
+	--bottom: 40%;
+}
+
 .mobile-controls {
 	display: flex;
 	position: absolute;
 	pointer-events: none;
-	bottom: 0px;
+	bottom: var(--bottom, 40%);
 	width: 100%;
 	justify-content: space-around;
 	align-items: flex-end;
+	font-size: var(--font-size, 1rem);
 }
 
 nub-stick {
-	width: 80px;
-	height: 80px;
-	margin-bottom: 5%;
+	width: 5em;
+	height: 5em;
 	pointer-events: all;
+	opacity: .5;
 }
 
 `
