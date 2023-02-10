@@ -53,6 +53,7 @@ export function makeBabylonWorld(): BabylonWorld {
 			engine.resize()
 		},
 		start() {
+			this.resize()
 			engine.runRenderLoop(() => {
 				for (const routine of renderLoop)
 					routine()

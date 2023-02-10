@@ -50,5 +50,4 @@ const cam = makeSpectatorCamera({
 
 wirePointerLockAttribute(theater, "data-pointer-lock")
 
-theater.babylon.resize()
 theater.babylon.start()
