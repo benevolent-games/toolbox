@@ -6,6 +6,7 @@ import {v3} from "./utils/v3.js"
 import {BenevTheater} from "./babylon/theater/element.js"
 import {makeSpectatorCamera} from "./babylon/camera/spectator-camera.js"
 import {spawnBoxes} from "./demo/spawn-boxes.js"
+import {wirePointerLockAttribute} from "./utils/wire-pointer-lock-attribute.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
 console.log("theater", theater)
@@ -46,6 +47,8 @@ const cam = makeSpectatorCamera({
 		mouse: 1 / 1000,
 	},
 })
+
+wirePointerLockAttribute(theater, "data-pointer-lock")
 
 theater.babylon.resize()
 theater.babylon.start()

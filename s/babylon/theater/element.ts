@@ -54,7 +54,7 @@ export class BenevTheater extends MagicElement {
 	#setViewMode = viewModeSetter({
 		settings: this.settings,
 		enterFullscreen: () => this.requestFullscreen(),
-		onViewModeChange: () => this.babylon.resize,
+		onViewModeChange: () => this.babylon.resize(),
 	})
 
 	#setShowFramerate = (showFramerate: boolean) => {

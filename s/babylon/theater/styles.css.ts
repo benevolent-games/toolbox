@@ -190,4 +190,9 @@ nub-stick {
 	opacity: .5;
 }
 
+:host([data-pointer-lock="true"]) .mobile-controls,
+:host([data-pointer-lock="true"]) .button_bar {
+	visibility: hidden;
+}
+
 `
