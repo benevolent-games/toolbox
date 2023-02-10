@@ -10,6 +10,7 @@ export function defaultSettings(renderers: Renderer[]): Settings {
 		framerate: true,
 		profiling: true,
 		viewMode: "small",
+		resolutionScale: 100,
 		addRenderer: (renderer: Renderer) => {
 			renderers.push(renderer)
 			return () => {

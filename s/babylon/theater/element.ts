@@ -65,6 +65,15 @@ export class BenevTheater extends MagicElement {
 		this.settings.profiling = showProfiling
 	}
 
+	#setResolutionScale = (percent: number) => {
+		const fraction = 100 / percent
+		const canvas = this.babylon.canvas
+		const {width, height} = canvas.getBoundingClientRect()
+		this.settings.resolutionScale = percent
+		canvas.width = width * fraction
+		canvas.height = height * fraction
+	}
+
 	realize(use: UseElement<typeof this>) {
 		use.setup(setupFullscreenListener(this.settings))
 		use.setup(setupListener(window, "resize", this.babylon.resize))
@@ -101,8 +110,10 @@ export class BenevTheater extends MagicElement {
 					${SettingsButton({
 						showFramerate: this.settingState.framerate,
 						showProfiling: this.settingState.profiling,
+						resolutionScale: this.settingState.resolutionScale,
 						setShowFramerate: this.#setShowFramerate,
 						setShowProfiling: this.#setShowProfiling,
+						setResolutionScale: this.#setResolutionScale,
 						additionalSettings: this.renderers
 					})}
 					${NubsButton()}

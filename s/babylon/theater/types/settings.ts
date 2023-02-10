@@ -8,5 +8,6 @@ export interface Settings {
 	viewMode: ViewMode
 	framerate: boolean
 	profiling: boolean
+	resolutionScale: number
 	addRenderer: (renderer: Renderer) => () => void
 }

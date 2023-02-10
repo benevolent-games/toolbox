@@ -8,14 +8,18 @@ import {buttonPanelView} from "./button-panel-view.js"
 export const SettingsButton = buttonPanelView(use => ({
 		showFramerate,
 		showProfiling,
+		resolutionScale,
 		setShowFramerate,
 		setShowProfiling,
+		setResolutionScale,
 		additionalSettings
 	}: {
 		showFramerate: boolean
 		showProfiling: boolean
+		resolutionScale: number,
 		setShowFramerate: (showFramerate: boolean) => void
 		setShowProfiling: (showProfiling: boolean) => void
+		setResolutionScale: (resolution: number) => void
 		additionalSettings: Renderer[]
 	}) => {
 
@@ -34,6 +38,14 @@ export const SettingsButton = buttonPanelView(use => ({
 					?checked=${showProfiling}>
 					show profile info
 				</benev-checkbox>
+				<range-slider 
+					label="Resolution scale"
+					initial-value=${resolutionScale}
+					min="10"
+					step="1"
+					max="100"
+					@valuechange=${({detail: {value}}: CustomEvent<{value: string}>) => setResolutionScale(Number(value))}>
+				</range-slider>
 				${additionalSettings.map(renderer => renderer())}
 			</div>`
 	}
