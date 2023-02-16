@@ -32,7 +32,7 @@ export function makeSpectatorCamera({
 	const transformB = new TransformNode("camB", scene)
 	const camera = (() => {
 		const name = "spectator camera"
-		const position = new Vector3(0, 0, 0)
+		const position = new Vector3(0, 5, 0)
 		return new TargetCamera(name, position, scene)
 	})()
 

@@ -18,9 +18,9 @@ export function makeBabylonWorld(): BabylonWorld {
 		useGeometryUniqueIdsMap: true,
 		useMaterialMeshMap: true,
 	})
-	const renderer = new DepthRenderer(scene)
-	renderer.enabled = true
-	scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
+	// const renderer = new DepthRenderer(scene)
+	// renderer.enabled = true
+	// scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
 
 	const renderLoop = new Set<() => void>()
 
@@ -37,7 +37,7 @@ export function makeBabylonWorld(): BabylonWorld {
 	sceneInstrumentation.captureCameraRenderTime = true
 	sceneInstrumentation.captureActiveMeshesEvaluationTime = true
 	
-	; (<any>window).engine = engine
+	;(<any>window).engine = engine
 
 	return {
 		canvas,
@@ -53,7 +53,6 @@ export function makeBabylonWorld(): BabylonWorld {
 			engine.resize()
 		},
 		start() {
-			this.resize()
 			engine.runRenderLoop(() => {
 				for (const routine of renderLoop)
 					routine()

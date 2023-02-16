@@ -74,9 +74,24 @@ export class BenevTheater extends MagicElement {
 		canvas.height = height * fraction
 	}
 
+	#wirePointerLockAttribute = () => {
+		const isPointerLocked = !!document.pointerLockElement
+		this.setAttribute(
+			"data-pointer-lock",
+			isPointerLocked
+				? "true"
+				: "false",
+		)
+	}
+
 	realize(use: UseElement<typeof this>) {
 		use.setup(setupFullscreenListener(this.settings))
 		use.setup(setupListener(window, "resize", this.babylon.resize))
+		use.setup(
+			setupListener(
+				document, "pointerlockchange", this.#wirePointerLockAttribute
+			)
+		)
 
 		return html`
 			<nub-context default-bindings="

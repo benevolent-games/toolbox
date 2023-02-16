@@ -3,10 +3,9 @@ import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
 
 import {v3} from "./utils/v3.js"
+import {spawnBoxes} from "./demo/spawn-boxes.js"
 import {BenevTheater} from "./babylon/theater/element.js"
 import {makeSpectatorCamera} from "./babylon/camera/spectator-camera.js"
-import {spawnBoxes} from "./demo/spawn-boxes.js"
-import {wirePointerLockAttribute} from "./utils/wire-pointer-lock-attribute.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
 console.log("theater", theater)
@@ -36,7 +35,7 @@ light.position = v3.toBabylon(
 	)
 )
 
-const cam = makeSpectatorCamera({
+makeSpectatorCamera({
 	engine,
 	scene,
 	nubContext,
@@ -47,7 +46,5 @@ const cam = makeSpectatorCamera({
 		mouse: 1 / 1000,
 	},
 })
-
-wirePointerLockAttribute(theater, "data-pointer-lock")
 
 theater.babylon.start()
