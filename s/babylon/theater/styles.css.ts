@@ -1,5 +1,5 @@
 
-import {css} from "@chasemoskal/magical"
+import {css} from "lit"
 export const styles = css`
 
 * {
@@ -24,6 +24,20 @@ export const styles = css`
 	aspect-ratio: 16 / 9;
 }
 
+:host([view-mode="fullscreen"]) {
+	--font-size: 1.5rem;
+	--bottom: 4%;
+}
+
+:host([view-mode="cinema"]) {
+	--font-size: 1.3rem;
+	--bottom: 2%;
+}
+
+:host([view-mode="small"]) {
+	--bottom: 40%;
+}
+
 button {
 	display: flex;
 	background: none;
@@ -45,6 +59,7 @@ canvas {
 	flex-direction: row;
 	align-items: center;
 	gap: 0.5em;
+	padding-inline: 0.5em;
 
 	position: absolute;
 	top: 0;
@@ -52,6 +67,7 @@ canvas {
 	left: 0;
 
 	color: white;
+	font-size: var(--font-size, 1rem);
 }
 
 .profile-info {
@@ -66,10 +82,6 @@ canvas {
 nub-editor { 
 	display: none; 
 	flex-direction: column;
-}
-
-.view-mode {
-	margin-left: 0.5em;
 }
 
 .toggle {
@@ -158,20 +170,6 @@ nub-editor {
 	cursor: pointer;
 }
 
-:host([view-mode="fullscreen"]) .mobile-controls {
-	--font-size: 2rem;
-	--bottom: 4%;
-}
-
-:host([view-mode="cinema"]) .mobile-controls {
-	--font-size: 1.5rem;
-	--bottom: 2%;
-}
-
-:host([view-mode="small"]) .mobile-controls {
-	--bottom: 40%;
-}
-
 .mobile-controls {
 	display: flex;
 	position: absolute;
@@ -184,15 +182,41 @@ nub-editor {
 }
 
 nub-stick {
-	width: 5em;
-	height: 5em;
+	width: 6em;
+	height: 6em;
 	pointer-events: all;
 	opacity: .5;
 }
 
-:host([data-pointer-lock="true"]) .mobile-controls,
-:host([data-pointer-lock="true"]) .button_bar {
-	visibility: hidden;
+.framerate {
+	text-shadow: black 0px 1px 3px;
+	margin-left: auto;
+	font-size: 1.4em;
 }
 
+.mobile-controls,
+.button_bar :not(.framerate) {
+	visibility: visible;
+	opacity: 1;
+	transition: all 0s linear 0ms;
+}
+
+:host([data-pointer-lock="true"]) .mobile-controls,
+:host([data-pointer-lock="true"]) .button_bar :not(.framerate) {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s linear 400ms, opacity 500ms;
+}
+
+@media (max-width: 425px) {
+
+	:host([view-mode="small"]) {
+		--bottom: 50%;
+	}
+
+	nub-stick {
+		width: 5em;
+		height: 5em;
+	}
+}
 `

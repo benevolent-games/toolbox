@@ -21,6 +21,6 @@ export const FramerateDisplay = view({}, use => ({
 	)
 
 	return html`
-		<div>${framerate}</div>
+		<div class=framerate>${framerate}</div>
 	`
 })

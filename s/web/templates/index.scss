@@ -49,3 +49,9 @@ span {
 	font-size: 31px;
 	margin-bottom: 10px;
 }
+
+@media (max-width: 425px) {
+	benev-theater {
+		width: 100vw;
+	}
+}
