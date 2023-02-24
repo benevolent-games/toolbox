@@ -43,7 +43,8 @@ export const SettingsButton = buttonPanelView(use => ({
 					initial-value=${resolutionScale}
 					min="10"
 					step="1"
-					max="100"
+					initial-value="100"
+					max="200"
 					@valuechange=${({detail: {value}}: CustomEvent<{value: string}>) => setResolutionScale(Number(value))}>
 				</range-slider>
 				${additionalSettings.map(renderer => renderer())}

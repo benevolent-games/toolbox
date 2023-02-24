@@ -71,7 +71,7 @@ export class BenevTheater extends MagicElement {
 	}
 
 	#setResolutionScale = (percent: number) => {
-		const fraction = 100 / percent
+		const fraction = percent / 100
 		const canvas = this.babylon.canvas
 		const {width, height} = canvas.getBoundingClientRect()
 		this.settings.resolutionScale = percent
