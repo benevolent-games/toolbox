@@ -40,8 +40,13 @@ export class BenevTheater extends MagicElement {
 			if (this.isConnected) {
 				this["view-mode"] = settings.viewMode
 				this.requestUpdate()
+				this.babylon.resize()
 			}
 		})
+	}
+
+	firstUpdated(): void {
+		this.settings.viewMode = this["view-mode"]
 	}
 
 	@query("nub-context")
