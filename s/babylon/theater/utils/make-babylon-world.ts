@@ -46,11 +46,11 @@ export function makeBabylonWorld(): BabylonWorld {
 		renderLoop,
 		sceneInstrumentation,
 		engineInstrumentation,
-		resize() {
+		resize(res) {
 			const {width, height} = canvas.getBoundingClientRect()
-			canvas.width = width
-			canvas.height = height
-			engine.resize()
+			const fraction = res / 100
+			canvas.width = width * fraction
+			canvas.height = height * fraction
 		},
 		start() {
 			engine.runRenderLoop(() => {

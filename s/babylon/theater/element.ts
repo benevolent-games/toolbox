@@ -11,6 +11,7 @@ import {NubsButton} from "./views/nubs-button.js"
 import {setupListener} from "./utils/setup-listener.js"
 import {MobileControls} from "./views/mobile-controls.js"
 import {SettingsButton} from "./views/settings-button.js"
+import {resizeObserver} from "./utils/resize-observer.js"
 import {viewModeSetter} from "./utils/view-mode-setter.js"
 import {ViewModeButton} from "./views/view-mode-button.js"
 import {ViewMode} from "./utils/view-selector/view-modes.js"
@@ -35,6 +36,7 @@ export class BenevTheater extends MagicElement {
 		return this.settingsSnap.writable
 	}
 	connectedCallback() {
+		this.settings.viewMode = this["view-mode"]
 		super.connectedCallback()
 		this.settingsSnap.subscribe(settings => {
 			if (this.isConnected) {
@@ -59,7 +61,6 @@ export class BenevTheater extends MagicElement {
 	#setViewMode = viewModeSetter({
 		settings: this.settings,
 		enterFullscreen: () => this.requestFullscreen(),
-		onViewModeChange: () => this.babylon.resize(),
 	})
 
 	#setShowFramerate = (showFramerate: boolean) => {
@@ -91,7 +92,8 @@ export class BenevTheater extends MagicElement {
 
 	realize(use: UseElement<typeof this>) {
 		use.setup(setupFullscreenListener(this.settings))
-		use.setup(setupListener(window, "resize", this.babylon.resize))
+		use.setup(resizeObserver)
+
 		use.setup(
 			setupListener(
 				document, "pointerlockchange", this.#wirePointerLockAttribute

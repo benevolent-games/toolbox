@@ -5,11 +5,9 @@ import {ViewMode} from "./view-selector/view-modes.js"
 export function viewModeSetter({
 		settings,
 		enterFullscreen,
-		onViewModeChange,
 	}: {
 		settings: Settings
 		enterFullscreen: () => void
-		onViewModeChange: () => void
 	}) {
 
 	return (mode: ViewMode) => {
@@ -25,7 +23,5 @@ export function viewModeSetter({
 			if (isCurrentlyFullscreen)
 				document.exitFullscreen()
 		}
-
-		onViewModeChange()
 	}
 }
