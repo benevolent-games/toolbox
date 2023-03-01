@@ -12,7 +12,7 @@ export type BabylonWorld = {
 	engineInstrumentation: EngineInstrumentation
 
 	renderLoop: Set<() => void>
-	resize(res: number): void
+	resize(resolutionScale: number): void
 	start(): void
 	stop(): void
 }

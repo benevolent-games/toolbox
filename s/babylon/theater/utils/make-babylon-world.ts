@@ -46,9 +46,9 @@ export function makeBabylonWorld(): BabylonWorld {
 		renderLoop,
 		sceneInstrumentation,
 		engineInstrumentation,
-		resize(res) {
+		resize(resolutionScale) {
 			const {width, height} = canvas.getBoundingClientRect()
-			const fraction = res / 100
+			const fraction = resolutionScale / 100
 			canvas.width = width * fraction
 			canvas.height = height * fraction
 		},
