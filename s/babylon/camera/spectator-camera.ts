@@ -1,5 +1,5 @@
 
-import {Nub, NubActionEvent, NubContext, NubEditor, NubStick} from "@benev/nubs"
+import {NubContext, NubStick, NubDetail, NubEffectEvent} from "@benev/nubs"
 
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
@@ -71,13 +71,13 @@ export function makeSpectatorCamera({
 		transformA.position.addInPlace(newPosition)
 	}
 
-	NubActionEvent
+	NubEffectEvent
 		.target(nubContext)
 		.listen(event => {
-			if (event.detail.type === Nub.Type.Mouse) {
+			if (event.detail.kind === "pointer") {
 				const [x, y] = event.detail.movement
 				const vector: V2 = [x, -y]
-				if(document.pointerLockElement)
+				if (document.pointerLockElement)
 					rotateCamera(vector, lookSensitivity.mouse)
 			}
 		})
@@ -99,17 +99,17 @@ export function makeSpectatorCamera({
 	})
 
 	renderLoop.add(() => {
-		const moveVector = nubContext.actions.vector2.move?.vector
-		const lookVector = nubContext.actions.vector2.look?.vector
+		const moveVector = nubContext.effects.stick("move")?.vector
+		const lookVector = nubContext.effects.stick("look")?.vector
 
 		if (lookVector)
 			rotateCamera(lookVector, lookSensitivity.stick)
 
 		const isPressed = {
-			forward: !!nubContext.actions.key.forward?.pressed,
-			backward: !!nubContext.actions.key.backward?.pressed,
-			leftward: !!nubContext.actions.key.leftward?.pressed,
-			rightward: !!nubContext.actions.key.rightward?.pressed,
+			forward: !!nubContext.effects.key("forward")?.pressed,
+			backward: !!nubContext.effects.key("backward")?.pressed,
+			leftward: !!nubContext.effects.key("leftward")?.pressed,
+			rightward: !!nubContext.effects.key("rightward")?.pressed,
 		}
 
 		const walking = walker({
