@@ -1,8 +1,8 @@
 
 import {html} from "lit"
 import {NubContext} from "@benev/nubs"
-import {property, query} from "lit/decorators.js"
 import {snapstate} from "@chasemoskal/snapstate"
+import {property, query} from "lit/decorators.js"
 import {MagicElement, mixinCss, UseElement} from "@chasemoskal/magical"
 
 import {styles} from "./styles.css.js"
@@ -75,7 +75,7 @@ export class BenevTheater extends MagicElement {
 		canvas.height = height * fraction
 	}
 
-	#wirePointerLockAttribute = () => {
+	#updatePointerLockAttribute = () => {
 		const isPointerLocked = !!document.pointerLockElement
 		this.setAttribute(
 			"data-pointer-lock",
@@ -85,37 +85,31 @@ export class BenevTheater extends MagicElement {
 		)
 	}
 
+	#requestPointerLock = (event: PointerEvent) => {
+		this.requestPointerLock()
+	}
+
 	realize(use: UseElement<typeof this>) {
 		use.setup(setupFullscreenListener(this.settings))
 		use.setup(resizeObserver)
 
 		use.setup(
 			setupListener(
-				document, "pointerlockchange", this.#wirePointerLockAttribute
+				document, "pointerlockchange", this.#updatePointerLockAttribute
 			)
 		)
 
 		return html`
-			<nub-context default-bindings="
-				👼 Cool Default Bindings
-				🖱 look :: lookmouse
-				🕹️ look :: lookstick
-				🕹️ move :: movestick
-				*️⃣ forward :: KeyW ArrowUp
-				*️⃣ backward :: KeyS ArrowDown
-				*️⃣ leftward :: KeyA ArrowLeft
-				*️⃣ rightward :: KeyD ArrowRight
-				*️⃣ jump :: Space
-				*️⃣ use :: KeyF Mouse3
-				*️⃣ primary :: Mouse1
-				*️⃣ secondary :: Mouse2
-				">
-
+			<nub-context>
 				${this.babylon.canvas}
 
-				<nub-visualizer></nub-visualizer>
-				<nub-real-keyboard></nub-real-keyboard>
-				<nub-real-mouse name=lookmouse></nub-real-mouse>
+				<nub-keyboard></nub-keyboard>
+				<nub-pointer></nub-pointer>
+
+				<div
+					class=pointer_lock_area
+					@pointerup=${this.#requestPointerLock}
+				></div>
 
 				${MobileControls()}
 
@@ -124,6 +118,7 @@ export class BenevTheater extends MagicElement {
 						viewMode: this.settings.viewMode,
 						setViewMode: this.#setViewMode,
 					})}
+
 					${SettingsButton({
 						showFramerate: this.settingState.framerate,
 						showProfiling: this.settingState.profiling,
@@ -133,7 +128,9 @@ export class BenevTheater extends MagicElement {
 						setResolutionScale: this.#setResolutionScale,
 						additionalSettings: this.renderers
 					})}
+
 					${NubsButton()}
+
 					${this.settingState.profiling
 						? Profiling({
 								sceneInstrumentation: this.babylon.sceneInstrumentation,
@@ -141,6 +138,7 @@ export class BenevTheater extends MagicElement {
 							})
 						: null
 					}
+
 					${this.settingState.framerate
 						? FramerateDisplay({
 								getFramerate: () => this.babylon.engine.getFps(),

@@ -71,52 +71,32 @@ export function makeSpectatorCamera({
 		transformA.position.addInPlace(newPosition)
 	}
 
+	function applyPointerMovementToCamera([x, y]: V2) {
+		rotateCamera([x, -y], lookSensitivity.mouse)
+	}
+
 	NubEffectEvent
 		.target(nubContext)
-		.listen(event => {
-			if (event.detail.kind === "pointer") {
-				const [x, y] = event.detail.movement
-				const vector: V2 = [x, -y]
-				if (document.pointerLockElement)
-					rotateCamera(vector, lookSensitivity.mouse)
+		.listen(({detail}) => {
+			if (detail.kind === "pointer" && detail.effect === "look") {
+				if (document.pointerLockElement || detail.cause === "Lookpad")
+					applyPointerMovementToCamera(detail.movement)
 			}
 		})
 
-	nubContext.addEventListener("pointerdown", (event: MouseEvent) => {
-		const target = event.target
-		if (target instanceof HTMLElement) {
-			const notAlreadyPointerLocked = !document.pointerLockElement
-
-			const notWithinButtonsBar = !target.closest(".button_bar")
-
-			const notWithinStick =
-				!(target instanceof NubStick) &&
-				!target.closest("nub-stick")
-
-			if (notAlreadyPointerLocked && notWithinStick && notWithinButtonsBar)
-				engine.enterPointerlock()
-		}
-	})
-
 	renderLoop.add(() => {
-		const moveVector = nubContext.effects.stick("move")?.vector
-		const lookVector = nubContext.effects.stick("look")?.vector
-
-		if (lookVector)
-			rotateCamera(lookVector, lookSensitivity.stick)
-
 		const isPressed = {
-			forward: !!nubContext.effects.key("forward")?.pressed,
-			backward: !!nubContext.effects.key("backward")?.pressed,
-			leftward: !!nubContext.effects.key("leftward")?.pressed,
-			rightward: !!nubContext.effects.key("rightward")?.pressed,
+			forward: !!nubContext.effects.key.forward?.pressed,
+			backward: !!nubContext.effects.key.backward?.pressed,
+			leftward: !!nubContext.effects.key.leftward?.pressed,
+			rightward: !!nubContext.effects.key.rightward?.pressed,
 		}
 
 		const walking = walker({
 			walk,
 			sprint,
 			isPressed,
-			moveVector,
+			moveVector: nubContext.effects.stick.move?.vector,
 		})
 
 		moveCam(walking.getForce())

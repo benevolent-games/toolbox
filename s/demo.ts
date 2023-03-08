@@ -43,7 +43,7 @@ makeSpectatorCamera({
 	walk: 0.2,
 	lookSensitivity: {
 		stick: 1 / 50,
-		mouse: 1 / 1000,
+		mouse: 1 / 500,
 	},
 })
 

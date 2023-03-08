@@ -1,5 +1,5 @@
 
-import {css} from "lit"
+import {css} from "@chasemoskal/magical"
 export const styles = css`
 
 * {
@@ -170,22 +170,41 @@ nub-editor {
 	cursor: pointer;
 }
 
+.pointer_lock_area {
+	position: absolute;
+	inset: 0;
+}
+
 .mobile-controls {
 	display: flex;
 	position: absolute;
-	pointer-events: none;
-	bottom: var(--bottom, 40%);
-	width: 100%;
-	justify-content: space-around;
+	top: 40%;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	flex-direction: row;
+	justify-content: space-between;
 	align-items: flex-end;
-	font-size: var(--font-size, 1rem);
-}
+	padding: 1em;
+	gap: 1em;
 
-nub-stick {
-	width: 6em;
-	height: 6em;
-	pointer-events: all;
-	opacity: .5;
+	> * {
+		width: 50%;
+		height: 100%;
+
+		^:is(nub-stickpad) {
+			border: none;
+
+			^::part(graphic) {
+				opacity: 0.2;
+			}
+		}
+
+		^:is(nub-lookpad) {
+			border: 1px solid #fff2;
+			border-radius: 0.5em;
+		}
+	}
 }
 
 .framerate {
@@ -196,16 +215,13 @@ nub-stick {
 
 .mobile-controls,
 .button_bar :not(.framerate) {
-	visibility: visible;
 	opacity: 1;
-	transition: all 0s linear 0ms;
+	transition: opacity 500ms linear;
 }
 
 :host([data-pointer-lock="true"]) .mobile-controls,
 :host([data-pointer-lock="true"]) .button_bar :not(.framerate) {
-	visibility: hidden;
 	opacity: 0;
-	transition: visibility 0s linear 400ms, opacity 500ms;
 }
 
 @media (max-width: 425px) {
