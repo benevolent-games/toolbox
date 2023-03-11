@@ -45,6 +45,7 @@ makeSpectatorCamera({
 		stick: 1 / 50,
 		mouse: 1 / 500,
 	},
+	startPosition: [0, 5, 0]
 })
 
 theater.babylon.start()

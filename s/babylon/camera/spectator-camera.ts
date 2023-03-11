@@ -9,13 +9,14 @@ import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {walker} from "./walker.js"
 import {v2} from "../../utils/v2.js"
+import {V3} from "../../utils/v3.js"
 import {lookAdd} from "./utils/look-add.js"
 import {onCameraRotate} from "./utils/on-camera-rotate.js"
 import {transformRotate} from "./utils/transform-rotate.js"
 import {onCameraMovement} from "./utils/on-camera-movement.js"
 
 export function makeSpectatorCamera({
-		walk, scene, engine, nubContext, renderLoop, lookSensitivity: {mouse}
+		walk, scene, engine, nubContext, renderLoop, lookSensitivity: {mouse}, startPosition
 	}: {
 		walk: number
 		scene: Scene
@@ -26,6 +27,7 @@ export function makeSpectatorCamera({
 			stick: number
 			mouse: number
 		}
+		startPosition: V3
 	}) {
 
 	const sprint = walk * 2
@@ -34,7 +36,7 @@ export function makeSpectatorCamera({
 	const transformB = new TransformNode("camB", scene)
 	const camera = (() => {
 		const name = "spectator camera"
-		const position = new Vector3(0, 5, 0)
+		const position = new Vector3(...startPosition)
 		return new TargetCamera(name, position, scene)
 	})()
 
