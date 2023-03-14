@@ -1,17 +1,13 @@
 
 import {V2, v2} from "../../utils/v2.js"
+import {EffectReports, NubDetail} from "@benev/nubs"
 
 export function walker({
-		walk, sprint, isPressed, moveVector
+		walk, sprint, key, moveVector
 	}: {
 		walk: number
 		sprint: number
-		isPressed: {
-			forward: boolean
-			backward: boolean
-			leftward: boolean
-			rightward: boolean
-		}
+		key: EffectReports<NubDetail.Key>
 		moveVector: V2 | undefined
 	}) {
 
@@ -25,10 +21,10 @@ export function walker({
 	function getKeyboardForce() {
 		let stride = 0
 		let strafe = 0
-		if (isPressed.forward) stride += 1
-		if (isPressed.backward) stride -= 1
-		if (isPressed.leftward) strafe -= 1
-		if (isPressed.rightward) strafe += 1
+		if (key.forward?.pressed) stride += 1
+		if (key.backward?.pressed) stride -= 1
+		if (key.leftward?.pressed) strafe -= 1
+		if (key.rightward?.pressed) strafe += 1
 		const capped = cap([strafe, stride])
 		return v2.multiplyBy(capped, walk)
 	}

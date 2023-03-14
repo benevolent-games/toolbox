@@ -6,6 +6,7 @@ import {v3} from "./utils/v3.js"
 import {spawnBoxes} from "./demo/spawn-boxes.js"
 import {BenevTheater} from "./babylon/theater/element.js"
 import {makeSpectatorCamera} from "./babylon/camera/spectator-camera.js"
+import {make_fly_camera} from "./babylon/camera/utils/make_fly_camera.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
 console.log("theater", theater)
@@ -35,17 +36,23 @@ light.position = v3.toBabylon(
 	)
 )
 
+const fly = make_fly_camera({scene, position: [0, 5, 0]})
+
 makeSpectatorCamera({
-	engine,
-	scene,
 	nubContext,
 	renderLoop,
-	walk: 0.2,
+	speed: {
+		walk: 1,
+		sprint: 3
+	},
 	lookSensitivity: {
 		stick: 1 / 50,
-		mouse: 1 / 500,
+		pointer: 1 / 500,
 	},
-	startPosition: [0, 5, 0]
+	controls: {
+		add_look: fly.add_look,
+		add_move: fly.add_move
+	}
 })
 
 theater.babylon.start()
