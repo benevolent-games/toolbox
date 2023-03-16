@@ -7,14 +7,16 @@ import {moveCamera} from "./utils/move-camera.js"
 import {rotateCamera} from "./utils/rotate-camera.js"
 
 export function makeSpectatorCamera({
-		speed, nubContext, renderLoop, lookSensitivity: {pointer}, controls: {add_look, add_move}
+		speed, nubContext, renderLoop,
+		lookSensitivity: {pointer},
+		controls: {add_look, add_move},
 	}: {
+		nubContext: NubContext
+		renderLoop: Set<() => void>
 		speed: {
 			walk: number
 			sprint: number
 		}
-		nubContext: NubContext
-		renderLoop: Set<() => void>
 		lookSensitivity: {
 			stick: number
 			pointer: number
@@ -38,7 +40,6 @@ export function makeSpectatorCamera({
 		})
 
 	renderLoop.add(() => {
-
 		const {getForce} = walker({
 			...speed,
 			key: nubContext.effects.key,
