@@ -31,6 +31,6 @@ export function spawn_boxes(scene: Scene) {
 		box.position = v3.toBabylon(position)
 	}
 
-	for (const i of range(50))
+	for (const i of range(200))
 		make_a_random_box()
 }
