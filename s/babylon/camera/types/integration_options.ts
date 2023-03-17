@@ -1,7 +1,7 @@
 
 import {NubContext} from "@benev/nubs"
 import {V2} from "../../../utils/v2.js"
-import {MovementInputs} from "../ambulate/types/movement_inputs.js"
+import {MovementInputs} from "../../../ambulation/types/movement_inputs.js"
 
 export type IntegrationOptions = {
 	nub_context: NubContext

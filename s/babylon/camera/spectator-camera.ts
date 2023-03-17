@@ -3,7 +3,7 @@ import {NubEffectEvent} from "@benev/nubs"
 
 import {V2, v2} from "../../utils/v2.js"
 import {IntegrationOptions} from "./types/integration_options.js"
-import {get_user_movement_intention_from_inputs} from "./ambulate/get_user_movement_intention_from_inputs.js"
+import {get_user_movement_intention_from_inputs} from "../../ambulation/get_user_movement_intention_from_inputs.js"
 
 export function integrate_nubs_to_control_fly_camera({
 	fly,
