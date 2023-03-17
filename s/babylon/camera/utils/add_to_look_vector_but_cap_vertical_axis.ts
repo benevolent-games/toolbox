@@ -11,6 +11,8 @@ export function add_to_look_vector_but_cap_vertical_axis(
 	) {
 
 	const result = v2.add(look, addition)
-	result[1] = cap(look[1], -radian, radian)
+
+	result[1] = cap(result[1], -radian, radian)
+
 	return result
 }

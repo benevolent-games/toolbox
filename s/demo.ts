@@ -17,7 +17,7 @@ if (!nubContext)
 	throw new Error("nub context not found")
 
 spawn_boxes(scene)
-spawn_light(scene, [0.3, -0.8, 0.4])
+spawn_light(scene, [0.11, 0.88, 0.44])
 
 integrate_nubs_to_control_fly_camera({
 	nub_context: nubContext,

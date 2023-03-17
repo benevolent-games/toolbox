@@ -6,14 +6,16 @@ import {IntegrationOptions} from "./types/integration_options.js"
 import {get_user_movement_intention_from_inputs} from "./movement/get_user_movement_intention_from_inputs.js"
 
 export function integrate_nubs_to_control_fly_camera({
-		fly,
-		speeds,
-		nub_context,
-		render_loop,
-		look_sensitivity,
+	fly,
+	speeds,
+	nub_context,
+	render_loop,
+	look_sensitivity,
 	}: IntegrationOptions) {
 
-	function apply_pointer_movement(pointer_movement_in_pixels: V2) {
+	function apply_pointer_movement(
+		pointer_movement_in_pixels: V2
+		) {
 		fly.add_look(
 			v2.multiplyBy(
 				pointer_movement_in_pixels,
@@ -38,12 +40,12 @@ export function integrate_nubs_to_control_fly_camera({
 			get_user_movement_intention_from_inputs({
 				speeds,
 				keys: {
-					forward: key.forward.pressed,
-					backward: key.backward.pressed,
-					leftward: key.leftward.pressed,
-					rightward: key.rightward.pressed,
-					mosey: key.mosey.pressed,
-					sprint: key.sprint.pressed,
+					forward: key.forward?.pressed ?? false,
+					backward: key.backward?.pressed ?? false,
+					leftward: key.leftward?.pressed ?? false,
+					rightward: key.rightward?.pressed ?? false,
+					mosey: key.mosey?.pressed ?? false,
+					sprint: key.sprint?.pressed ?? false,
 				},
 				stick: (
 					nub_context.effects.stick.move?.vector
