@@ -3,7 +3,7 @@ import {spawn_boxes} from "./demo/spawn_boxes.js"
 import {spawn_light} from "./demo/spawn_light.js"
 import {BenevTheater} from "./babylon/theater/element.js"
 import {make_fly_camera} from "./babylon/camera/make_fly_camera.js"
-import {integrate_nubs_to_control_fly_camera} from "./babylon/camera/spectator-camera.js"
+import {integrate_nubs_to_control_fly_camera} from "./babylon/camera/integrate_nubs_to_control_fly_camera.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
 console.log("theater", theater)
