@@ -23,16 +23,20 @@ export function make_fly_camera({scene, position}: {
 		camera,
 		gimbal,
 
-		add_look: (vector: V2) => {
+		add_look(vector: V2) {
 			look = add_to_look_vector_but_cap_vertical_axis(look, vector)
 			apply_look_to_gimbal(look, gimbal)
 		},
 
-		add_move: (vector: V2) => {
+		add_move(vector: V2) {
 			apply_movement_to_gimbal_while_considering_rotation(
 				vector,
 				gimbal,
 			)
 		},
+
+		dispose() {
+			gimbal.a.dispose(true)
+		}
 	}
 }

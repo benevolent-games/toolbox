@@ -1,44 +1,67 @@
 
-import {NubContext, NubEffectEvent} from "@benev/nubs"
+import {NubEffectEvent} from "@benev/nubs"
 
-import {walker} from "./walker.js"
-import {v2} from "../../utils/v2.js"
+import {V2, v2} from "../../utils/v2.js"
+import {IntegrationOptions} from "./types/integration_options.js"
+import {get_user_movement_intention_from_inputs} from "./movement/get_user_movement_intention_from_inputs.js"
 
-export function makeSpectatorCamera({
-		speed, nubContext, renderLoop, lookSensitivity,
-		controls: {add_look, add_move},
-	}: {
-		nubContext: NubContext
-		renderLoop: Set<() => void>
-		speed: {
-			walk: number
-			sprint: number
+export function integrate_nubs_to_control_fly_camera({
+		fly,
+		speeds,
+		nub_context,
+		render_loop,
+		look_sensitivity,
+	}: IntegrationOptions) {
+
+	function apply_pointer_movement(pointer_movement_in_pixels: V2) {
+		fly.add_look(
+			v2.multiplyBy(
+				pointer_movement_in_pixels,
+				look_sensitivity.pointer,
+			)
+		)
+	}
+
+	const dispose_pointer_listening = (
+		NubEffectEvent
+			.target(nub_context)
+			.listen(({detail}) => {
+				if (detail.kind === "pointer" && detail.effect === "look")
+					if (document.pointerLockElement || detail.cause === "Lookpad")
+						apply_pointer_movement(detail.movement)
+			})
+	)
+
+	function simulate_movement() {
+		const {key} = nub_context.effects
+		fly.add_move(
+			get_user_movement_intention_from_inputs({
+				speeds,
+				keys: {
+					forward: key.forward.pressed,
+					backward: key.backward.pressed,
+					leftward: key.leftward.pressed,
+					rightward: key.rightward.pressed,
+					mosey: key.mosey.pressed,
+					sprint: key.sprint.pressed,
+				},
+				stick: (
+					nub_context.effects.stick.move?.vector
+						?? v2.zero()
+				),
+			})
+		)
+	}
+
+	render_loop.add(
+		simulate_movement
+	)
+
+	return {
+		dispose() {
+			dispose_pointer_listening()
+			render_loop.delete(simulate_movement)
+			fly.dispose()
 		}
-		lookSensitivity: {
-			stick: number
-			pointer: number
-		}
-		controls: {
-			add_look: (vector: v2.V2) => void
-			add_move: (force: v2.V2) => void
-		}
-	}) {
-
-	NubEffectEvent
-		.target(nubContext)
-		.listen(({detail}) => {
-			if (detail.kind === "pointer" && detail.effect === "look") {
-				if (document.pointerLockElement || detail.cause === "Lookpad")
-					add_look(v2.multiplyBy(detail.movement, lookSensitivity.pointer))
-			}
-		})
-
-	renderLoop.add(() => {
-		const {getForce} = walker({
-			...speed,
-			key: nubContext.effects.key,
-			moveVector: nubContext.effects.stick.move?.vector,
-		})
-		add_move(getForce())
-	})
+	}
 }
