@@ -6,7 +6,7 @@ import {v3} from "./utils/v3.js"
 import {spawnBoxes} from "./demo/spawn-boxes.js"
 import {BenevTheater} from "./babylon/theater/element.js"
 import {makeSpectatorCamera} from "./babylon/camera/spectator-camera.js"
-import {make_fly_camera} from "./babylon/camera/utils/make_fly_camera.js"
+import {make_fly_camera} from "./babylon/camera/make_fly_camera.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
 console.log("theater", theater)
