@@ -28,7 +28,7 @@ integrate_nubs_to_control_fly_camera({
 		pointer: 1 / 500,
 	},
 	speeds: {
-		mosey: 0.3,
+		creep: 0.3,
 		walk: 1,
 		sprint: 3,
 	},

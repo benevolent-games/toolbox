@@ -4,7 +4,7 @@ import {V2} from "../../../../utils/v2.js"
 export type MovementInputs = {
 
 	speeds: {
-		mosey: number
+		creep: number
 		walk: number
 		sprint: number
 	}
@@ -15,7 +15,7 @@ export type MovementInputs = {
 		leftward: boolean
 		rightward: boolean
 
-		mosey: boolean
+		creep: boolean
 		sprint: boolean
 	}
 

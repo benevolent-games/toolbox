@@ -16,8 +16,8 @@ export function get_keyboard_force({keys, speeds}: MovementInputs) {
 
 	const speed = keys.sprint
 		? speeds.sprint
-		: keys.mosey
-			? speeds.mosey
+		: keys.creep
+			? speeds.creep
 			: speeds.walk
 
 	return v2.multiplyBy(capped, speed)

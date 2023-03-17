@@ -44,7 +44,7 @@ export function integrate_nubs_to_control_fly_camera({
 					backward: key.backward?.pressed ?? false,
 					leftward: key.leftward?.pressed ?? false,
 					rightward: key.rightward?.pressed ?? false,
-					mosey: key.mosey?.pressed ?? false,
+					creep: key.creep?.pressed ?? false,
 					sprint: key.sprint?.pressed ?? false,
 				},
 				stick: (
