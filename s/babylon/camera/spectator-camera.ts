@@ -3,12 +3,9 @@ import {NubContext, NubEffectEvent} from "@benev/nubs"
 
 import {walker} from "./walker.js"
 import {v2} from "../../utils/v2.js"
-import {moveCamera} from "./utils/move-camera.js"
-import {rotateCamera} from "./utils/rotate-camera.js"
 
 export function makeSpectatorCamera({
-		speed, nubContext, renderLoop,
-		lookSensitivity: {pointer},
+		speed, nubContext, renderLoop, lookSensitivity,
 		controls: {add_look, add_move},
 	}: {
 		nubContext: NubContext
@@ -32,10 +29,7 @@ export function makeSpectatorCamera({
 		.listen(({detail}) => {
 			if (detail.kind === "pointer" && detail.effect === "look") {
 				if (document.pointerLockElement || detail.cause === "Lookpad")
-					rotateCamera({
-						movement: detail.movement,
-						addMouseforce: (mouseforce) => add_look(v2.multiplyBy(mouseforce, pointer)),
-					})
+					add_look(v2.multiplyBy(detail.movement, lookSensitivity.pointer))
 			}
 		})
 
@@ -45,9 +39,6 @@ export function makeSpectatorCamera({
 			key: nubContext.effects.key,
 			moveVector: nubContext.effects.stick.move?.vector,
 		})
-
-		moveCamera({
-			addMoveForce: () => add_move(getForce())
-		})
+		add_move(getForce())
 	})
 }
