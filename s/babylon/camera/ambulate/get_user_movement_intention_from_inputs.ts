@@ -1,6 +1,6 @@
 
 import {v2} from "../../../utils/v2.js"
-import {MovementInputs} from "../types/movement_inputs.js"
+import {MovementInputs} from "./types/movement_inputs.js"
 import {cap_top_speed} from "./functions/cap_top_speed.js"
 import {get_stick_force} from "./functions/get_stick_force.js"
 import {get_keyboard_force} from "./functions/get_keyboard_force.js"
