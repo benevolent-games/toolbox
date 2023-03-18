@@ -10,8 +10,8 @@ import {add_to_look_vector_but_cap_vertical_axis} from "./utils/add_to_look_vect
 import {apply_movement_to_gimbal_while_considering_rotation} from "./utils/apply_movement_to_gimbal_while_considering_rotation.js"
 
 export function make_fly_camera({scene, position}: {
-	scene: Scene
-	position: V3
+		scene: Scene
+		position: V3
 	}) {
 
 	let look = v2.zero()

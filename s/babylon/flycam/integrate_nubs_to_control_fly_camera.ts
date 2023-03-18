@@ -1,70 +1,59 @@
 
 import {NubEffectEvent} from "@benev/nubs"
 
-import {V2, v2} from "../../utils/v2.js"
 import {IntegrationOptions} from "./types/integration_options.js"
-import {get_trajectory_from_user_inputs} from "../../trajectory/get_trajectory_from_user_inputs.js"
+import {add_user_pointer_movements_to_look} from "./utils/add_user_pointer_movements_to_look.js"
+import {get_user_move_trajectory_from_keys_and_stick} from "./utils/get_user_move_trajectory_from_keys_and_stick.js"
+import {get_user_look_trajectory_from_keys_and_stick} from "./utils/get_user_look_trajectory_from_keys_and_stick.js"
 
 export function integrate_nubs_to_control_fly_camera({
-	fly,
-	speeds,
-	nub_context,
-	render_loop,
-	look_sensitivity,
+		fly,
+		nub_context,
+		render_loop,
+		look_key_speeds,
+		look_sensitivity,
+		move_stick_and_key_speeds,
 	}: IntegrationOptions) {
 
-	function apply_pointer_movement(
-		pointer_movement_in_pixels: V2
-		) {
+	const dispose_pointer_listening = NubEffectEvent
+		.target(nub_context)
+		.listen(
+
+			add_user_pointer_movements_to_look({
+				effect: "look",
+				is_pointer_locked: !!document.pointerLockElement,
+				cause_when_pointer_not_locked: "Lookpad",
+				sensitivity: look_sensitivity.pointer,
+				add_look: fly.add_look,
+			})
+		)
+
+	function simulate() {
+
+		fly.add_move(
+			get_user_move_trajectory_from_keys_and_stick(
+				nub_context,
+				move_stick_and_key_speeds,
+			)
+		)
+
 		fly.add_look(
-			v2.multiplyBy(
-				pointer_movement_in_pixels,
-				look_sensitivity.pointer,
+			get_user_look_trajectory_from_keys_and_stick(
+				nub_context,
+				look_key_speeds,
+				look_sensitivity.stick,
 			)
 		)
 	}
 
-	const dispose_pointer_listening = (
-		NubEffectEvent
-			.target(nub_context)
-			.listen(({detail}) => {
-				if (detail.kind === "pointer" && detail.effect === "look")
-					if (document.pointerLockElement || detail.cause === "Lookpad")
-						apply_pointer_movement(detail.movement)
-			})
-	)
-
-	function simulate_movement() {
-		const {key} = nub_context.effects
-		fly.add_move(
-			get_trajectory_from_user_inputs({
-				speeds,
-				cardinals: {
-					north: key.move_forward?.pressed ?? false,
-					south: key.move_backward?.pressed ?? false,
-					west: key.move_leftward?.pressed ?? false,
-					east: key.move_rightward?.pressed ?? false,
-				},
-				modifiers: {
-					fast: key.move_fast?.pressed ?? false,
-					slow: key.move_slow?.pressed ?? false,
-				},
-				stick_vector: (
-					nub_context.effects.stick.move?.vector
-						?? v2.zero()
-				),
-			})
-		)
-	}
-
-	render_loop.add(
-		simulate_movement
-	)
+	render_loop.add(simulate)
 
 	return {
+		camera: fly.camera,
+		gimbal: fly.gimbal,
 		dispose() {
 			dispose_pointer_listening()
-			render_loop.delete(simulate_movement)
+			render_loop.delete(simulate)
 			fly.dispose()
 		}
 	}

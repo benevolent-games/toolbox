@@ -7,7 +7,7 @@ export function apply_look_to_gimbal(look: V2, gimbal: Gimbal) {
 	const [x, y] = look
 
 	gimbal.b.rotationQuaternion = Quaternion
-		.RotationYawPitchRoll(0, y, 0)
+		.RotationYawPitchRoll(0, -y, 0)
 
 	gimbal.a.rotationQuaternion = Quaternion
 		.RotationYawPitchRoll(x, 0, 0)

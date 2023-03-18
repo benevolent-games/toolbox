@@ -28,6 +28,9 @@ export class BenevTheater extends MagicElement {
 	@property({reflect: true})
 	["view-mode"]: ViewMode = "small"
 
+	@property({type: Boolean, reflect: true})
+	["pointer-lock"]: boolean = false
+
 	@property()
 	renderers: Renderer[] = []
 
@@ -76,13 +79,7 @@ export class BenevTheater extends MagicElement {
 	}
 
 	#updatePointerLockAttribute = () => {
-		const isPointerLocked = !!document.pointerLockElement
-		this.setAttribute(
-			"data-pointer-lock",
-			isPointerLocked
-				? "true"
-				: "false",
-		)
+		this["pointer-lock"] = !!document.pointerLockElement
 	}
 
 	#requestPointerLock = (event: PointerEvent) => {
@@ -99,11 +96,13 @@ export class BenevTheater extends MagicElement {
 			)
 		)
 
+		const is_pointer_locked = !!document.pointerLockElement
+
 		return html`
 			<nub-context>
 				${this.babylon.canvas}
 
-				<nub-keyboard></nub-keyboard>
+				<nub-keyboard ?prevent-default=${is_pointer_locked}></nub-keyboard>
 				<nub-pointer></nub-pointer>
 
 				<div

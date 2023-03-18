@@ -219,13 +219,12 @@ nub-editor {
 	transition: opacity 500ms linear;
 }
 
-:host([data-pointer-lock="true"]) .mobile-controls,
-:host([data-pointer-lock="true"]) .button_bar :not(.framerate) {
+:host([pointer-lock]) .mobile-controls,
+:host([pointer-lock]) .button_bar :not(.framerate) {
 	opacity: 0;
 }
 
 @media (max-width: 425px) {
-
 	:host([view-mode="small"]) {
 		--bottom: 50%;
 	}
