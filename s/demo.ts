@@ -6,6 +6,8 @@ import {make_fly_camera} from "./babylon/flycam/make_fly_camera.js"
 import {integrate_nubs_to_control_fly_camera} from "./babylon/flycam/integrate_nubs_to_control_fly_camera.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
+await theater.updateComplete
+
 const nub_context = theater.nubContext!
 const {scene, renderLoop: render_loop} = theater.babylon
 
