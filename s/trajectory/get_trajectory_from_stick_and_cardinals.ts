@@ -2,7 +2,7 @@
 import {V2, v2} from "../utils/v2.js"
 import {TrajectoryInputs} from "./types/trajectory_inputs.js"
 import {cap_vector_to_top_speed} from "./utils/cap_vector_to_top_speed.js"
-import {get_vector_from_cardinals} from "./utils/get_vector_from_cardinals.js"
+import {get_trajectory_from_cardinals} from "./get_trajectory_from_cardinals.js"
 import {select_speed_based_on_modifiers} from "./utils/select_speed_based_on_modifiers.js"
 
 export function get_trajectory_from_stick_and_cardinals({
@@ -13,7 +13,7 @@ export function get_trajectory_from_stick_and_cardinals({
 	}: TrajectoryInputs): V2 {
 
 	const cardinal_is_scaled_based_on_modifiers = v2.multiplyBy(
-		get_vector_from_cardinals(cardinals),
+		get_trajectory_from_cardinals(cardinals),
 		select_speed_based_on_modifiers(modifiers, speeds),
 	)
 

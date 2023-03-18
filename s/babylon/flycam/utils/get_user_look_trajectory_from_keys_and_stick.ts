@@ -1,11 +1,9 @@
 
-
 import {NubContext} from "@benev/nubs"
 
 import {v2} from "../../../utils/v2.js"
-import {invert_y_axis} from "./inversions.js"
 import {Speeds} from "../../../trajectory/types/speeds.js"
-import {get_vector_from_cardinals} from "../../../trajectory/utils/get_vector_from_cardinals.js"
+import {get_trajectory_from_cardinals} from "../../../trajectory/get_trajectory_from_cardinals.js"
 import {select_speed_based_on_modifiers} from "../../../trajectory/utils/select_speed_based_on_modifiers.js"
 
 export function get_user_look_trajectory_from_keys_and_stick(
@@ -34,7 +32,7 @@ export function get_user_look_trajectory_from_keys_and_stick(
 	)
 
 	const cardinal_is_scaled_based_on_modifiers = v2.multiplyBy(
-		get_vector_from_cardinals(cardinals),
+		get_trajectory_from_cardinals(cardinals),
 		select_speed_based_on_modifiers(modifiers, speeds),
 	)
 
