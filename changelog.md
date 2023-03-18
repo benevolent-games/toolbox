@@ -1,12 +1,16 @@
 
 # changelog
 
+## v0.3.0 - 2023-03-18
+- ! change fly camera signature
+- ! move some trajectory stuff around
+
 ## v0.2.0 - 2023-03-18
-- (breaking) reworked the fly camera function signatures
+- ! reworked the fly camera function signatures
   - now there are look keys, they have configurable speeds
 
 ## v0.1.0 - 2023-03-17
-- (breaking) totally reworked spectator cam.
+- ! totally reworked spectator cam.
   - now it's called the "fly camera"
   - movement-related code moved to `s/ambulation`
 
