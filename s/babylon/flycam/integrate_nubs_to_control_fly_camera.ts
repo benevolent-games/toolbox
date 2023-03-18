@@ -3,6 +3,7 @@ import {NubEffectEvent} from "@benev/nubs"
 
 import {IntegrationOptions} from "./types/integration_options.js"
 import {add_user_pointer_movements_to_look} from "./utils/add_user_pointer_movements_to_look.js"
+import {get_user_vertical_movement_based_on_keys} from "./utils/get_user_vertical_movement_based_on_keys.js"
 import {get_user_move_trajectory_from_keys_and_stick} from "./utils/get_user_move_trajectory_from_keys_and_stick.js"
 import {get_user_look_trajectory_from_keys_and_stick} from "./utils/get_user_look_trajectory_from_keys_and_stick.js"
 
@@ -10,9 +11,9 @@ export function integrate_nubs_to_control_fly_camera({
 		fly,
 		nub_context,
 		render_loop,
-		look_key_speeds,
 		look_sensitivity,
-		move_stick_and_key_speeds,
+		speeds_for_movement,
+		speeds_for_looking_with_keys_and_stick,
 	}: IntegrationOptions) {
 
 	const dispose_pointer_listening = NubEffectEvent
@@ -29,20 +30,26 @@ export function integrate_nubs_to_control_fly_camera({
 		)
 
 	function simulate() {
+		fly.add_look(
+			get_user_look_trajectory_from_keys_and_stick(
+				nub_context,
+				speeds_for_looking_with_keys_and_stick,
+				look_sensitivity.stick,
+			)
+		)
 
 		fly.add_move(
 			get_user_move_trajectory_from_keys_and_stick(
 				nub_context,
-				move_stick_and_key_speeds,
+				speeds_for_movement,
 			)
 		)
 
-		fly.add_look(
-			get_user_look_trajectory_from_keys_and_stick(
+		fly.add_move_vertical(
+			get_user_vertical_movement_based_on_keys(
 				nub_context,
-				look_key_speeds,
-				look_sensitivity.stick,
-			)
+				speeds_for_movement,
+			),
 		)
 	}
 

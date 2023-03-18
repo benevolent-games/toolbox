@@ -17,13 +17,13 @@ integrate_nubs_to_control_fly_camera({
 	render_loop,
 	fly: make_fly_camera({scene, position: [0, 5, 0]}),
 
-	move_stick_and_key_speeds: {
+	speeds_for_movement: {
 		slow: 1 / 50,
 		base: 1 / 10,
 		fast: 1 / 2,
 	},
 
-	look_key_speeds: {
+	speeds_for_looking_with_keys_and_stick: {
 		slow: 1 / 200,
 		base: 1 / 25,
 		fast: 1 / 5,

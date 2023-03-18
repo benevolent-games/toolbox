@@ -15,8 +15,8 @@ export function make_fly_camera({scene, position}: {
 	}) {
 
 	let look = v2.zero()
-	const {camera, gimbal} = make_camera_gear(scene)
 
+	const {camera, gimbal} = make_camera_gear(scene)
 	gimbal.a.position = new Vector3(...position)
 
 	return {
@@ -33,6 +33,10 @@ export function make_fly_camera({scene, position}: {
 				vector,
 				gimbal,
 			)
+		},
+
+		add_move_vertical(y: number) {
+			gimbal.a.position.addInPlaceFromFloats(0, y, 0)
 		},
 
 		dispose() {
