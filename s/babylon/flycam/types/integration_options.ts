@@ -1,12 +1,12 @@
 
 import {NubContext} from "@benev/nubs"
 import {V2} from "../../../utils/v2.js"
-import {MovementInputs} from "../../../ambulation/types/movement_inputs.js"
+import {Speeds} from "../../../trajectory/types/speeds.js"
 
 export type IntegrationOptions = {
 	nub_context: NubContext
 	render_loop: Set<() => void>
-	speeds: MovementInputs["speeds"]
+	speeds: Speeds
 
 	look_sensitivity: {
 		stick: number

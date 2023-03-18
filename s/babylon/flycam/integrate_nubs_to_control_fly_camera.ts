@@ -3,7 +3,7 @@ import {NubEffectEvent} from "@benev/nubs"
 
 import {V2, v2} from "../../utils/v2.js"
 import {IntegrationOptions} from "./types/integration_options.js"
-import {get_user_movement_intention_from_inputs} from "../../ambulation/get_user_movement_intention_from_inputs.js"
+import {get_trajectory_from_user_inputs} from "../../trajectory/get_trajectory_from_user_inputs.js"
 
 export function integrate_nubs_to_control_fly_camera({
 	fly,
@@ -37,17 +37,19 @@ export function integrate_nubs_to_control_fly_camera({
 	function simulate_movement() {
 		const {key} = nub_context.effects
 		fly.add_move(
-			get_user_movement_intention_from_inputs({
+			get_trajectory_from_user_inputs({
 				speeds,
-				keys: {
-					forward: key.forward?.pressed ?? false,
-					backward: key.backward?.pressed ?? false,
-					leftward: key.leftward?.pressed ?? false,
-					rightward: key.rightward?.pressed ?? false,
-					creep: key.creep?.pressed ?? false,
-					sprint: key.sprint?.pressed ?? false,
+				cardinals: {
+					north: key.move_forward?.pressed ?? false,
+					south: key.move_backward?.pressed ?? false,
+					west: key.move_leftward?.pressed ?? false,
+					east: key.move_rightward?.pressed ?? false,
 				},
-				stick: (
+				modifiers: {
+					fast: key.move_fast?.pressed ?? false,
+					slow: key.move_slow?.pressed ?? false,
+				},
+				stick_vector: (
 					nub_context.effects.stick.move?.vector
 						?? v2.zero()
 				),

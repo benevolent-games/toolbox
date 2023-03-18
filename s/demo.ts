@@ -6,31 +6,24 @@ import {make_fly_camera} from "./babylon/flycam/make_fly_camera.js"
 import {integrate_nubs_to_control_fly_camera} from "./babylon/flycam/integrate_nubs_to_control_fly_camera.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
-console.log("theater", theater)
-
-const {
-	nubContext,
-	babylon: {scene, renderLoop},
-} = theater
-
-if (!nubContext)
-	throw new Error("nub context not found")
+const nub_context = theater.nubContext!
+const {scene, renderLoop: render_loop} = theater.babylon
 
 spawn_boxes(scene)
 spawn_light(scene, [0.11, 0.88, 0.44])
 
 integrate_nubs_to_control_fly_camera({
-	nub_context: nubContext,
-	render_loop: renderLoop,
+	nub_context,
+	render_loop,
 	fly: make_fly_camera({scene, position: [0, 5, 0]}),
 	look_sensitivity: {
 		stick: 1 / 50,
-		pointer: 1 / 500,
+		pointer: 1 / 100,
 	},
 	speeds: {
-		creep: 0.3,
-		walk: 1,
-		sprint: 3,
+		slow: 1 / 50,
+		base: 1 / 10,
+		fast: 1,
 	},
 })
 
