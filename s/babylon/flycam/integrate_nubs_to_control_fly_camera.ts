@@ -22,10 +22,10 @@ export function integrate_nubs_to_control_fly_camera({
 
 			add_user_pointer_movements_to_look({
 				effect: "look",
-				is_pointer_locked: !!document.pointerLockElement,
-				cause_when_pointer_not_locked: "Lookpad",
 				sensitivity: look_sensitivity.pointer,
+				cause_to_use_when_pointer_not_locked: "Lookpad",
 				add_look: fly.add_look,
+				is_pointer_locked: () => !!document.pointerLockElement,
 			})
 		)
 
