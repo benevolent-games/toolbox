@@ -18,9 +18,9 @@ integrate_nubs_to_control_fly_camera({
 	fly: make_fly_camera({scene, position: [0, 5, 0]}),
 
 	speeds_for_movement: {
-		slow: 1 / 50,
-		base: 1 / 10,
-		fast: 1 / 2,
+		slow: 1 / 25,
+		base: 1 / 5,
+		fast: 1,
 	},
 
 	speeds_for_looking_with_keys_and_stick: {
@@ -30,8 +30,8 @@ integrate_nubs_to_control_fly_camera({
 	},
 
 	look_sensitivity: {
-		stick: 1 / 50,
-		pointer: 1 / 100,
+		stick: 1 / 100,
+		pointer: 1 / 200,
 	},
 })
 
