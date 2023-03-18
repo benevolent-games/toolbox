@@ -33,7 +33,7 @@
 		"test-wip": "cynic puppeteer x/tests.test.js"
 	},
 	"dependencies": {
-		"@benev/nubs": "^0.2.3",
+		"@benev/nubs": "^0.2.4",
 		"@chasemoskal/magical": "^0.1.3",
 		"@chasemoskal/snapstate": "^0.0.9",
 		"lit": "^2.4.1",
