@@ -1,5 +1,6 @@
 
 import {NubEffectEvent} from "@benev/nubs"
+
 import {Frequency} from "./overlord/types.js"
 import {Overlord} from "./overlord/overlord.js"
 import {spawn_boxes} from "./demo/spawn_boxes.js"
@@ -64,7 +65,7 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 
 	behavior("user can move the fly camera with key inputs")
 		.selector("fly_camera")
-		.activity(Frequency.High, state => {
+		.activity(Frequency.High, ({state}) => {
 			state.fly_camera.add_move(
 				get_user_move_trajectory_from_keys_and_stick(
 					context.nub,
@@ -75,7 +76,7 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 
 	behavior("user can vertically move the fly camera with key inputs")
 		.selector("fly_camera")
-		.activity(Frequency.High, state => {
+		.activity(Frequency.High, ({state}) => {
 			state.fly_camera.add_move_vertical(
 				get_user_vertical_movement_based_on_keys(
 					context.nub,
@@ -86,7 +87,7 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 
 	behavior("user can aim the fly camera with key and stick inputs")
 		.selector("fly_camera")
-		.activity(Frequency.High, state => {
+		.activity(Frequency.High, ({state}) => {
 			state.fly_camera.add_look(
 				get_user_look_trajectory_from_keys_and_stick(
 					context.nub,
@@ -99,7 +100,7 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 	behavior("user can aim the fly camera with pointer input")
 		.selector("fly_camera")
 		.lifecycle({
-			create: (state) => ({
+			create: ({state}) => ({
 				dispose_pointer_listening: NubEffectEvent
 					.target(context.nub)
 					.listen(add_user_pointer_movements_to_look({
@@ -110,7 +111,9 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 						is_pointer_locked: () => !!document.pointerLockElement,
 					}))
 			}),
-			delete: (state, local) => local.dispose_pointer_listening(),
+			delete: ({local}) => {
+				local.dispose_pointer_listening()
+			},
 		}),
 ])
 

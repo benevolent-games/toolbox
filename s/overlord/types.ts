@@ -5,7 +5,7 @@ export type Action<
 	S extends Rec,
 	K extends keyof S,
 	L,
-> = (state: Pick<S, K>, local: L, id: number) => void
+> = ({}: {state: Pick<S, K>, local: L, id: number}) => void
 
 export type Activity = [Frequency, Action<any, any, any>]
 
@@ -16,8 +16,8 @@ export type Behavior<
 	> = {
 	name: string
 	selector: K[]
-	create: (state: Pick<S, K>, id: number) => L
-	delete: (state: Pick<S, K>, local: L, id: number) => void
+	create: ({}: {state: Pick<S, K>, id: number}) => L
+	delete: ({}: {state: Pick<S, K>, local: L, id: number}) => void
 	activity?: [Frequency, Action<S, K, L>]
 }
 
@@ -29,8 +29,8 @@ export type BehaviorMaker<S extends Rec> = {
 	selector: <K extends keyof S>(...selector: K[]) => {
 
 		lifecycle: <L extends Rec = any>({}: {
-			create: (state: Pick<S, K>, id: number) => L
-			delete: (state: Pick<S, K>, local: L, id: number) => void
+			create: ({}: {state: Pick<S, K>, id: number}) => L
+			delete: ({}: {state: Pick<S, K>, local: L, id: number}) => void
 			activity?: [Frequency, Action<S, K, L>]
 		}) => Behavior<S, K>
 

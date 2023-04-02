@@ -24,13 +24,13 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 
 	behavior("test")
 		.selector("count")
-		.activity(Frequency.Low, state => {
+		.activity(Frequency.Low, ({state}) => {
 			state.count += 1
 		}),
 
 	behavior("user can move robot")
 		.selector("robot", "position")
-		.activity(Frequency.High, state => {
+		.activity(Frequency.High, ({state}) => {
 			state.robot.apply_move_force(
 				get_user_movement_trajectory(context.nub)
 			)

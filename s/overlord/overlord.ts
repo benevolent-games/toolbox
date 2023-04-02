@@ -42,8 +42,12 @@ export class Overlord<S extends Rec> {
 				const [frequency, action] = behavior.activity
 
 				if (behavior_is_ready_to_execute(phases, frequency))
-					for (const [id, entity] of this.#select_entities(behavior))
-						action(entity, id, this.#locals.get(behavior, id))
+					for (const [id, state] of this.#select_entities(behavior))
+						action({
+							id,
+							state,
+							local: this.#locals.get(behavior, id),
+						})
 			}
 		}
 	}

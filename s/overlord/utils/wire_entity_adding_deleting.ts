@@ -12,7 +12,7 @@ export function wire_entity_adding_and_deleting(
 		on_add(id, state) {
 			cache.cache_entity(id, state)
 			for (const behavior of cache.get_behaviors_for_entity(id)) {
-				const local = behavior.create(state, id)
+				const local = behavior.create({state, id})
 				locals.set(behavior, id, local)
 			}
 		},
@@ -20,7 +20,7 @@ export function wire_entity_adding_and_deleting(
 		on_delete(id, state) {
 			for (const behavior of cache.get_behaviors_for_entity(id)) {
 				const local = locals.get(behavior, id)
-				behavior.delete(state, local, id)
+				behavior.delete({state, local, id})
 			}
 		},
 	}
