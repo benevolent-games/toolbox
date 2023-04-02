@@ -1,18 +1,17 @@
 
+import {NubEffectEvent} from "@benev/nubs"
+import {Frequency} from "./overlord/types.js"
+import {Overlord} from "./overlord/overlord.js"
 import {spawn_boxes} from "./demo/spawn_boxes.js"
 import {spawn_light} from "./demo/spawn_light.js"
+import {Speeds} from "./trajectory/types/speeds.js"
 import {BenevTheater} from "./babylon/theater/element.js"
 import {make_fly_camera} from "./babylon/flycam/make_fly_camera.js"
-import {integrate_nubs_to_control_fly_camera} from "./babylon/flycam/integrate_nubs_to_control_fly_camera.js"
-import {V3} from "./utils/v3.js"
 import {contextual_behaviors_function} from "./overlord/behaviors.js"
-import {Frequency} from "./overlord/types.js"
-import {get_user_move_trajectory_from_keys_and_stick} from "./babylon/flycam/utils/get_user_move_trajectory_from_keys_and_stick.js"
-import {Speeds} from "./trajectory/types/speeds.js"
-import {get_user_vertical_movement_based_on_keys} from "./babylon/flycam/utils/get_user_vertical_movement_based_on_keys.js"
-import {get_user_look_trajectory_from_keys_and_stick} from "./babylon/flycam/utils/get_user_look_trajectory_from_keys_and_stick.js"
-import {NubEffectEvent} from "@benev/nubs"
 import {add_user_pointer_movements_to_look} from "./babylon/flycam/utils/add_user_pointer_movements_to_look.js"
+import {get_user_vertical_movement_based_on_keys} from "./babylon/flycam/utils/get_user_vertical_movement_based_on_keys.js"
+import {get_user_move_trajectory_from_keys_and_stick} from "./babylon/flycam/utils/get_user_move_trajectory_from_keys_and_stick.js"
+import {get_user_look_trajectory_from_keys_and_stick} from "./babylon/flycam/utils/get_user_look_trajectory_from_keys_and_stick.js"
 
 const theater = document.querySelector<BenevTheater>("benev-theater")!
 await theater.updateComplete
@@ -112,30 +111,28 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 					}))
 			}),
 			delete: (state, local) => local.dispose_pointer_listening(),
-		})
+		}),
 ])
 
-integrate_nubs_to_control_fly_camera({
-	nub_context,
-	render_loop,
-	fly: make_fly_camera({scene, position: [0, 5, 0]}),
-
-	speeds_for_movement: {
-		slow: 1 / 25,
-		base: 1 / 5,
-		fast: 1,
-	},
-
-	speeds_for_looking_with_keys_and_stick: {
-		slow: 1 / 200,
-		base: 1 / 25,
-		fast: 1 / 5,
-	},
-
-	look_sensitivity: {
-		stick: 1 / 100,
-		pointer: 1 / 200,
+const overlord = new Overlord<State>({
+	behaviors: behaviors_for_examples,
+	frequencies: {
+		high: 0,
+		medium: 1000 / 20,
+		low: 1000,
 	},
 })
+
+overlord.entities.add(
+	{
+		fly_camera: make_fly_camera({
+			scene,
+			position: [0, 5, 0],
+		}),
+	},
+	state => state.fly_camera.dispose(),
+)
+
+render_loop.add(() => overlord.tick())
 
 theater.babylon.start()

@@ -2,32 +2,47 @@
 import {Rec} from "./types.js"
 import {make_id_getter} from "./utils/make_id_getter.js"
 
+type EntityCallbacks<S extends Rec> = {
+	on_add(id: number, state: Partial<S>): void
+	on_delete(id: number, state: Partial<S>): void
+}
+
 export class Entities<S extends Rec> {
 	#get_new_id = make_id_getter()
 	#entities = new Map<number, Partial<S>>()
 	#disposers = new Map<number, (es: Partial<S>) => void>()
+	#callbacks: EntityCallbacks<S>
+
+	constructor(callbacks: EntityCallbacks<S>) {
+		this.#callbacks = callbacks
+	}
 
 	add<ES extends Partial<S>>(
-			entity_state: ES,
+			state: ES,
 			dispose: (e: ES) => void = () => {},
 		) {
+
 		const id = this.#get_new_id()
-		this.#entities.set(id, entity_state)
+
+		this.#entities.set(id, state)
 		this.#disposers.set(id, dispose as any)
+
+		this.#callbacks.on_add(id, state)
 	}
 
 	delete(id: number) {
-		const entity = this.#entities.get(id)!
+		const state = this.#entities.get(id)!
 		const dispose = this.#disposers.get(id)!
 
-		if (!entity || !dispose)
+		if (!state || !dispose)
 			throw new Error(`unknown entity "${id}"`)
 
+		this.#callbacks.on_delete(id, state)
 		this.#entities.delete(id)
-		dispose(entity)
+		dispose(state)
 	}
 
-	*select(selector: (keyof S)[]) {
+	;*select(selector: (keyof S)[]) {
 		for (const entry of this.#entities) {
 			const [, entity] = entry
 			const matching = selector.every(s => entity.hasOwnProperty(s))

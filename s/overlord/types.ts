@@ -1,11 +1,13 @@
 
 export type Rec = Record<string, unknown>
 
-export type Activity<
+export type Action<
 	S extends Rec,
 	K extends keyof S,
 	L,
 > = (state: Pick<S, K>, local: L, id: number) => void
+
+export type Activity = [Frequency, Action<any, any, any>]
 
 export type Behavior<
 		S extends Rec = any,
@@ -16,7 +18,7 @@ export type Behavior<
 	selector: K[]
 	create: (state: Pick<S, K>, id: number) => L
 	delete: (state: Pick<S, K>, local: L, id: number) => void
-	activity?: [Frequency, Activity<S, K, L>]
+	activity?: [Frequency, Action<S, K, L>]
 }
 
 export type BehaviorArrayMaker<S extends Rec> = (
@@ -29,10 +31,10 @@ export type BehaviorMaker<S extends Rec> = {
 		lifecycle: <L extends Rec = any>({}: {
 			create: (state: Pick<S, K>, id: number) => L
 			delete: (state: Pick<S, K>, local: L, id: number) => void
-			activity?: [Frequency, Activity<S, K, L>]
+			activity?: [Frequency, Action<S, K, L>]
 		}) => Behavior<S, K>
 
-		activity: (f: Frequency, a: Activity<S, K, void>) => Behavior<S, K>
+		activity: (f: Frequency, a: Action<S, K, void>) => Behavior<S, K>
 	}
 }
 
