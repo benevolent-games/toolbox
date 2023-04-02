@@ -15,7 +15,7 @@ export class SelectionCache {
 		for (const behavior of behaviors)
 			this.#selector_by_behavior.set(
 				behavior,
-				this.dedupe_selector(behavior.selector),
+				this.#dedupe_selector(behavior.selector),
 			)
 
 		for (const selector of this.#all_known_selectors)
@@ -26,7 +26,7 @@ export class SelectionCache {
 		return [...this.#selector_by_behavior.values()]
 	}
 
-	dedupe_selector(selector: string[]) {
+	#dedupe_selector(selector: string[]) {
 		return (
 			this.#all_known_selectors
 				.find(cached => selectors_are_the_same(selector, cached))
@@ -44,7 +44,7 @@ export class SelectionCache {
 			const selector = this.#selector_by_behavior.get(behavior)!
 			const entities = this.#entities_by_selector.get(selector)!
 			if (entities.has(id))
-			behaviors_for_this_entity.add(behavior)
+				behaviors_for_this_entity.add(behavior)
 		}
 
 		this.#behaviors_by_entity.set(id, behaviors_for_this_entity)
@@ -59,5 +59,11 @@ export class SelectionCache {
 
 	get_behaviors_for_entity(id: number) {
 		return [...this.#behaviors_by_entity.get(id)!]
+	}
+
+	;*select_entities_for_behavior(behavior: Behavior) {
+		const selector = this.#selector_by_behavior.get(behavior)!
+		const entities = this.#entities_by_selector.get(selector)!
+		yield* entities.values()
 	}
 }

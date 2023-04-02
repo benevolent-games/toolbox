@@ -54,3 +54,8 @@ export type OverlordParams<S extends Rec> = {
 	behaviors: Behavior<S, keyof S>[]
 	frequencies: Freq<number>
 }
+
+export type EntityCallbacks<S extends Rec> = {
+	on_add(id: number, state: Partial<S>): void
+	on_delete(id: number, state: Partial<S>): void
+}

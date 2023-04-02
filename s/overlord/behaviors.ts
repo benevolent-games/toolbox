@@ -1,13 +1,15 @@
 
-import {Rec, BehaviorMaker, BehaviorArrayMaker, Frequency} from "./types.js"
+import {Rec, BehaviorMaker, BehaviorArrayMaker} from "./types.js"
 
 export const behavior = <S extends Rec>(name: string): BehaviorMaker<S> => ({
 	selector: (...selector) => ({
+
 		lifecycle: funcs => ({
 			...funcs,
 			name,
 			selector,
 		}),
+
 		activity: (frequency, activity) => ({
 			name,
 			selector,

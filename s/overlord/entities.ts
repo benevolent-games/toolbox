@@ -1,11 +1,6 @@
 
-import {Rec} from "./types.js"
+import {EntityCallbacks, Rec} from "./types.js"
 import {make_id_getter} from "./utils/make_id_getter.js"
-
-type EntityCallbacks<S extends Rec> = {
-	on_add(id: number, state: Partial<S>): void
-	on_delete(id: number, state: Partial<S>): void
-}
 
 export class Entities<S extends Rec> {
 	#get_new_id = make_id_getter()
@@ -42,13 +37,12 @@ export class Entities<S extends Rec> {
 		dispose(state)
 	}
 
-	;*select(selector: (keyof S)[]) {
-		for (const entry of this.#entities) {
-			const [, entity] = entry
-			const matching = selector.every(s => entity.hasOwnProperty(s))
+	get(id: number) {
+		const entity = this.#entities.get(id)
 
-			if (matching)
-				yield entry
-		}
+		if (!entity)
+			throw new Error(`unknown entity id ${id}`)
+
+		return entity
 	}
 }
