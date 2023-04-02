@@ -29,6 +29,10 @@ type Context = {
 	fly_settings: {
 		speeds_for_movement: Speeds
 		speeds_for_looking_with_keys_and_stick: Speeds
+		pointer: {
+			effect: string,
+			cause_to_use_when_pointer_not_locked: string,
+		}
 		look_sensitivity: {
 			stick: number
 			pointer: number
@@ -44,6 +48,10 @@ const cbehaviors = contextual_behaviors_function<Context, State>({
 	nub: nub_context,
 	theater,
 	fly_settings: {
+		pointer: {
+			effect: "look",
+			cause_to_use_when_pointer_not_locked: "Lookpad",
+		},
 		speeds_for_movement: {
 			slow: 1 / 25,
 			base: 1 / 5,
@@ -104,8 +112,7 @@ export const behaviors_for_examples = cbehaviors(context => behavior => [
 				dispose_pointer_listening: NubEffectEvent
 					.target(context.nub)
 					.listen(add_user_pointer_movements_to_look({
-						effect: "look",
-						cause_to_use_when_pointer_not_locked: "Lookpad",
+						...context.fly_settings.pointer,
 						sensitivity: context.fly_settings.look_sensitivity.pointer,
 						add_look: state.fly_camera.add_look,
 						is_pointer_locked: () => !!document.pointerLockElement,
