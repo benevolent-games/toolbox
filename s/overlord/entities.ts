@@ -18,11 +18,10 @@ export class Entities<S extends Rec> {
 		) {
 
 		const id = this.#get_new_id()
-
 		this.#entities.set(id, state)
 		this.#disposers.set(id, dispose as any)
-
 		this.#callbacks.on_add(id, state)
+		return id
 	}
 
 	delete(id: number) {
