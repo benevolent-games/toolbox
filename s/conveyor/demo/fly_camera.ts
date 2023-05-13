@@ -5,15 +5,15 @@ import {Component} from "../classes/component.js"
 
 export class FlyCamera extends Component<Context, FlyCameraState> {
 
-  constructor(
-      context: Context,
-      state: FlyCameraState = fly_camera_default_state(),
-    ) {
-    super(context, state)
-  }
+	constructor(
+			context: Context,
+			state: FlyCameraState = fly_camera_default_state(),
+		) {
+		super(context, state)
+	}
 
-  async spawn() {}
-  async despawn() {}
+	async spawn() {}
+	async despawn() {}
 }
 
 export type Speeds = {
@@ -36,29 +36,29 @@ export type FlyCameraSettings = {
 }
 
 export type FlyCameraState = FlyCameraSettings & {
-  position: V3
-  swivel: V2
+	position: V3
+	swivel: V2
 }
 
 export const fly_camera_default_state = (): FlyCameraState => ({
-  position: [0, 0, 0],
-  swivel: [0, 0],
-  pointer: {
-    effect: "look",
-    cause_to_use_when_pointer_not_locked: "Lookpad",
-  },
-  speeds_for_movement: {
-    slow: 1 / 25,
-    base: 1 / 5,
-    fast: 1,
-  },
-  speeds_for_looking_with_keys_and_stick: {
-    slow: 1 / 200,
-    base: 1 / 25,
-    fast: 1 / 5,
-  },
-  look_sensitivity: {
-    stick: 1 / 100,
-    pointer: 1 / 200,
-  },
+	position: [0, 0, 0],
+	swivel: [0, 0],
+	pointer: {
+		effect: "look",
+		cause_to_use_when_pointer_not_locked: "Lookpad",
+	},
+	speeds_for_movement: {
+		slow: 1 / 25,
+		base: 1 / 5,
+		fast: 1,
+	},
+	speeds_for_looking_with_keys_and_stick: {
+		slow: 1 / 200,
+		base: 1 / 25,
+		fast: 1 / 5,
+	},
+	look_sensitivity: {
+		stick: 1 / 100,
+		pointer: 1 / 200,
+	},
 })
