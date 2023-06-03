@@ -1,27 +1,26 @@
 
-import {html, HtmlTemplate} from "xiome/x/toolbox/hamster-html/html.js"
-import {WebsiteContext} from "xiome/x/toolbox/hamster-html/website/build-website-types.js"
+import {webpage, html, HtmlTemplate} from "@benev/turtle"
 
-import headBasicsHtml from "./head-basics.html.js"
+export default webpage<{
+		head: HtmlTemplate
+		main: HtmlTemplate
+	}>(async({v}, {head, main}) => html`
 
-export default ({
-	v, mainContent,
-	headContent,
-	htmlClass = "",
-	...options
-}: WebsiteContext & {
-	htmlClass?: string
-	headContent?: HtmlTemplate
-	mainContent?: HtmlTemplate
-}) => html`
+	<!doctype html>
+	<html>
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width,initial-scale=1"/>
+			<meta name="darkreader" content="dark"/>
 
-<!doctype html>
-<html class="${htmlClass}">
-<head>
-	${headBasicsHtml({...options, v, title: "toolbox"})}
-	${headContent}
-</head>
-<body>
-	${mainContent}
-</body>
-`
+			<title>@benev/toolbox</title>
+			<link rel=stylesheet href="${v("/index.css")}"/>
+
+			${head}
+		</head>
+		<body>
+			${main}
+		</body>
+	</html>
+`)
+
