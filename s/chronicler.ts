@@ -2,7 +2,6 @@
 import {ecs} from "./ecs.js"
 import {human} from "./utils/human.js"
 import {repeat} from "./utils/repeat.js"
-import {r, seed} from "./utils/randomly.js"
 import {Timekeep} from "./utils/timekeep.js"
 import {Traits} from "./chronicler/traits.js"
 import {behaviors} from "./chronicler/behaviors.js"
@@ -10,6 +9,7 @@ import {archetypes} from "./chronicler/archetypes.js"
 import {durationSpec} from "./chronicler/durations.js"
 import {setupTimeline} from "./chronicler/utils/gametime.js"
 import {threadedSerializer} from "./kson/serialize/threaded.js"
+import { Randy } from "./utils/randy.js"
 
 const config = {
 	people: 10_000,
@@ -21,14 +21,13 @@ const TIMER_CHRONICLER = timekeepAll.timers.chronicler
 const timekeep = new Timekeep("📜")
 
 const TIMER_INIT = timekeep.timers.init
-const random = seed(1)
-const randomly = r(random)
+const randy = Randy.seed(1)
 const timeline = setupTimeline(durationSpec)
 const e = ecs<Traits>(behaviors, timeline)
 TIMER_INIT()
 
 const TIMER_SETUP = timekeep.timers.setup
-const make = archetypes({randomly})
+const make = archetypes({randy})
 repeat(config.people, () => e.add(make.person()))
 e.add(make.hut())
 e.add(make.hut())
@@ -44,9 +43,9 @@ TIMER_SIMULATION()
 const TIMER_QUERIES = timekeep.timers.queries
 const people = e.select(["identity"])
 const alive = people
-	.filter(([id, components]) => !components.death)
+	.filter(([_, components]) => !components.death)
 const dead = people
-	.filter(([id, components]) => !!components.death)
+	.filter(([_, components]) => !!components.death)
 TIMER_QUERIES()
 
 

@@ -1,6 +1,6 @@
 
-import {Randomly} from "../../utils/randomly.js"
+import {Randy} from "../../utils/randy.js"
 
 export interface ArchetypeOptions {
-	randomly: Randomly
+	randy: Randy
 }

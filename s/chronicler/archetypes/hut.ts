@@ -2,7 +2,7 @@
 import {Traits} from "../traits.js"
 import {archetype} from "../utils/archetype.js"
 
-export const hut = archetype<Traits>()(({randomly}) =>
+export const hut = archetype<Traits>()(({randy}) =>
 		({capacity = 4}: {capacity?: number} = {}) => ({
 
 	shelter: {
@@ -12,7 +12,7 @@ export const hut = archetype<Traits>()(({randomly}) =>
 
 	structure: {
 		integrity: 1,
-		strength: 0.2 + (randomly.random() * 0.5),
+		strength: 0.2 + (randy.random() * 0.5),
 	},
 
 	flammable: {

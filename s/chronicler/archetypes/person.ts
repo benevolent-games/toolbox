@@ -3,8 +3,8 @@ import {Traits} from "../traits.js"
 import {archetype} from "../utils/archetype.js"
 import {nomenclature} from "../../utils/nomenclature.js"
 
-export const person = archetype<Traits>()(({randomly}) => () => {
-	const {random} = randomly
+export const person = archetype<Traits>()(({randy}) => () => {
+	const {random} = randy
 	const {birthname, nickname} = nomenclature(random)
 	return {
 

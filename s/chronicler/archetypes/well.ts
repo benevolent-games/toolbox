@@ -2,7 +2,7 @@
 import {Traits} from "../traits.js"
 import {archetype} from "../utils/archetype.js"
 
-export const well = archetype<Traits>()(({randomly}) =>
+export const well = archetype<Traits>()(({randy}) =>
 		({}: {position: [number, number, number]}) => ({
 
 	location: {

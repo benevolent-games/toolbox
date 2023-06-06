@@ -6,7 +6,7 @@ import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 import {v3, V3} from "../utils/v3.js"
 import {range} from "../utils/range.js"
-import {r, seed} from "../utils/randomly.js"
+import { Randy } from "../utils/randy.js"
 
 export function spawn_boxes(scene: Scene) {
 	const material = new PBRMaterial("material", scene)
@@ -14,11 +14,11 @@ export function spawn_boxes(scene: Scene) {
 	material.roughness = 0.5
 	material.metallic = 0.5
 
-	const randomly = r(seed(4))
+	const randy = Randy.seed(4)
 
 	function rand() {
-		const sign = randomly.flip(0.5)
-		const coordinate = randomly.between(5, 20)
+		const sign = randy.roll(0.5)
+		const coordinate = randy.between(5, 20)
 		return sign
 			? coordinate
 			: -coordinate
@@ -31,6 +31,6 @@ export function spawn_boxes(scene: Scene) {
 		box.position = v3.toBabylon(position)
 	}
 
-	for (const i of range(200))
+	for (const _ of range(200))
 		make_a_random_box()
 }
