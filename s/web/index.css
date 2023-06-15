@@ -13,7 +13,7 @@
 
 html {
 	font-family: "Gentium Book Basic", serif;
-	background: fixed linear-gradient(0deg, rgb(132 87 44 / 75%) 0%, rgba(255, 149, 0, 0.94) 100%);
+	background: #2e1805;
 	color: whitesmoke;
 	font-size: 16px;
 }
@@ -55,3 +55,4 @@ span {
 		width: 100vw;
 	}
 }
+
