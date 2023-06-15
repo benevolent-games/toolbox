@@ -10,25 +10,14 @@
 		"x",
 		"s"
 	],
+	"bin": {
+		"toolbox-cleanup-babylon": "scripts/toolbox-cleanup-babylon"
+	},
 	"scripts": {
-		"prepare": "rm -rf node_modules/@babylonjs/core/index.d.ts node_modules/@babylonjs/core/index.js",
-		"build": "run-s clean importly compile",
-		"start": "run-p http watch",
-		"http": "http-server x",
-		"clean": "rimraf x && mkdirp x",
-		"importly": "importly --host=node_modules < package-lock.json > x/importmap.json",
-		"links": "run-s link-s link-modules",
-		"link-s": "ln -s $(realpath s) x/s",
-		"link-modules": "ln -s $(realpath node_modules) x/node_modules",
-		"link-nubs": "rimraf node_modules/@benev/nubs && ln -s $(realpath ../nubs) node_modules/@benev",
-		"compile": "run-p links && run-s typescript web",
-		"typescript": "tsc",
-		"web": "turtle --in s/web:x/web --out x --exclude **/partials/*:**/*.map +verbose",
-		"watch-typescript": "tsc -w",
-		"watch-web": "chokidar \"x/web/**/*\" -c \"npm run web -s && echo 'rebuilt web'\"",
-		"watch": "run-p watch-typescript watch-web",
-		"test": "exit 0",
-		"test-wip": "cynic puppeteer x/tests.test.js"
+		"prepare": "./scripts/toolbox-cleanup-babylon",
+		"build": "turtle-standard s/web:x/web x **/partials/*:**/*.map",
+		"start": "turtle-standard-watch s/web:x/web x **/partials/*:**/*.map",
+		"test": "exit 0"
 	},
 	"dependencies": {
 		"@benev/nubs": "^0.2.4",
@@ -42,7 +31,7 @@
 		"@babylonjs/loaders": "^6.7.0"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.3.6",
+		"@benev/turtle": "^0.3.7",
 		"chokidar": "^3.5.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
