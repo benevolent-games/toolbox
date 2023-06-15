@@ -1,10 +1,10 @@
 
-import {webpage, html, HtmlTemplate} from "@benev/turtle"
+import {template, html, Html} from "@benev/turtle"
 
-export default webpage<{
-		head: HtmlTemplate
-		main: HtmlTemplate
-	}>(async({v}, {head, main}) => html`
+export default template<{
+		head: Html
+		main: Html
+	}>(async({path}, {head, main}) => html`
 
 	<!doctype html>
 	<html>
@@ -14,7 +14,7 @@ export default webpage<{
 			<meta name="darkreader" content="dark"/>
 
 			<title>@benev/toolbox</title>
-			<link rel=stylesheet href="${v("/index.css")}"/>
+			<link rel=stylesheet href="${path(import.meta.url).version.root('index.css')}"/>
 
 			${head}
 		</head>

@@ -1,23 +1,25 @@
 
-import {webpage, html} from "@benev/turtle"
+import {template, html} from "@benev/turtle"
 import pageHtml from "./partials/page.html.js"
 
-export default webpage(({v, ...b}) => pageHtml({v, ...b}, {
+const {url} = import.meta
+
+export default template(basics => pageHtml(basics, {
 
 	head: html`
 		<script
 			type=importmap-shim
-			src="${v("/importmap.json")}"
+			src="${basics.path(url).version.root('importmap.json')}"
 			defer
 		></script>
 		<script
 			type=module-shim
-			src="${v("/html.js")}"
+			src="${basics.path(url).version.root('html.js')}"
 			defer
 		></script>
 		<script
 			type=module-shim
-			src="${v("/demo.js")}"
+			src="${basics.path(url).version.root('demo.js')}"
 			defer
 		></script>
 		<script
