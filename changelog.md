@@ -1,6 +1,10 @@
 
 # changelog
 
+## v0.4.1 - 2023-06-14
+- use turtle's standard build
+- add npm bin `toolbox-cleanup-babylon` script in `scripts/`
+
 ## v0.4.0 - 2023-06-06
 - ! upgraded to babylon 6 (from babylon 5).
 - ! loopy.js util has replaced loop2d.js, and the looping functions are now generators.
