@@ -31,6 +31,9 @@ export class BenevTheater extends MagicElement {
 	@property({type: Boolean, reflect: true})
 	["pointer-lock"]: boolean = false
 
+	@property({type: Boolean, reflect: true})
+	["disable-pointer-lock"]: boolean = false
+
 	@property()
 	renderers: Renderer[] = []
 
@@ -105,10 +108,14 @@ export class BenevTheater extends MagicElement {
 				<nub-keyboard ?prevent-default=${is_pointer_locked}></nub-keyboard>
 				<nub-pointer></nub-pointer>
 
-				<div
-					class=pointer_lock_area
-					@pointerup=${this.#requestPointerLock}
-				></div>
+				${!this["disable-pointer-lock"]
+					? html`
+							<div
+								class=pointer_lock_area
+								@pointerup=${this.#requestPointerLock}
+							></div>`
+					: null
+				}
 
 				${MobileControls()}
 
