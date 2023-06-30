@@ -34,6 +34,9 @@ export class BenevTheater extends MagicElement {
 	@property({type: Boolean, reflect: true})
 	["disable-pointer-lock"]: boolean = false
 
+	@property({type: Boolean, reflect: true})
+	["mobile-controls"]: boolean = false
+
 	@property()
 	renderers: Renderer[] = []
 
@@ -117,7 +120,9 @@ export class BenevTheater extends MagicElement {
 					: null
 				}
 
-				${MobileControls()}
+				${this["mobile-controls"]
+					? MobileControls()
+					: null}
 
 				<div class="button_bar">
 					${ViewModeButton({

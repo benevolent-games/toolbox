@@ -1,6 +1,9 @@
 
 # changelog
 
+## v0.5.0-dev.0 - 2023-06-30
+- ! <benev-theater> mobile controls default to being *disabled*, and can be enabled by adding the `mobile-controls` attribute
+
 ## v0.4.1 - 2023-06-14
 - use turtle's standard build
 - add npm bin `toolbox-cleanup-babylon` script in `scripts/`
