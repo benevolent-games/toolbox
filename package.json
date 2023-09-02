@@ -20,15 +20,15 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"@benev/nubs": "^0.2.4",
+		"@benev/nubs": "^0.3.0-dev.1",
 		"@chasemoskal/magical": "^0.1.7",
 		"@chasemoskal/snapstate": "^0.0.9",
 		"lit": "^2.8.0",
 		"simplex-noise": "^4.0.1"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^6.16.0",
-		"@babylonjs/loaders": "^6.16.0"
+		"@babylonjs/core": "^6.19.1",
+		"@babylonjs/loaders": "^6.19.1"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.0",
@@ -40,9 +40,9 @@
 		"importly": "^0.2.1",
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
-		"puppeteer": "^21.0.3",
+		"puppeteer": "^21.1.1",
 		"rimraf": "^5.0.1",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"keywords": [
 		"web-games",
