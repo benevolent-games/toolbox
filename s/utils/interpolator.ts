@@ -18,7 +18,7 @@ export function positionInterpolator(steps: number) {
 }
 
 export function rotationInterpolator(steps: number) {
-	let goalpost = quat.zero()
+	let goalpost = quat.identity()
 	return {
 		updateGoalpost(rotation: Quat) {
 			goalpost = rotation
