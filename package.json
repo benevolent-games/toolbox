@@ -20,28 +20,28 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"@benev/nubs": "^0.3.0-dev.1",
-		"@chasemoskal/magical": "^0.1.7",
+		"@benev/nubs": "^0.3.0-dev.2",
+		"@chasemoskal/magical": "^0.1.8",
 		"@chasemoskal/snapstate": "^0.0.9",
-		"lit": "^2.8.0",
+		"lit": "^3.0.2",
 		"simplex-noise": "^4.0.1"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^6.19.1",
-		"@babylonjs/loaders": "^6.19.1"
+		"@babylonjs/core": "^6.28.1",
+		"@babylonjs/loaders": "^6.28.1"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.5.0",
+		"@benev/turtle": "^0.5.1",
 		"chokidar": "^3.5.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
-		"es-module-shims": "^1.8.0",
+		"es-module-shims": "^1.8.1",
 		"http-server": "^14.1.1",
-		"importly": "^0.2.1",
+		"importly": "^0.2.2",
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
-		"puppeteer": "^21.1.1",
-		"rimraf": "^5.0.1",
+		"puppeteer": "^21.5.0",
+		"rimraf": "^5.0.5",
 		"typescript": "^5.2.2"
 	},
 	"keywords": [
