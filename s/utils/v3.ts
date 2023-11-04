@@ -1,6 +1,6 @@
 
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
-import {fastInverseSquareRoot} from "./fast-inverse-square-root.js"
+// import {fastInverseSquareRoot} from "./fast-inverse-square-root.js"
 
 export type V3 = v3.V3
 
@@ -137,4 +137,20 @@ export namespace v3 {
 		const radiusSquared = radius ** 2
 		return distanceSquared < radiusSquared
 	}
+
+	export function sum(...vectors: V3[]) {
+		return vectors.reduce(
+			(previous, current) => v3.add(previous, current),
+			[0, 0, 0] as V3,
+		)
+	}
+
+	export function average(a: V3, ...more: V3[]) {
+		const vectors = [a, ...more]
+		return v3.divideBy(
+			sum(...vectors),
+			vectors.length,
+		)
+	}
 }
+
