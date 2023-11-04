@@ -10,21 +10,20 @@ export default template(basics => pageHtml(basics, {
 		<script
 			type=importmap-shim
 			src="${basics.path(url).version.root('importmap.json')}"
-			defer
 		></script>
 		<script
 			type=module-shim
+			defer
 			src="${basics.path(url).version.root('html.js')}"
-			defer
 		></script>
 		<script
 			type=module-shim
-			src="${basics.path(url).version.root('demo.js')}"
 			defer
+			src="${basics.path(url).version.root('demo.js')}"
 		></script>
 		<script
+			async
 			src="/node_modules/es-module-shims/dist/es-module-shims.wasm.js"
-			defer
 		></script>
 	`,
 
