@@ -19,7 +19,7 @@ export default template(basics => pageHtml(basics, {
 		<script
 			type=module-shim
 			defer
-			src="${basics.path(url).version.root('demo.js')}"
+			src="${basics.path(url).version.root('main.js')}"
 		></script>
 		<script
 			async
