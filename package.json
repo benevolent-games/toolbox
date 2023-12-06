@@ -17,7 +17,7 @@
 		"prepare": "./scripts/toolbox-cleanup-babylon",
 		"build": "turtle-standard",
 		"start": "turtle-standard-watch",
-		"test": "exit 0"
+		"test": "cynic node x/tests.test.js"
 	},
 	"dependencies": {
 		"@benev/slate": "^0.1.0-x.1",
