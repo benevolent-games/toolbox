@@ -15,20 +15,17 @@
 	},
 	"scripts": {
 		"prepare": "./scripts/toolbox-cleanup-babylon",
-		"build": "turtle-standard s/web:x/web x **/partials/*:**/*.map",
-		"start": "turtle-standard-watch s/web:x/web x **/partials/*:**/*.map",
+		"build": "turtle-standard",
+		"start": "turtle-standard-watch",
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"@benev/nubs": "^0.3.0-dev.2",
-		"@chasemoskal/magical": "^0.1.8",
-		"@chasemoskal/snapstate": "^0.0.9",
-		"lit": "^3.0.2",
+		"@benev/slate": "^0.1.0-x.1",
 		"simplex-noise": "^4.0.1"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^6.28.1",
-		"@babylonjs/loaders": "^6.28.1"
+		"@babylonjs/core": "^6.32.1",
+		"@babylonjs/loaders": "^6.32.1"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.1",
@@ -36,16 +33,15 @@
 		"chokidar": "^3.5.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
-		"es-module-shims": "^1.8.1",
+		"es-module-shims": "^1.8.2",
 		"http-server": "^14.1.1",
 		"importly": "^0.2.3",
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
-		"puppeteer": "^21.5.0",
 		"rimraf": "^5.0.5",
-		"rollup": "^4.3.0",
-		"terser": "^5.24.0",
-		"typescript": "^5.2.2"
+		"rollup": "^4.6.1",
+		"terser": "^5.25.0",
+		"typescript": "^5.3.3"
 	},
 	"keywords": [
 		"web-games",
