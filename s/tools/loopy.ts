@@ -9,6 +9,6 @@ export function* loop(n: number) {
 export function* loop2d([columns, rows]: Vec2) {
 	for (let y = 0; y < rows; y++)
 		for (let x = 0; x < columns; x++)
-			yield [x, y]
+			yield [x, y] as Vec2
 }
 

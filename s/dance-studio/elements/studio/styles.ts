@@ -1,6 +1,5 @@
 
 import {css} from "@benev/slate"
-
 export const styles = css`
 
 :host {
@@ -14,6 +13,7 @@ export const styles = css`
 .studio {
 	position: absolute;
 	inset: 0;
+
 	&[data-drop]::before {
 		content: "";
 		display: block;
@@ -23,6 +23,21 @@ export const styles = css`
 
 		border: 0.5em var(--alpha) dashed;
 		background: color-mix(in srgb, transparent, var(--alpha) 10%);
+	}
+
+	.panel {
+		z-index: 2;
+		position: relative;
+		width: 20em;
+		max-width: calc(100% - 2em);
+		padding: 1em;
+		margin: 1em;
+
+		background: #0004;
+		color: #fffa;
+
+		backdrop-filter: blur(1em);
+		border-radius: 0.3em;
 	}
 }
 

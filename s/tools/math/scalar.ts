@@ -29,5 +29,13 @@ export namespace scalar {
 	export function within(value: number, min: number, max: number) {
 		return value >= min && value <= max
 	}
+
+	export function radians(degrees: number) {
+		return degrees * Math.PI / 180;
+	}
+
+	export function degrees(radians: number) {
+		return radians * 180 / Math.PI;
+	}
 }
 

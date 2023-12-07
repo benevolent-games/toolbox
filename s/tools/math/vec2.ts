@@ -104,7 +104,12 @@ export namespace vec2 {
 		return applyBy(vector, a => a * factor)
 	}
 
+	export function divideBy(vector: Vec2, factor: number): Vec2 {
+		return applyBy(vector, a => a / factor)
+	}
+
 	export function addBy(vector: Vec2, amount: number): Vec2 {
 		return applyBy(vector, a => a + amount)
 	}
 }
+
