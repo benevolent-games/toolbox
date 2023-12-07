@@ -18,3 +18,8 @@ html, body {
 	background: black;
 }
 
+dance-studio {
+	position: absolute;
+	inset: 0;
+}
+

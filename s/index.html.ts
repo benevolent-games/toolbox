@@ -10,8 +10,7 @@ export default template(async basic => {
 		title: "@benev/toolbox",
 		head: startup_scripts_with_dev_mode(path),
 		body: html`
-			<h1>a new toolbox is coming...</h1>
-			<benev-toolbox></benev-toolbox>
+			<dance-studio></dance-studio>
 		`,
 	})
 })
