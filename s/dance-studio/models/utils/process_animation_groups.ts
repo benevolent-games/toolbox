@@ -1,21 +1,23 @@
 
 import {Pojo} from "@benev/slate"
-import {fix_animation_quaternions} from "./fix_animation_quaternions.js"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
+import {fix_animation_quaternions} from "./fix_animation_quaternions.js"
+
 export function process_animation_groups(groups: AnimationGroup[]) {
+
 	const anims: Pojo<AnimationGroup> = Object.fromEntries(
 		groups
-			.map(anim => {
-				anim.stop()
-				anim.reset()
-				return anim
+			.map(group => {
+				group.stop()
+				group.reset()
+				return group
 			})
-			.map(anim => {
-				fix_animation_quaternions(anim)
-				return anim
+			.map(group => {
+				fix_animation_quaternions(group)
+				return group
 			})
-			.map(anim => [anim.name, anim])
+			.map(group => [group.name, group])
 	)
 
 	return anims
