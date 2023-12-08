@@ -16,7 +16,7 @@ export type Glb = {
 
 export class Loader {
 	#scene: Scene
-	readonly glb = signals.op<Glb | null>()
+	readonly glb = signals.op<Glb | null>(Op.ready(null))
 
 	constructor(scene: Scene) {
 		this.#scene = scene

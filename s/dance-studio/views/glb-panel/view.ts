@@ -5,6 +5,7 @@ import {styles} from "./styles.js"
 import {slate} from "../../slate.js"
 import {Glb} from "../../models/loader.js"
 import {human} from "../../../tools/human.js"
+import {render_op} from "../../utils/render_op.js"
 
 export const GlbPanel = slate.shadow_view({styles, name: "glb-panel"}, use => () => {
 	const {loader} = use.context
@@ -35,9 +36,9 @@ export const GlbPanel = slate.shadow_view({styles, name: "glb-panel"}, use => ()
 
 	return html`
 		<h2>glb</h2>
-		${loader.glb.payload
-			? render_glb(loader.glb.payload)
-			: render_no_glb()}
+		${render_op(loader.glb.value, glb => glb
+			? render_glb(glb)
+			: render_no_glb())}
 	`
 })
 
