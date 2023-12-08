@@ -10,6 +10,13 @@ export default template(async basic => {
 		title: "@benev/toolbox",
 		head: startup_scripts_with_dev_mode(path),
 		body: html`
+			<header>
+				<h1>
+					<span>benevolent.games</span>
+					<span>—</span>
+					<span>"dance studio"</span>
+				</h1>
+			</header>
 			<dance-studio></dance-studio>
 		`,
 	})
