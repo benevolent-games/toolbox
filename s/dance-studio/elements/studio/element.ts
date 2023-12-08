@@ -3,7 +3,7 @@ import {drag_has_files, dropped_files, html, ShockDrop} from "@benev/slate"
 
 import {styles} from "./styles.js"
 import {slate} from "../../slate.js"
-import {AnimPanel} from "../../views/anim-panel/view.js"
+import {CameraPanel} from "../../views/camera-panel/view.js"
 
 export const DanceStudio = slate.shadow_component({styles}, use => {
 	const {world, loader} = use.context
@@ -26,7 +26,9 @@ export const DanceStudio = slate.shadow_component({styles}, use => {
 
 			${world.viewport.canvas}
 
-			${AnimPanel([], {attrs: {class: "anim panel"}})}
+			<div class=panel>
+				${CameraPanel([])}
+			</div>
 		</div>
 	`
 })

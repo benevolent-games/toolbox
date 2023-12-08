@@ -3,7 +3,7 @@ import {html, reactor} from "@benev/slate"
 import {styles} from "./styles.js"
 import {slate} from "../../slate.js"
 
-export const AnimPanel = slate.shadow_view({styles}, use => () => {
+export const CameraPanel = slate.shadow_view({styles, name: "camera-panel"}, use => () => {
 	const {world} = use.context
 
 	const zoom = use.signal(4)
