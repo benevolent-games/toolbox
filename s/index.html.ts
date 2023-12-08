@@ -11,13 +11,25 @@ export default template(async basic => {
 		head: startup_scripts_with_dev_mode(path),
 		body: html`
 			<header>
-				<h1>
-					<span>benevolent.games</span>
-					<span>—</span>
-					<span>"dance studio"</span>
-				</h1>
+				<a href="https://benevolent.games/">
+					<img class=logo src="https://benevolent.games/assets/benevolent.svg" alt=""/>
+				</a>
+				<h1><code>@benev/toolbox</code></h1>
+				<p>a <a href="https://benevolent.games/">benevolent.games</a> project</p>
 			</header>
-			<dance-studio></dance-studio>
+			<div class=content>
+				<p>toolbox helps us make web games. maybe it can help you too.</p>
+				<p>it's on <a href="https://github.com/benevolent-games/toolbox">github</a> and <a href="https://www.npmjs.com/package/@benev/toolbox">npm</a>.</p>
+				<p>toolbox also hosts some standalone apps:</p>
+			</div>
+			<ul>
+				<li>
+					<a href="/dance-studio/">
+						<strong>dance-studio</strong>
+						<span>character animation gym</span>
+					</a>
+				</li>
+			</ul>
 		`,
 	})
 })

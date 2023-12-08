@@ -1,35 +1,61 @@
 
-* {
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
-}
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 1em; }
-::-webkit-scrollbar-thumb:hover { background: #444; }
-
-html, body {
-	font-size: 16px;
-	height: 100%;
-
-	color: gray;
-	background: black;
-}
+@import url("/common.css");
 
 body {
-	display: flex;
-	flex-direction: column;
+	width: 32em;
+	max-width: 90%;
+	padding: 1em;
+	padding-bottom: 3em;
+	margin: auto;
+	margin-top: 1em;
 
-	> header {
-		flex: 0 0 auto;
+	background: #222;
+	box-shadow: 0.2em 0.5em 1em #0004;
+	border-radius: 0.5em;
+
+	& > * + * {
+		margin-top: 2em;
 	}
 
-	> dance-studio {
-		display: block;
-		flex: 1 1 auto;
-		position: relative;
+	> header {
+		text-align: center;
+
+		& .logo {
+			display: block;
+			width: 16em;
+			max-width: 100%;
+			margin: auto;
+		}
+
+		> h1 {
+			font-size: 1.1em;
+			color: white;
+		}
+
+		> p {
+			font-style: italic;
+		}
+	}
+
+	> ul {
+		list-style: none;
+		display: flex;
+		justify-content: center;
+
+		> li {
+			display: contents;
+
+			> a {
+				display: flex;
+				flex-direction: column;
+				background: #333;
+				padding: 0.5em;
+				border-radius: 0.3em;
+				color: white;
+				text-decoration: none;
+				box-shadow: 0.1em 0.3em 0.2em #0002;
+			}
+		}
 	}
 }
 

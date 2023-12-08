@@ -15,7 +15,7 @@
 	},
 	"scripts": {
 		"prepare": "./scripts/toolbox-cleanup-babylon",
-		"build": "turtle-standard",
+		"build": "turtle-ts-app && turtle-ts-app-bundle x/dance-studio/main.js && turtle-web",
 		"start": "turtle-standard-watch",
 		"test": "cynic node x/tests.test.js"
 	},

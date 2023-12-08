@@ -1,0 +1,51 @@
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+html, body {
+	font-size: 16px;
+	min-height: 100%;
+	font-family: sans-serif;
+
+	color: #888;
+	background: #111;
+	--link: cyan;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 1em; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
+
+a {
+	color: var(--link);
+	text-decoration: none;
+
+	&:visited {
+		color: color-mix(in srgb, purple, var(--link) 70%);
+	}
+
+	&:hover {
+		color: color-mix(in srgb, white, var(--link) 90%);
+		text-decoration: underline;
+	}
+
+	&:active {
+		color: color-mix(in srgb, white, var(--link) 50%);
+	}
+}
+
+code {
+	background: #0001;
+	border: 1px solid #fff1;
+	border-radius: 0.3em;
+	padding: 0 0.2em;
+}
+
+.content > * + * {
+	margin-top: 1em;
+}
+
