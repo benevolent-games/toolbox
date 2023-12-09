@@ -36,14 +36,17 @@ export class Impulse<B extends Binds> {
 		}
 	}
 
-	constructor({binds, devices = []}: {
+	constructor({binds, devices = [], modes = []}: {
 			binds: B
 			devices?: Device[]
+			modes?: Mode<B>[]
 		}) {
 
 		this.modes = new Modes<Mode<B>>()
 		this.binds = binds
 		this.add(...devices)
+
+		this.modes.assign(...modes)
 
 		this.report = ob.map(
 			binds,
