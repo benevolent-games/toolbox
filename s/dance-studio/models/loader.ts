@@ -1,6 +1,6 @@
 
-import {Op, Pojo, signals} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
+import {Op, Pojo, signals, is} from "@benev/slate"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
@@ -12,6 +12,39 @@ export type Glb = {
 	filename: string
 	filesize: number
 	anims: Pojo<AnimationGroup>
+	activeAnims: Partial<ActiveAnims>
+}
+
+export type ActiveAnims = {
+	tpose: AnimationGroup
+	runningbackwards: AnimationGroup
+	legs_strafeleft: AnimationGroup
+	legs_straferight: AnimationGroup
+	legs_running: AnimationGroup
+	arms_running: AnimationGroup
+}
+
+function activate_animations(
+		anims: Pojo<AnimationGroup>,
+		ordering: [keyof ActiveAnims, number | null][],
+	) {
+
+	const activeAnims = {} as Partial<ActiveAnims>
+
+	ordering.forEach(([key, weight], index) => {
+		const anim = anims[key]
+		if (anim) {
+			anim.playOrder = index
+			if (is.defined(weight))
+				anim.weight = weight
+			anim.start(true, 1)
+			activeAnims[key] = anim
+		}
+		else
+			activeAnims[key] = undefined
+	})
+
+	return activeAnims
 }
 
 export class Loader {
@@ -42,11 +75,21 @@ export class Loader {
 
 		container.addAllToScene()
 
+		const anims = process_animation_groups(container.animationGroups)
+
 		return {
 			container,
 			filename: file.name,
 			filesize: file.size,
-			anims: process_animation_groups(container.animationGroups)
+			anims,
+			activeAnims: activate_animations(anims, [
+				["tpose", null],
+				["runningbackwards", 0],
+				["legs_strafeleft", 0],
+				["legs_straferight", 0],
+				["legs_running", 0],
+				["arms_running", 0],
+			])
 		}
 	}
 

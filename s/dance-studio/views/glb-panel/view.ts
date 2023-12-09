@@ -14,19 +14,30 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 	const {loader} = use.context
 
 	function render_glb(glb: Glb) {
+		const allKeys = Object.keys(glb.anims)
+		const activeKeys = Object.keys(glb.activeAnims)
 		return html`
 			<p><strong>${glb.filename}</strong></p>
 			<p>
 				<span>${human.megabytes(glb.filesize)}</span>
 				<button class=based @click="${() => loader.unload_glb()}">unload</button>
 			</p>
-			<ul>
+			<ul class=anims>
 				${Object.entries(glb.anims).map(([animName, animGroup]) => html`
-					<li>
+					<li ?data-active="${activeKeys.includes(animName)}">
 						<span>${animName}</span>
 						<span>${animGroup.targetedAnimations.length}</span>
 					</li>
 				`)}
+			</ul>
+			<ul class=missing-anims>
+				${Object.entries(glb.activeAnims)
+					.filter(([animName]) => !allKeys.includes(animName))
+					.map(([animName]) => html`
+						<li>
+							<span>${animName}</span>
+						</li>
+					`)}
 			</ul>
 		`
 	}

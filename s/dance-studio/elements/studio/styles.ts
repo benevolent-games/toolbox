@@ -38,6 +38,14 @@ export const styles = css`
 
 		backdrop-filter: blur(1em);
 		border-radius: 0.3em;
+
+		> [view="nub-stick"] {
+			display: block;
+			margin: auto;
+			margin-top: 1em;
+			width: 5em;
+			height: 5em;
+		}
 	}
 }
 

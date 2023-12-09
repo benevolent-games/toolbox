@@ -9,6 +9,11 @@ export const styles = css`
 	touch-action: none;
 }
 
+.container {
+	width: 100%;
+	height: 100%;
+}
+
 [part="graphic"] {
 	width: 100%;
 	height: 100%;

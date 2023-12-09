@@ -2,6 +2,7 @@
 import {html} from "@benev/slate"
 
 import {Stick} from "./device.js"
+import {styles} from "./styles.js"
 import {nub_nexus} from "../nexus.js"
 import {Basis} from "../stick-graphic/types/basis.js"
 import {NubStickGraphic} from "../stick-graphic/element.js"
@@ -10,6 +11,7 @@ import {calculate_new_vector_from_pointer_position} from "./utils/calculate_new_
 
 export const NubStick = nub_nexus.shadow_view(use => (stick: Stick) => {
 	use.name("nub-stick")
+	use.styles(styles)
 
 	let basis: Basis | undefined = undefined
 	const updateBasis = (b: Basis) => basis = b
@@ -27,7 +29,7 @@ export const NubStick = nub_nexus.shadow_view(use => (stick: Stick) => {
 
 	return html`
 		<div
-			part=container
+			class=container
 			.vector="${stick.vector}"
 			@pointerdown="${listeners.pointerdown}"
 			@pointermove="${listeners.pointermove}"
