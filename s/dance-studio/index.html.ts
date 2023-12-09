@@ -8,11 +8,14 @@ export default template(async basic => {
 		path,
 		css: "dance-studio/index.css",
 		title: "dance-studio (@benev/toolbox)",
-		head: startup_scripts_with_dev_mode(path, {
-			...default_script_locations(),
-			script: "dance-studio/main.js",
-			script_bundle: "dance-studio/main.bundle.min.js",
-		}),
+		head: html`
+			<link rel="icon" href="https://benevolent.games/assets/benevolent.svg"/>
+			${startup_scripts_with_dev_mode(path, {
+				...default_script_locations(),
+				script: "dance-studio/main.js",
+				script_bundle: "dance-studio/main.bundle.min.js",
+			})}
+		`,
 		body: html`
 			<header>
 				<a href="https://benevolent.games/">

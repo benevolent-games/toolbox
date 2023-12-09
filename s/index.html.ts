@@ -8,7 +8,10 @@ export default template(async basic => {
 		path,
 		css: "index.css",
 		title: "@benev/toolbox",
-		head: startup_scripts_with_dev_mode(path),
+		head: html`
+			<link rel="icon" href="https://benevolent.games/assets/benevolent.svg"/>
+			${startup_scripts_with_dev_mode(path)}
+		`,
 		body: html`
 			<header>
 				<a href="https://benevolent.games/">
