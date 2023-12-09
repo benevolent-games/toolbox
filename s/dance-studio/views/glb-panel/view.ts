@@ -12,15 +12,16 @@ export const GlbPanel = slate.shadow_view({styles, name: "glb-panel"}, use => ()
 
 	function render_glb(glb: Glb) {
 		return html`
+			<p><strong>${glb.filename}</strong></p>
 			<p>
-				<strong>${glb.filename}</strong>
 				<span>${human.megabytes(glb.filesize)}</span>
+				<button class=based @click="${() => loader.unload_glb()}">unload</button>
 			</p>
 			<ul>
 				${Object.entries(glb.anims).map(([animName, animGroup]) => html`
 					<li>
 						<span>${animName}</span>
-						<span>(${animGroup.targetedAnimations.length})</span>
+						<span>${animGroup.targetedAnimations.length}</span>
 					</li>
 				`)}
 			</ul>

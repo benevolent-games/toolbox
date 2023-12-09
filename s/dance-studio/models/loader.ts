@@ -22,7 +22,7 @@ export class Loader {
 		this.#scene = scene
 	}
 
-	#delete_existing_glb() {
+	unload_glb() {
 		const glb = this.glb.payload
 		if (glb) {
 			glb.container.removeAllFromScene()
@@ -54,7 +54,7 @@ export class Loader {
 		if (this.glb.isLoading())
 			return
 
-		this.#delete_existing_glb()
+		this.unload_glb()
 		await this.glb.run(() => this.#load_glb_asset_container(file))
 
 		// console.log("anims", anims)
