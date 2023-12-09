@@ -1,11 +1,13 @@
 
 import {html, reactor} from "@benev/slate"
 import {styles} from "./styles.js"
-import {slate} from "../../slate.js"
+import {nexus} from "../../nexus.js"
 
-export const CameraPanel = slate.shadow_view({styles, name: "camera-panel"}, use => () => {
+export const CameraPanel = nexus.shadow_view(use => () => {
+	use.name("camera-panel")
+	use.styles(styles)
+
 	const {world} = use.context
-
 	const zoom = use.signal(4)
 	const swivel = use.signal(160)
 

@@ -2,13 +2,14 @@
 import {html} from "@benev/slate"
 
 import {Stick} from "./device.js"
-import {slate} from "../slate.js"
+import {nub_nexus} from "../nexus.js"
 import {Basis} from "../stick-graphic/types/basis.js"
 import {NubStickGraphic} from "../stick-graphic/element.js"
 import {make_pointer_listeners} from "./utils/make_pointer_listeners.js"
 import {calculate_new_vector_from_pointer_position} from "./utils/calculate_new_vector_from_pointer_position.js"
 
-export const NubStick = slate.shadow_view({}, use => (stick: Stick) => {
+export const NubStick = nub_nexus.shadow_view(use => (stick: Stick) => {
+	use.name("nub-stick")
 
 	let basis: Basis | undefined = undefined
 	const updateBasis = (b: Basis) => basis = b

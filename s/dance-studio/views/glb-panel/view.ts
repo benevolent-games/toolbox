@@ -2,12 +2,15 @@
 import {html} from "@benev/slate"
 
 import {styles} from "./styles.js"
-import {slate} from "../../slate.js"
+import {nexus} from "../../nexus.js"
 import {Glb} from "../../models/loader.js"
 import {human} from "../../../tools/human.js"
 import {render_op} from "../../utils/render_op.js"
 
-export const GlbPanel = slate.shadow_view({styles, name: "glb-panel"}, use => () => {
+export const GlbPanel = nexus.shadow_view(use => () => {
+	use.name("glb-panel")
+	use.styles(styles)
+
 	const {loader} = use.context
 
 	function render_glb(glb: Glb) {

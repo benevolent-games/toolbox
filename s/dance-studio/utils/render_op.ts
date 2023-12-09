@@ -1,11 +1,50 @@
 
-import {slate} from "../slate.js"
+import {nexus} from "../nexus.js"
 import {css, html, prep_render_op} from "@benev/slate"
+
+export const ErrorIndicator = nexus.shadow_view(use => (reason: string) => {
+	use.name("error-indicator")
+	use.styles(styles.error)
+	return html`${reason}`
+})
+
+export const LoadingIndicator = nexus.shadow_view(use => () => {
+	use.name("error-indicator")
+	use.styles(styles.loading)
+	const frame = use.signal(6)
+
+	use.setup(() => {
+		const id = setInterval(() => {
+			const next = frame.value + 1
+			frame.value = (next < loading_frames.length)
+				? next
+				: 0
+		}, 1000 / 20)
+		return () => clearInterval(id)
+	})
+
+	return html`${loading_frames[frame.value]}`
+})
 
 export const render_op = prep_render_op({
 	error: reason => ErrorIndicator([reason]),
 	loading: () => LoadingIndicator([]),
 })
+
+export const styles = {
+	error: css`
+		:host {
+			color: red;
+			font-family: monospace;
+		}
+	`,
+	loading: css`
+		:host {
+			color: #8888;
+			font-family: monospace;
+		}
+	`,
+}
 
 const loading_frames = [
 	"00000",
@@ -28,33 +67,4 @@ const loading_frames = [
 	"00010",
 	"00001",
 ]
-
-export const ErrorIndicator = slate.shadow_view({styles: css`
-	:host {
-		color: red;
-		font-family: monospace;
-	}
-`}, _use => (reason: string) => html`${reason}`)
-
-export const LoadingIndicator = slate.shadow_view({styles: css`
-		:host {
-			color: #8888;
-			font-family: monospace;
-		}
-	`}, use => () => {
-
-	const frame = use.signal(6)
-
-	use.setup(() => {
-		const id = setInterval(() => {
-			const next = frame.value + 1
-			frame.value = (next < loading_frames.length)
-				? next
-				: 0
-		}, 1000 / 20)
-		return () => clearInterval(id)
-	})
-
-	return html`${loading_frames[frame.value]}`
-})
 

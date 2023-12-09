@@ -2,12 +2,14 @@
 import {drag_has_files, dropped_files, html, ShockDrop} from "@benev/slate"
 
 import {styles} from "./styles.js"
-import {slate} from "../../slate.js"
+import {nexus} from "../../nexus.js"
 import {GlbPanel} from "../../views/glb-panel/view.js"
 import {CameraPanel} from "../../views/camera-panel/view.js"
 import {NubStick} from "../../../impulse/nubs/stick/element.js"
 
-export const DanceStudio = slate.shadow_component({styles}, use => {
+export const DanceStudio = nexus.shadow_component(use => {
+	use.styles(styles)
+
 	const {world, loader, sticks} = use.context
 
 	const drop = use.prepare(() => new ShockDrop({

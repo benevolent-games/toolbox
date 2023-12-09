@@ -20,13 +20,13 @@
 		"test": "cynic node x/tests.test.js"
 	},
 	"dependencies": {
-		"@benev/slate": "^0.1.0-x.1",
+		"@benev/slate": "^0.1.0-x.2",
 		"lit": "^3.1.0",
 		"simplex-noise": "^4.0.1"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^6.32.1",
-		"@babylonjs/loaders": "^6.32.1"
+		"@babylonjs/core": "^6.33.1",
+		"@babylonjs/loaders": "^6.33.1"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.1",
@@ -40,8 +40,8 @@
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
 		"rimraf": "^5.0.5",
-		"rollup": "^4.6.1",
-		"terser": "^5.25.0",
+		"rollup": "^4.7.0",
+		"terser": "^5.26.0",
 		"typescript": "^5.3.3"
 	},
 	"keywords": [
