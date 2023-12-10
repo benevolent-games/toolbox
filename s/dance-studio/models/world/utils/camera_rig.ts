@@ -7,8 +7,8 @@ import {scalar} from "../../../../tools/math/scalar.js"
 
 export class CameraRig {
 	#camera: ArcRotateCamera
-	#zoom = 4 / 10
-	#swivel = 4 / 10
+	#zoom = 2 / 10
+	#swivel = 3 / 10
 
 	constructor(scene: Scene) {
 		const name = "cam"

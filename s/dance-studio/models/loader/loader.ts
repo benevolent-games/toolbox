@@ -28,12 +28,27 @@ export class Loader {
 			return
 
 		this.unload_glb()
-		await this.glb.run(() => this.#load_glb_asset_container(file))
+		await this.glb.run(() => this.#load_glb_asset_container(fileData(file)))
 	}
 
-	async #load_glb_asset_container(file: File): Promise<Glb> {
+	async ingest_glb_from_url(url: string) {
+		if (this.glb.isLoading())
+			return
+
+		this.unload_glb()
+
+		await this.glb.run(async() => {
+			const file = await download(url)
+			return await this.#load_glb_asset_container(file)
+		})
+	}
+
+	async #load_glb_asset_container(
+			{objectUrl, filename, filesize}: FileData
+		): Promise<Glb> {
+
 		const container = await SceneLoader.LoadAssetContainerAsync(
-			URL.createObjectURL(file),
+			objectUrl,
 			undefined,
 			this.#scene,
 			() => {},
@@ -44,10 +59,38 @@ export class Loader {
 
 		return {
 			container,
-			filename: file.name,
-			filesize: file.size,
+			filename,
+			filesize,
 			choreographer: new Choreographer(container.animationGroups),
 		}
 	}
+}
+
+export type FileData = {
+	objectUrl: string
+	filename: string
+	filesize: number
+}
+
+function fileData(file: File): FileData {
+	return {
+		objectUrl: URL.createObjectURL(file),
+		filename: file.name,
+		filesize: file.size,
+	}
+}
+
+async function download(url: string): Promise<FileData> {
+	const response = await fetch(url)
+
+	if (!response.ok)
+		throw new Error(`failed ${response.statusText}`)
+
+	const blob = await response.blob()
+	const objectUrl = URL.createObjectURL(blob)
+	const filesize = blob.size
+	const filename = new URL(url).pathname.split("/").at(-1) ?? "unknown"
+
+	return {objectUrl, filename, filesize}
 }
 
