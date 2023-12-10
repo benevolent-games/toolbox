@@ -6,7 +6,9 @@ import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {scalar} from "../../../../tools/math/scalar.js"
 
 export class Jib {
-	readonly camera: ArcRotateCamera
+	#camera: ArcRotateCamera
+	#zoom = 4 / 10
+	#swivel = 4 / 10
 
 	constructor(scene: Scene) {
 		const name = "cam"
@@ -15,18 +17,29 @@ export class Jib {
 		const radius = 3
 		const target = new Vector3(0, 1, 0)
 
-		this.camera = new ArcRotateCamera(
+		this.#camera = new ArcRotateCamera(
 			name, alpha, beta, radius, target,
 			scene,
 		)
 	}
 
-	swivel(degrees: number) {
-		this.camera.alpha = scalar.radians(degrees)
+	get zoom() {
+		return this.#zoom
 	}
 
-	zoom(distance: number) {
-		this.camera.radius = distance
+	get swivel() {
+		return this.#swivel
+	}
+
+	set zoom(n: number) {
+		this.#zoom = scalar.cap(n)
+		this.#camera.radius = scalar.map(this.#zoom, [1.5, 5])
+		this.#camera.beta = scalar.map(this.#zoom, [scalar.pi(0.5), scalar.pi(0)])
+	}
+
+	set swivel(n: number) {
+		this.#swivel = scalar.wrap(n)
+		this.#camera.alpha = scalar.map(this.#swivel, [0, scalar.pi(2)])
 	}
 }
 

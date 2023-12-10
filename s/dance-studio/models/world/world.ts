@@ -15,6 +15,7 @@ import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 import {Jib} from "./utils/jib.js"
 import {Viewport} from "./utils/viewport.js"
 import {GridFloor} from "./utils/grid_floor.js"
+import { interval } from "../../../tools/repeater.js"
 
 export class World {
 	viewport = new Viewport()
@@ -23,6 +24,7 @@ export class World {
 	jib = new Jib(this.scene)
 
 	onRender = pub<void>()
+	onTick = pub<void>()
 
 	constructor() {
 		const {scene} = this
@@ -30,6 +32,8 @@ export class World {
 		scene.clearColor = new Color4(0.1, 0.1, 0.1, 1)
 		new HemisphericLight("hemi", new Vector3(0.234, 1, 0.123), scene)
 		new GridFloor({scene, boxSize: 0.02, extent: [7, 7], scale: 0.2})
+
+		interval(60, () => this.onTick.publish())
 
 		this.engine.runRenderLoop(() => {
 			this.onRender.publish()
