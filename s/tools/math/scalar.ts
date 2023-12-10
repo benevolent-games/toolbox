@@ -23,39 +23,39 @@ export namespace scalar {
 	// constraints and boundaries
 	//
 
-	export function bottom(value: number, min: number) {
-		return value < min
+	export function bottom(n: number, min: number) {
+		return n < min
 			? min
-			: value
+			: n
 	}
 
-	export function top(value: number, max: number) {
-		return value > max
+	export function top(n: number, max: number) {
+		return n > max
 			? max
-			: value
+			: n
 	}
 
-	export function cap(value: number, min: number = 0, max: number = 1) {
-		return value < min
+	export function cap(n: number, min: number = 0, max: number = 1) {
+		return n < min
 			? min
-			: value > max
+			: n > max
 				? max
-				: value
+				: n
 	}
 
-	export function between(value: number, min: number, max: number) {
+	export function between(n: number, min: number, max: number) {
 		const space = max - min
-		const amount = value - min
+		const amount = n - min
 		return amount / space
 	}
 
-	export function within(value: number, min: number = 0, max: number = 1) {
-		return value >= min && value <= max
+	export function within(n: number, min: number = 0, max: number = 1) {
+		return n >= min && n <= max
 	}
 
-	export function wrap(value: number, min: number = 0, max: number = 1) {
+	export function wrap(n: number, min: number = 0, max: number = 1) {
 		const span = max - min
-		const adjusted = value - min
+		const adjusted = n - min
 		const wrapped = (adjusted < 0)
 			? span - (-adjusted % span)
 			: adjusted % span
@@ -66,13 +66,13 @@ export namespace scalar {
 	// transformations and mappings
 	//
 
-	export function map(value: number, [b1, b2]: Vec2) {
-		const fraction = (value - 0) / (1 - 0)
+	export function map(n: number, [b1, b2]: Vec2) {
+		const fraction = (n - 0) / (1 - 0)
 		return fraction * (b2 - b1) + b1
 	}
 
-	export function remap(value: number, [a1, a2]: Vec2, [b1, b2]: Vec2) {
-		const fraction = (value - a1) / (a2 - a1)
+	export function remap(n: number, [a1, a2]: Vec2, [b1, b2]: Vec2) {
+		const fraction = (n - a1) / (a2 - a1)
 		return fraction * (b2 - b1) + b1
 	}
 

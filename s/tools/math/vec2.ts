@@ -6,7 +6,7 @@ export type Vec2 = vec2.Vec2
 export namespace vec2 {
 	export type Vec2 = [number, number]
 
-	export function is(v: Vec2) {
+	export function as(v: Vec2) {
 		return v
 	}
 
