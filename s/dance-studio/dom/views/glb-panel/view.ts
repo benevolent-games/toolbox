@@ -52,7 +52,6 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 	}
 
 	return html`
-		<h2>glb</h2>
 		${render_op(loader.glb.value, glb => glb
 			? render_glb(glb)
 			: render_no_glb())}

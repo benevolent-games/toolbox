@@ -5,7 +5,7 @@ export const styles = css`
 :host {
 	display: block;
 	width: 8em;
-	height: 8em;
+	aspect-ratio: 1 / 1;
 	touch-action: none;
 }
 
