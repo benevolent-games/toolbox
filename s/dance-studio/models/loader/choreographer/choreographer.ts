@@ -2,16 +2,16 @@
 import {Pojo} from "@benev/slate"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
+import {Molasses} from "./utils/molasses.js"
 import {AnimLibrary} from "./utils/types.js"
-import {Vec2} from "../../../../tools/math/vec2.js"
+import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {scalar} from "../../../../tools/math/scalar.js"
 import {activate_animations} from "./utils/active_animations.js"
 import {process_animation_groups} from "./utils/process_animation_groups.js"
 
 function configure_animation(anims: AnimLibrary) {
 	return activate_animations(anims, [
-		["tpose", "primary"],
-		["spine", "primary"],
+		["idle", "weighted_looper"],
 
 		["legs_running", "weighted_looper"],
 		["legs_strafeleft", "weighted_looper"],
@@ -55,13 +55,17 @@ export class Choreographer {
 		this.anims = configure_animation(this.all_animations)
 	}
 
-	tick({ambulate}: {
+	#ambulation_weights = new Molasses(0.1)
+
+	tick(inputs: {
 			ambulate: Vec2
 		}) {
 
 		const {anims} = this
+		const ambulate = this.#ambulation_weights.update(inputs.ambulate)
 
 		{
+			const idleness = scalar.cap(1 - vec2.magnitude(ambulate), 0, 1)
 			const [x, y] = ambulate
 			const w = scalar.cap(y, 0, 1)
 			const a = -scalar.cap(x, -1, 0)
@@ -69,6 +73,8 @@ export class Choreographer {
 			const d = scalar.cap(x, 0, 1)
 
 			this.#apply_weights(
+				[anims.idle, idleness],
+
 				[anims.legs_running, w],
 				[anims.arms_running, w],
 
