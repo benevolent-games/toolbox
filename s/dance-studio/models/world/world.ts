@@ -12,16 +12,16 @@ import {Color4} from "@babylonjs/core/Maths/math.color.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 
-import {Jib} from "./utils/jib.js"
 import {Viewport} from "./utils/viewport.js"
+import {CameraRig} from "./utils/camera_rig.js"
 import {GridFloor} from "./utils/grid_floor.js"
-import { interval } from "../../../tools/repeater.js"
+import {interval} from "../../../tools/interval.js"
 
 export class World {
 	viewport = new Viewport()
 	engine = new Engine(this.viewport.canvas)
 	scene = new Scene(this.engine)
-	jib = new Jib(this.scene)
+	cameraRig = new CameraRig(this.scene)
 
 	onRender = pub<void>()
 	onTick = pub<void>()

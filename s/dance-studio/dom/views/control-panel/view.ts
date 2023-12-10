@@ -17,8 +17,8 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 
 	const apply_to_camera = use.prepare(() => ([x, y]: Vec2) => {
 		const sensitivity = 1 / 100
-		world.jib.zoom += y * sensitivity
-		world.jib.swivel += x * sensitivity
+		world.cameraRig.zoom += y * sensitivity
+		world.cameraRig.swivel += x * sensitivity
 	})
 
 	use.setup(() => world.onTick(() => {

@@ -5,7 +5,7 @@ import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 
 import {scalar} from "../../../../tools/math/scalar.js"
 
-export class Jib {
+export class CameraRig {
 	#camera: ArcRotateCamera
 	#zoom = 4 / 10
 	#swivel = 4 / 10
