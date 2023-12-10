@@ -3,9 +3,9 @@ import {html} from "@benev/slate"
 
 import {styles} from "./styles.js"
 import {nexus} from "../../nexus.js"
-import {Glb} from "../../models/loader.js"
 import {human} from "../../../tools/human.js"
 import {render_op} from "../../utils/render_op.js"
+import {Glb} from "../../models/loader/utils/types.js"
 
 export const GlbPanel = nexus.shadow_view(use => () => {
 	use.name("glb-panel")
@@ -14,8 +14,10 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 	const {loader} = use.context
 
 	function render_glb(glb: Glb) {
-		const allKeys = Object.keys(glb.anims)
-		const activeKeys = Object.keys(glb.activeAnims)
+		const {anims, all_animations} = glb.choreographer
+		const all_anim_keys = Object.keys(all_animations)
+		const active_anim_keys = Object.keys(anims)
+
 		return html`
 			<p><strong>${glb.filename}</strong></p>
 			<p>
@@ -23,16 +25,16 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 				<button class=based @click="${() => loader.unload_glb()}">unload</button>
 			</p>
 			<ul class=anims>
-				${Object.entries(glb.anims).map(([animName, animGroup]) => html`
-					<li ?data-active="${activeKeys.includes(animName)}">
+				${Object.entries(all_animations).map(([animName, animGroup]) => html`
+					<li ?data-active="${active_anim_keys.includes(animName)}">
 						<span>${animName}</span>
 						<span>${animGroup.targetedAnimations.length}</span>
 					</li>
 				`)}
 			</ul>
 			<ul class=missing-anims>
-				${Object.entries(glb.activeAnims)
-					.filter(([animName]) => !allKeys.includes(animName))
+				${Object.entries(anims)
+					.filter(([animName]) => !all_anim_keys.includes(animName))
 					.map(([animName]) => html`
 						<li>
 							<span>${animName}</span>

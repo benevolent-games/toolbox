@@ -1,8 +1,9 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
-import {scalar} from "../../../tools/math/scalar.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
+
+import {scalar} from "../../../../tools/math/scalar.js"
 
 export class Jib {
 	readonly camera: ArcRotateCamera

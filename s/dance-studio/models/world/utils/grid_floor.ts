@@ -7,8 +7,8 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {AbstractMesh} from "@babylonjs/core/Meshes/abstractMesh.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
-import {loop2d} from "../../../tools/loopy.js"
-import {Vec2, vec2} from "../../../tools/math/vec2.js"
+import {loop2d} from "../../../../tools/loopy.js"
+import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 
 export class GridFloor {
 	material: PBRMaterial

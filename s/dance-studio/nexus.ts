@@ -2,9 +2,9 @@
 import {Nexus, Context} from "@benev/slate"
 
 import {theme} from "./theme.js"
-import {World} from "./models/world.js"
-import {Loader} from "./models/loader.js"
 import {Impulse} from "../impulse/impulse.js"
+import {World} from "./models/world/world.js"
+import {Loader} from "./models/loader/loader.js"
 import {Stick} from "../impulse/nubs/stick/device.js"
 
 export const nexus = new Nexus(new class extends Context {
