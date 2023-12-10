@@ -1,5 +1,5 @@
 
-import {pub, signals} from "@benev/slate"
+import {pub, signal} from "@benev/slate"
 
 import {Input} from "../../input.js"
 import {Device} from "../../device.js"
@@ -10,7 +10,7 @@ export class Stick extends Device {
 	dispose = () => {}
 
 	#channel: string
-	#vector = signals.signal<Vec2>([0, 0])
+	#vector = signal<Vec2>([0, 0])
 
 	constructor(channel: string) {
 		super()

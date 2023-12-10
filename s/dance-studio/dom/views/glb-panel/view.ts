@@ -2,10 +2,10 @@
 import {html} from "@benev/slate"
 
 import {styles} from "./styles.js"
-import {nexus} from "../../nexus.js"
-import {human} from "../../../tools/human.js"
-import {render_op} from "../../utils/render_op.js"
-import {Glb} from "../../models/loader/utils/types.js"
+import {nexus} from "../../../nexus.js"
+import {human} from "../../../../tools/human.js"
+import {render_op} from "../../../utils/render_op.js"
+import {Glb} from "../../../models/loader/utils/types.js"
 
 export const GlbPanel = nexus.shadow_view(use => () => {
 	use.name("glb-panel")

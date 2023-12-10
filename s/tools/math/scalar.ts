@@ -30,6 +30,15 @@ export namespace scalar {
 		return value >= min && value <= max
 	}
 
+	export function wrap(value: number, min: number, max: number) {
+		const span = max - min
+		const adjusted = value - min
+		const wrapped = (adjusted < 0)
+			? span - (-adjusted % span)
+			: adjusted % span
+		return min + wrapped
+	}
+
 	export function radians(degrees: number) {
 		return degrees * Math.PI / 180;
 	}

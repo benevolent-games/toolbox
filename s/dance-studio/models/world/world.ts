@@ -5,6 +5,7 @@ import "@babylonjs/core/Culling/ray.js"
 import "@babylonjs/core/Rendering/edgesRenderer.js"
 import "@babylonjs/core/Animations/index.js"
 
+import {pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color4} from "@babylonjs/core/Maths/math.color.js"
@@ -21,6 +22,8 @@ export class World {
 	scene = new Scene(this.engine)
 	jib = new Jib(this.scene)
 
+	onRender = pub<void>()
+
 	constructor() {
 		const {scene} = this
 
@@ -29,6 +32,7 @@ export class World {
 		new GridFloor({scene, boxSize: 0.02, extent: [7, 7], scale: 0.2})
 
 		this.engine.runRenderLoop(() => {
+			this.onRender.publish()
 			scene.render()
 		})
 	}
