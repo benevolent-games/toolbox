@@ -1,6 +1,8 @@
 
 import {Pojo} from "@benev/slate"
+import {Quaternion} from "@babylonjs/core/Maths/math.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
+import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
 import {Molasses} from "./utils/molasses.js"
@@ -9,8 +11,6 @@ import {scalar} from "../../../../tools/math/scalar.js"
 import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {configure_animation} from "./configure_animations.js"
 import {process_animation_groups} from "./utils/process_animation_groups.js"
-import { TransformNode } from "@babylonjs/core/Meshes/transformNode.js"
-import { Quaternion } from "@babylonjs/core/Maths/math.js"
 
 export class Choreographer {
 	readonly all_animations: Pojo<AnimationGroup>
@@ -26,11 +26,123 @@ export class Choreographer {
 	#movement_weights = new Molasses(0.1)
 
 	#vertical = new Constrained(0.5, x => scalar.cap(x))
+
 	#horizontal = {
 		capsule: new Constrained(0, x => scalar.wrap(x)),
-		swivel: new Constrained(0.5, x => scalar.cap(x, 0.25, 0.75)),
-		swivel_target: 0.5,
+		swivel: new Constrained(0.5, x => scalar.cap(x)),
+		swivel_center: 0.5,
+		is_yoinking: false,
+		yoink_timeline: {
+			current: 0,
+		},
 	}
+
+	#yoinker = (() => {
+		let yoink: null | {
+			progress: number
+			weight: number
+			direction: "left" | "right"
+		}
+
+		const speed = 1 / 60
+
+		const adjustment_animation = (() => {
+			return {
+
+				play: (direction: "left" | "right") => {
+					const {anims} = this
+
+					if (direction === "left" && anims.legs_stand_adjust_left)
+						anims.legs_stand_adjust_left.play(false)
+
+					else if (direction === "right" && anims.legs_stand_adjust_right)
+						anims.legs_stand_adjust_right.play(false)
+				},
+
+				updateWeight: (weight: number) => {
+					const {anims} = this
+
+					if (anims.legs_stand_adjust_left)
+						anims.legs_stand_adjust_left.weight = weight
+
+					if (anims.legs_stand_adjust_right)
+						anims.legs_stand_adjust_right.weight = weight
+				},
+
+				stop: () => {
+					const {anims} = this
+					anims.legs_stand_adjust_left?.stop()
+					anims.legs_stand_adjust_right?.stop()
+				},
+			}
+		})()
+
+		const consider_starting_the_yoink = () => {
+			if (!yoink) {
+				const swivel = this.#horizontal.swivel.value
+				const in_yoink_territory = !scalar.within(
+					swivel,
+					0.1,
+					0.9,
+				)
+				if (in_yoink_territory) {
+					yoink = {
+						progress: 0,
+						weight: 0,
+						direction: swivel > 0.5
+							? "right"
+							: "left"
+					}
+					adjustment_animation.play(yoink.direction)
+				}
+			}
+		}
+
+		const end_the_yoink = () => {
+			yoink = null
+			adjustment_animation.stop()
+		}
+
+		const tick = ({is_moving}: {is_moving: boolean}) => {
+			consider_starting_the_yoink()
+
+			if (yoink) {
+				yoink.progress += speed
+
+				if (yoink.progress >= 1)
+					end_the_yoink()
+
+				else {
+					yoink.weight = scalar.spline.quickLinear(yoink.progress, [0, 1, 1, 0])
+					adjustment_animation.updateWeight(yoink.weight)
+				}
+			}
+
+			if (yoink || is_moving) {
+				const speed = 0.04
+				const diff = this.#horizontal.swivel_center - this.#horizontal.swivel.value
+
+				if (Math.abs(diff) <= speed) {
+					this.#horizontal.swivel.value = this.#horizontal.swivel_center
+					this.#horizontal.is_yoinking = false
+				}
+				else
+					this.#horizontal.swivel.value += (diff < 0)
+						? -speed
+						: speed
+			}
+		}
+
+		const leg_weight = (w: number) => {
+			const yoinkWeight = yoink?.weight ?? 0
+			return scalar.cap(w - yoinkWeight)
+		}
+
+		return {
+			tick,
+			leg_weight,
+		}
+	})()
 
 	tick(inputs: {
 			look: Vec2
@@ -38,9 +150,9 @@ export class Choreographer {
 		}) {
 
 		const {anims} = this
+		const yoinker = this.#yoinker
 
 		const move = this.#movement_weights.update(inputs.move)
-
 
 		{
 			const move_magnitude = vec2.magnitude(move)
@@ -56,17 +168,8 @@ export class Choreographer {
 				this.#horizontal.capsule.value += x * 0.01
 				this.#horizontal.swivel.value += x * 0.02
 				this.#vertical.value += y * 0.01
-				if (move_magnitude > 0.1) {
-					const diff = this.#horizontal.swivel_target - this.#horizontal.swivel.value
-					const d1 = 0.02
-					const d2 = d1 > Math.abs(diff)
-						? Math.abs(diff)
-						: d1
-					const delta = diff < 0
-						? -d2
-						: d2
-					this.#horizontal.swivel.value += delta
-				}
+
+				yoinker.tick({is_moving: move_magnitude > 0.1})
 			}
 
 			// spine and swivel
@@ -83,11 +186,11 @@ export class Choreographer {
 
 			// legs
 			this.#apply_weights(
-				[anims.legs_stand_stationary, stillness],
-				[anims.legs_stand_forward, w],
-				[anims.legs_stand_backward, s],
-				[anims.legs_stand_leftward, a],
-				[anims.legs_stand_rightward, d],
+				[anims.legs_stand_stationary, yoinker.leg_weight(stillness)],
+				[anims.legs_stand_forward, yoinker.leg_weight(w)],
+				[anims.legs_stand_backward, yoinker.leg_weight(s)],
+				[anims.legs_stand_leftward, yoinker.leg_weight(a)],
+				[anims.legs_stand_rightward, yoinker.leg_weight(d)],
 			)
 
 			// arms

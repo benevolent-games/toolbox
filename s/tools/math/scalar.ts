@@ -76,39 +76,74 @@ export namespace scalar {
 		return fraction * (b2 - b1) + b1
 	}
 
-	export function spline(n: number, points: number[]): number {
-		if (points.length < 2)
-			throw new Error("spline must have at least two points")
+	export namespace spline {
+		export function quickLinear(x: number, points: number[]) {
+			if (points.length < 2)
+				throw new Error("need at least two points, come on")
 
-		n = cap(n)
+			const points2 = points.map(
+				(p, index): Vec2 =>
+					[cap(index / (points.length - 1)), p]
+			)
 
-		// normalize n to the number of segments in the points array
-		const maxIndex = points.length - 1
-		const scaledN = n * maxIndex
-		const i = Math.floor(scaledN)
+			return linear(x, points2)
+		}
 
-		// handle edge cases for the start and end of the points array
-		const p0 = points[Math.max(i - 1, 0)]
-		const p1 = points[i]
-		const p2 = points[Math.min(i + 1, maxIndex)]
-		const p3 = points[Math.min(i + 2, maxIndex)]
+		export function linear(x: number, points: Vec2[]): number {
+			if (points.length < 2)
+				throw new Error("need at least two points, come on")
 
-		// perform catmull-rom interpolation
-		const t = scaledN - i
-		return internal.catmullRom(p0, p1, p2, p3, t)
-	}
+			for (let i = 0; i < points.length - 1; i++) {
+				const [x0, y0] = points[i]
+				const [x1, y1] = points[i + 1]
 
-	//
-	// private internal helpers
-	//
+				if (x >= x0 && x <= x1) {
+					const t = (x - x0) / (x1 - x0)
+					return y0 + t * (y1 - y0)
+				}
+			}
 
-	namespace internal {
-		export function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number): number {
-			const v0 = (p2 - p0) * 0.5
-			const v1 = (p3 - p1) * 0.5
-			const t2 = t * t
-			const t3 = t * t2
-			return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1
+			throw new Error("x is out of bounds, what are you even doing")
+		}
+
+		export function catmullRom(x: number, points: Vec2[]) {
+			if (points.length < 4)
+				throw new Error("need at least four points for this magic")
+
+			// find the segment where 'x' fits
+			for (let i = 1; i < points.length - 2; i++) {
+				const [x1, ] = points[i]
+				const [x2, ] = points[i + 1]
+
+				if (x >= x1 && x <= x2) {
+					const t = (x - x1) / (x2 - x1)
+					return helpers.catmullRom(t, points[i - 1], points[i], points[i + 1], points[i + 2])
+				}
+			}
+
+			throw new Error("x is out of bounds, try again")
+		}
+
+		namespace helpers {
+			export function catmullRom(
+					t: number,
+					[,p0]: Vec2,
+					[,p1]: Vec2,
+					[,p2]: Vec2,
+					[,p3]: Vec2,
+				) {
+
+				const t2 = t * t
+				const t3 = t2 * t
+
+				// coefficients for the cubic polynomial (Catmull-Rom)
+				const a = -0.5 * p0 + 1.5 * p1 - 1.5 * p2 + 0.5 * p3
+				const b = p0 - 2.5 * p1 + 2 * p2 - 0.5 * p3
+				const c = -0.5 * p0 + 0.5 * p2
+				const d = p1
+
+				return a * t3 + b * t2 + c * t + d
+			}
 		}
 	}
 }

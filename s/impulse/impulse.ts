@@ -1,5 +1,4 @@
 
-
 import {Pub, flat, ob, pub} from "@benev/slate"
 
 import {Input} from "./input.js"
@@ -48,19 +47,17 @@ export class Impulse<B extends Binds> {
 
 		this.modes.assign(...modes)
 
-		this.report = ob.map(
-			binds,
+		this.report = ob(binds).map(
 			({buttons, vectors}) => ({
-				buttons: flat.state(ob.map(buttons, () => false)) as any,
-				vectors: flat.state(ob.map(vectors, () => vec2.zero())) as any,
+				buttons: flat.state(ob(buttons).map(() => false)) as any,
+				vectors: flat.state(ob(vectors).map(() => vec2.zero())) as any,
 			}),
 		)
 
-		this.on = ob.map(
-			binds,
+		this.on = ob(binds).map(
 			({buttons, vectors}) => ({
-				buttons: ob.map(buttons, () => pub()) as any,
-				vectors: ob.map(vectors, () => pub()) as any,
+				buttons: ob(buttons).map(() => pub()) as any,
+				vectors: ob(vectors).map(() => pub()) as any,
 			}),
 		)
 	}

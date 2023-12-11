@@ -17,7 +17,7 @@ export const NubStickGraphic = nub_nexus.shadow_view(use => (
 	use.name("nub-stick-graphic")
 	use.styles(styles)
 
-	const basis = use.afterRender(() => {
+	const basis = use.defer(() => {
 		const basis = calculate_basis(
 			use.shadow.querySelector<HTMLElement>(`[part="base"]`)!,
 			use.shadow.querySelector<HTMLElement>(`[part="over"]`)!,

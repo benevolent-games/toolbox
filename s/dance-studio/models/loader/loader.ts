@@ -1,9 +1,10 @@
 
-import {Op, explode_promise, signals} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
+import {Op, explode_promise, signals} from "@benev/slate"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 
 import {Glb} from "./utils/types.js"
+import {nap} from "../../../tools/nap.js"
 import {Choreographer} from "./choreographer/choreographer.js"
 
 export class Loader {
@@ -30,7 +31,10 @@ export class Loader {
 
 	async ingest(file: File) {
 		await this.unload_glb()
-		await this.glb.load(() => this.#load_glb_asset_container(fileData(file)))
+		await this.glb.load(async() => {
+			await nap(200)
+			return this.#load_glb_asset_container(fileData(file))
+		})
 	}
 
 	async ingest_but_actually_fail() {

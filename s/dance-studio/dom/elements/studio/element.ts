@@ -11,7 +11,7 @@ export const DanceStudio = nexus.shadow_component(use => {
 
 	const {world, loader} = use.context
 
-	const drop = use.prepare(() => new ShockDrop({
+	const drop = use.once(() => new ShockDrop({
 		predicate: event => drag_has_files(event),
 		async handle_drop(event) {
 			const [file] = dropped_files(event)

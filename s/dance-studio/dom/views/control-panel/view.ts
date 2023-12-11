@@ -12,17 +12,17 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 	use.styles(styles)
 
 	const {world, loader} = use.context
-	const moveStick = use.prepare(() => new Stick("move"))
-	const lookStick = use.prepare(() => new Stick("look"))
-	const cameraStick = use.prepare(() => new Stick("camera"))
+	const moveStick = use.once(() => new Stick("move"))
+	const lookStick = use.once(() => new Stick("look"))
+	const cameraStick = use.once(() => new Stick("camera"))
 
-	const apply_to_camera = use.prepare(() => ([x, y]: Vec2) => {
+	const apply_to_camera = use.once(() => ([x, y]: Vec2) => {
 		const sensitivity = 1 / 100
 		world.cameraRig.zoom += y * sensitivity
 		world.cameraRig.swivel += x * sensitivity
 	})
 
-	use.setup(() => world.onTick(() => {
+	use.once(() => world.onTick(() => {
 		apply_to_camera(cameraStick.vector)
 
 		const glb = loader.glb.payload

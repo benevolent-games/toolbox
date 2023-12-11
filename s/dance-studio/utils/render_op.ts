@@ -1,27 +1,26 @@
 
 import {nexus} from "../nexus.js"
-import {css, html, prep_render_op} from "@benev/slate"
+import {css, html, interval, prep_render_op} from "@benev/slate"
 
 export const ErrorIndicator = nexus.shadow_view(use => (reason: string) => {
 	use.name("error-indicator")
 	use.styles(styles.error)
-	return html`${reason}`
+
+	return html`${reason || "unknown error"}`
 })
 
 export const LoadingIndicator = nexus.shadow_view(use => () => {
-	use.name("error-indicator")
+	use.name("loading-indicator")
 	use.styles(styles.loading)
+
 	const frame = use.signal(6)
 
-	use.setup(() => {
-		const id = setInterval(() => {
-			const next = frame.value + 1
-			frame.value = (next < loading_frames.length)
-				? next
-				: 0
-		}, 1000 / 20)
-		return () => clearInterval(id)
-	})
+	use.mount(() => interval(20, () => {
+		const next = frame.value + 1
+		frame.value = (next < loading_frames.length)
+			? next
+			: 0
+	}))
 
 	return html`${loading_frames[frame.value]}`
 })

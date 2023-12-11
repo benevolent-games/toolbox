@@ -16,7 +16,7 @@ export const NubStick = nub_nexus.shadow_view(use => (stick: Stick) => {
 	let basis: Basis | undefined = undefined
 	const updateBasis = (b: Basis) => basis = b
 
-	const listeners = use.prepare(() => make_pointer_listeners({
+	const listeners = use.once(() => make_pointer_listeners({
 		set_vector: vector => stick.vector = vector,
 		set_pointer_position: position => {
 			if (basis)

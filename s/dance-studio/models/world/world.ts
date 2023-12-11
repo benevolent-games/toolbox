@@ -5,7 +5,7 @@ import "@babylonjs/core/Culling/ray.js"
 import "@babylonjs/core/Rendering/edgesRenderer.js"
 import "@babylonjs/core/Animations/index.js"
 
-import {pub} from "@benev/slate"
+import {interval, pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color4} from "@babylonjs/core/Maths/math.color.js"
@@ -15,7 +15,6 @@ import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 import {Viewport} from "./utils/viewport.js"
 import {CameraRig} from "./utils/camera_rig.js"
 import {GridFloor} from "./utils/grid_floor.js"
-import {interval} from "../../../tools/interval.js"
 
 export class World {
 	viewport = new Viewport()
