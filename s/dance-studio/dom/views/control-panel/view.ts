@@ -13,6 +13,7 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 
 	const {world, loader} = use.context
 	const moveStick = use.prepare(() => new Stick("move"))
+	const lookStick = use.prepare(() => new Stick("look"))
 	const cameraStick = use.prepare(() => new Stick("camera"))
 
 	const apply_to_camera = use.prepare(() => ([x, y]: Vec2) => {
@@ -25,12 +26,17 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 		apply_to_camera(cameraStick.vector)
 
 		const glb = loader.glb.payload
-		if (glb)
-			glb.choreographer.tick({ambulate: moveStick.vector})
+		if (glb) {
+			glb.choreographer.tick({
+				move: moveStick.vector,
+				look: lookStick.vector,
+			})
+		}
 	}))
 
 	return html`
 		${NubStick([moveStick])}
+		${NubStick([lookStick])}
 		${NubStick([cameraStick])}
 	`
 })

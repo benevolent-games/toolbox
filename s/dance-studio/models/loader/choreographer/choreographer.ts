@@ -3,48 +3,11 @@ import {Pojo} from "@benev/slate"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
 import {Molasses} from "./utils/molasses.js"
-import {AnimLibrary} from "./utils/types.js"
-import {Vec2, vec2} from "../../../../tools/math/vec2.js"
+import {Constrained} from "./utils/constrained.js"
 import {scalar} from "../../../../tools/math/scalar.js"
-import {activate_animations} from "./utils/active_animations.js"
+import {Vec2, vec2} from "../../../../tools/math/vec2.js"
+import {configure_animation} from "./configure_animations.js"
 import {process_animation_groups} from "./utils/process_animation_groups.js"
-
-// function configure_animation(anims: AnimLibrary) {
-// 	return activate_animations(anims, [
-// 		["idle", "weighted_looper"],
-
-// 		["legs_running", "weighted_looper"],
-// 		["legs_strafeleft", "weighted_looper"],
-// 		["legs_straferight", "weighted_looper"],
-// 		["runningbackwards", "weighted_looper"],
-
-// 		["arms_running", "weighted_looper"],
-// 		["arms_strafeleft", "weighted_looper"],
-// 		["arms_straferight", "weighted_looper"],
-// 	])
-// }
-
-function configure_animation(anims: AnimLibrary) {
-	return activate_animations(anims, [
-		["spine", "primary"],
-
-		["swivel", "primary"],
-		["legs_stand_adjust_left", "weighted_looper"],
-		["legs_stand_adjust_right", "weighted_looper"],
-
-		["legs_stand_stationary", "weighted_looper"],
-		["legs_stand_forward", "weighted_looper"],
-		["legs_stand_backward", "weighted_looper"],
-		["legs_stand_leftward", "weighted_looper"],
-		["legs_stand_rightward", "weighted_looper"],
-
-		["arms_stand_unequipped_stationary", "weighted_looper"],
-		["arms_stand_unequipped_forward", "weighted_looper"],
-		["arms_stand_unequipped_backward", "weighted_looper"],
-		["arms_stand_unequipped_leftward", "weighted_looper"],
-		["arms_stand_unequipped_rightward", "weighted_looper"],
-	])
-}
 
 export class Choreographer {
 	all_animations: Pojo<AnimationGroup>
@@ -55,18 +18,29 @@ export class Choreographer {
 		this.anims = configure_animation(this.all_animations)
 	}
 
-	#ambulation_weights = new Molasses(0.1)
+	#movement_weights = new Molasses(0.1)
+
+	#vertical = new Constrained(0.5, x => scalar.cap(x))
+	#horizontal = new Constrained(0, x => scalar.cap(x))
 
 	tick(inputs: {
-			ambulate: Vec2
+			look: Vec2
+			move: Vec2
 		}) {
 
 		const {anims} = this
-		const ambulate = this.#ambulation_weights.update(inputs.ambulate)
+
+		const move = this.#movement_weights.update(inputs.move)
 
 		{
-			const stillness = scalar.cap(1 - vec2.magnitude(ambulate), 0, 1)
-			const [x, y] = ambulate
+			const [x, y] = inputs.look
+			this.#horizontal.value += x * 0.01
+			this.#vertical.value += y * 0.01
+		}
+
+		{
+			const stillness = scalar.cap(1 - vec2.magnitude(move), 0, 1)
+			const [x, y] = move
 			const w = scalar.cap(y, 0, 1)
 			const a = -scalar.cap(x, -1, 0)
 			const s = -scalar.cap(y, -1, 0)
@@ -77,6 +51,8 @@ export class Choreographer {
 				[anims.spine, 1.0],
 				[anims.swivel, 1.0],
 			)
+			anims.swivel?.goToFrame(this.#horizontal.value * 1000)
+			anims.spine?.goToFrame(this.#vertical.value * 1000)
 
 			// legs
 			this.#apply_weights(
@@ -95,21 +71,6 @@ export class Choreographer {
 				[anims.arms_stand_unequipped_leftward, a],
 				[anims.arms_stand_unequipped_rightward, d],
 			)
-
-			// this.#apply_weights(
-			// 	[anims.idle, idleness],
-
-			// 	[anims.legs_running, w],
-			// 	[anims.arms_running, w],
-
-			// 	[anims.runningbackwards, s],
-
-			// 	[anims.legs_strafeleft, a],
-			// 	[anims.arms_strafeleft, a],
-
-			// 	[anims.legs_straferight, d],
-			// 	[anims.arms_straferight, d],
-			// )
 		}
 
 	}

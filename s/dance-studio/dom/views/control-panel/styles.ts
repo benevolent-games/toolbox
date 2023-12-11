@@ -9,9 +9,7 @@ export const styles = css`
 }
 
 [view="nub-stick"] {
-	flex: 0 0 50%;
-	width: 10em;
-	max-width: 40%;
+	flex: 0 0 25%;
 	--nub-stick-background: #fff1;
 	--nub-stick-color: #888a;
 }
