@@ -5,7 +5,6 @@ import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 
 import {Glb} from "./utils/types.js"
 import {Choreographer} from "./choreographer/choreographer.js"
-import { nap } from "@benev/turtle"
 
 export class Loader {
 	#scene: Scene
@@ -93,7 +92,7 @@ export class Loader {
 			container,
 			filename,
 			filesize,
-			choreographer: new Choreographer(container.animationGroups),
+			choreographer: new Choreographer(container),
 		}
 	}
 }
