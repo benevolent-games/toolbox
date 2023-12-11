@@ -22,9 +22,9 @@ export default template(async basic => {
 					<img class=logo src="https://benevolent.games/assets/benevolent.svg" alt=""/>
 				</a>
 				<h1>
-					<span>"dance-studio"</span>
-					<span>—</span>
 					<a href="/">@benev/toolbox</a>
+					<span>—</span>
+					<span>"dance-studio"</span>
 				</h1>
 			</header>
 			<dance-studio></dance-studio>
