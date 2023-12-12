@@ -14,9 +14,11 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 	const {loader} = use.context
 
 	function render_glb(glb: Glb) {
-		const {anims, all_animations} = glb.choreographer
-		const all_anim_keys = Object.keys(all_animations)
-		const active_anim_keys = Object.keys(anims)
+		const {anims} = glb.choreographer
+		const all_anim_names = glb.all_animations.map(a => a.name)
+		const active_anim_names = Object.entries(anims)
+			.filter(([,anim]) => anim.is_available)
+			.map(([key]) => key)
 
 		return html`
 			<p><strong>${glb.filename}</strong></p>
@@ -24,18 +26,20 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 				<span>${human.megabytes(glb.filesize)}</span>
 				<button class=based @click="${() => loader.unload_glb()}">unload</button>
 			</p>
+
 			<ul class=anims>
-				${Object.entries(all_animations).map(([animName, animGroup]) => html`
-					<li ?data-active="${active_anim_keys.includes(animName)}">
-						<span>${animName}</span>
+				${glb.all_animations.map(animGroup => html`
+					<li ?data-active="${active_anim_names.includes(animGroup.name)}">
+						<span>${animGroup.name}</span>
 						<span>${animGroup.targetedAnimations.length}</span>
 					</li>
 				`)}
 			</ul>
+
 			<ul class=missing-anims>
-				${Object.entries(anims)
-					.filter(([animName]) => !all_anim_keys.includes(animName))
-					.map(([animName]) => html`
+				${active_anim_names
+					.filter(animName => !all_anim_names.includes(animName))
+					.map(animName => html`
 						<li>
 							<span>${animName}</span>
 						</li>

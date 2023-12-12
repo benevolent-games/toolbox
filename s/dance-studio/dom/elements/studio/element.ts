@@ -15,7 +15,7 @@ export const DanceStudio = nexus.shadow_component(use => {
 		predicate: event => drag_has_files(event),
 		async handle_drop(event) {
 			const [file] = dropped_files(event)
-			loader.ingest(file)
+			loader.ingest_file(file)
 		},
 	}))
 

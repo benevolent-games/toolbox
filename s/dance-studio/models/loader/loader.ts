@@ -1,11 +1,18 @@
 
+import {Op, signals} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
-import {Op, explode_promise, signals} from "@benev/slate"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 
-import {Glb} from "./utils/types.js"
 import {nap} from "../../../tools/nap.js"
+import {download} from "./utils/download.js"
+import {fileData} from "./utils/file_data.js"
+import {FileData, Glb} from "./utils/types.js"
 import {Choreographer} from "./choreographer/choreographer.js"
+import {CharacterInstance} from "./character/character_instance.js"
+
+import {anim_blueprint} from "./character/anim_blueprint.js"
+import {fix_animation_groups} from "./character/utils/fix_animation_groups.js"
+import {process_original_animations} from "./character/utils/process_original_animations.js"
 
 export class Loader {
 	#scene: Scene
@@ -29,32 +36,11 @@ export class Loader {
 		}
 	}
 
-	async ingest(file: File) {
+	async ingest_file(file: File) {
 		await this.unload_glb()
 		await this.glb.load(async() => {
 			await nap(200)
 			return this.#load_glb_asset_container(fileData(file))
-		})
-	}
-
-	async ingest_but_actually_fail() {
-		await this.unload_glb()
-		await this.glb.load(async() => {
-			const {promise, resolve} = explode_promise<FileData | null>()
-			const abort = () => resolve(null)
-			this.#abort = async() => {
-				abort()
-				return new Promise(resolve => this.glb.once(() => resolve()))
-			}
-			try {
-				const file = await promise
-				return file
-					? await this.#load_glb_asset_container(file)
-					: null
-			}
-			finally {
-				this.#abort = null
-			}
 		})
 	}
 
@@ -79,7 +65,7 @@ export class Loader {
 	}
 
 	async #load_glb_asset_container(
-			{objectUrl, filename, filesize}: FileData
+			{objectUrl, filename, filesize, revokeObjectUrl}: FileData
 		): Promise<Glb> {
 
 		const container = await SceneLoader.LoadAssetContainerAsync(
@@ -90,70 +76,19 @@ export class Loader {
 			".glb",
 		)
 
-		container.addAllToScene()
+		revokeObjectUrl()
+
+		fix_animation_groups(container.animationGroups)
 
 		return {
 			container,
 			filename,
 			filesize,
-			choreographer: new Choreographer(container),
+			all_animations: [...container.animationGroups],
+			choreographer: new Choreographer(
+				new CharacterInstance(container, [0, 0, 0])
+			),
 		}
 	}
-}
-
-export type FileData = {
-	objectUrl: string
-	filename: string
-	filesize: number
-	revoke: () => void
-}
-
-export type Download = {
-	abort: () => void
-	promise: Promise<FileData | null>
-}
-
-function fileData(file: File): FileData {
-	const objectUrl = URL.createObjectURL(file)
-	const revoke = () => URL.revokeObjectURL(objectUrl)
-	return {
-		objectUrl,
-		revoke,
-		filename: file.name,
-		filesize: file.size,
-	}
-}
-
-function download(url: string): Download {
-	const abortController = new AbortController()
-	const abort = () => abortController.abort()
-	const filename = new URL(url).pathname.split("/").at(-1) ?? "unknown"
-
-	const promise = fetch(url, {signal: abortController.signal})
-		.then(response => {
-			if (!response.ok)
-				throw new Error(`failed to load "${filename}"`)
-			return response
-		})
-		.then(response => response.blob())
-		.then(blob => {
-			const objectUrl = URL.createObjectURL(blob)
-			const revoke = () => URL.revokeObjectURL(objectUrl)
-			const data: FileData = {
-				objectUrl,
-				revoke,
-				filename,
-				filesize: blob.size,
-			}
-			return data
-		})
-		.catch(error => {
-			if (error.name === "AbortError")
-				return null
-			else
-				throw error
-		})
-
-	return {abort, promise}
 }
 
