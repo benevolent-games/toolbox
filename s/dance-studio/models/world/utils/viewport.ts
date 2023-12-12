@@ -1,4 +1,6 @@
 
+import {debounce} from "@benev/slate"
+
 export class Viewport {
 	#resolution = 1.0
 	readonly canvas = document.createElement("canvas")
@@ -21,11 +23,11 @@ export class Viewport {
 		this.#recompute_resolution_for_size()
 	}
 
-	#recompute_resolution_for_size() {
+	#recompute_resolution_for_size = debounce(100, () => {
 		const {canvas} = this
 		const rect = canvas.getBoundingClientRect()
 		canvas.width = rect.width
 		canvas.height = rect.height
-	}
+	})
 }
 
