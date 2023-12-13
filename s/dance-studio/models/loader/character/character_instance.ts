@@ -26,7 +26,7 @@ export class CharacterInstance {
 
 		this.root = root
 		this.anims = process_cloned_animations(instanced.animationGroups)
-		this.dispose = instanced.dispose
+		this.dispose = () => instanced.dispose()
 	}
 }
 

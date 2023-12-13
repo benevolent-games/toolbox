@@ -12,13 +12,30 @@ export class Anim {
 		return !!this.#group
 	}
 
+	get from() {
+		return this.#group?.from ?? 0
+	}
+
+	get to() {
+		return this.#group?.to ?? 0
+	}
+
 	get weight() {
 		return this.#group?.weight ?? 0
 	}
 
-	set weight(w: number) {
+	set weight(n: number) {
 		if (this.#group)
-			this.#group.weight = w
+			this.#group.weight = n
+	}
+
+	get speedRatio() {
+		return this.#group?.speedRatio ?? 1
+	}
+
+	set speedRatio(n: number) {
+		if (this.#group)
+			this.#group.speedRatio = n
 	}
 
 	get playOrder() {

@@ -10,13 +10,8 @@ export class Molasses {
 		this.#delta = delta
 	}
 
-	#cap_scalar_to_delta_positive_or_negative(n: number) {
-		const delta = this.#delta
-		return scalar.within(n, -delta, delta)
-			? n
-			: n < 0
-				? -delta
-				: delta
+	get vector() {
+		return this.#current
 	}
 
 	update(target: Vec2) {
@@ -26,6 +21,15 @@ export class Molasses {
 			this.#cap_scalar_to_delta_positive_or_negative(y),
 		])
 		return this.#current
+	}
+
+	#cap_scalar_to_delta_positive_or_negative(n: number) {
+		const delta = this.#delta
+		return scalar.within(n, -delta, delta)
+			? n
+			: n < 0
+				? -delta
+				: delta
 	}
 }
 

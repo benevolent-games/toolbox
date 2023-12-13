@@ -10,16 +10,20 @@ export class Strider {
 		this.#vector = new Molasses(speed)
 	}
 
+	get vector() { return this.#vector.vector }
+	get x() { return this.vector[0] }
+	get y() { return this.vector[1] }
+
+	get magnitude() { return vec2.magnitude(this.vector) }
+	get stillness() { return scalar.cap(1 - this.magnitude, 0, 1) }
+
+	get north() { return scalar.cap(this.y, 0, 1) }
+	get west() { return -scalar.cap(this.x, -1, 0) }
+	get south() { return -scalar.cap(this.y, -1, 0) }
+	get east() { return scalar.cap(this.x, 0, 1) }
+
 	update(target: Vec2) {
-		const vector = this.#vector.update(target)
-		const magnitude = vec2.magnitude(vector)
-		const stillness = scalar.cap(1 - magnitude, 0, 1)
-		const [x, y] = vector
-		const north = scalar.cap(y, 0, 1)
-		const west = -scalar.cap(x, -1, 0)
-		const south = -scalar.cap(y, -1, 0)
-		const east = scalar.cap(x, 0, 1)
-		return {magnitude, stillness, north, west, south, east}
+		this.#vector.update(target)
 	}
 }
 

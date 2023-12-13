@@ -9,10 +9,7 @@ import {fileData} from "./utils/file_data.js"
 import {FileData, Glb} from "./utils/types.js"
 import {Choreographer} from "./choreographer/choreographer.js"
 import {CharacterInstance} from "./character/character_instance.js"
-
-import {anim_blueprint} from "./character/anim_blueprint.js"
 import {fix_animation_groups} from "./character/utils/fix_animation_groups.js"
-import {process_original_animations} from "./character/utils/process_original_animations.js"
 
 export class Loader {
 	#scene: Scene
@@ -27,8 +24,7 @@ export class Loader {
 	async unload_glb() {
 		const glb = this.glb.payload
 		if (glb) {
-			glb.container.removeAllFromScene()
-			glb.container.dispose()
+			glb.dispose()
 			this.glb.setReady(null)
 		}
 		else if (this.#abort) {
@@ -77,17 +73,21 @@ export class Loader {
 		)
 
 		revokeObjectUrl()
-
+		container.removeAllFromScene()
 		fix_animation_groups(container.animationGroups)
+		const character = new CharacterInstance(container, [0, 0, 0])
 
 		return {
 			container,
 			filename,
 			filesize,
 			all_animations: [...container.animationGroups],
-			choreographer: new Choreographer(
-				new CharacterInstance(container, [0, 0, 0])
-			),
+			choreographer: new Choreographer(character),
+			dispose: () => {
+				character.dispose()
+				container.removeAllFromScene()
+				container.dispose()
+			},
 		}
 	}
 }

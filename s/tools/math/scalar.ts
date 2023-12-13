@@ -93,6 +93,8 @@ export namespace scalar {
 			if (points.length < 2)
 				throw new Error("need at least two points, come on")
 
+			x = cap(x)
+
 			for (let i = 0; i < points.length - 1; i++) {
 				const [x0, y0] = points[i]
 				const [x1, y1] = points[i + 1]
@@ -109,6 +111,8 @@ export namespace scalar {
 		export function catmullRom(x: number, points: Vec2[]) {
 			if (points.length < 4)
 				throw new Error("need at least four points for this magic")
+
+			x = cap(x)
 
 			// find the segment where 'x' fits
 			for (let i = 1; i < points.length - 2; i++) {

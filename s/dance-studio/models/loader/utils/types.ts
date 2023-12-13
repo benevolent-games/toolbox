@@ -9,6 +9,7 @@ export type Glb = {
 	filesize: number
 	all_animations: AnimationGroup[]
 	choreographer: Choreographer
+	dispose: () => void
 }
 
 export type FileData = {

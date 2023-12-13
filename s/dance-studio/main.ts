@@ -8,3 +8,5 @@ register_to_dom({DanceStudio})
 
 // nexus.context.loader.ingest_glb_from_url("https://filebin.net/eomque4qqcqr3nqb/bungledanimations15.glb")
 
+;(window as any).nexus = nexus
+
