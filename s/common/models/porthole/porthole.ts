@@ -1,7 +1,7 @@
 
 import {debounce} from "@benev/slate"
 
-export class Viewport {
+export class Porthole {
 	#resolution = 1.0
 	readonly canvas = document.createElement("canvas")
 
@@ -9,7 +9,6 @@ export class Viewport {
 		const {canvas} = this
 		canvas.width = 400
 		canvas.height = 400
-
 		new ResizeObserver(() => this.#recompute_resolution_for_size())
 			.observe(canvas)
 	}
@@ -26,8 +25,8 @@ export class Viewport {
 	#recompute_resolution_for_size = debounce(100, () => {
 		const {canvas} = this
 		const rect = canvas.getBoundingClientRect()
-		canvas.width = rect.width
-		canvas.height = rect.height
+		canvas.width = rect.width * this.#resolution
+		canvas.height = rect.height * this.#resolution
 	})
 }
 

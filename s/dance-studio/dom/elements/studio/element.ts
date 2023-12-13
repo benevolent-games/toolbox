@@ -27,7 +27,7 @@ export const DanceStudio = nexus.shadow_component(use => {
 			@drop="${drop.drop}"
 			?data-drop="${drop.indicator}">
 
-			${world.viewport.canvas}
+			${world.porthole.canvas}
 
 			<div class=panel>
 				${ControlPanel([])}

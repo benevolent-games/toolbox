@@ -29,7 +29,11 @@ export default template(async basic => {
 				<li>
 					<a href="/dance-studio/">
 						<strong>dance-studio</strong>
-						<span>character animation gym</span>
+						<span>character animation testing</span>
+					</a>
+					<a href="/humanoid/">
+						<strong>humanoid</strong>
+						<span>character controller gym</span>
 					</a>
 				</li>
 			</ul>

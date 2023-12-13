@@ -1,10 +1,4 @@
 
-import "@babylonjs/loaders/glTF/index.js"
-import "@babylonjs/core/Engines/index.js"
-import "@babylonjs/core/Culling/ray.js"
-import "@babylonjs/core/Rendering/edgesRenderer.js"
-import "@babylonjs/core/Animations/index.js"
-
 import {interval, pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
@@ -12,13 +6,13 @@ import {Color4} from "@babylonjs/core/Maths/math.color.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 
-import {Viewport} from "./utils/viewport.js"
 import {CameraRig} from "./utils/camera_rig.js"
 import {GridFloor} from "./utils/grid_floor.js"
+import {Porthole} from "../../../common/models/porthole/porthole.js"
 
 export class World {
-	viewport = new Viewport()
-	engine = new Engine(this.viewport.canvas)
+	porthole = new Porthole()
+	engine = new Engine(this.porthole.canvas)
 	scene = new Scene(this.engine)
 	cameraRig = new CameraRig(this.scene)
 
