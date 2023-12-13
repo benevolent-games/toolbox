@@ -32,7 +32,7 @@ export class Loader {
 		}
 	}
 
-	async ingest_file(file: File) {
+	async ingest_glb(file: File) {
 		await this.unload_glb()
 		await this.glb.load(async() => {
 			await nap(200)
