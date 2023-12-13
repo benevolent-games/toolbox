@@ -6,6 +6,7 @@ import {nexus} from "../../../nexus.js"
 import {human} from "../../../../tools/human.js"
 import {render_op} from "../../../utils/render_op.js"
 import {Glb} from "../../../models/loader/utils/types.js"
+import { anim_title } from "./utils/anim_title.js"
 
 export const GlbPanel = nexus.shadow_view(use => () => {
 	use.name("glb-panel")
@@ -29,7 +30,9 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 
 			<ul class=anims>
 				${glb.all_animations.map(animGroup => html`
-					<li ?data-active="${active_anim_names.includes(animGroup.name)}">
+					<li
+						title="${anim_title(animGroup)}"
+						?data-active="${active_anim_names.includes(animGroup.name)}">
 						<span>${animGroup.name}</span>
 						<span>${animGroup.targetedAnimations.length}</span>
 					</li>
