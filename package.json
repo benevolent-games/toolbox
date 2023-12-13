@@ -21,7 +21,7 @@
 		"test": "cynic node x/tests.test.js"
 	},
 	"dependencies": {
-		"@benev/slate": "^0.1.0-x.4",
+		"@benev/slate": "^0.1.0-x.6",
 		"lit": "^3.1.0",
 		"simplex-noise": "^4.0.1"
 	},
