@@ -59,6 +59,10 @@ jobs:
         cp -r node_modules/ x/
         cp -r s/ x/
 
+    - name: 🗑️ delete temp symlink
+      run: |
+        rm -rf x/temp
+
     - name: 📝 configure pages
       uses: actions/configure-pages@v2
 
