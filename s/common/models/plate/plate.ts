@@ -1,14 +1,19 @@
 
 import {interval, pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
-import {scalar} from "../../../tools/math/scalar.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color4, Vector3} from "@babylonjs/core/Maths/math.js"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {SSAO2RenderingPipeline, SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/index.js"
 
+import {scalar} from "../../../tools/math/scalar.js"
+import {Camera} from "@babylonjs/core/Cameras/camera.js"
+import {fix_animation_groups} from "../../../dance-studio/models/loader/character/utils/fix_animation_groups.js"
+
 export class Plate {
+	#running = false
+
 	engine: Engine
 	scene: Scene
 	fallbackCamera: ArcRotateCamera
@@ -19,6 +24,17 @@ export class Plate {
 	constructor(canvas: HTMLCanvasElement) {
 		this.engine = new Engine(canvas)
 		this.scene = new Scene(this.engine)
+
+		this.scene.clearColor = new Color4(
+			0.1, 0.1, 0.1, 1,
+		)
+
+		const ssao = new SSAO2RenderingPipeline("ssao", this.scene, 0.75)
+		ssao.totalStrength = 3
+		ssao.radius = 5
+
+		const ssr = new SSRRenderingPipeline("ssr", this.scene)
+		ssr.reflectivityThreshold = 0
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
@@ -32,28 +48,36 @@ export class Plate {
 			)
 		})()
 
-		this.scene.clearColor = new Color4(
-			0.1, 0.1, 0.1, 1,
-		)
-
-		const ssao = new SSAO2RenderingPipeline("ssaopipeline", this.scene, 0.75)
-		ssao.totalStrength = 3
-		ssao.radius = 5
-
-		new SSRRenderingPipeline("ssr", this.scene)
-
 		let degrees = 0
 
 		interval(60, () => {
-			degrees = scalar.wrap(degrees + 0.1, 0, 360)
-			this.fallbackCamera.alpha = scalar.radians(degrees)
+			if (this.scene.activeCamera === this.fallbackCamera) {
+				degrees = scalar.wrap(degrees + 0.1, 0, 360)
+				this.fallbackCamera.alpha = scalar.radians(degrees)
+			}
 			this.onTick.publish()
 		})
+	}
 
-		this.engine.runRenderLoop(() => {
-			this.onRender.publish()
-			this.scene.render()
-		})
+	start() {
+		if (!this.#running) {
+			this.engine.runRenderLoop(() => {
+				this.onRender.publish()
+				this.scene.render()
+			})
+			this.#running = true
+		}
+	}
+
+	stop() {
+		if (this.#running) {
+			this.engine.stopRenderLoop()
+			this.#running = false
+		}
+	}
+
+	setCamera(camera: Camera = this.fallbackCamera) {
+		this.scene.activeCamera = camera
 	}
 
 	async load_glb(url: string) {
@@ -64,7 +88,12 @@ export class Plate {
 			() => {},
 			".glb",
 		)
+
 		container.removeAllFromScene()
+
+		if (container.animationGroups.length)
+			fix_animation_groups(container.animationGroups)
+
 		return container
 	}
 }
