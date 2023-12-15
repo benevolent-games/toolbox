@@ -2,7 +2,7 @@
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 
 import {make_realm} from "./make.js"
-import {Spectator} from "../spectator/spectator.js"
+// import {Spectator} from "../spectator/spectator.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
 import {Plate} from "../../../common/models/plate/plate.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
@@ -32,8 +32,8 @@ export class Realm {
 		this.#impulse = new HumanoidImpulse()
 
 		const {plate} = params
-		const spectator = new Spectator(plate, this.#impulse)
-		plate.setCamera(spectator.camera)
+		// const spectator = new Spectator(plate, this.#impulse)
+		// plate.setCamera(spectator.camera)
 
 		plate.start()
 	}

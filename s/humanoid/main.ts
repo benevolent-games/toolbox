@@ -14,6 +14,11 @@ import {nexus} from "./nexus.js"
 import {Realm} from "./models/realm/realm.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 
+import {Core} from "../core/core.js"
+import {HumanoidSchema} from "./ecs/schema.js"
+import {modelSystem} from "./ecs/systems/model/system.js"
+import {lightSystem} from "./ecs/systems/light/system.js"
+
 register_to_dom({BenevHumanoid})
 
 ;(window as any).nexus = nexus
@@ -29,6 +34,26 @@ const realm = await nexus.context.realmOp.load(
 		},
 	})
 )
+
+const entities = new Core.Entities<HumanoidSchema>()
+
+entities.create({model: {container: "gym"}})
+entities.create({light: {
+	type: "hemi",
+	direction: [0.234, 1, 0.123],
+	intensity: 0.5,
+}})
+
+const executor = new Core.Executor({
+	entities,
+	realm,
+}, [
+	lightSystem,
+	modelSystem,
+])
+
+let count = 0
+realm.plate.onTick(() => executor.tick({tick: count++}))
 
 console.log("realm", realm)
 
