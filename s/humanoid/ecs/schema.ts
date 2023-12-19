@@ -15,6 +15,9 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		scale: Vec3
 	}
 	gimbal: Vec2
+	flyControls: {
+		speed: 1,
+	}
 	camera: {
 		attachment: "transform" | "gimbal"
 		fov: number

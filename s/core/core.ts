@@ -14,6 +14,11 @@ export namespace Core {
 	export type System<T> = (tick: T) => void
 	export type PreSystem<S, T> = (starter: S) => System<T>
 
+	export type Selection<CS, K extends keyof CS> = (
+		{[P in K]: CS[P]}
+			& Partial<CS>
+	)
+
 	export function configure_systems<Starter, Tick>() {
 		return function system(
 				_name: string,
@@ -48,7 +53,7 @@ export namespace Core {
 				const entity_matches_selector = kinds.every(kind => kind in entity)
 
 				if (entity_matches_selector)
-					yield [id, entity] as [Id, {[K in Kind]: CS[K]}]
+					yield [id, entity] as [Id, Selection<CS, Kind>]
 			}
 		}
 
