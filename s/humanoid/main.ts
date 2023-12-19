@@ -11,13 +11,15 @@ import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
 import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
+import {Core} from "../core/core.js"
 import {Realm} from "./models/realm/realm.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 
-import {Core} from "../core/core.js"
 import {HumanoidSchema} from "./ecs/schema.js"
 import {modelSystem} from "./ecs/systems/model/system.js"
 import {lightSystem} from "./ecs/systems/light/system.js"
+import {reifySystem} from "./ecs/specials/babylon_reify/system.js"
+import {setup_rezzers} from "./ecs/specials/babylon_reify/rezzers.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -44,12 +46,16 @@ entities.create({light: {
 	intensity: 0.5,
 }})
 
+const {rezzers, fullRezzers} = setup_rezzers({realm})
+
 const executor = new Core.Executor({
 	entities,
 	realm,
+	rezzers,
 }, [
 	lightSystem,
 	modelSystem,
+	reifySystem(fullRezzers),
 ])
 
 let count = 0
