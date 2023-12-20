@@ -16,8 +16,8 @@ import {Realm} from "./models/realm/realm.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 
 import {HumanoidSchema} from "./ecs/schema.js"
-import {reifySystem} from "./ecs/specials/babylon_reify/system.js"
-import {setup_rezzers} from "./ecs/specials/babylon_reify/rezzers.js"
+import {reifySystem} from "./ecs/specials/reify/system.js"
+import {setup_rezzers} from "./ecs/specials/reify/rezzers.js"
 
 register_to_dom({BenevHumanoid})
 
