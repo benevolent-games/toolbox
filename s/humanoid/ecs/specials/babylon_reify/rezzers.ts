@@ -17,17 +17,31 @@ export function setup_rezzers({realm}: {
 
 		light: makeRezzer("light")<Light>(map => ({
 			add(id, {light}) {
-				const hemi = new HemisphericLight(
-					"hemi",
-					new Vector3(...light.direction),
-					realm.plate.scene,
-				)
-				hemi.intensity = light.intensity
-				map.set(id, hemi)
+				if (light.type === "hemi") {
+					const hemi = new HemisphericLight(
+						"hemi",
+						new Vector3(...light.direction),
+						realm.plate.scene,
+					)
+					hemi.intensity = light.intensity
+					map.set(id, hemi)
+				}
+				else
+					throw new Error(`unsupported light type "${light.type}"`)
+			},
+			update(hemi, {light}) {
+				if (light.type === "hemi") {
+					if (hemi instanceof HemisphericLight) {
+						hemi.direction.set(...light.direction)
+						hemi.intensity = light.intensity
+					}
+					else
+						throw new Error(`cannot change light type at this time "${light.type}"`)
+				}
 			},
 			delete(id) {
-				const hemi = map.get(id)!
-				hemi.dispose()
+				const light = map.get(id)!
+				light.dispose()
 				map.delete(id)
 			},
 		})),
@@ -38,6 +52,7 @@ export function setup_rezzers({realm}: {
 				const instanced = container.instantiateModelsToScene()
 				map.set(id, instanced)
 			},
+			update() {},
 			delete(id) {
 				const instanced = map.get(id)!
 				instanced.dispose()

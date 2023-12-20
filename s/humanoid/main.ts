@@ -46,13 +46,12 @@ entities.create({light: {
 
 const {rezzers, fullRezzers} = setup_rezzers({realm})
 
-const executor = new Core.Executor({
-	entities,
-	realm,
-	rezzers,
-}, [
-	reifySystem(fullRezzers),
-])
+const executor = new Core.Executor(
+	{entities, realm, rezzers},
+	[
+		reifySystem(fullRezzers),
+	],
+)
 
 let count = 0
 realm.plate.onTick(() => executor.tick({tick: count++}))
