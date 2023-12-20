@@ -20,10 +20,7 @@ export namespace Core {
 	)
 
 	export function configure_systems<Starter, Tick>() {
-		return function system(
-				_name: string,
-				sys: PreSystem<Starter, Tick>,
-			) {
+		return function system(sys: PreSystem<Starter, Tick>) {
 			return sys
 		}
 	}
@@ -46,6 +43,10 @@ export namespace Core {
 			const id = freshId()
 			this.#map.set(id, entity)
 			return id
+		}
+
+		*all() {
+			yield* this.#map.entries()
 		}
 
 		*select<Kind extends keyof CS>(...kinds: Kind[]) {

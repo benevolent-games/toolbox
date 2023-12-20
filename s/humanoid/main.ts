@@ -14,10 +14,10 @@ import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
 import {Realm} from "./models/realm/realm.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
-
-import {HumanoidSchema} from "./ecs/schema.js"
-import {reifySystem} from "./ecs/specials/reify/system.js"
-import {setup_rezzers} from "./ecs/specials/reify/rezzers.js"
+import {Base, house} from "./ecs/house.js"
+import {hemiSystem} from "./ecs/systems/hemi.js"
+import {flycamSystem} from "./ecs/systems/flycam.js"
+import {environmentSystem} from "./ecs/systems/environment.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -35,23 +35,22 @@ const realm = await nexus.context.realmOp.load(
 	})
 )
 
-const entities = new Core.Entities<HumanoidSchema>()
+house.entities.create({
+	environment: {name: "gym"}
+})
 
-entities.create({model: {container: "gym"}})
-entities.create({light: {
-	type: "hemi",
+house.entities.create({hemi: {
 	direction: [0.234, 1, 0.123],
-	intensity: 0.5,
+	intensity: 0.6,
 }})
 
-const {rezzers, fullRezzers} = setup_rezzers({realm})
+const base: Base = {entities: house.entities, realm}
 
-const executor = new Core.Executor(
-	{entities, realm, rezzers},
-	[
-		reifySystem(fullRezzers),
-	],
-)
+const executor = new Core.Executor(base, [
+	// flycamSystem,
+	hemiSystem,
+	environmentSystem,
+])
 
 let count = 0
 realm.plate.onTick(() => executor.tick({tick: count++}))

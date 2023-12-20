@@ -1,33 +1,50 @@
 
 import {Core} from "../../core/core.js"
-import {Containers} from "./systematize.js"
-import {Quat} from "../../tools/math/quat.js"
 import {Vec2} from "../../tools/math/vec2.js"
 import {Vec3} from "../../tools/math/vec3.js"
+import {Quat} from "../../tools/math/quat.js"
+import {RealmContainers} from "../models/realm/realm.js"
+import {Speeds} from "../../impulse/trajectory/types/speeds.js"
+
+export type Spatial = {
+	position: Vec3
+	rotation: Quat
+	scale: Vec3
+}
 
 export type HumanoidSchema = Core.AsComponentSchema<{
-	model: {
-		container: keyof Containers
+	environment: {
+		name: keyof RealmContainers
 	}
-	transform: {
-		position: Vec3
-		rotation: Quat
-		scale: Vec3
+
+	physics: {
+		gravity: number
 	}
-	gimbal: Vec2
-	flyControls: {
-		speed: 1,
+
+	prop: {
+		spatial: Spatial
+		type: "box"
+		size: number
 	}
-	camera: {
-		attachment: "transform" | "gimbal"
-		fov: number
-		minZ: number
-		maxZ: number
-	}
-	light: {
-		type: "hemi"
+
+	hemi: {
 		direction: Vec3
 		intensity: number
+	}
+
+	humanoid: {
+		position: Vec3
+		speeds: Speeds
+		height: number
+		mass: number
+	}
+
+	flycam: {
+		position: Vec3
+		gimbal: Vec2
+		speeds: Speeds
+		transformA: Core.Id
+		transformB: Core.Id
 	}
 }>
 

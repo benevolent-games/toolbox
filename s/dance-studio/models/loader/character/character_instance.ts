@@ -5,12 +5,11 @@ import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {BlueprintToAnims} from "./types.js"
 import {anim_blueprint} from "./anim_blueprint.js"
 import {Vec3} from "../../../../tools/math/vec3.js"
-import {Positional} from "../../../../core/sketch.js"
 import {Disposable} from "../../../../tools/disposable.js"
 import {babylonian} from "../../../../tools/math/babylonian.js"
 import {process_original_animations} from "./utils/process_original_animations.js"
 
-export class CharacterInstance extends Disposable implements Positional {
+export class CharacterInstance extends Disposable {
 	root: TransformNode
 	anims: BlueprintToAnims<typeof anim_blueprint>
 
