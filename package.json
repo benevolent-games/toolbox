@@ -23,7 +23,8 @@
 	"dependencies": {
 		"@benev/slate": "^0.1.0-x.6",
 		"lit": "^3.1.0",
-		"simplex-noise": "^4.0.1"
+		"simplex-noise": "^4.0.1",
+		"sparrow-rtc": "^0.0.0-dev.6"
 	},
 	"peerDependencies": {
 		"@babylonjs/core": "^6.33.1",

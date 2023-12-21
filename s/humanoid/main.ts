@@ -16,7 +16,7 @@ import {Realm} from "./models/realm/realm.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 import {Base, house} from "./ecs/house.js"
 import {hemiSystem} from "./ecs/systems/hemi.js"
-import {flycamSystem} from "./ecs/systems/flycam.js"
+import {spectatorSystem} from "./ecs/systems/spectator.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
 
 register_to_dom({BenevHumanoid})
@@ -44,12 +44,22 @@ house.entities.create({hemi: {
 	intensity: 0.6,
 }})
 
+house.entities.create({spectator: {
+	gimbal: [0, 0],
+	position: [0, 1, 0],
+	speeds: {
+		base: 1,
+		fast: 2,
+		slow: 0.2,
+	},
+}})
+
 const base: Base = {entities: house.entities, realm}
 
 const executor = new Core.Executor(base, [
-	// flycamSystem,
 	hemiSystem,
 	environmentSystem,
+	spectatorSystem,
 ])
 
 let count = 0

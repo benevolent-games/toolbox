@@ -58,6 +58,23 @@ export namespace Core {
 			}
 		}
 
+		singleton<Kind extends keyof CS>(...kinds: Kind[]) {
+			const iterator = this.select(...kinds)
+			const {done, value} = iterator.next()
+
+			if (!done)
+				console.error(`expected only one entity for singleton, but found more (${kinds.join(", ")})`)
+
+			return value ?? null
+		}
+
+		singletonRequired<Kind extends keyof CS>(...kinds: Kind[]) {
+			const entity = this.singleton(...kinds)
+			if (!entity)
+				throw new Error(`missing required singleton (${kinds.join(", ")})`)
+			return entity
+		}
+
 		delete(id: Id) {
 			this.#map.delete(id)
 		}

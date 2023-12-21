@@ -76,6 +76,10 @@ export class Plate {
 		}
 	}
 
+	get camera() {
+		return this.scene.activeCamera
+	}
+
 	setCamera(camera: Camera = this.fallbackCamera) {
 		this.scene.activeCamera = camera
 	}

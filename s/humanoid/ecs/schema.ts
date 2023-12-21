@@ -5,6 +5,7 @@ import {Vec3} from "../../tools/math/vec3.js"
 import {Quat} from "../../tools/math/quat.js"
 import {RealmContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
+import { Op } from "@benev/slate"
 
 export type Spatial = {
 	position: Vec3
@@ -39,12 +40,35 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		mass: number
 	}
 
-	flycam: {
+	spectator: {
 		position: Vec3
 		gimbal: Vec2
 		speeds: Speeds
-		transformA: Core.Id
-		transformB: Core.Id
+		sensitivity: {
+			keys: number
+			mouse: number
+			stick: number
+		}
+	}
+
+	network: {
+		target: null | {
+			type: "host"
+			label: string
+		} | {
+			type: "client"
+			sessionId: string
+		}
+
+		connection: null | Op.For<{
+			type: "host"
+			label: string
+			sessionId: string
+		} | {
+			type: "client"
+			label: string
+			sessionId: string
+		}>
 	}
 }>
 
