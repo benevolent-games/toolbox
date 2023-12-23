@@ -2,7 +2,7 @@
 export class Disposable {
 	#disposers = new Set<() => void>()
 
-	protected disposable(fn: () => void) {
+	disposable(fn: () => void) {
 		this.#disposers.add(fn)
 	}
 

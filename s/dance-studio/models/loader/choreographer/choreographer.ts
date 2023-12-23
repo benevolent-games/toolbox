@@ -22,6 +22,10 @@ export class Choreographer {
 		})
 	}
 
+	get gimbal(): Vec2 {
+		return [this.#gimbal.swivel, this.#gimbal.spine]
+	}
+
 	get anims() {
 		return this.#character.anims
 	}

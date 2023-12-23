@@ -29,6 +29,11 @@ export const humanoid_binds = () => binds(({
 			down: buttons(modless("KeyK")),
 			left: buttons(modless("KeyJ")),
 			right: buttons(modless("KeyL")),
+
+			test_bracket_left: buttons(modless("BracketLeft")),
+			test_bracket_right: buttons(modless("BracketRight")),
+			test_comma: buttons(modless("Comma")),
+			test_period: buttons(modless("Period")),
 		},
 	}),
 }))

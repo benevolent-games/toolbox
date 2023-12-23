@@ -4,19 +4,21 @@ import "@babylonjs/core/Engines/index.js"
 import "@babylonjs/core/Culling/ray.js"
 import "@babylonjs/core/Rendering/edgesRenderer.js"
 import "@babylonjs/core/Animations/index.js"
+import "@babylonjs/core/Physics/physicsEngineComponent.js"
 
 import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
 
-import {register_to_dom, signals} from "@benev/slate"
+import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
-import {Base, Tick, house} from "./ecs/house.js"
 import {Realm} from "./models/realm/realm.js"
 import {hemiSystem} from "./ecs/systems/hemi.js"
+import {Base, Tick, house} from "./ecs/house.js"
 // import {NetworkSession} from "./network/session.js"
 // import {network_connect} from "./network/connect.js"
+import {humanoidSystem} from "./ecs/systems/humanoid.js"
 import {spectatorSystem} from "./ecs/systems/spectator.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
 // import {parse_network_target_from_url} from "./network/target.js"
@@ -63,18 +65,37 @@ house.entities.create({hemi: {
 
 house.entities.create({spectator: {
 	gimbal: [0, 0],
-	position: [0, 1, 0],
+	position: [0, 1, -2],
 	speeds: {
 		base: 1,
 		fast: 2,
 		slow: 0.2,
 	},
 	sensitivity: {
-		keys: 0.1,
-		mouse: 0.1,
-		stick: 0.1,
+		keys: 10 / 100,
+		mouse: 10 / 100,
+		stick: 10 / 100,
 	},
 }})
+
+house.entities.create({
+	humanoid: {
+		position: [0, 1, 0],
+		radius: 0.3,
+		height: 1.75,
+		mass: 75,
+		sensitivity: {
+			keys: 10 / 100,
+			mouse: 10 / 100,
+			stick: 10 / 100,
+		},
+		speeds: {
+			base: 1,
+			fast: 2,
+			slow: 0.2,
+		},
+	},
+})
 
 const executor = new Core.Executor<Base, Tick>(
 	{realm, entities: house.entities},
@@ -82,6 +103,7 @@ const executor = new Core.Executor<Base, Tick>(
 		hemiSystem,
 		environmentSystem,
 		spectatorSystem,
+		humanoidSystem,
 	],
 )
 

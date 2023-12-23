@@ -1,6 +1,7 @@
 
 import {interval, pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
+import {Camera} from "@babylonjs/core/Cameras/camera.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color4, Vector3} from "@babylonjs/core/Maths/math.js"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
@@ -8,7 +9,6 @@ import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {SSAO2RenderingPipeline, SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/index.js"
 
 import {scalar} from "../../../tools/math/scalar.js"
-import {Camera} from "@babylonjs/core/Cameras/camera.js"
 import {fix_animation_groups} from "../../../dance-studio/models/loader/character/utils/fix_animation_groups.js"
 
 export class Plate {

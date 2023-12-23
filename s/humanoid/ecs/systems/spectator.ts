@@ -7,7 +7,7 @@ import {house} from "../house.js"
 import {Vec2, vec2} from "../../../tools/math/vec2.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
-import {get_trajectory_from_cardinals} from "../../../impulse/trajectory/get_trajectory_from_cardinals.js"
+import {gather_input_vectors} from "./commons/gather_input_vectors.js"
 import {add_to_look_vector_but_cap_vertical_axis} from "../../../common/models/flycam/utils/add_to_look_vector_but_cap_vertical_axis.js"
 
 export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, id) => {
@@ -26,23 +26,6 @@ export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, 
 	transformA.position.set(...state.spectator.position)
 
 	realm.plate.setCamera(camera)
-
-	function gather_inputs() {
-		const {buttons} = impulse.report.humanoid
-		const move = get_trajectory_from_cardinals({
-			north: buttons.forward,
-			south: buttons.backward,
-			east: buttons.rightward,
-			west: buttons.leftward,
-		})
-		const look = get_trajectory_from_cardinals({
-			north: buttons.up,
-			south: buttons.down,
-			east: buttons.right,
-			west: buttons.left,
-		})
-		return {move, look}
-	}
 
 	function apply_movement_while_considering_gimbal_rotation(
 			position: Vec3,
@@ -63,7 +46,7 @@ export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, 
 
 	return {
 		update(state) {
-			const {move, look} = gather_inputs()
+			const {move, look} = gather_input_vectors(impulse)
 
 			state.spectator.gimbal = add_to_look_vector_but_cap_vertical_axis(
 				state.spectator.gimbal,
@@ -97,4 +80,3 @@ export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, 
 		},
 	}
 })
-
