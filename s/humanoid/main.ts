@@ -12,14 +12,14 @@ import {register_to_dom, signals} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
-import {Base, house} from "./ecs/house.js"
+import {Base, Tick, house} from "./ecs/house.js"
 import {Realm} from "./models/realm/realm.js"
 import {hemiSystem} from "./ecs/systems/hemi.js"
-import {NetworkSession} from "./network/session.js"
-import {network_connect} from "./network/connect.js"
+// import {NetworkSession} from "./network/session.js"
+// import {network_connect} from "./network/connect.js"
 import {spectatorSystem} from "./ecs/systems/spectator.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
-import {parse_network_target_from_url} from "./network/target.js"
+// import {parse_network_target_from_url} from "./network/target.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 
 register_to_dom({BenevHumanoid})
@@ -38,50 +38,52 @@ const realm = await nexus.context.realmOp.load(
 	})
 )
 
-const network = {
-	target: parse_network_target_from_url(window.location.href),
-	sessionOp: signals.op<NetworkSession>(),
-}
+// const network = {
+// 	target: parse_network_target_from_url(window.location.href),
+// 	sessionOp: signals.op<NetworkSession>(),
+// }
 
-nexus.context.network = network
+// nexus.context.network = network
 
-network.sessionOp.load(async() =>
-	network_connect(network.target)
+// network.sessionOp.load(async() =>
+// 	network_connect(network.target)
+// )
+
+// if (network.target.type === "host") {
+// }
+
+house.entities.create({
+	environment: {name: "gym"}
+})
+
+house.entities.create({hemi: {
+	direction: [0.234, 1, 0.123],
+	intensity: 0.6,
+}})
+
+house.entities.create({spectator: {
+	gimbal: [0, 0],
+	position: [0, 1, 0],
+	speeds: {
+		base: 1,
+		fast: 2,
+		slow: 0.2,
+	},
+	sensitivity: {
+		keys: 0.1,
+		mouse: 0.1,
+		stick: 0.1,
+	},
+}})
+
+const executor = new Core.Executor<Base, Tick>(
+	{realm, entities: house.entities},
+	[
+		hemiSystem,
+		environmentSystem,
+		spectatorSystem,
+	],
 )
-
-if (network.target.type === "host") {
-	house.entities.create({
-		environment: {name: "gym"}
-	})
-
-	house.entities.create({hemi: {
-		direction: [0.234, 1, 0.123],
-		intensity: 0.6,
-	}})
-
-	house.entities.create({spectator: {
-		gimbal: [0, 0],
-		position: [0, 1, 0],
-		speeds: {
-			base: 1,
-			fast: 2,
-			slow: 0.2,
-		},
-		sensitivity: {
-			keys: 0.1,
-			mouse: 0.1,
-			stick: 0.1,
-		},
-	}})
-}
-
-const base: Base = {entities: house.entities, realm}
-
-const executor = new Core.Executor(base, [
-	hemiSystem,
-	environmentSystem,
-	spectatorSystem,
-])
 
 let count = 0
 realm.plate.onTick(() => executor.tick({tick: count++}))

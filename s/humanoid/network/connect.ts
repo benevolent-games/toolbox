@@ -35,7 +35,6 @@ async function connect_as_host(target: NetworkHostTarget) {
 			session!.discoverable
 		},
 	})
-	lol.state.session!.
 	return session
 }
 
