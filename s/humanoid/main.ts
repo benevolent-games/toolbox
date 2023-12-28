@@ -63,7 +63,8 @@ house.entities.create({hemi: {
 	intensity: 0.6,
 }})
 
-house.entities.create({spectator: {
+house.entities.create({
+	spectator: {},
 	gimbal: [0, 0],
 	position: [0, 1, -2],
 	speeds: {
@@ -76,24 +77,25 @@ house.entities.create({spectator: {
 		mouse: 10 / 100,
 		stick: 10 / 100,
 	},
-}})
+})
 
 house.entities.create({
 	humanoid: {
-		position: [0, 1, 0],
 		radius: 0.3,
 		height: 1.75,
 		mass: 75,
-		sensitivity: {
-			keys: 10 / 100,
-			mouse: 10 / 100,
-			stick: 10 / 100,
-		},
-		speeds: {
-			base: 1,
-			fast: 2,
-			slow: 0.2,
-		},
+	},
+	position: [0, 1, 0],
+	gimbal: [0, 0],
+	sensitivity: {
+		keys: 10 / 100,
+		mouse: 10 / 100,
+		stick: 10 / 100,
+	},
+	speeds: {
+		base: 1,
+		fast: 2,
+		slow: 0.2,
 	},
 })
 

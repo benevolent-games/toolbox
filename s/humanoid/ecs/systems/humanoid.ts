@@ -3,17 +3,16 @@ import {generate_id} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color3, Quaternion} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
 import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
 
 import {house} from "../house.js"
 import {Vec3} from "../../../tools/math/vec3.js"
-import { scalar } from "../../../tools/math/scalar.js"
-import { CharacterInstance } from "../../../dance-studio/models/loader/character/character_instance.js"
-import { Choreographer } from "../../../dance-studio/models/loader/choreographer/choreographer.js"
-import { Vec2 } from "../../../tools/math/vec2.js"
-import { TransformNode } from "@babylonjs/core/Meshes/transformNode.js"
+import {scalar} from "../../../tools/math/scalar.js"
+import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
+import {CharacterInstance} from "../../../dance-studio/models/loader/character/character_instance.js"
 
 export const humanoidSystem = house.rezzer(["humanoid"], ({realm}) => ({humanoid}, id) => {
 	const {impulse, plate} = realm
@@ -32,14 +31,8 @@ export const humanoidSystem = house.rezzer(["humanoid"], ({realm}) => ({humanoid
 		{radius: humanoid.radius, height: humanoid.height},
 		plate.scene,
 	)
-	capsule.material = colors.cyan
 
-	// const material = new PBRMaterial(name("capsule-material"), plate.scene)
-	// material.albedoColor = new Color3(0.8, 1.0, 1.0)
-	// material.roughness = 0.1
-	// material.metallic = 0.9
-	// capsule.visibility = 0.7
-	// capsule.material = material
+	capsule.material = colors.cyan
 
 	const aggregate = new PhysicsAggregate(
 		capsule,
@@ -183,4 +176,6 @@ export function debugMaterial({scene, color}: {
 	m.alpha = 0.2
 	return m
 }
+
+export function choreo() {}
 

@@ -10,9 +10,8 @@ import {babylonian} from "../../../tools/math/babylonian.js"
 import {gather_input_vectors} from "./commons/gather_input_vectors.js"
 import {add_to_look_vector_but_cap_vertical_axis} from "../../../common/models/flycam/utils/add_to_look_vector_but_cap_vertical_axis.js"
 
-export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, id) => {
+export const spectatorSystem = house.rezzer(["spectator", "position", "gimbal"], ({realm}) => (state, id) => {
 	const {impulse, plate} = realm
-	const {position} = state.spectator
 	const name = (n: string) => `${n}::${id}`
 
 	const transformA = new TransformNode(name("transform-a"), plate.scene, true)
@@ -23,7 +22,7 @@ export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, 
 	camera.parent = transformB
 	transformB.parent = transformA
 
-	transformA.position.set(...state.spectator.position)
+	transformA.position.set(...state.position)
 
 	realm.plate.setCamera(camera)
 
@@ -48,21 +47,20 @@ export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, 
 		update(state) {
 			const {move, look} = gather_input_vectors(impulse)
 
-			state.spectator.gimbal = add_to_look_vector_but_cap_vertical_axis(
-				state.spectator.gimbal,
+			state.gimbal = add_to_look_vector_but_cap_vertical_axis(
+				state.gimbal,
 				vec2.multiplyBy(look, 5 / 100),
 			)
 
-			state.spectator.position = (
+			state.position = (
 				apply_movement_while_considering_gimbal_rotation(
-					state.spectator.position,
+					state.position,
 					vec2.multiplyBy(move, 10 / 100),
 				)
 			)
 
-			const {gimbal} = state.spectator
-
-			transformA.position.set(...state.spectator.position)
+			const {gimbal} = state
+			transformA.position.set(...state.position)
 			transformB.rotationQuaternion = (
 				Quaternion
 					.RotationYawPitchRoll(0, -gimbal[1], 0)
@@ -80,3 +78,4 @@ export const spectatorSystem = house.rezzer(["spectator"], ({realm}) => (state, 
 		},
 	}
 })
+

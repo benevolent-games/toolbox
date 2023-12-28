@@ -33,28 +33,23 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	}
 
 	humanoid: {
-		position: Vec3
-		speeds: Speeds
 		height: number
 		mass: number
 		radius: number
-		gimbal: Vec2
-		sensitivity: {
-			keys: number
-			mouse: number
-			stick: number
-		}
 	}
 
-	spectator: {
-		position: Vec3
-		gimbal: Vec2
-		speeds: Speeds
-		sensitivity: {
-			keys: number
-			mouse: number
-			stick: number
-		}
+	position: Vec3
+
+	sensitivity: {
+		keys: number
+		mouse: number
+		stick: number
 	}
+
+	gimbal: Vec2
+
+	speeds: Speeds
+
+	spectator: {}
 }>
 
