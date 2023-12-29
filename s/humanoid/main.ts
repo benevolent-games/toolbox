@@ -23,6 +23,7 @@ import {spectatorSystem} from "./ecs/systems/spectator.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
 // import {parse_network_target_from_url} from "./network/target.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
+import { spawners } from "./ecs/spawners.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -63,41 +64,8 @@ house.entities.create({hemi: {
 	intensity: 0.6,
 }})
 
-house.entities.create({
-	spectator: {},
-	gimbal: [0, 0],
-	position: [0, 1, -2],
-	speeds: {
-		base: 1,
-		fast: 2,
-		slow: 0.2,
-	},
-	sensitivity: {
-		keys: 10 / 100,
-		mouse: 10 / 100,
-		stick: 10 / 100,
-	},
-})
-
-house.entities.create({
-	humanoid: {
-		radius: 0.3,
-		height: 1.75,
-		mass: 75,
-	},
-	position: [0, 1, 0],
-	gimbal: [0, 0],
-	sensitivity: {
-		keys: 10 / 100,
-		mouse: 10 / 100,
-		stick: 10 / 100,
-	},
-	speeds: {
-		base: 1,
-		fast: 2,
-		slow: 0.2,
-	},
-})
+spawners.spectator({position: [0, 1, -2]})
+spawners.humanoid({position: [0, 1, 0]})
 
 const executor = new Core.Executor<Base, Tick>(
 	{realm, entities: house.entities},

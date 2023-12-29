@@ -1,15 +1,61 @@
 
+import {Pojo} from "@benev/slate"
+
 import {loop} from "./loopy.js"
 import {human} from "./human.js"
+import {scalar} from "./math/scalar.js"
 
-export function ascii_progress_bar(progress: number, bars = 10) {
-	let ascii = ""
+export const glyphs = {
+	eline: ["=", "-"],
+	oline: ["o", "—"],
+	dots: ["●", "o"],
+	blocks: ["■", "□"],
+	patches: ["▓", "░"],
+	slider: ["█", "—"],
+} satisfies Pojo<[string, string]>
 
-	for (const i of loop(bars))
-		ascii += (i <= Math.floor(progress * bars))
-			? "="
-			: "-"
+export function ascii_progress_bar(
+		progress: number,
+		{
+			kind = "bar",
+			bars = 10,
+			show_percent = true,
+			clamp_between_1_and_99_percent = true,
+			glyphs: [a, b] = glyphs.slider,
+		}: {
+			kind?: "bar" | "knob"
+			glyphs?: [string, string]
+			bars?: number
+			show_percent?: boolean
+			clamp_between_1_and_99_percent?: boolean
+		} = {}
+	) {
 
-	return `[${ascii}] ${human.percent(progress)}`
+	progress = clamp_between_1_and_99_percent
+		? scalar.cap(progress, 1/100, 99/100)
+		: scalar.cap(progress)
+
+	let line = ""
+
+	if (kind === "bar") {
+		const position = Math.round(progress * bars)
+		for (const i of loop(bars))
+			line += (i < position)
+				? a
+				: b
+	}
+	else {
+		const position = Math.round(progress * (bars - 1))
+		for (const i of loop(bars))
+			line += (i === position)
+				? a
+				: b
+	}
+
+	const percent = show_percent
+		? ` ${human.percent(progress)}`
+		: ""
+
+	return line + percent
 }
 

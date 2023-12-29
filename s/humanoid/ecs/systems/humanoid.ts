@@ -11,10 +11,19 @@ import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IP
 import {house} from "../house.js"
 import {Vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
+import {choreograph} from "../../../dance-studio/models/loader/choreo/choreo.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
 import {CharacterInstance} from "../../../dance-studio/models/loader/character/character_instance.js"
 
-export const humanoidSystem = house.rezzer(["humanoid"], ({realm}) => ({humanoid}, id) => {
+export const humanoidSystem = house.rezzer([
+		"humanoid",
+		"position",
+		"sensitivity",
+		"gimbal",
+		"speeds",
+		"intent",
+	], ({realm}) => ({humanoid}, id) => {
+
 	const {impulse, plate} = realm
 	const {scene} = plate
 	const name = (n: string) => `${n}::${id}`
@@ -109,7 +118,7 @@ export const humanoidSystem = house.rezzer(["humanoid"], ({realm}) => ({humanoid
 	// }
 
 	return {
-		update(_state) {
+		update(state) {
 			let look_y_change = 0
 
 			if (impulse.report.humanoid.buttons.test_comma)
@@ -117,6 +126,15 @@ export const humanoidSystem = house.rezzer(["humanoid"], ({realm}) => ({humanoid
 
 			if (impulse.report.humanoid.buttons.test_period)
 				look_y_change = 1
+
+			// const results = choreograph({
+			// 	gimbal: state.gimbal,
+			// 	intent: state.intent,
+			// 	choreography: state.humanoid.choreography,
+			// })
+
+			// state.gimbal = results.gimbal
+			// state.humanoid.choreography = results.choreography
 
 			choreographer.tick({
 				move: [0, 1],
@@ -176,6 +194,4 @@ export function debugMaterial({scene, color}: {
 	m.alpha = 0.2
 	return m
 }
-
-export function choreo() {}
 

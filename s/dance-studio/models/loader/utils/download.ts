@@ -2,7 +2,7 @@
 import {Download, FileData} from "./types.js"
 
 export function download(url: string): Download {
-	const filename = new URL(url).pathname.split("/").at(-1) ?? "unknown"
+	const filename = new URL(url, window.location.href).pathname.split("/").at(-1) ?? "unknown"
 	const abortController = new AbortController()
 	const abort = () => abortController.abort()
 
