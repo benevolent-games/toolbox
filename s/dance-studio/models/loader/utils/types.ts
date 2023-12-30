@@ -1,4 +1,5 @@
 
+import {ChoreographyMachine} from "../choreo/choreo.js"
 import {Choreographer} from "../choreographer/choreographer.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
@@ -9,6 +10,7 @@ export type Glb = {
 	filesize: number
 	all_animations: AnimationGroup[]
 	choreographer: Choreographer
+	choreography: ChoreographyMachine
 	dispose: () => void
 }
 

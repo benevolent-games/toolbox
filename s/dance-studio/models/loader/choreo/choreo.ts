@@ -3,11 +3,44 @@ import {scalar} from "../../../../tools/math/scalar.js"
 import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {CharacterInstance} from "../character/character_instance.js"
 import {Choreography, Intent, LegAdjustment} from "../../../../humanoid/ecs/schema.js"
-import {AdjustmentAnimations, AdjustmentDirection} from "../choreographer/parts/utils/adjustment_sequence.js"
+import {AdjustmentDirection} from "../choreographer/parts/utils/adjustment_sequence.js"
+
+/*
+
+bad names:
+- choreography
+- choreo: Choreograpy
+	- gimbal: Vec2
+	- choreography
+		- ambulation: Vec2
+		- swivel: number
+		- adjustment?: LegAdjustment
+	- intent
+		- amble
+		- glance
+
+good names:
+- Choreographer2
+- choreo
+	- intent
+		- amble
+		- glance
+	- gimbal
+	- ambulation
+	- swivel
+	- adjustment?: LegAdjustment
+
+*/
 
 const sensitivity = 1 / 100
-const swivel_readjustment_margin = 1 / 10
-const swivel_centerpoint = 0.5
+
+const swivel_settings = (() => {
+	const readjustment_margin = 1 / 10
+	const midpoint = 0.5
+	const duration = 30 // counted in update ticks
+	const speed = (midpoint - readjustment_margin) / duration
+	return {readjustment_margin, midpoint, duration, speed}
+})()
 
 export type Choreo = {
 	gimbal: Vec2
@@ -15,11 +48,11 @@ export type Choreo = {
 	choreography: Choreography
 }
 
-export function prepare_choreography({
-		character,
-	}: {
-		character: CharacterInstance
-	}) {
+export type Ambulatory = ReturnType<typeof calculate_ambulatory_report>
+export type ChoreographyMachine = ReturnType<typeof establish_choreography_machine>
+
+export function establish_choreography_machine(character: CharacterInstance) {
+	const {anims} = character
 
 	const adjustment_animations: AdjustmentAnims = {
 		start: ({direction}) => {
@@ -43,22 +76,88 @@ export function prepare_choreography({
 	}
 
 	return {
-		choreograph(original: Choreo) {
-			const choreo = structuredClone(original)
-
-			choreo.gimbal = gimbal_effected_by_glance(choreo)
-			choreo.choreography.swivel = swivel_effected_by_glance(choreo)
-
-			const ambulatory = calculate_ambulatory_report(choreo)
-			choreo.choreography.ambulation = ambulatory.ambulation
-
-			return {
-				choreo,
-				ambulatory,
-			}
+		character,
+		update(original: Choreo) {
+			const {choreo, ambulatory} = calculate_choreo_values(
+				original,
+				adjustment_animations,
+			)
+			synchornize_animations(choreo, ambulatory, anims)
+			const rotation = character_rotation_in_radians(choreo)
+			return {choreo, ambulatory, rotation}
 		},
 	}
 }
+
+/////////////////////////////////
+
+export function calculate_choreo_values(
+		original: Choreo,
+		adjustment_anims: AdjustmentAnims,
+	) {
+
+	const choreo = structuredClone(original)
+
+	choreo.gimbal = gimbal_effected_by_glance(choreo)
+	choreo.choreography.swivel = swivel_effected_by_glance(choreo)
+
+	const ambulatory = calculate_ambulatory_report(choreo)
+	choreo.choreography.ambulation = ambulatory.ambulation
+
+	const {swivel, adjustment} = handle_adjustments(
+		choreo,
+		ambulatory,
+		adjustment_anims,
+	)
+	choreo.choreography.swivel = swivel
+	choreo.choreography.adjustment = adjustment
+
+	return {
+		choreo,
+		ambulatory,
+	}
+}
+
+export function character_rotation_in_radians(choreo: Choreo) {
+	const [horizontal] = choreo.gimbal
+	return -2 * Math.PI * horizontal
+}
+
+export function synchornize_animations(
+		choreo: Choreo,
+		ambulatory: Ambulatory,
+		anims: CharacterInstance["anims"],
+	) {
+
+	const [,vertical] = choreo.gimbal
+	const {swivel, adjustment} = choreo.choreography
+
+	anims.spine.weight = 1
+	anims.spine.goToFrame(vertical * 1000)
+
+	anims.swivel.weight = 1
+	anims.swivel.goToFrame(swivel * 1000)
+
+	const mod = function modulate_leg_weight(w: number) {
+		return adjustment
+			? scalar.cap(w - calculate_adjustment_weight(adjustment.progress))
+			: w
+	}
+
+	anims.legs_stand_stationary.weight = mod(ambulatory.stillness)
+	anims.legs_stand_forward.weight = mod(ambulatory.north)
+	anims.legs_stand_backward.weight = mod(ambulatory.south)
+	anims.legs_stand_leftward.weight = mod(ambulatory.west)
+	anims.legs_stand_rightward.weight = mod(ambulatory.east)
+
+	anims.arms_stand_unequipped_stationary.weight = ambulatory.stillness
+	anims.arms_stand_unequipped_forward.weight = ambulatory.north
+	anims.arms_stand_unequipped_backward.weight = ambulatory.south
+	anims.arms_stand_unequipped_leftward.weight = ambulatory.west
+	anims.arms_stand_unequipped_rightward.weight = ambulatory.east
+}
+
+////////////////////////////////
 
 function adjustment_anim_for_direction(
 		character: CharacterInstance,
@@ -70,19 +169,21 @@ function adjustment_anim_for_direction(
 }
 
 function handle_adjustments(
-		{choreography}: Choreo,
+		choreo: Choreo,
+		ambulatory: Ambulatory,
 		adjustment_anims: AdjustmentAnims,
 	) {
 
-	let adjustment = structuredClone(choreography.adjustment)
+	let swivel = structuredClone(choreo.choreography.swivel)
+	let adjustment = structuredClone(choreo.choreography.adjustment)
 
 	const adjustment_is_needed = !scalar.within(
-		choreography.swivel,
-		swivel_readjustment_margin,
-		1 - swivel_readjustment_margin,
+		swivel,
+		swivel_settings.readjustment_margin,
+		1 - swivel_settings.readjustment_margin,
 	)
 
-	if (!choreography.adjustment && adjustment_is_needed) {
+	if (!adjustment && adjustment_is_needed) {
 		adjustment = {
 			duration: 30,
 			progress: 0,
@@ -98,7 +199,27 @@ function handle_adjustments(
 		const speed = 1 / adjustment.duration
 		adjustment.progress += speed
 
+		swivel = calculate_adjustment_swivel(adjustment)
+
+		if (adjustment.progress >= 1) {
+			adjustment_anims.stop(adjustment)
+			adjustment = undefined
+		}
 	}
+
+	if (!adjustment && ambulatory.magnitude > 0.1) {
+		const {midpoint, speed} = swivel_settings
+		const diff = midpoint - swivel
+
+		if (Math.abs(diff) <= speed)
+			swivel = midpoint
+		else
+			swivel += (diff < 0)
+				? -speed
+				: speed
+	}
+
+	return {swivel, adjustment}
 }
 
 export type AdjustmentAnims = {
@@ -114,7 +235,7 @@ function calculate_adjustment_weight(progress: number) {
 function calculate_adjustment_swivel(adjustment: LegAdjustment) {
 	return scalar.map(adjustment.progress, [
 		adjustment.initial_swivel,
-		swivel_centerpoint,
+		swivel_settings.midpoint,
 	])
 }
 

@@ -5,10 +5,10 @@ import {styles} from "./styles.js"
 import {nexus} from "../../../nexus.js"
 import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {Stick} from "../../../../impulse/nubs/stick/device.js"
+import {Quaternion} from "@babylonjs/core/Maths/math.vector.js"
 import {Choreography} from "../../../../humanoid/ecs/schema.js"
 import {NubStick} from "../../../../impulse/nubs/stick/element.js"
 import {ascii_progress_bar} from "../../../../tools/ascii_progress_bar.js"
-import {choreograph} from "../../../models/loader/choreo/choreo.js"
 
 export const ControlPanel = nexus.shadow_view(use => () => {
 	use.name("control-panel")
@@ -37,16 +37,20 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 		const glb = loader.glb.payload
 
 		if (glb) {
-			const {choreo} = choreograph({
+			const {choreo, ambulatory, rotation} = glb.choreography.update({
 				choreography: choreography.value,
 				gimbal: gimbal.value,
 				intent: {
 					amble: moveStick.vector,
 					glance: lookStick.vector,
-				},
+				}
 			})
 			choreography.value = choreo.choreography
 			gimbal.value = choreo.gimbal
+			glb.choreography.character.root.rotationQuaternion = (
+				Quaternion.FromEulerAngles(0, rotation, 0)
+			)
+
 			// glb.choreographer.tick({
 			// 	move: moveStick.vector,
 			// 	look: lookStick.vector,
