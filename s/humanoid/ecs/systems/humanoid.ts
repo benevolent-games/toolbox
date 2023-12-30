@@ -11,7 +11,6 @@ import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IP
 import {house} from "../house.js"
 import {Vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
-import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
 import {CharacterInstance} from "../../../dance-studio/models/loader/character/character_instance.js"
 
 export const humanoidSystem = house.rezzer([
@@ -80,7 +79,7 @@ export const humanoidSystem = house.rezzer([
 		realm.containers.character,
 		[0, -(humanoid.height / 2), 0],
 	)
-	const choreographer = new Choreographer(instance)
+	// const choreographer = new Choreographer(instance)
 
 	const torusRoot = new TransformNode(name("torusRoot"), scene)
 
@@ -135,12 +134,12 @@ export const humanoidSystem = house.rezzer([
 			// state.gimbal = results.gimbal
 			// state.humanoid.choreography = results.choreography
 
-			choreographer.tick({
-				move: [0, 1],
-				look: [0, look_y_change],
-			})
+			// choreographer.tick({
+			// 	move: [0, 1],
+			// 	look: [0, look_y_change],
+			// })
 
-			const a = choreographer.gimbal[1]
+			const a = 0 //choreographer.gimbal[1]
 			// const b = scalar.map(a, [0.1, 0.7])
 			const b = scalar.spline.quickLinear(a, [0.1, 0.5, 0.7])
 			const toroidal = (Math.PI / 2) + (Math.PI * -b)

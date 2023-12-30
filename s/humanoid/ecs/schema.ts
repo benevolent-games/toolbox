@@ -5,7 +5,7 @@ import {Vec3} from "../../tools/math/vec3.js"
 import {Quat} from "../../tools/math/quat.js"
 import {RealmContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
-import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreo/types.js"
+import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreographer/types.js"
 
 export type HumanoidSchema = Core.AsComponentSchema<{
 	environment: {

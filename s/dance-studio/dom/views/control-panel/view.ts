@@ -7,8 +7,8 @@ import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {Stick} from "../../../../impulse/nubs/stick/device.js"
 import {Quaternion} from "@babylonjs/core/Maths/math.vector.js"
 import {NubStick} from "../../../../impulse/nubs/stick/element.js"
-import {Choreographer2} from "../../../models/loader/choreo/choreo.js"
 import {ascii_progress_bar} from "../../../../tools/ascii_progress_bar.js"
+import {Choreographer} from "../../../models/loader/choreographer/choreographer.js"
 
 export const ControlPanel = nexus.shadow_view(use => () => {
 	use.name("control-panel")
@@ -25,7 +25,7 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 		world.cameraRig.swivel += x * sensitivity
 	})
 
-	const choreography = use.signal(Choreographer2.default_choreography())
+	const choreography = use.signal(Choreographer.default_choreography())
 	const choreo = choreography.value
 
 	use.once(() => world.onTick(() => {

@@ -1,7 +1,7 @@
 
-import {calculate_ambulation_speed, calculate_swivel_speed} from "../settings.js"
 import {scalar} from "../../../../../tools/math/scalar.js"
 import {Vec2, vec2} from "../../../../../tools/math/vec2.js"
+import {calculate_ambulation_speed, calculate_swivel_speed} from "../settings.js"
 import {AdjustmentAnims, ChoreoAmbulatory, ChoreoSettings, ChoreoSwivelAdjustment, Choreography} from "../types.js"
 
 export function calculate_choreo_values(

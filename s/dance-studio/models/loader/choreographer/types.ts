@@ -32,9 +32,11 @@ export type ChoreoIntent = {
 	glance: Vec2
 }
 
+export type AdjustmentDirection = "left" | "right"
+
 export type ChoreoSwivelAdjustment = {
 	initial_swivel: number
-	direction: "left" | "right"
+	direction: AdjustmentDirection
 	duration: number
 	progress: number
 }
