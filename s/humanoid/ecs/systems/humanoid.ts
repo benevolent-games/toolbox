@@ -11,6 +11,7 @@ import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IP
 import {house} from "../house.js"
 import {Vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
+import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
 import {CharacterInstance} from "../../../dance-studio/models/loader/character/character_instance.js"
 
 export const humanoidSystem = house.rezzer([
@@ -20,7 +21,10 @@ export const humanoidSystem = house.rezzer([
 		"gimbal",
 		"speeds",
 		"intent",
-	], ({realm}) => ({humanoid}, id) => {
+		"choreography",
+	], ({realm}) => (components, id) => {
+
+	const {humanoid} = components
 
 	const {impulse, plate} = realm
 	const {scene} = plate
@@ -79,7 +83,8 @@ export const humanoidSystem = house.rezzer([
 		realm.containers.character,
 		[0, -(humanoid.height / 2), 0],
 	)
-	// const choreographer = new Choreographer(instance)
+
+	const choreographer = new Choreographer(instance)
 
 	const torusRoot = new TransformNode(name("torusRoot"), scene)
 
@@ -124,6 +129,24 @@ export const humanoidSystem = house.rezzer([
 
 			if (impulse.report.humanoid.buttons.test_period)
 				look_y_change = 1
+
+			// update the intent
+			{
+				components.intent.amble = [0, 1]
+				components.intent.glance = [0, look_y_change]
+			}
+
+			// run the choreographer
+			{
+				const {intent, gimbal, ...choreography} = choreographer.update({
+					...components.choreography,
+					intent: components.intent,
+					gimbal: components.gimbal,
+				})
+				components.intent = intent
+				components.gimbal = gimbal
+				components.choreography = choreography
+			}
 
 			// const results = choreograph({
 			// 	gimbal: state.gimbal,

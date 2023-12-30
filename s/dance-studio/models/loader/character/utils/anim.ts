@@ -20,29 +20,35 @@ export class Anim {
 		return this.#group?.to ?? 0
 	}
 
-	get weight() {
-		return this.#group?.weight ?? 0
+	make_additive() {
+		if (this.#group)
+			AnimationGroup.MakeAnimationAdditive(this.#group)
 	}
 
-	set weight(n: number) {
+	get isAdditive() {
+		return this.#group?.isAdditive ?? false
+	} set isAdditive(a: boolean) {
+		if (this.#group)
+			this.#group.isAdditive = a
+	}
+
+	get weight() {
+		return this.#group?.weight ?? 0
+	} set weight(n: number) {
 		if (this.#group)
 			this.#group.weight = n
 	}
 
 	get speedRatio() {
 		return this.#group?.speedRatio ?? 1
-	}
-
-	set speedRatio(n: number) {
+	} set speedRatio(n: number) {
 		if (this.#group)
 			this.#group.speedRatio = n
 	}
 
 	get playOrder() {
 		return this.#group?.playOrder ?? 0
-	}
-
-	set playOrder(index: number) {
+	} set playOrder(index: number) {
 		if (this.#group)
 			this.#group.playOrder = index
 	}

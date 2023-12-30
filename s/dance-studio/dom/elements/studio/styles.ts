@@ -30,6 +30,9 @@ export const styles = css`
 		position: relative;
 		width: 20em;
 		max-width: calc(100% - 2em);
+		max-height: 90%;
+		overflow-y: auto;
+
 		padding: 1em;
 		margin: 1em;
 

@@ -2,28 +2,28 @@
 import "@babylonjs/loaders/glTF/index.js"
 import "@babylonjs/core/Engines/index.js"
 import "@babylonjs/core/Culling/ray.js"
-import "@babylonjs/core/Rendering/edgesRenderer.js"
 import "@babylonjs/core/Animations/index.js"
+import "@babylonjs/core/Rendering/edgesRenderer.js"
 import "@babylonjs/core/Physics/physicsEngineComponent.js"
-
-import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
+import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 
 import {register_to_dom} from "@benev/slate"
 
+// import {NetworkSession} from "./network/session.js"
+// import {network_connect} from "./network/connect.js"
+// import {parse_network_target_from_url} from "./network/target.js"
+
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
+import {spawners} from "./ecs/spawners.js"
 import {Realm} from "./models/realm/realm.js"
 import {hemiSystem} from "./ecs/systems/hemi.js"
 import {Base, Tick, house} from "./ecs/house.js"
-// import {NetworkSession} from "./network/session.js"
-// import {network_connect} from "./network/connect.js"
 import {humanoidSystem} from "./ecs/systems/humanoid.js"
 import {spectatorSystem} from "./ecs/systems/spectator.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
-// import {parse_network_target_from_url} from "./network/target.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
-import { spawners } from "./ecs/spawners.js"
 
 register_to_dom({BenevHumanoid})
 

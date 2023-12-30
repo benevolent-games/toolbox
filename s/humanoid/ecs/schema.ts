@@ -30,8 +30,11 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		height: number
 		mass: number
 		radius: number
-		choreography: Omit<Choreography, "gimbal" | "intent">
 	}
+
+	choreography: ChoreographyComponent
+	intent: ChoreoIntent
+	gimbal: Vec2
 
 	position: Vec3
 	rotation: Quat
@@ -43,10 +46,10 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		stick: number
 	}
 
-	gimbal: Vec2
-	intent: ChoreoIntent
 	speeds: Speeds
 
 	spectator: {}
 }>
+
+export type ChoreographyComponent = Omit<Choreography, "gimbal" | "intent">
 

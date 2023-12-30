@@ -29,29 +29,31 @@ export const spawners = {
 
 	humanoid: ({position}: {
 			position: Vec3
-		}) => house.entities.create({
-		humanoid: {
-			height: 1.75,
-			mass: 70,
-			radius: 0.5,
-			choreography: Choreographer.default_choreography(),
-		},
-		position,
-		sensitivity: {
-			keys: 10 / 100,
-			mouse: 10 / 100,
-			stick: 10 / 100,
-		},
-		gimbal: [0, 0.5],
-		speeds: {
-			base: 0.5,
-			fast: 1.5,
-			slow: 0.1,
-		},
-		intent: {
-			amble: [0, 0],
-			glance: [0, 0],
-		},
-	}),
+		}) => {
+		const {intent, gimbal, ...choreography} = (
+			Choreographer.default_choreography()
+		)
+		return house.entities.create({
+			humanoid: {
+				height: 1.75,
+				mass: 70,
+				radius: 0.5,
+			},
+			choreography,
+			intent,
+			gimbal,
+			position,
+			sensitivity: {
+				keys: 10 / 100,
+				mouse: 10 / 100,
+				stick: 10 / 100,
+			},
+			speeds: {
+				base: 0.5,
+				fast: 1.5,
+				slow: 0.1,
+			},
+		})
+	},
 }
 
