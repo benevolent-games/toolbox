@@ -6,9 +6,10 @@ import {nexus} from "../../../nexus.js"
 import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {Stick} from "../../../../impulse/nubs/stick/device.js"
 import {Quaternion} from "@babylonjs/core/Maths/math.vector.js"
-import {Choreography} from "../../../../humanoid/ecs/schema.js"
 import {NubStick} from "../../../../impulse/nubs/stick/element.js"
+import {Choreography} from "../../../models/loader/choreo/types.js"
 import {ascii_progress_bar} from "../../../../tools/ascii_progress_bar.js"
+import { Choreographer2 } from "../../../models/loader/choreo/choreo.js"
 
 export const ControlPanel = nexus.shadow_view(use => () => {
 	use.name("control-panel")
@@ -27,34 +28,25 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 
 	const gimbal = use.signal<Vec2>([0, 0.5])
 
-	const choreography = use.signal<Choreography>({
-		swivel: 0.5,
-		ambulation: [0, 0],
-	})
+	const choreography = use.signal(Choreographer2.default_choreography())
 
 	use.once(() => world.onTick(() => {
 		apply_to_camera(cameraStick.vector)
 		const glb = loader.glb.payload
 
-		if (glb) {
-			const {choreo, ambulatory, rotation} = glb.choreography.update({
-				choreography: choreography.value,
-				gimbal: gimbal.value,
-				intent: {
-					amble: moveStick.vector,
-					glance: lookStick.vector,
-				}
-			})
-			choreography.value = choreo.choreography
-			gimbal.value = choreo.gimbal
-			glb.choreography.character.root.rotationQuaternion = (
-				Quaternion.FromEulerAngles(0, rotation, 0)
-			)
+		choreography.value = {
+			...choreography.value,
+			intent: {
+				amble: moveStick.vector,
+				glance: lookStick.vector,
+			},
+		}
 
-			// glb.choreographer.tick({
-			// 	move: moveStick.vector,
-			// 	look: lookStick.vector,
-			// })
+		if (glb) {
+			choreography.value = glb.choreographer.update(choreography.value)
+			glb.choreographer.character.root.rotationQuaternion = (
+				Quaternion.FromEulerAngles(0, choreography.value.rotation, 0)
+			)
 		}
 	}))
 
@@ -65,7 +57,7 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 			${NubStick([cameraStick])}
 		</div>
 		<ul class=bars>
-			${barGroup("ambulation", ...renormalize(choreography.value.ambulation))}
+			${barGroup("ambulation", ...renormalize(choreography.value.ambulatory.ambulation))}
 			${barGroup("swivel", choreography.value.swivel)}
 			${barGroup("gimbal", ...gimbal.value)}
 		</ul>

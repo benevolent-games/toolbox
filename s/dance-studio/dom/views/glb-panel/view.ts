@@ -15,7 +15,7 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 	const {loader} = use.context
 
 	function render_glb(glb: Glb) {
-		const {anims} = glb.choreographer
+		const {anims} = glb.choreographer.character
 		const all_anim_names = glb.all_animations.map(a => a.name)
 		const active_anim_names = Object.entries(anims)
 			.filter(([,anim]) => anim.is_available)

@@ -1,4 +1,5 @@
 
+import { anim_blueprint } from "./anim_blueprint.js"
 import {Anim} from "./utils/anim.js"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
@@ -15,4 +16,6 @@ export type BlueprintToAnims<BP extends AnimBlueprint<any>> = (
 		? Anims<K>
 		: never
 )
+
+export type CharacterAnims = BlueprintToAnims<typeof anim_blueprint>
 

@@ -5,6 +5,7 @@ import {Vec3} from "../../tools/math/vec3.js"
 import {Quat} from "../../tools/math/quat.js"
 import {RealmContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
+import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreo/types.js"
 
 export type HumanoidSchema = Core.AsComponentSchema<{
 	environment: {
@@ -29,7 +30,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		height: number
 		mass: number
 		radius: number
-		choreography: Choreography
+		choreography: Omit<Choreography, "gimbal" | "intent">
 	}
 
 	position: Vec3
@@ -43,27 +44,9 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	}
 
 	gimbal: Vec2
+	intent: ChoreoIntent
 	speeds: Speeds
-	intent: Intent
 
 	spectator: {}
 }>
-
-export type Intent = {
-	amble: Vec2
-	glance: Vec2
-}
-
-export type LegAdjustment = {
-	initial_swivel: number
-	direction: "left" | "right"
-	duration: number
-	progress: number
-}
-
-export type Choreography = {
-	ambulation: Vec2
-	swivel: number
-	adjustment?: LegAdjustment
-}
 

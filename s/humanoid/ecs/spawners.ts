@@ -1,6 +1,7 @@
 
 import {house} from "./house.js"
 import {Vec3} from "../../tools/math/vec3.js"
+import { Choreographer2 } from "../../dance-studio/models/loader/choreo/choreo.js"
 
 export const spawners = {
 
@@ -33,10 +34,7 @@ export const spawners = {
 			height: 1.75,
 			mass: 70,
 			radius: 0.5,
-			choreography: {
-				ambulation: [0, 0],
-				swivel: 0,
-			},
+			choreography: Choreographer2.default_choreography(),
 		},
 		position,
 		sensitivity: {

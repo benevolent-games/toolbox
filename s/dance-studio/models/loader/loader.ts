@@ -8,9 +8,9 @@ import {download} from "./utils/download.js"
 import {fileData} from "./utils/file_data.js"
 import {FileData, Glb} from "./utils/types.js"
 import {Choreographer} from "./choreographer/choreographer.js"
-import {establish_choreography_machine} from "./choreo/choreo.js"
 import {CharacterInstance} from "./character/character_instance.js"
 import {fix_animation_groups} from "./character/utils/fix_animation_groups.js"
+import { Choreographer2 } from "./choreo/choreo.js"
 
 export class Loader {
 	#scene: Scene
@@ -83,8 +83,7 @@ export class Loader {
 			filename,
 			filesize,
 			all_animations: [...container.animationGroups],
-			choreographer: new Choreographer(character),
-			choreography: establish_choreography_machine(character),
+			choreographer: new Choreographer2(character),
 			dispose: () => {
 				character.dispose()
 				container.removeAllFromScene()
