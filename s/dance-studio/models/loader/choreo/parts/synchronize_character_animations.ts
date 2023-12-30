@@ -1,7 +1,7 @@
 
 import {CharacterAnims} from "../../character/types.js"
 import {scalar} from "../../../../../tools/math/scalar.js"
-import {ChoreoAmbulatory, Choreography} from "../types.js"
+import {Choreography} from "../types.js"
 import {calculate_adjustment_weight} from "./utils/calculate_adjustment_weight.js"
 
 export function synchronize_character_animations(

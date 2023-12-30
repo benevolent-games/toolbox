@@ -3,7 +3,7 @@ import {ChoreoSettings} from "./types.js"
 
 export const default_choreo_settings = (): ChoreoSettings => ({
 	sensitivity: 1 / 100,
-	ambulation_delay: 60,
+	ambulation_delay: 15,
 	swivel: {
 		readjustment_margin: 1 / 10,
 		midpoint: 0.5,

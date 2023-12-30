@@ -7,9 +7,8 @@ import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {Stick} from "../../../../impulse/nubs/stick/device.js"
 import {Quaternion} from "@babylonjs/core/Maths/math.vector.js"
 import {NubStick} from "../../../../impulse/nubs/stick/element.js"
-import {Choreography} from "../../../models/loader/choreo/types.js"
+import {Choreographer2} from "../../../models/loader/choreo/choreo.js"
 import {ascii_progress_bar} from "../../../../tools/ascii_progress_bar.js"
-import { Choreographer2 } from "../../../models/loader/choreo/choreo.js"
 
 export const ControlPanel = nexus.shadow_view(use => () => {
 	use.name("control-panel")
@@ -26,9 +25,8 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 		world.cameraRig.swivel += x * sensitivity
 	})
 
-	const gimbal = use.signal<Vec2>([0, 0.5])
-
 	const choreography = use.signal(Choreographer2.default_choreography())
+	const choreo = choreography.value
 
 	use.once(() => world.onTick(() => {
 		apply_to_camera(cameraStick.vector)
@@ -45,7 +43,7 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 		if (glb) {
 			choreography.value = glb.choreographer.update(choreography.value)
 			glb.choreographer.character.root.rotationQuaternion = (
-				Quaternion.FromEulerAngles(0, choreography.value.rotation, 0)
+				Quaternion.FromEulerAngles(0, -choreography.value.rotation, 0)
 			)
 		}
 	}))
@@ -57,22 +55,38 @@ export const ControlPanel = nexus.shadow_view(use => () => {
 			${NubStick([cameraStick])}
 		</div>
 		<ul class=bars>
-			${barGroup("ambulation", ...renormalize(choreography.value.ambulatory.ambulation))}
-			${barGroup("swivel", choreography.value.swivel)}
-			${barGroup("gimbal", ...gimbal.value)}
+			${render_bars("ambulation",
+				["magnitude", "knob", choreo.ambulatory.magnitude],
+				["north", "knob", choreo.ambulatory.north],
+				["west", "knob", choreo.ambulatory.west],
+				["south", "knob", choreo.ambulatory.south],
+				["east", "knob", choreo.ambulatory.east],
+			)}
+			${render_bars("swivel",
+				["swivel", "knob", choreo.swivel],
+				["adjustment-progress", "bar", choreo.adjustment?.progress ?? 0],
+			)}
+			${render_bars("gimbal",
+				["gimbal-x", "knob", choreo.gimbal[0]],
+				["gimbal-y", "knob", choreo.gimbal[1]],
+			)}
 		</ul>
 	`
 })
 
-function barGroup(name: string, ...bars: number[]) {
+function render_bars(groupName: string, ...units: [
+		string, // title
+		"bar" | "knob", // kind
+		number, // progress
+	][]) {
 	return html`
 		<li class=barGroup>
-			<span class=name>${name}</span>
+			<span class=name>${groupName}</span>
 			<span class=ascii>
-				${bars.map(progress => html`
-					<span class=bar>
+				${units.map(([title, kind, progress]) => html`
+					<span class=bar title="${title}">
 						${ascii_progress_bar(progress, {
-							kind: "knob",
+							kind,
 							bars: 10,
 							show_percent: false,
 							clamp_between_1_and_99_percent: false,

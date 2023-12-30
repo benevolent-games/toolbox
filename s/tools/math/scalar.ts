@@ -67,13 +67,13 @@ export namespace scalar {
 	//
 
 	export function map(n: number, [b1, b2]: Vec2) {
-		const fraction = (n - 0) / (1 - 0)
-		return fraction * (b2 - b1) + b1
+		const fraction = n
+		return (fraction * (b2 - b1)) + b1
 	}
 
-	export function remap(n: number, [a1, a2]: Vec2, [b1, b2]: Vec2) {
+	export function remap(n: number, [a1, a2]: Vec2, [b1, b2]: Vec2 = [0, 1]) {
 		const fraction = (n - a1) / (a2 - a1)
-		return fraction * (b2 - b1) + b1
+		return (fraction * (b2 - b1)) + b1
 	}
 
 	export namespace spline {

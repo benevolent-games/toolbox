@@ -1,5 +1,5 @@
 
-import {calculate_swivel_speed} from "../settings.js"
+import {calculate_ambulation_speed, calculate_swivel_speed} from "../settings.js"
 import {scalar} from "../../../../../tools/math/scalar.js"
 import {Vec2, vec2} from "../../../../../tools/math/vec2.js"
 import {AdjustmentAnims, ChoreoAmbulatory, ChoreoSettings, ChoreoSwivelAdjustment, Choreography} from "../types.js"
@@ -33,7 +33,7 @@ export function calculate_choreo_values(
 function swivel_effected_by_glance(choreo: Choreography) {
 	const [x] = choreo.intent.glance
 	const {swivel, settings} = choreo
-	return scalar.cap(swivel + (x * settings.sensitivity))
+	return scalar.cap(swivel + (x * settings.sensitivity * 2))
 }
 
 function gimbal_effected_by_glance(choreo: Choreography) {
@@ -46,13 +46,13 @@ function gimbal_effected_by_glance(choreo: Choreography) {
 
 function calculate_ambulatory_report(choreo: Choreography): ChoreoAmbulatory {
 	const ambulation = molasses2d(
-		1 / 10,
+		calculate_ambulation_speed(choreo.settings),
 		choreo.ambulatory.ambulation,
 		choreo.intent.amble,
 	)
-	const [x, y] = choreo.intent.amble
 	const magnitude = vec2.magnitude(ambulation)
 	const stillness = scalar.cap(1 - magnitude)
+	const [x, y] = ambulation
 	const north = scalar.cap(y, 0, 1)
 	const west = -scalar.cap(x, -1, 0)
 	const south = -scalar.cap(y, -1, 0)
@@ -77,10 +77,10 @@ function handle_adjustments(
 
 	if (!adjustment && adjustment_is_needed) {
 		adjustment = {
-			duration: 30,
+			duration: settings.swivel.duration,
 			progress: 0,
 			initial_swivel: swivel,
-			direction: swivel < 0.5
+			direction: swivel < settings.swivel.midpoint
 				? "left"
 				: "right",
 		}
@@ -122,9 +122,11 @@ function calculate_adjustment_swivel(settings: ChoreoSettings, adjustment: Chore
 	])
 }
 
+const circle = 2 * Math.PI
+
 function calculate_character_rotation_in_radians(choreo: Choreography) {
 	const [horizontal] = choreo.gimbal
-	return -2 * Math.PI * horizontal
+	return circle * horizontal
 }
 
 function molasses2d(delta: number, from: Vec2, to: Vec2) {
