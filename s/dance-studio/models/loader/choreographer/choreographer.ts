@@ -62,7 +62,11 @@ export class Choreographer {
 			original,
 			this.adjustment_anims,
 		)
-		synchronize_character_animations(choreo, this.character.anims)
+		synchronize_character_animations(
+			choreo,
+			this.character.anims,
+			this.adjustment_anims,
+		)
 		return choreo
 	}
 }

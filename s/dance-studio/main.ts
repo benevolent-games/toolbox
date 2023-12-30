@@ -13,6 +13,7 @@ import {DanceStudio} from "./dom/elements/studio/element.js"
 register_to_dom({DanceStudio})
 
 nexus.context.loader.ingest_glb_from_url("/temp/bungledanimations18.glb")
+// nexus.context.loader.ingest_glb_from_url("/temp/knightanimations1.glb")
 
 ;(window as any).nexus = nexus
 
