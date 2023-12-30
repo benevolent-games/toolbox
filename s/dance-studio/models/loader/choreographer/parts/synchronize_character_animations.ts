@@ -16,8 +16,8 @@ export function synchronize_character_animations(
 	// anims.spine_tilt_forwardsbackwards.weight = 1
 	// anims.spine_tilt_forwardsbackwards.goToFrame(vertical * 1000)
 
-	anims.spine_swivel.weight = 1
-	anims.spine_swivel.goToFrame(1000 - (swivel * 1000))
+	// anims.legs_swivel.weight = 1
+	// anims.legs_swivel.goToFrame(swivel * 1000)
 
 	if (adjustment)
 		adjustment_anims.update(adjustment)
@@ -28,32 +28,14 @@ export function synchronize_character_animations(
 			: w
 	}
 
-	// anims.stand_stationary.weight = ambulatory.stillness
+	anims.stand_stationary.weight = ambulatory.stillness
 
-	// anims.stand_unequipped_sprint_forward.weight = mod(ambulatory.north)
-	// // anims.stand_unequipped_sprint_backward.weight = mod(ambulatory.south)
+	anims.stand_unequipped_sprint_forward.weight = mod(ambulatory.north)
+	anims.fullbody_stand_unequipped_jog_backward.weight = mod(ambulatory.south)
+	// anims.fullbody_stand_unequipped_jog_forward.weight = mod(ambulatory.north)
+	// anims.stand_unequipped_sprint_backward.weight = mod(ambulatory.south)
 
-	// // anims.fullbody_stand_unequipped_jog_forward.weight = mod(ambulatory.north)
-	// anims.fullbody_stand_unequipped_jog_backward.weight = mod(ambulatory.south)
-
-	// anims.stand_unequipped_leftward.weight = mod(ambulatory.west)
-	// anims.stand_unequipped_rightward.weight = mod(ambulatory.east)
-
-
-
-
-
-
-
-
-
-
-
-
-	// anims.arms_stand_unequipped_stationary.weight = ambulatory.stillness
-	// anims.arms_stand_unequipped_forward.weight = ambulatory.north
-	// anims.arms_stand_unequipped_backward.weight = ambulatory.south
-	// anims.arms_stand_unequipped_leftward.weight = ambulatory.west
-	// anims.arms_stand_unequipped_rightward.weight = ambulatory.east
+	anims.stand_unequipped_leftward.weight = mod(ambulatory.west)
+	anims.stand_unequipped_rightward.weight = mod(ambulatory.east)
 }
 

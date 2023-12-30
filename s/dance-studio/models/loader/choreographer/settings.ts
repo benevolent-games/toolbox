@@ -5,7 +5,7 @@ export const default_choreo_settings = (): ChoreoSettings => ({
 	sensitivity: 1 / 100,
 	ambulation_delay: 15,
 	swivel: {
-		readjustment_margin: 1 / 10,
+		readjustment_margin: 3 / 10,
 		midpoint: 0.5,
 		duration: 30, // counted in update ticks
 	},

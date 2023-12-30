@@ -2,13 +2,6 @@
 import {AnimBlueprint} from "./types.js"
 
 export const anim_blueprint = [
-
-	["spine_tilt_forwardsbackwards", "primary"],
-	["spine_swivel", "primary"],
-
-	["legs_stand_adjust_left", "primary"],
-	["legs_stand_adjust_right", "primary"],
-
 	["stand_stationary", "weighted_looper"],
 	["stand_unequipped_sprint_forward", "weighted_looper"],
 	["stand_unequipped_sprint_backward", "weighted_looper"],
@@ -16,6 +9,13 @@ export const anim_blueprint = [
 	["fullbody_stand_unequipped_jog_backward", "weighted_looper"],
 	["stand_unequipped_leftward", "weighted_looper"],
 	["stand_unequipped_rightward", "weighted_looper"],
+
+	["legs_stand_adjust_left", "primary"],
+	["legs_stand_adjust_right", "primary"],
+
+	["spine_tilt_forwardsbackwards", "primary_additive"],
+	["legs_swivel", "primary"],
+
 
 	// ["spine", "primary"],
 
