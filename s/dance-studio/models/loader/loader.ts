@@ -73,6 +73,8 @@ export class Loader {
 
 		revokeObjectUrl()
 		container.removeAllFromScene()
+
+		console.log("animationGroups", container.animationGroups.map(g => g.name))
 		const characterContainer = new CharacterContainer(container)
 		const characterInstance = characterContainer.instance([0, 0, 0])
 

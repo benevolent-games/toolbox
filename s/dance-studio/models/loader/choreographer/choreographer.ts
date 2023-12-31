@@ -2,11 +2,11 @@
 import {default_choreo_settings} from "./settings.js"
 import {scalar} from "../../../../tools/math/scalar.js"
 import {CharacterInstance} from "../character/instance.js"
+import {setup_character_anims} from "./parts/setup_character_anims.js"
 import {calculate_choreo_values} from "./parts/calculate_choreo_values.js"
 import {AdjustmentAnims, AdjustmentDirection, Choreography} from "./types.js"
 import {calculate_adjustment_weight} from "./parts/utils/calculate_adjustment_weight.js"
 import {synchronize_character_animations} from "./parts/synchronize_character_animations.js"
-import { ChoreographerAnims, prepare_anims } from "./anims.js"
 
 export class Choreographer {
 	static default_choreography(): Choreography {
@@ -33,12 +33,12 @@ export class Choreographer {
 		}
 	}
 
-	anims: ChoreographerAnims
+	anims: ReturnType<typeof setup_character_anims>
 	adjustment_anims: AdjustmentAnims
 
 	constructor(public character: CharacterInstance) {
-		this.anims = prepare_anims(character.animationCollection)
-		console.log(this.anims)
+		this.anims = setup_character_anims(character)
+		console.log("anims", this.anims)
 		// console.log(character.anims.spine_tilt_forwardsbackwards.group)
 		this.adjustment_anims = {
 			start: ({direction}) => {
