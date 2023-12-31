@@ -11,8 +11,8 @@ import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IP
 import {house} from "../house.js"
 import {Vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
+import {CharacterInstance} from "../../../dance-studio/models/loader/character/instance.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
-import {CharacterInstance} from "../../../dance-studio/models/loader/character/character_instance.js"
 
 export const humanoidSystem = house.rezzer([
 		"humanoid",

@@ -8,6 +8,10 @@ export class Anim {
 		this.#group = animationGroup
 	}
 
+	get group() {
+		return this.#group
+	}
+
 	get is_available() {
 		return !!this.#group
 	}
@@ -22,7 +26,7 @@ export class Anim {
 
 	make_additive() {
 		if (this.#group)
-			AnimationGroup.MakeAnimationAdditive(this.#group)
+			this.#group = AnimationGroup.MakeAnimationAdditive(this.#group)
 	}
 
 	get isAdditive() {
@@ -58,9 +62,9 @@ export class Anim {
 			this.#group.goToFrame(frame)
 	}
 
-	start(loop: boolean) {
+	start(loop: boolean, speedRatio = this.speedRatio, from = this.from, to = this.to) {
 		if (this.#group)
-			this.#group.start(loop)
+			this.#group.start(loop, speedRatio, from, to)
 	}
 
 	play(loop: boolean) {

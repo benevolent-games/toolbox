@@ -1,11 +1,12 @@
 
 import {default_choreo_settings} from "./settings.js"
 import {scalar} from "../../../../tools/math/scalar.js"
-import {CharacterInstance} from "../character/character_instance.js"
+import {CharacterInstance} from "../character/instance.js"
 import {calculate_choreo_values} from "./parts/calculate_choreo_values.js"
 import {AdjustmentAnims, AdjustmentDirection, Choreography} from "./types.js"
 import {calculate_adjustment_weight} from "./parts/utils/calculate_adjustment_weight.js"
 import {synchronize_character_animations} from "./parts/synchronize_character_animations.js"
+import { ChoreographerAnims, prepare_anims } from "./anims.js"
 
 export class Choreographer {
 	static default_choreography(): Choreography {
@@ -32,27 +33,32 @@ export class Choreographer {
 		}
 	}
 
+	anims: ChoreographerAnims
 	adjustment_anims: AdjustmentAnims
 
 	constructor(public character: CharacterInstance) {
+		this.anims = prepare_anims(character.animationCollection)
+		console.log(this.anims)
+		// console.log(character.anims.spine_tilt_forwardsbackwards.group)
 		this.adjustment_anims = {
 			start: ({direction}) => {
-				const anim = adjustment_anim_for_direction(character, direction)
-				anim.play(false)
-				anim.pause()
+				// const anim = adjustment_anim_for_direction(character, direction)
+				// anim.play(false)
+				// anim.pause()
 			},
 			stop: () => {
-				character.anims.legs_stand_adjust_left.stop()
-				character.anims.legs_stand_adjust_right.stop()
+				// // TODO
+				// character.anims.legs_stand_adjust_left.stop()
+				// character.anims.legs_stand_adjust_right.stop()
 			},
 			update: ({direction, progress}) => {
-				const anim = adjustment_anim_for_direction(character, direction)
-				const frame = scalar.map(progress, [
-					anim.from,
-					anim.to,
-				])
-				anim.weight = calculate_adjustment_weight(progress)
-				anim.goToFrame(frame)
+				// const anim = adjustment_anim_for_direction(character, direction)
+				// const frame = scalar.map(progress, [
+				// 	anim.from,
+				// 	anim.to,
+				// ])
+				// anim.weight = calculate_adjustment_weight(progress)
+				// anim.goToFrame(frame)
 			},
 		}
 	}
@@ -64,7 +70,7 @@ export class Choreographer {
 		)
 		synchronize_character_animations(
 			choreo,
-			this.character.anims,
+			this.anims,
 			this.adjustment_anims,
 		)
 		return choreo
@@ -78,8 +84,9 @@ function adjustment_anim_for_direction(
 		character: CharacterInstance,
 		direction: AdjustmentDirection,
 	) {
-	return direction === "left"
-		? character.anims.legs_stand_adjust_left
-		: character.anims.legs_stand_adjust_right
+	return null
+	// return direction === "left"
+	// 	? character.anims.legs_stand_adjust_left
+	// 	: character.anims.legs_stand_adjust_right
 }
 

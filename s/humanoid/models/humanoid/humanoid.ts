@@ -2,7 +2,7 @@
 import {Realm} from "../realm/realm.js"
 import {Disposable} from "../../../tools/disposable.js"
 // import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
-import {CharacterInstance} from "../../../dance-studio/models/loader/character/character_instance.js"
+import {CharacterInstance} from "../../../dance-studio/models/loader/character/instance.js"
 
 export class Humanoid extends Disposable {
 	#character: CharacterInstance
