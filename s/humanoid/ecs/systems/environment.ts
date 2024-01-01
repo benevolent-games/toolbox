@@ -4,9 +4,14 @@ import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
 import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
 
 export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({environment}) => {
-	const container = environment.name in realm.containers
-		? realm.containers[environment.name]
-		: null
+	const container = (() => {
+		switch (environment.name) {
+			case "gym":
+				return realm.containers.gym
+			default:
+				return null
+		}
+	})()
 
 	if (container) {
 		const instanced = container.instantiateModelsToScene()
@@ -30,7 +35,7 @@ export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({en
 		}
 	}
 	else {
-		console.error(`unknown environment name "${environment.name}" (realm container not found)`)
+		console.error(`unknown environment name "${environment.name}"`)
 		return {
 			update() {},
 			dispose() {},

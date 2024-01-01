@@ -33,7 +33,7 @@ const realm = await nexus.context.realmOp.load(
 	async() => Realm.make({
 		glb_links: {
 			gym: "/temp/gym.glb",
-			character: "/temp/bungledanimations18.glb",
+			character: "/temp/knightanimations9.glb",
 
 			// gym: "https://filebin.net/42013ycnu1eav4h6/gym.glb",
 			// character: "https://filebin.net/yuuj502md0iwfxrn/bungledanimations18.glb",
@@ -56,7 +56,7 @@ const realm = await nexus.context.realmOp.load(
 // }
 
 house.entities.create({
-	environment: {name: "gym"}
+	environment: {name: "gym"},
 })
 
 house.entities.create({hemi: {

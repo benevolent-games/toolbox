@@ -35,9 +35,9 @@ export const spawners = {
 		)
 		return house.entities.create({
 			humanoid: {
-				height: 1.75,
+				height: 1.6,
 				mass: 70,
-				radius: 0.5,
+				radius: 0.3,
 			},
 			choreography,
 			intent,

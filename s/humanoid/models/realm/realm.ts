@@ -6,10 +6,11 @@ import {HumanoidImpulse} from "../impulse/impulse.js"
 import {Plate} from "../../../common/models/plate/plate.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
 import {PlatePhysics} from "../../../common/models/plate/setup_physics.js"
+import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
 export type RealmContainers = {
 	gym: AssetContainer
-	character: AssetContainer
+	character: CharacterContainer
 }
 
 export type RealmParams = {

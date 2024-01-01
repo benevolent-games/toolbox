@@ -3,15 +3,17 @@ import {generate_id} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color3, Quaternion} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
 import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
 
 import {house} from "../house.js"
-import {Vec3} from "../../../tools/math/vec3.js"
+import {vec2} from "../../../tools/math/vec2.js"
+import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
-import {CharacterInstance} from "../../../dance-studio/models/loader/character/instance.js"
+import {babylonian} from "../../../tools/math/babylonian.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
 
 export const humanoidSystem = house.rezzer([
@@ -50,13 +52,16 @@ export const humanoidSystem = house.rezzer([
 		PhysicsShapeType.CAPSULE,
 		{
 			mass: humanoid.mass,
-			restitution: 0.75,
-			friction: 0.1,
+			restitution: 0,
+			friction: 1 / 100,
 		},
 		plate.scene,
 	)
 	aggregate.body.setMotionType(PhysicsMotionType.DYNAMIC)
-	aggregate.body.setAngularDamping(1)
+	const {body} = aggregate
+	body.setMassProperties({
+		inertia: babylonian.from.vec3([0, 0, 0]),
+	})
 
 	const torusDiameter = humanoid.height - 0.3
 	const torus = MeshBuilder.CreateTorus(name("torus"), {
@@ -76,25 +81,30 @@ export const humanoidSystem = house.rezzer([
 		{size: 0.2},
 		scene,
 	)
+	const third_person_cam = new TargetCamera(
+		name("third_person_cam"),
+		babylonian.from.vec3([0, 0, -4]),
+		scene,
+	)
+	third_person_cam.setTarget(headbox.position)
+	realm.plate.setCamera(third_person_cam)
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 
-	const instance = new CharacterInstance(
-		realm.containers.character,
-		[0, -(humanoid.height / 2), 0],
-	)
-
-	const choreographer = new Choreographer(instance)
+	const characterInstance = realm.containers.character.instance([0, -(humanoid.height / 2), 0])
+	const choreographer = new Choreographer(characterInstance)
 
 	const torusRoot = new TransformNode(name("torusRoot"), scene)
 
 	// parenting
+	third_person_cam.parent = headbox
 	headbox.setParent(torusRoot)
 	torus.setParent(torusRoot)
 	torusRoot.setParent(capsule)
-	instance.root.parent = capsule
+	characterInstance.root.setParent(capsule)
+	// characterInstance.root.parent = capsule
 
-	console.log(capsule, instance)
+	console.log(capsule, characterInstance)
 
 	// const camera = new TargetCamera(name("camera"), Vector3.Zero())
 
@@ -132,8 +142,42 @@ export const humanoidSystem = house.rezzer([
 
 			// update the intent
 			{
-				components.intent.amble = [0, 1]
+				let x = 0
+				let y = 0
+
+				const {
+					forward,
+					backward,
+					leftward,
+					rightward,
+				} = impulse.report.humanoid.buttons
+
+				if (forward)
+					y += 1
+
+				if (backward)
+					y -= 1
+
+				if (leftward)
+					x -= 1
+
+				if (rightward)
+					x += 1
+
+				components.intent.amble = vec2.normalize([x, y])
 				components.intent.glance = [0, look_y_change]
+			}
+
+			// run physical movement
+			{
+				const [x, z] = vec2.rotate(
+					components.intent.amble,
+					scalar.map(components.gimbal[0], [0, 2 * Math.PI]),
+				)
+				body.applyImpulse(
+					babylonian.from.vec3(vec3.multiplyBy([x, 0, z], 100)),
+					capsule.absolutePosition,
+				)
 			}
 
 			// run the choreographer
@@ -143,26 +187,11 @@ export const humanoidSystem = house.rezzer([
 					intent: components.intent,
 					gimbal: components.gimbal,
 				})
-				components.intent = intent
 				components.gimbal = gimbal
 				components.choreography = choreography
 			}
 
-			// const results = choreograph({
-			// 	gimbal: state.gimbal,
-			// 	intent: state.intent,
-			// 	choreography: state.humanoid.choreography,
-			// })
-
-			// state.gimbal = results.gimbal
-			// state.humanoid.choreography = results.choreography
-
-			// choreographer.tick({
-			// 	move: [0, 1],
-			// 	look: [0, look_y_change],
-			// })
-
-			const a = 0 //choreographer.gimbal[1]
+			const a = components.gimbal[1]
 			// const b = scalar.map(a, [0.1, 0.7])
 			const b = scalar.spline.quickLinear(a, [0.1, 0.5, 0.7])
 			const toroidal = (Math.PI / 2) + (Math.PI * -b)
