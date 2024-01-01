@@ -40,6 +40,14 @@ export class Choreographer {
 		const anims = setup_character_anims(character)
 		this.anims = anims
 
+		// initialize with tpose
+		if (anims.tpose.group) {
+			anims.tpose.group.weight = -1
+			anims.tpose.group.play(false)
+			anims.tpose.group.pause()
+			anims.tpose.group.goToFrame(0)
+		}
+
 		console.log("anims", this.anims)
 
 		this.adjustment_anims = {
