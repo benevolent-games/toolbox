@@ -22,18 +22,27 @@ export function synchronize_character_animations(
 			: w
 	}
 
-	anims.stand_stationary.weight = ambulatory.stillness
-	anims.stand_unequipped_sprint_forward.weight = mod(ambulatory.north)
-	anims.fullbody_stand_unequipped_jog_backward.weight = mod(ambulatory.south)
-	anims.stand_unequipped_leftward.weight = mod(ambulatory.west)
-	anims.stand_unequipped_rightward.weight = mod(ambulatory.east)
+	anims.stand.weight = ambulatory.stillness
+	anims.twohander.weight = ambulatory.stillness
+
+	anims.stand_forward.weight = mod(ambulatory.north)
+	anims.twohander_forward.weight = mod(ambulatory.north)
+
+	anims.stand_backward.weight = mod(ambulatory.south)
+	anims.twohander_backward.weight = mod(ambulatory.south)
+
+	anims.stand_leftward.weight = mod(ambulatory.west)
+	anims.twohander_leftward.weight = mod(ambulatory.west)
+
+	anims.stand_rightward.weight = mod(ambulatory.east)
+	anims.twohander_rightward.weight = mod(ambulatory.east)
 
 	// additives
 
-	anims.spine_tilt_forwardsbackwards.weight = 1
-	anims.spine_tilt_forwardsbackwards.forceFrame(vertical * anims.spine_tilt_forwardsbackwards.to)
+	anims.spine_bend.weight = 1
+	anims.spine_bend.forceFrame(vertical * anims.spine_bend.to)
 
-	anims.legs_swivel.weight = 1
-	anims.legs_swivel.forceFrame(swivel * 1000)
+	anims.hips_swivel.weight = 1
+	anims.hips_swivel.forceFrame(swivel * 1000)
 }
 

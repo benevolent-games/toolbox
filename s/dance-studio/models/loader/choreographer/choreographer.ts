@@ -53,8 +53,8 @@ export class Choreographer {
 		this.adjustment_anims = {
 			start: () => {},
 			stop: () => {
-				anims.legs_stand_adjust_left.weight = 0
-				anims.legs_stand_adjust_right.weight = 0
+				anims.stand_legadjust_left.weight = 0
+				anims.stand_legadjust_right.weight = 0
 			},
 			update: ({direction, progress}) => {
 				const anim = adjustment_anim_for_direction(anims, direction)
@@ -90,7 +90,7 @@ function adjustment_anim_for_direction(
 		direction: AdjustmentDirection,
 	) {
 	return direction === "left"
-		? anims.legs_stand_adjust_left
-		: anims.legs_stand_adjust_right
+		? anims.stand_legadjust_left
+		: anims.stand_legadjust_right
 }
 

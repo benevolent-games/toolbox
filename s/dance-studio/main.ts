@@ -17,5 +17,5 @@ register_to_dom({DanceStudio})
 // nexus.context.loader.ingest_glb_from_url("/temp/bungledanimations18.glb")
 // await nexus.context.loader.ingest_glb_from_url("https://filebin.net/o9g5lbh4ex6frwrf/knightanimations12.glb")
 
-await nexus.context.loader.ingest_glb_from_url("/temp/knightanimations12.glb")
+await nexus.context.loader.ingest_glb_from_url("/temp/knightanimations14.glb")
 
