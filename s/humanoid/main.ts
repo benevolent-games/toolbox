@@ -33,7 +33,7 @@ const realm = await nexus.context.realmOp.load(
 	async() => Realm.make({
 		glb_links: {
 			gym: "/temp/gym.glb",
-			character: "/temp/knightanimations9.glb",
+			character: "/temp/knightanimations14.glb",
 
 			// gym: "https://filebin.net/42013ycnu1eav4h6/gym.glb",
 			// character: "https://filebin.net/yuuj502md0iwfxrn/bungledanimations18.glb",
