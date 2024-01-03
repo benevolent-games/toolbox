@@ -53,7 +53,7 @@ export const humanoidSystem = house.rezzer([
 		{
 			mass: humanoid.mass,
 			restitution: 0,
-			friction: 1 / 100,
+			friction: 1000,
 		},
 		plate.scene,
 	)

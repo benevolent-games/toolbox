@@ -20,11 +20,11 @@ export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({en
 				const aggregate = new PhysicsAggregate(
 					mesh,
 					PhysicsShapeType.MESH,
-					{mass: 0},
+					{mass: 0, friction: 1},
 					realm.plate.scene,
 				)
 				aggregate.body.setMotionType(PhysicsMotionType.STATIC)
-				console.log("added mesh physics", mesh.name)
+				// console.log("added mesh physics", mesh.name)
 			}
 		}
 		return {
