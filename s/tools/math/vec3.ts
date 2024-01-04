@@ -5,6 +5,15 @@ export type Vec3 = vec3.Vec3
 
 export namespace vec3 {
 	export type Vec3 = [number, number, number]
+	export type Xyz = {x: number, y: number, z: number}
+
+	export const to = {
+		xyz: ([x, y, z]: Vec3): Xyz => ({x, y, z}),
+	}
+
+	export const from = {
+		xyz: ({x, y, z}: Xyz): Vec3 => [x, y, z],
+	}
 
 	export function as(vec3: Vec3): Vec3 {
 		return vec3
