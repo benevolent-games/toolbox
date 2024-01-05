@@ -1,8 +1,8 @@
 
 import {house} from "./house.js"
 import {Vec3} from "../../tools/math/vec3.js"
+import {Quat} from "../../tools/math/quat.js"
 import {Choreographer} from "../../dance-studio/models/loader/choreographer/choreographer.js"
-import { Quat } from "../../tools/math/quat.js"
 
 export const spawners = {
 

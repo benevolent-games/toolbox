@@ -1,6 +1,7 @@
 
 import {house} from "../house.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
+import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 
 export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({environment}) => {
 	const container = (() => {
@@ -19,12 +20,11 @@ export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({en
 		for (const root of instanced.rootNodes) {
 			const meshes = root
 				.getChildMeshes()
-				.filter(m => m instanceof Mesh) as Mesh[]
+				.filter(m => (m instanceof Mesh) || (m instanceof InstancedMesh)) as (Mesh | InstancedMesh)[]
 
 			for (const mesh of meshes) {
 				const body = realm.physics.static_trimesh(mesh)
 				disposables.add(() => body.dispose())
-				// console.log("added mesh physics", mesh.name)
 			}
 		}
 

@@ -11,7 +11,7 @@ import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 import {house} from "../house.js"
 import {vec2} from "../../../tools/math/vec2.js"
-import {Vec3} from "../../../tools/math/vec3.js"
+import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
@@ -24,9 +24,7 @@ export const humanoidSystem = house.rezzer([
 		"speeds",
 		"intent",
 		"choreography",
-	], ({realm}) => (components, id) => {
-
-	const {humanoid} = components
+	], ({realm}) => (state, id) => {
 
 	const {impulse, plate} = realm
 	const {scene} = plate
@@ -39,13 +37,19 @@ export const humanoidSystem = house.rezzer([
 		green: debugMaterial({scene, color: [.2, 1, .2]}),
 	}
 
-	const capsule = MeshBuilder.CreateCapsule(
-		name("capsule"),
-		{radius: humanoid.radius, height: humanoid.height},
-		plate.scene,
-	)
+	const capsule = realm.physics.character_capsule({
+		density: 1,
+		radius: state.humanoid.radius,
+		halfHeight: state.humanoid.height / 2,
+	})
 
-	capsule.material = colors.cyan
+	// const capsule = MeshBuilder.CreateCapsule(
+	// 	name("capsule"),
+	// 	{radius: humanoid.radius, height: humanoid.height},
+	// 	plate.scene,
+	// )
+
+	// capsule.material = colors.cyan
 
 	// const aggregate = new PhysicsAggregate(
 	// 	capsule,
@@ -63,9 +67,9 @@ export const humanoidSystem = house.rezzer([
 	// 	inertia: babylonian.from.vec3([0, 0, 0]),
 	// })
 
-	const torusDiameter = humanoid.height - 0.3
+	const torusDiameter = state.humanoid.height - 0.3
 	const torus = MeshBuilder.CreateTorus(name("torus"), {
-		diameter: humanoid.height - 0.3,
+		diameter: state.humanoid.height - 0.3,
 		thickness: 0.1,
 		tessellation: 48,
 	}, scene)
@@ -91,7 +95,11 @@ export const humanoidSystem = house.rezzer([
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 
-	const characterInstance = realm.containers.character.instance([0, -(humanoid.height / 2), 0])
+	const characterInstance = realm
+		.containers
+		.character
+		.instance([0, -(state.humanoid.height / 2), 0])
+
 	const choreographer = new Choreographer(characterInstance)
 
 	const torusRoot = new TransformNode(name("torusRoot"), scene)
@@ -100,9 +108,8 @@ export const humanoidSystem = house.rezzer([
 	third_person_cam.parent = headbox
 	headbox.setParent(torusRoot)
 	torus.setParent(torusRoot)
-	torusRoot.setParent(capsule)
-	characterInstance.root.setParent(capsule)
-	// characterInstance.root.parent = capsule
+	torusRoot.setParent(capsule.mesh)
+	characterInstance.root.setParent(capsule.mesh)
 
 	console.log(capsule, characterInstance)
 
@@ -164,16 +171,17 @@ export const humanoidSystem = house.rezzer([
 				if (rightward)
 					x += 1
 
-				components.intent.amble = vec2.normalize([x, y])
-				components.intent.glance = [0, look_y_change]
+				state.intent.amble = vec2.normalize([x, y])
+				state.intent.glance = [0, look_y_change]
 			}
 
 			// run physical movement
 			{
 				const [x, z] = vec2.rotate(
-					components.intent.amble,
-					scalar.map(components.gimbal[0], [0, 2 * Math.PI]),
+					state.intent.amble,
+					scalar.map(state.gimbal[0], [0, 2 * Math.PI]),
 				)
+				capsule.applyMovement(vec3.divideBy([x, 0, z], 10))
 				// body.applyImpulse(
 				// 	babylonian.from.vec3(vec3.multiplyBy([x, 0, z], 100)),
 				// 	capsule.absolutePosition,
@@ -183,15 +191,15 @@ export const humanoidSystem = house.rezzer([
 			// run the choreographer
 			{
 				const {intent, gimbal, ...choreography} = choreographer.update({
-					...components.choreography,
-					intent: components.intent,
-					gimbal: components.gimbal,
+					...state.choreography,
+					intent: state.intent,
+					gimbal: state.gimbal,
 				})
-				components.gimbal = gimbal
-				components.choreography = choreography
+				state.gimbal = gimbal
+				state.choreography = choreography
 			}
 
-			const a = components.gimbal[1]
+			const a = state.gimbal[1]
 			// const b = scalar.map(a, [0.1, 0.7])
 			const b = scalar.spline.quickLinear(a, [0.1, 0.5, 0.7])
 			const toroidal = (Math.PI / 2) + (Math.PI * -b)

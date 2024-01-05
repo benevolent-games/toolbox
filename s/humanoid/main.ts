@@ -67,7 +67,7 @@ house.entities.create({hemi: {
 }})
 
 spawners.spectator({position: [0, 1, -2]})
-// spawners.humanoid({position: [0, 1, 0]})
+spawners.humanoid({position: [0, 3, 0]})
 spawners.physicsBox({
 	density: 1,
 	position: [0, 1, 3],

@@ -2,10 +2,10 @@
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 
 import {make_realm} from "./make.js"
+import {Physics} from "../../../rapier/physics.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
 import {Plate} from "../../../common/models/plate/plate.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
-import {BabylonRapierPhysics} from "../../../tools/babylon/rapier/rapier.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
 export type RealmContainers = {
@@ -17,7 +17,7 @@ export type RealmParams = {
 	porthole: Porthole
 	plate: Plate
 	containers: RealmContainers
-	physics: BabylonRapierPhysics
+	physics: Physics
 }
 
 export class Realm {

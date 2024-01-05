@@ -1,8 +1,8 @@
 
 import {Realm} from "./realm.js"
+import {Physics} from "../../../rapier/physics.js"
 import {Plate} from "../../../common/models/plate/plate.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
-import {BabylonRapierPhysics} from "../../../tools/babylon/rapier/rapier.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
 export async function make_realm({glb_links}: {
@@ -14,7 +14,8 @@ export async function make_realm({glb_links}: {
 
 	const porthole = new Porthole()
 	const plate = new Plate(porthole.canvas)
-	const physics = new BabylonRapierPhysics({
+
+	const physics = new Physics({
 		scene: plate.scene,
 		timestep: 1 / 60,
 		gravity: [0, -9.81, 0],
