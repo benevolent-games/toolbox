@@ -8,24 +8,23 @@ import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
-import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
+import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 import {quat} from "../../math/quat.js"
 import {Vec3, vec3} from "../../math/vec3.js"
-import {babylonian} from "../../math/babylonian.js"
 
-export type Container<X> = {
-	value: X
+export type Container = {
 	dispose: () => void
 }
 
-export const asContainer = <X>(r: Container<X>) => r
+export const containerize = <X extends Container>(c: X) => c
 
 export type Body = {
-	transform: TransformNode
 	rigid: Rapier.RigidBody
 	collider: Rapier.Collider
+	position: Vector3
+	rotation: Quaternion
 }
 
 export class BabylonRapierPhysics {
@@ -49,10 +48,6 @@ export class BabylonRapierPhysics {
 		return `${n}::${this.#counter++}`
 	}
 
-	#new_transform_node() {
-		return new TransformNode(this.#label("physics_transform"), this.#scene)
-	}
-
 	#debug_material(color: Vec3) {
 		const m = new PBRMaterial(
 			this.#label("physics_debug_material"),
@@ -73,16 +68,20 @@ export class BabylonRapierPhysics {
 	}
 
 	body(
-			transform: TransformNode,
 			rigidDesc: Rapier.RigidBodyDesc,
 			colliderDesc: Rapier.ColliderDesc,
 		) {
+
 		const rigid = this.#world.createRigidBody(rigidDesc)
 		const collider = this.#world.createCollider(colliderDesc, rigid)
-		const body: Body = {transform, rigid, collider}
-		this.#synchronizedBodies.add({transform, rigid, collider})
-		return asContainer({
-			value: body,
+		const position = Vector3.Zero()
+		const rotation = Quaternion.Identity()
+		const body: Body = {rigid, collider, position, rotation}
+
+		this.#synchronizedBodies.add(body)
+
+		return containerize({
+			...body,
 			dispose: () => {
 				this.#synchronizedBodies.delete(body)
 				this.#world.removeCollider(collider, false)
@@ -97,18 +96,15 @@ export class BabylonRapierPhysics {
 			material: Material
 		}) {
 
-		const rigid = Rapier
-			.RigidBodyDesc
-			.dynamic()
-
-		const collider = Rapier
-			.ColliderDesc
-			.cuboid(...vec3.divideBy(spec.dimensions, 2))
-			.setDensity(spec.density)
-
-		const transform = this.#new_transform_node()
-		const container = this.body(transform, rigid, collider)
 		const [width, height, depth] = spec.dimensions
+
+		const body = this.body(
+			Rapier.RigidBodyDesc
+				.dynamic(),
+			Rapier.ColliderDesc
+				.cuboid(...vec3.divideBy(spec.dimensions, 2))
+				.setDensity(spec.density),
+		)
 
 		const mesh = MeshBuilder.CreateBox(
 			this.#label("physics_visual_box"),
@@ -116,44 +112,43 @@ export class BabylonRapierPhysics {
 			this.#scene,
 		)
 
+		mesh.position = body.position
+		mesh.rotationQuaternion = body.rotation
 		mesh.material = spec.material ?? this.colors.red
-		mesh.setParent(transform)
 
-		return asContainer({
-			value: {transform, rigid, collider, mesh},
+		return containerize({
+			mesh,
+			rigid: body.rigid,
+			collider: body.collider,
 			dispose: () => {
-				container.dispose()
 				mesh.dispose()
+				body.dispose()
 			},
 		})
 	}
 
 	character(size: {halfHeight: number, radius: number}) {
 		const controller = this.#world.createCharacterController(0.01)
-		const transform = this.#new_transform_node()
 
-		const container = this.body(
-			transform,
+		const body = this.body(
 			Rapier.RigidBodyDesc.kinematicPositionBased(),
 			Rapier.ColliderDesc.capsule(size.halfHeight, size.radius),
 		)
 
-		const {rigid, collider} = container.value
-
 		const applyMovement = (velocity: Vec3) => {
 			controller.computeColliderMovement(
-				collider,
+				body.collider,
 				vec3.to.xyz(velocity),
 			)
 			const grounded = controller.computedGrounded()
 			const movement = controller.computedMovement()
 			const newPosition = vec3.to.xyz(
 				vec3.add(
-					vec3.from.xyz(rigid.translation()),
+					vec3.from.xyz(body.rigid.translation()),
 					vec3.from.xyz(movement),
 				)
 			)
-			rigid.setNextKinematicTranslation(newPosition)
+			body.rigid.setNextKinematicTranslation(newPosition)
 			return {grounded, movement}
 		}
 
@@ -163,14 +158,17 @@ export class BabylonRapierPhysics {
 			this.#scene,
 		)
 
+		mesh.position = body.position
+		mesh.rotationQuaternion = body.rotation
 		mesh.material = this.colors.cyan
-		mesh.setParent(transform)
 
-		return asContainer({
-			value: {transform, rigid, collider, mesh, applyMovement},
+		return containerize({
+			...body,
+			mesh,
+			applyMovement,
 			dispose: () => {
 				this.#world.removeCharacterController(controller)
-				container.dispose()
+				body.dispose()
 			},
 		})
 	}
@@ -190,8 +188,9 @@ export class BabylonRapierPhysics {
 			rigid,
 		)
 
-		return asContainer({
-			value: {rigid, collider},
+		return containerize({
+			rigid,
+			collider,
 			dispose: () => {
 				this.#world.removeCollider(collider, false)
 				this.#world.removeRigidBody(rigid)
@@ -203,17 +202,9 @@ export class BabylonRapierPhysics {
 		this.#world.step()
 
 		// update babylon positions and rotations
-		for (const {transform, rigid} of this.#synchronizedBodies) {
-			transform.position.set(...vec3.from.xyz(rigid.translation()))
-
-			if (transform.rotationQuaternion)
-				transform.rotationQuaternion.set(
-					...quat.from.xyzw(rigid.rotation())
-				)
-			else
-				transform.rotationQuaternion = babylonian.from.quat(
-					quat.from.xyzw(rigid.rotation())
-				)
+		for (const {rigid, position, rotation} of this.#synchronizedBodies) {
+			position.set(...vec3.from.xyz(rigid.translation()))
+			rotation.set(...quat.from.xyzw(rigid.rotation()))
 		}
 	}
 }
