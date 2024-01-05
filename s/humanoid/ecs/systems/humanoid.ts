@@ -6,12 +6,12 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
-import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
-import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
+// import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
+// import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
 
 import {house} from "../house.js"
 import {vec2} from "../../../tools/math/vec2.js"
-import {Vec3, vec3} from "../../../tools/math/vec3.js"
+import {Vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
@@ -47,21 +47,21 @@ export const humanoidSystem = house.rezzer([
 
 	capsule.material = colors.cyan
 
-	const aggregate = new PhysicsAggregate(
-		capsule,
-		PhysicsShapeType.CAPSULE,
-		{
-			mass: humanoid.mass,
-			restitution: 0,
-			friction: 1000,
-		},
-		plate.scene,
-	)
-	aggregate.body.setMotionType(PhysicsMotionType.DYNAMIC)
-	const {body} = aggregate
-	body.setMassProperties({
-		inertia: babylonian.from.vec3([0, 0, 0]),
-	})
+	// const aggregate = new PhysicsAggregate(
+	// 	capsule,
+	// 	PhysicsShapeType.CAPSULE,
+	// 	{
+	// 		mass: humanoid.mass,
+	// 		restitution: 0,
+	// 		friction: 1000,
+	// 	},
+	// 	plate.scene,
+	// )
+	// aggregate.body.setMotionType(PhysicsMotionType.DYNAMIC)
+	// const {body} = aggregate
+	// body.setMassProperties({
+	// 	inertia: babylonian.from.vec3([0, 0, 0]),
+	// })
 
 	const torusDiameter = humanoid.height - 0.3
 	const torus = MeshBuilder.CreateTorus(name("torus"), {
@@ -174,10 +174,10 @@ export const humanoidSystem = house.rezzer([
 					components.intent.amble,
 					scalar.map(components.gimbal[0], [0, 2 * Math.PI]),
 				)
-				body.applyImpulse(
-					babylonian.from.vec3(vec3.multiplyBy([x, 0, z], 100)),
-					capsule.absolutePosition,
-				)
+				// body.applyImpulse(
+				// 	babylonian.from.vec3(vec3.multiplyBy([x, 0, z], 100)),
+				// 	capsule.absolutePosition,
+				// )
 			}
 
 			// run the choreographer

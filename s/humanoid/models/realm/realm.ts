@@ -5,7 +5,7 @@ import {make_realm} from "./make.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
 import {Plate} from "../../../common/models/plate/plate.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
-import {PlatePhysics} from "../../../common/models/plate/setup_physics.js"
+import {BabylonRapierPhysics} from "../../../tools/babylon/rapier/rapier.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
 export type RealmContainers = {
@@ -16,8 +16,8 @@ export type RealmContainers = {
 export type RealmParams = {
 	porthole: Porthole
 	plate: Plate
-	physics: PlatePhysics
 	containers: RealmContainers
+	physics: BabylonRapierPhysics
 }
 
 export class Realm {

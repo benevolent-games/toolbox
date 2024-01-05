@@ -1,7 +1,6 @@
 
 import {house} from "../house.js"
-import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
-import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
+import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 
 export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({environment}) => {
 	const container = (() => {
@@ -15,21 +14,32 @@ export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({en
 
 	if (container) {
 		const instanced = container.instantiateModelsToScene()
+		const disposables = new Set<() => void>()
+
 		for (const root of instanced.rootNodes) {
-			for (const mesh of root.getChildMeshes()) {
-				const aggregate = new PhysicsAggregate(
-					mesh,
-					PhysicsShapeType.MESH,
-					{mass: 0, friction: 1},
-					realm.plate.scene,
-				)
-				aggregate.body.setMotionType(PhysicsMotionType.STATIC)
-				// console.log("added mesh physics", mesh.name)
+			const meshes = root
+				.getChildMeshes()
+				.filter(m => m instanceof Mesh) as Mesh[]
+
+			for (const mesh of meshes) {
+				const container = realm.physics.static_trimesh(mesh)
+				disposables.add(() => container.dispose())
+				console.log("added mesh physics", mesh.name)
+				// const aggregate = new PhysicsAggregate(
+				// 	mesh,
+				// 	PhysicsShapeType.MESH,
+				// 	{mass: 0, friction: 1},
+				// 	realm.plate.scene,
+				// )
+				// aggregate.body.setMotionType(PhysicsMotionType.STATIC)
 			}
 		}
+
 		return {
 			update() {},
 			dispose() {
+				for (const dispose of disposables)
+					dispose()
 				instanced.dispose()
 			},
 		}

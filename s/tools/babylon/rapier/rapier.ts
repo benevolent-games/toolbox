@@ -1,17 +1,19 @@
 
-import Rapier from "@dimforge/rapier3d"
+import Rapier from "@dimforge/rapier3d-compat/rapier.es.js"
+await (Rapier as any).init()
+
 import {Scene} from "@babylonjs/core/scene.js"
+import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 import {quat} from "../../math/quat.js"
 import {Vec3, vec3} from "../../math/vec3.js"
 import {babylonian} from "../../math/babylonian.js"
-import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
-import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 
 export type Container<X> = {
 	value: X
@@ -26,9 +28,10 @@ export type Body = {
 	collider: Rapier.Collider
 }
 
-export class PhysicsIntegration {
+export class BabylonRapierPhysics {
 	#scene: Scene
 	#world: Rapier.World
+
 	#counter = 0
 	#synchronizedBodies = new Set<Body>()
 
@@ -128,12 +131,15 @@ export class PhysicsIntegration {
 	character(size: {halfHeight: number, radius: number}) {
 		const controller = this.#world.createCharacterController(0.01)
 		const transform = this.#new_transform_node()
+
 		const container = this.body(
 			transform,
 			Rapier.RigidBodyDesc.kinematicPositionBased(),
 			Rapier.ColliderDesc.capsule(size.halfHeight, size.radius),
 		)
+
 		const {rigid, collider} = container.value
+
 		const applyMovement = (velocity: Vec3) => {
 			controller.computeColliderMovement(
 				collider,
