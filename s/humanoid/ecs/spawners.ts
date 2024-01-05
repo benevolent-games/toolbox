@@ -2,6 +2,7 @@
 import {house} from "./house.js"
 import {Vec3} from "../../tools/math/vec3.js"
 import {Choreographer} from "../../dance-studio/models/loader/choreographer/choreographer.js"
+import { Quat } from "../../tools/math/quat.js"
 
 export const spawners = {
 
@@ -55,5 +56,23 @@ export const spawners = {
 			},
 		})
 	},
+
+	physicsBox: ({
+		scale,
+		density,
+		position,
+		rotation,
+	}: {
+		scale: Vec3
+		position: Vec3
+		rotation: Quat
+		density: number
+	}) => house.entities.create({
+		physicsBox: {},
+		scale,
+		density,
+		position,
+		rotation,
+	}),
 }
 

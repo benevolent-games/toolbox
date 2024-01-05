@@ -22,8 +22,10 @@ import {hemiSystem} from "./ecs/systems/hemi.js"
 import {Base, Tick, house} from "./ecs/house.js"
 import {humanoidSystem} from "./ecs/systems/humanoid.js"
 import {spectatorSystem} from "./ecs/systems/spectator.js"
+import {physicsBoxSystem} from "./ecs/systems/physics_box.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
+import { quat } from "../tools/math/quat.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -65,7 +67,13 @@ house.entities.create({hemi: {
 }})
 
 spawners.spectator({position: [0, 1, -2]})
-spawners.humanoid({position: [0, 1, 0]})
+// spawners.humanoid({position: [0, 1, 0]})
+spawners.physicsBox({
+	density: 1,
+	position: [0, 1, 3],
+	rotation: quat.identity(),
+	scale: [1, 1, 1],
+})
 
 const executor = new Core.Executor<Base, Tick>(
 	{realm, entities: house.entities},
@@ -74,11 +82,15 @@ const executor = new Core.Executor<Base, Tick>(
 		environmentSystem,
 		spectatorSystem,
 		humanoidSystem,
+		physicsBoxSystem,
 	],
 )
 
 let count = 0
-realm.plate.onTick(() => executor.tick({tick: count++}))
+realm.plate.onTick(() => {
+	executor.tick({tick: count++})
+	realm.physics.step()
+})
 
 console.log("realm", realm)
 

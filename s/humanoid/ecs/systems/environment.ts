@@ -22,16 +22,9 @@ export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({en
 				.filter(m => m instanceof Mesh) as Mesh[]
 
 			for (const mesh of meshes) {
-				const container = realm.physics.static_trimesh(mesh)
-				disposables.add(() => container.dispose())
-				console.log("added mesh physics", mesh.name)
-				// const aggregate = new PhysicsAggregate(
-				// 	mesh,
-				// 	PhysicsShapeType.MESH,
-				// 	{mass: 0, friction: 1},
-				// 	realm.plate.scene,
-				// )
-				// aggregate.body.setMotionType(PhysicsMotionType.STATIC)
+				const body = realm.physics.static_trimesh(mesh)
+				disposables.add(() => body.dispose())
+				// console.log("added mesh physics", mesh.name)
 			}
 		}
 

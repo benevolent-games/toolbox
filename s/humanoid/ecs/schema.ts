@@ -39,6 +39,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	position: Vec3
 	rotation: Quat
 	scale: Vec3
+	density: number
 
 	sensitivity: {
 		keys: number
@@ -49,6 +50,8 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	speeds: Speeds
 
 	spectator: {}
+
+	physicsBox: {}
 }>
 
 export type ChoreographyComponent = Omit<Choreography, "gimbal" | "intent">

@@ -11,8 +11,9 @@ import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
-import {quat} from "../../math/quat.js"
+import {Quat, quat} from "../../math/quat.js"
 import {Vec3, vec3} from "../../math/vec3.js"
+import { babylonian } from "../../math/babylonian.js"
 
 export type Container = {
 	dispose: () => void
@@ -32,7 +33,7 @@ export class BabylonRapierPhysics {
 	#world: Rapier.World
 
 	#counter = 0
-	#synchronizedBodies = new Set<Body>()
+	#bodies = new Set<Body>()
 
 	constructor({scene, gravity, timestep}: {
 			scene: Scene,
@@ -74,16 +75,17 @@ export class BabylonRapierPhysics {
 
 		const rigid = this.#world.createRigidBody(rigidDesc)
 		const collider = this.#world.createCollider(colliderDesc, rigid)
+
 		const position = Vector3.Zero()
 		const rotation = Quaternion.Identity()
-		const body: Body = {rigid, collider, position, rotation}
 
-		this.#synchronizedBodies.add(body)
+		const body: Body = {rigid, collider, position, rotation}
+		this.#bodies.add(body)
 
 		return containerize({
 			...body,
 			dispose: () => {
-				this.#synchronizedBodies.delete(body)
+				this.#bodies.delete(body)
 				this.#world.removeCollider(collider, false)
 				this.#world.removeRigidBody(rigid)
 			},
@@ -91,20 +93,30 @@ export class BabylonRapierPhysics {
 	}
 
 	box(spec: {
+			scale: Vec3
 			density: number
-			dimensions: Vec3
-			material: Material
+			position?: Vec3
+			rotation?: Quat
+			material?: Material
 		}) {
 
-		const [width, height, depth] = spec.dimensions
+		const [width, height, depth] = spec.scale
 
 		const body = this.body(
 			Rapier.RigidBodyDesc
 				.dynamic(),
 			Rapier.ColliderDesc
-				.cuboid(...vec3.divideBy(spec.dimensions, 2))
+				.cuboid(...vec3.divideBy(spec.scale, 2))
 				.setDensity(spec.density),
 		)
+
+		if (spec.position)
+			body.rigid.setTranslation(vec3.to.xyz(spec.position), true)
+
+		if (spec.rotation)
+			body.rigid.setRotation(quat.to.xyzw(spec.rotation), true)
+
+		this.#synchronize(body)
 
 		const mesh = MeshBuilder.CreateBox(
 			this.#label("physics_visual_box"),
@@ -174,10 +186,17 @@ export class BabylonRapierPhysics {
 	}
 
 	static_trimesh(mesh: Mesh) {
-		const {positions, indices} = VertexData.ExtractFromMesh(mesh)
+		const data = VertexData.ExtractFromMesh(mesh)
+		const indices = new Uint32Array(data.indices!)
+		const scale = babylonian.to.vec3(mesh.absoluteScaling)
+		const positions = (new Float32Array(data.positions!))
+			.map((p, i) => p * scale[i % 3])
 
 		const rigid = this.#world.createRigidBody(
-			Rapier.RigidBodyDesc.fixed()
+			Rapier.RigidBodyDesc
+				.fixed()
+				.setTranslation(...babylonian.to.vec3(mesh.absolutePosition))
+				.setRotation(mesh.absoluteRotationQuaternion)
 		)
 
 		const collider = this.#world.createCollider(
@@ -200,12 +219,13 @@ export class BabylonRapierPhysics {
 
 	step() {
 		this.#world.step()
+		for (const body of this.#bodies)
+			this.#synchronize(body)
+	}
 
-		// update babylon positions and rotations
-		for (const {rigid, position, rotation} of this.#synchronizedBodies) {
-			position.set(...vec3.from.xyz(rigid.translation()))
-			rotation.set(...quat.from.xyzw(rigid.rotation()))
-		}
+	#synchronize({rigid, position, rotation}: Body) {
+		position.set(...vec3.from.xyz(rigid.translation()))
+		rotation.set(...quat.from.xyzw(rigid.rotation()))
 	}
 }
 
