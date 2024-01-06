@@ -49,8 +49,9 @@ function std(
 	)
 
 	material.wireframe = true
-	material.alpha = a
 	material.emissiveColor = new Color3(r, g, b)
+	material.disableLighting = true
+	material.alpha = a
 
 	return material
 }

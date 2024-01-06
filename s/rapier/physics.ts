@@ -11,11 +11,19 @@ import {Rapier} from "./rapier.js"
 import {labeler} from "../tools/labeler.js"
 import {Quat, quat} from "../tools/math/quat.js"
 import {Vec3, vec3} from "../tools/math/vec3.js"
-import {gravitation} from "./parts/gravitation.js"
 import {synchronize} from "./parts/synchronize.js"
-import {debug_colors} from "../tools/debug_color.js"
+import {debug_colors} from "../tools/debug_colors.js"
 import {CharacterCapsule, Physical} from "./types.js"
+// import {make_limited_logger} from "../tools/limited_logger.js"
 import {transform_vertex_data} from "./parts/transform_vertex_data.js"
+import {make_apply_movement_fn} from "./parts/make_apply_movement_fn.js"
+import { scalar } from "../tools/math/scalar.js"
+
+const constants = {
+	contact_force_threshold: 0.5,
+}
+
+// const log = make_limited_logger(100)
 
 /**
  * rapier physics integration for babylon.
@@ -39,6 +47,16 @@ export class Physics {
 	}
 
 	/**
+	 * advance the physical simulation by one tick
+	 */
+	step() {
+		this.#world.step()
+
+		for (const body of this.#physicals)
+			synchronize(body)
+	}
+
+	/**
 	 * add a rigidbody to the physics simulation,
 	 * which is synchronized with a babylon position and rotation.
 	 */
@@ -46,8 +64,10 @@ export class Physics {
 			rigidDesc: Rapier.RigidBodyDesc,
 			colliderDesc: Rapier.ColliderDesc,
 		) {
+
 		const rigid = this.#world.createRigidBody(rigidDesc)
 		const collider = this.#world.createCollider(colliderDesc, rigid)
+
 		const physical: Physical = {
 			rigid,
 			collider,
@@ -59,6 +79,7 @@ export class Physics {
 				this.#world.removeRigidBody(rigid)
 			},
 		}
+
 		this.#physicals.add(physical)
 		return physical
 	}
@@ -79,9 +100,15 @@ export class Physics {
 		const physical = this.physical(
 			Rapier.RigidBodyDesc
 				.dynamic(),
+
 			Rapier.ColliderDesc
 				.cuboid(...vec3.divideBy(spec.scale, 2))
-				.setDensity(spec.density),
+				.setDensity(spec.density)
+				.setActiveEvents(
+					Rapier.ActiveEvents.COLLISION_EVENTS |
+					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
+				)
+				.setContactForceEventThreshold(constants.contact_force_threshold),
 		)
 
 		if (spec.position)
@@ -120,43 +147,29 @@ export class Physics {
 			density: number
 			radius: number
 			halfHeight: number
-		}) {
+		}): CharacterCapsule {
 
 		const controller = this.#world.createCharacterController(0.01)
 
-		const body = this.physical(
-			Rapier.RigidBodyDesc.kinematicPositionBased(),
-			Rapier.ColliderDesc.capsule(spec.halfHeight, spec.radius),
-		)
+		controller.setSlideEnabled(true)
+		controller.setApplyImpulsesToDynamicBodies(true)
+		controller.enableSnapToGround(spec.halfHeight)
+		controller.enableAutostep(spec.halfHeight, spec.radius, true)
+		controller.setMaxSlopeClimbAngle(scalar.radians(46))
+		controller.setMinSlopeSlideAngle(scalar.radians(75))
 
-		const applyMovement = (velocity: Vec3) => {
-			const velocity_with_gravity = vec3.add(
-				velocity,
-				gravitation(this.#world),
-			)
+		const physical = this.physical(
+			Rapier.RigidBodyDesc
+				.kinematicPositionBased(),
 
-			controller.computeColliderMovement(
-				body.collider,
-				vec3.to.xyz(velocity_with_gravity),
-			)
-
-			const grounded = controller.computedGrounded()
-			const movement = controller.computedMovement()
-
-			const newPosition = vec3.to.xyz(
-				vec3.add(
-					vec3.from.xyz(body.rigid.translation()),
-					vec3.from.xyz(movement),
+			Rapier.ColliderDesc
+				.capsule(spec.halfHeight, spec.radius)
+				.setActiveEvents(
+					Rapier.ActiveEvents.COLLISION_EVENTS |
+					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
 				)
-			)
-
-			body.rigid.setNextKinematicTranslation(newPosition)
-
-			return {
-				grounded,
-				movement: vec3.from.xyz(movement),
-			}
-		}
+				.setContactForceEventThreshold(constants.contact_force_threshold),
+		)
 
 		const mesh = MeshBuilder.CreateCapsule(
 			this.#label("capsule"),
@@ -164,21 +177,23 @@ export class Physics {
 			this.#scene,
 		)
 
-		mesh.position = body.position
-		mesh.rotationQuaternion = body.rotation
+		mesh.position = physical.position
+		mesh.rotationQuaternion = physical.rotation
 		mesh.material = this.#colors.cyan
 
-		const capsule: CharacterCapsule = {
-			...body,
+		return {
+			...physical,
 			mesh,
-			applyMovement,
+			applyMovement: make_apply_movement_fn(
+				this.#world,
+				controller,
+				physical,
+			),
 			dispose: () => {
 				this.#world.removeCharacterController(controller)
-				body.dispose()
+				physical.dispose()
 			},
 		}
-
-		return capsule
 	}
 
 	/**
@@ -209,16 +224,6 @@ export class Physics {
 				this.#world.removeRigidBody(rigid)
 			},
 		}
-	}
-
-	/**
-	 * advance the physical simulation by one tick
-	 */
-	step() {
-		this.#world.step()
-
-		for (const body of this.#physicals)
-			synchronize(body)
 	}
 }
 
