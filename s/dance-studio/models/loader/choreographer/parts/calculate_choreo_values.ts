@@ -132,12 +132,12 @@ function calculate_character_rotation_in_radians(choreo: Choreography) {
 function molasses2d(delta: number, from: Vec2, to: Vec2) {
 	const [x, y] = vec2.subtract(to, from)
 	return vec2.add(from, [
-		cap_scalar_to_delta_positive_or_negative(x, delta),
-		cap_scalar_to_delta_positive_or_negative(y, delta),
+		clamp_scalar_to_delta_positive_or_negative(x, delta),
+		clamp_scalar_to_delta_positive_or_negative(y, delta),
 	])
 }
 
-function cap_scalar_to_delta_positive_or_negative(n: number, delta: number) {
+function clamp_scalar_to_delta_positive_or_negative(n: number, delta: number) {
 	return scalar.within(n, -delta, delta)
 		? n
 		: n < 0
