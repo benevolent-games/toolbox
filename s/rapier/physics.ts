@@ -141,22 +141,41 @@ export class Physics {
 	}
 
 	/**
-	 * create a kinematic character controller
+	 * create a kinematic character controller.
 	 */
 	character_capsule(spec: {
 			density: number
 			radius: number
 			halfHeight: number
+			autostep: null | {
+				maxHeight: number
+				minWidth: number
+				includeDynamicBodies: boolean
+			}
+			snapToGround: null | {
+				distance: number
+			}
+			slopes: {
+				maxClimbAngle: number
+				minSlideAngle: number
+			}
 		}): CharacterCapsule {
 
-		const controller = this.#world.createCharacterController(0.01)
-
+		const controller = this.#world.createCharacterController(0.02)
 		controller.setSlideEnabled(true)
 		controller.setApplyImpulsesToDynamicBodies(true)
-		controller.enableSnapToGround(spec.halfHeight)
-		controller.enableAutostep(spec.halfHeight, spec.radius, true)
-		controller.setMaxSlopeClimbAngle(scalar.radians(46))
-		controller.setMinSlopeSlideAngle(scalar.radians(75))
+		controller.setMaxSlopeClimbAngle(spec.slopes.maxClimbAngle)
+		controller.setMinSlopeSlideAngle(spec.slopes.minSlideAngle)
+
+		if (spec.autostep)
+			controller.enableAutostep(
+				spec.autostep.maxHeight,
+				spec.autostep.minWidth,
+				spec.autostep.includeDynamicBodies,
+			)
+
+		if (spec.snapToGround)
+			controller.enableSnapToGround(spec.snapToGround.distance)
 
 		const physical = this.physical(
 			Rapier.RigidBodyDesc

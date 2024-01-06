@@ -37,10 +37,24 @@ export const humanoidSystem = house.rezzer([
 		green: debugMaterial({scene, color: [.2, 1, .2]}),
 	}
 
+	const halfHeight = state.humanoid.height / 2
+
 	const capsule = realm.physics.character_capsule({
 		density: 1,
 		radius: state.humanoid.radius,
-		halfHeight: state.humanoid.height / 2,
+		halfHeight,
+		snapToGround: {
+			distance: halfHeight,
+		},
+		autostep: {
+			maxHeight: halfHeight,
+			minWidth: state.humanoid.radius,
+			includeDynamicBodies: false,
+		},
+		slopes: {
+			minSlideAngle: scalar.radians(75),
+			maxClimbAngle: scalar.radians(46),
+		},
 	})
 
 	// const capsule = MeshBuilder.CreateCapsule(
