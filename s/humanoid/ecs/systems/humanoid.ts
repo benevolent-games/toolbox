@@ -52,8 +52,8 @@ export const humanoidSystem = house.rezzer([
 			includeDynamicBodies: false,
 		},
 		slopes: {
-			minSlideAngle: scalar.radians(75),
-			maxClimbAngle: scalar.radians(46),
+			minSlideAngle: scalar.radians.from.degrees(75),
+			maxClimbAngle: scalar.radians.from.degrees(46),
 		},
 	})
 
@@ -91,7 +91,7 @@ export const humanoidSystem = house.rezzer([
 	torus.rotationQuaternion = Quaternion.RotationAlphaBetaGamma(
 		0,
 		0,
-		scalar.radians(90),
+		scalar.radians.from.degrees(90),
 	)
 
 	const headbox = MeshBuilder.CreateBox(

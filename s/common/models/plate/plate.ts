@@ -38,7 +38,7 @@ export class Plate {
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
-			const beta = scalar.radians(60)
+			const beta = scalar.radians.from.degrees(60)
 			const radius = 2
 			const target = new Vector3(0, 1.5, 0)
 			return new ArcRotateCamera(
@@ -53,7 +53,7 @@ export class Plate {
 		interval(60, () => {
 			if (this.scene.activeCamera === this.fallbackCamera) {
 				degrees = scalar.wrap(degrees + 0.1, 0, 360)
-				this.fallbackCamera.alpha = scalar.radians(degrees)
+				this.fallbackCamera.alpha = scalar.radians.from.degrees(degrees)
 			}
 			this.onTick.publish()
 		})

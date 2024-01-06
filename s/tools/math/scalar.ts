@@ -11,12 +11,17 @@ export namespace scalar {
 		return n * Math.PI
 	}
 
-	export function radians(degrees: number) {
-		return degrees * Math.PI / 180
-	}
-
-	export function degrees(radians: number) {
-		return radians * 180 / Math.PI
+	export const radians = {
+		to: {
+			degrees(radians: number) {
+				return radians * 180 / Math.PI
+			},
+		},
+		from: {
+			degrees(degrees: number) {
+				return degrees * Math.PI / 180
+			},
+		},
 	}
 
 	//
