@@ -1,6 +1,4 @@
 
-// import {fastInverseSquareRoot} from "./fast-inverse-square-root.js"
-
 export type Vec3 = vec3.Vec3
 
 export namespace vec3 {
@@ -101,16 +99,6 @@ export namespace vec3 {
 				z / length,
 			]
 	}
-
-	// export function normalize([x, y, z]: V3): V3 {
-	// 	const magnitudeSquared = (x ** 2) + (y ** 2) + (z ** 2)
-	// 	const factor = fastInverseSquareRoot(magnitudeSquared)
-	// 	return [
-	// 		x * factor,
-	// 		y * factor,
-	// 		z * factor,
-	// 	]
-	// }
 
 	export function distance([ax, ay, az]: Vec3, [bx, by, bz]: Vec3) {
 		return Math.sqrt(
