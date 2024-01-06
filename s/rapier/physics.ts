@@ -1,138 +1,96 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
-import {Material} from "@babylonjs/core/Materials/material.js"
-import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
-import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 import {Rapier} from "./rapier.js"
 import {labeler} from "../tools/labeler.js"
-import {Quat, quat} from "../tools/math/quat.js"
 import {Vec3, vec3} from "../tools/math/vec3.js"
-import {synchronize} from "./parts/synchronize.js"
 import {debug_colors} from "../tools/debug_colors.js"
-import {CharacterCapsule, Physical} from "./types.js"
-// import {make_limited_logger} from "../tools/limited_logger.js"
-import {transform_vertex_data} from "./parts/transform_vertex_data.js"
-import {make_apply_movement_fn} from "./parts/make_apply_movement_fn.js"
-import { scalar } from "../tools/math/scalar.js"
-
-const constants = {
-	contact_force_threshold: 0.5,
-}
-
-// const log = make_limited_logger(100)
+import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
+import {CharacterCapsule, PhysContext, Physical, PhysicalDesc} from "./types.js"
+import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
+import {BoxSpec, apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
+import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create_character_controller, make_apply_movement_fn} from "./aspects/character.js"
 
 /**
  * rapier physics integration for babylon.
  */
 export class Physics {
-	#scene: Scene
-	#world: Rapier.World
-	#label = labeler("physics")
-	#physicals = new Set<Physical>()
-	#colors: ReturnType<typeof debug_colors>
+	#context: PhysContext
 
-	constructor({scene, gravity, timestep}: {
+	constructor({
+			scene,
+			gravity,
+			timestep,
+			contact_force_threshold = 0.2,
+		}: {
 			scene: Scene,
 			gravity: Vec3,
 			timestep: number,
+			contact_force_threshold?: number,
 		}) {
-		this.#scene = scene
-		this.#world = new Rapier.World(vec3.to.xyz(gravity))
-		this.#world.timestep = timestep
-		this.#colors = debug_colors(scene)
+
+		const world = new Rapier.World(vec3.to.xyz(gravity))
+		world.timestep = timestep
+
+		this.#context = {
+			scene,
+			world,
+			physicals: new Set(),
+			label: labeler("physics"),
+			colors: debug_colors(scene),
+			contact_force_threshold,
+		}
 	}
 
 	/**
 	 * advance the physical simulation by one tick
 	 */
 	step() {
-		this.#world.step()
-
-		for (const body of this.#physicals)
-			synchronize(body)
+		this.#context.world.step()
+		for (const body of this.#context.physicals)
+			synchronize_to_babylon_position_and_rotation(body)
 	}
 
 	/**
 	 * add a rigidbody to the physics simulation,
 	 * which is synchronized with a babylon position and rotation.
 	 */
-	physical(
-			rigidDesc: Rapier.RigidBodyDesc,
-			colliderDesc: Rapier.ColliderDesc,
-		) {
-
-		const rigid = this.#world.createRigidBody(rigidDesc)
-		const collider = this.#world.createCollider(colliderDesc, rigid)
-
+	physical(desc: PhysicalDesc) {
+		const {world, physicals} = this.#context
+		const rigid = this.#context.world.createRigidBody(desc.rigid)
+		const collider = this.#context.world.createCollider(desc.collider, rigid)
 		const physical: Physical = {
 			rigid,
 			collider,
 			position: Vector3.Zero(),
 			rotation: Quaternion.Identity(),
 			dispose: () => {
-				this.#physicals.delete(physical)
-				this.#world.removeCollider(collider, false)
-				this.#world.removeRigidBody(rigid)
+				physicals.delete(physical)
+				world.removeCollider(collider, false)
+				world.removeRigidBody(rigid)
 			},
 		}
-
-		this.#physicals.add(physical)
+		physicals.add(physical)
 		return physical
 	}
 
 	/**
-	 * create a box physics simulation
+	 * create a box physics simulation.
 	 */
-	box(spec: {
-			scale: Vec3
-			density: number
-			position?: Vec3
-			rotation?: Quat
-			material?: Material
-		}) {
-
-		const [width, height, depth] = spec.scale
-
-		const physical = this.physical(
-			Rapier.RigidBodyDesc
-				.dynamic(),
-
-			Rapier.ColliderDesc
-				.cuboid(...vec3.divideBy(spec.scale, 2))
-				.setDensity(spec.density)
-				.setActiveEvents(
-					Rapier.ActiveEvents.COLLISION_EVENTS |
-					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
-				)
-				.setContactForceEventThreshold(constants.contact_force_threshold),
+	box(spec: BoxSpec) {
+		const physical = this.physical(box_desc(this.#context, spec))
+		apply_position_and_rotation(spec, physical)
+		synchronize_to_babylon_position_and_rotation(physical)
+		const mesh = create_babylon_mesh_for_box(
+			this.#context, spec, physical,
 		)
-
-		if (spec.position)
-			physical.rigid.setTranslation(vec3.to.xyz(spec.position), true)
-
-		if (spec.rotation)
-			physical.rigid.setRotation(quat.to.xyzw(spec.rotation), true)
-
-		synchronize(physical)
-
-		const mesh = MeshBuilder.CreateBox(
-			this.#label("physics_visual_box"),
-			{width, height, depth},
-			this.#scene,
-		)
-
-		mesh.position = physical.position
-		mesh.rotationQuaternion = physical.rotation
-		mesh.material = spec.material ?? this.#colors.red
 
 		return {
+			...physical,
 			mesh,
-			rigid: physical.rigid,
-			collider: physical.collider,
 			dispose: () => {
 				mesh.dispose()
 				physical.dispose()
@@ -141,106 +99,46 @@ export class Physics {
 	}
 
 	/**
-	 * create a kinematic character controller.
+	 * create a kinematic character controller capsule.
 	 */
-	character_capsule(spec: {
-			density: number
-			radius: number
-			halfHeight: number
-			autostep: null | {
-				maxHeight: number
-				minWidth: number
-				includeDynamicBodies: boolean
-			}
-			snapToGround: null | {
-				distance: number
-			}
-			slopes: {
-				maxClimbAngle: number
-				minSlideAngle: number
-			}
-		}): CharacterCapsule {
-
-		const controller = this.#world.createCharacterController(0.02)
-		controller.setSlideEnabled(true)
-		controller.setApplyImpulsesToDynamicBodies(true)
-		controller.setMaxSlopeClimbAngle(spec.slopes.maxClimbAngle)
-		controller.setMinSlopeSlideAngle(spec.slopes.minSlideAngle)
-
-		if (spec.autostep)
-			controller.enableAutostep(
-				spec.autostep.maxHeight,
-				spec.autostep.minWidth,
-				spec.autostep.includeDynamicBodies,
-			)
-
-		if (spec.snapToGround)
-			controller.enableSnapToGround(spec.snapToGround.distance)
-
-		const physical = this.physical(
-			Rapier.RigidBodyDesc
-				.kinematicPositionBased(),
-
-			Rapier.ColliderDesc
-				.capsule(spec.halfHeight, spec.radius)
-				.setActiveEvents(
-					Rapier.ActiveEvents.COLLISION_EVENTS |
-					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
-				)
-				.setContactForceEventThreshold(constants.contact_force_threshold),
+	character(spec: CharacterSpec): CharacterCapsule {
+		const {world} = this.#context
+		const controller = create_character_controller(this.#context, spec)
+		const physical = this.physical(character_desc(this.#context, spec))
+		const mesh = create_babylon_mesh_for_character(
+			this.#context, spec, physical,
 		)
-
-		const mesh = MeshBuilder.CreateCapsule(
-			this.#label("capsule"),
-			{radius: spec.radius, height: 2 * (spec.halfHeight + spec.radius)},
-			this.#scene,
-		)
-
-		mesh.position = physical.position
-		mesh.rotationQuaternion = physical.rotation
-		mesh.material = this.#colors.cyan
 
 		return {
 			...physical,
 			mesh,
 			applyMovement: make_apply_movement_fn(
-				this.#world,
+				world,
 				controller,
 				physical,
 			),
 			dispose: () => {
-				this.#world.removeCharacterController(controller)
+				mesh.dispose()
+				world.removeCharacterController(controller)
 				physical.dispose()
 			},
 		}
 	}
 
 	/**
-	 * turn a mesh into a fixed physical boundary.
+	 * turn a mesh into a fixed boundary.
 	 */
-	static_trimesh(mesh: Mesh | InstancedMesh) {
-		const source = mesh instanceof InstancedMesh
-			? mesh.sourceMesh
-			: mesh
-
-		const data = VertexData.ExtractFromMesh(source)
-		const {positions, indices} = transform_vertex_data(data, mesh)
-
-		const rigid = this.#world.createRigidBody(
-			Rapier.RigidBodyDesc.fixed()
+	trimesh(mesh: Mesh | InstancedMesh) {
+		const {world} = this.#context
+		const {rigid, collider} = make_trimesh_rigid_and_collider(
+			this.#context, mesh
 		)
-
-		const collider = this.#world.createCollider(
-			Rapier.ColliderDesc.trimesh(positions, indices),
-			rigid,
-		)
-
 		return {
 			rigid,
 			collider,
 			dispose: () => {
-				this.#world.removeCollider(collider, false)
-				this.#world.removeRigidBody(rigid)
+				world.removeCollider(collider, false)
+				world.removeRigidBody(rigid)
 			},
 		}
 	}

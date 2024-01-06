@@ -6,8 +6,6 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
-// import {PhysicsAggregate} from "@babylonjs/core/Physics/v2/physicsAggregate.js"
-// import {PhysicsMotionType, PhysicsShapeType} from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin.js"
 
 import {house} from "../house.js"
 import {vec2} from "../../../tools/math/vec2.js"
@@ -39,7 +37,7 @@ export const humanoidSystem = house.rezzer([
 
 	const halfHeight = state.humanoid.height / 2
 
-	const capsule = realm.physics.character_capsule({
+	const capsule = realm.physics.character({
 		density: 1,
 		radius: state.humanoid.radius,
 		halfHeight,

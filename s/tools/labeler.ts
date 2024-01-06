@@ -1,4 +1,6 @@
 
+export type Labeler = (name: string) => string
+
 export function labeler(tag: string) {
 	let count = 0
 

@@ -23,7 +23,7 @@ export const environmentSystem = house.rezzer(["environment"], ({realm}) => ({en
 				.filter(m => (m instanceof Mesh) || (m instanceof InstancedMesh)) as (Mesh | InstancedMesh)[]
 
 			for (const mesh of meshes) {
-				const body = realm.physics.static_trimesh(mesh)
+				const body = realm.physics.trimesh(mesh)
 				disposables.add(() => body.dispose())
 			}
 		}

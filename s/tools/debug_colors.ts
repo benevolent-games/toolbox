@@ -5,6 +5,8 @@ import {StandardMaterial} from "@babylonjs/core"
 import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
+export type DebugColors = ReturnType<typeof debug_colors>
+
 export const debug_colors = (scene: Scene) => {
 	const X = 1
 	const o = .2
