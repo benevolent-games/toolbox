@@ -93,7 +93,7 @@ export namespace vec2 {
 	}
 
 	export function cap(vector: Vec2, min: number, max: number) {
-		return applyBy(vector, a => scalar.cap(a, min, max))
+		return applyBy(vector, a => scalar.clamp(a, min, max))
 	}
 
 	export function negate(vector: Vec2): Vec2 {

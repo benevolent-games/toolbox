@@ -32,8 +32,8 @@ export function ascii_progress_bar(
 	) {
 
 	progress = clamp_between_1_and_99_percent
-		? scalar.cap(progress, 1/100, 99/100)
-		: scalar.cap(progress)
+		? scalar.clamp(progress, 1/100, 99/100)
+		: scalar.clamp(progress)
 
 	let line = ""
 

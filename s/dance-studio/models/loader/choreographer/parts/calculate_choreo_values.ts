@@ -33,14 +33,14 @@ export function calculate_choreo_values(
 function swivel_effected_by_glance(choreo: Choreography) {
 	const [x] = choreo.intent.glance
 	const {swivel, settings} = choreo
-	return scalar.cap(swivel + (x * settings.sensitivity * 2))
+	return scalar.clamp(swivel + (x * settings.sensitivity * 2))
 }
 
 function gimbal_effected_by_glance(choreo: Choreography) {
 	let [glanceX, glanceY] = choreo.intent.glance
 	let [x, y] = choreo.gimbal
 	x = scalar.wrap(x + (glanceX * choreo.settings.sensitivity))
-	y = scalar.cap(y + (glanceY * choreo.settings.sensitivity))
+	y = scalar.clamp(y + (glanceY * choreo.settings.sensitivity))
 	return [x, y] as Vec2
 }
 
@@ -51,12 +51,12 @@ function calculate_ambulatory_report(choreo: Choreography): ChoreoAmbulatory {
 		choreo.intent.amble,
 	)
 	const magnitude = vec2.magnitude(ambulation)
-	const stillness = scalar.cap(1 - magnitude)
+	const stillness = scalar.clamp(1 - magnitude)
 	const [x, y] = ambulation
-	const north = scalar.cap(y, 0, 1)
-	const west = -scalar.cap(x, -1, 0)
-	const south = -scalar.cap(y, -1, 0)
-	const east = scalar.cap(x, 0, 1)
+	const north = scalar.clamp(y, 0, 1)
+	const west = -scalar.clamp(x, -1, 0)
+	const south = -scalar.clamp(y, -1, 0)
+	const east = scalar.clamp(x, 0, 1)
 	return {ambulation, magnitude, stillness, north, west, south, east}
 }
 

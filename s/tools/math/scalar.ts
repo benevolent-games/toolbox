@@ -40,7 +40,7 @@ export namespace scalar {
 			: n
 	}
 
-	export function cap(n: number, min: number = 0, max: number = 1) {
+	export function clamp(n: number, min: number = 0, max: number = 1) {
 		return n < min
 			? min
 			: n > max
@@ -88,7 +88,7 @@ export namespace scalar {
 
 			const points2 = points.map(
 				(p, index): Vec2 =>
-					[cap(index / (points.length - 1)), p]
+					[clamp(index / (points.length - 1)), p]
 			)
 
 			return linear(x, points2)
@@ -98,7 +98,7 @@ export namespace scalar {
 			if (points.length < 2)
 				throw new Error("need at least two points, come on")
 
-			x = cap(x)
+			x = clamp(x)
 
 			for (let i = 0; i < points.length - 1; i++) {
 				const [x0, y0] = points[i]
@@ -117,7 +117,7 @@ export namespace scalar {
 			if (points.length < 4)
 				throw new Error("need at least four points for this magic")
 
-			x = cap(x)
+			x = clamp(x)
 
 			// find the segment where 'x' fits
 			for (let i = 1; i < points.length - 2; i++) {

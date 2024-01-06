@@ -32,7 +32,7 @@ export class CameraRig {
 	}
 
 	set zoom(n: number) {
-		this.#zoom = scalar.cap(n)
+		this.#zoom = scalar.clamp(n)
 		this.#camera.radius = scalar.map(this.#zoom, [1.5, 5])
 		this.#camera.beta = scalar.map(this.#zoom, [scalar.pi(0.5), scalar.pi(0)])
 	}

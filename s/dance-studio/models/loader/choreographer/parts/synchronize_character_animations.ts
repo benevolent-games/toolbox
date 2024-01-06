@@ -18,7 +18,7 @@ export function synchronize_character_animations(
 
 	const mod = function modulate_leg_weight(w: number) {
 		return adjustment
-			? scalar.cap(w - calculate_adjustment_weight(adjustment.progress))
+			? scalar.clamp(w - calculate_adjustment_weight(adjustment.progress))
 			: w
 	}
 
