@@ -12,6 +12,7 @@ import {labeler} from "../tools/labeler.js"
 import {Quat, quat} from "../tools/math/quat.js"
 import {Vec3, vec3} from "../tools/math/vec3.js"
 import {gravitation} from "./parts/gravitation.js"
+import {synchronize} from "./parts/synchronize.js"
 import {debug_colors} from "../tools/debug_color.js"
 import {CharacterCapsule, Physical} from "./types.js"
 import {transform_vertex_data} from "./parts/transform_vertex_data.js"
@@ -89,7 +90,7 @@ export class Physics {
 		if (spec.rotation)
 			physical.rigid.setRotation(quat.to.xyzw(spec.rotation), true)
 
-		this.#synchronize(physical)
+		synchronize(physical)
 
 		const mesh = MeshBuilder.CreateBox(
 			this.#label("physics_visual_box"),
@@ -217,12 +218,7 @@ export class Physics {
 		this.#world.step()
 
 		for (const body of this.#physicals)
-			this.#synchronize(body)
-	}
-
-	#synchronize({rigid, position, rotation}: Physical) {
-		position.set(...vec3.from.xyz(rigid.translation()))
-		rotation.set(...quat.from.xyzw(rigid.rotation()))
+			synchronize(body)
 	}
 }
 
