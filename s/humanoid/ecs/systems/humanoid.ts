@@ -9,11 +9,11 @@ import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 import {house} from "../house.js"
 import {vec2} from "../../../tools/math/vec2.js"
+import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
-import { labeler } from "../../../tools/labeler.js"
 
 export const humanoidSystem = house.rezzer([
 		"humanoid",
@@ -47,6 +47,9 @@ export const humanoidSystem = house.rezzer([
 			maxClimbAngle: scalar.radians.from.degrees(46),
 		},
 	})
+
+	const transform = new TransformNode(name("transform"), scene)
+	transform.position = capsule.position
 
 	const torusDiameter = state.humanoid.height - 0.3
 	const torus = MeshBuilder.CreateTorus(name("torus"), {
@@ -87,8 +90,9 @@ export const humanoidSystem = house.rezzer([
 	third_person_cam.parent = headbox
 	headbox.setParent(torusRoot)
 	torus.setParent(torusRoot)
-	torusRoot.setParent(capsule.mesh)
-	characterInstance.root.setParent(capsule.mesh)
+	torusRoot.setParent(transform)
+	characterInstance.root.setParent(transform)
+	capsule.rigid.setTranslation(vec3.to.xyz(state.position), true)
 
 	console.log(capsule, characterInstance)
 
@@ -118,13 +122,20 @@ export const humanoidSystem = house.rezzer([
 
 	return {
 		update(state) {
+			let look_x_change = 0
 			let look_y_change = 0
 
-			if (impulse.report.humanoid.buttons.test_comma)
-				look_y_change = -1
+			if (impulse.report.humanoid.buttons.left)
+				look_x_change -= 1
 
-			if (impulse.report.humanoid.buttons.test_period)
-				look_y_change = 1
+			if (impulse.report.humanoid.buttons.right)
+				look_x_change += 1
+
+			if (impulse.report.humanoid.buttons.down)
+				look_y_change -= 1
+
+			if (impulse.report.humanoid.buttons.up)
+				look_y_change += 1
 
 			// update the intent
 			{
@@ -151,14 +162,17 @@ export const humanoidSystem = house.rezzer([
 					x += 1
 
 				state.intent.amble = vec2.normalize([x, y])
-				state.intent.glance = [0, look_y_change]
+				state.intent.glance = [look_x_change, look_y_change]
 			}
 
 			// run physical movement
 			{
 				const [x, z] = vec2.rotate(
 					state.intent.amble,
-					scalar.map(state.gimbal[0], [0, 2 * Math.PI]),
+					-scalar.map(state.gimbal[0], [0, 2 * Math.PI]),
+				)
+				transform.rotationQuaternion = Quaternion.FromEulerAngles(
+					0, scalar.radians.from.circle(state.gimbal[0]), 0,
 				)
 				capsule.applyMovement(vec3.divideBy([x, 0, z], 10))
 				// body.applyImpulse(

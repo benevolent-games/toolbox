@@ -8,9 +8,9 @@ import {labeler} from "../tools/labeler.js"
 import {vec3} from "../tools/math/vec3.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
-import {CharacterCapsule, PhysContext, Physical, PhysicalDesc, PhysicsOptions} from "./types.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
 import {BoxSpec, apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
+import {PhysicalCharacterCapsule, PhysContext, Physical, PhysicalDesc, PhysicsOptions, PhysicalBox} from "./types.js"
 import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create_character_controller, make_apply_movement_fn} from "./aspects/character.js"
 
 /**
@@ -75,14 +75,13 @@ export class Physics {
 	/**
 	 * create a box physics simulation.
 	 */
-	box(spec: BoxSpec) {
+	box(spec: BoxSpec): PhysicalBox {
 		const physical = this.physical(box_desc(this.#context, spec))
 		apply_position_and_rotation(spec, physical)
 		synchronize_to_babylon_position_and_rotation(physical)
 		const mesh = create_babylon_mesh_for_box(
 			this.#context, spec, physical, this.#context.colors.red,
 		)
-
 		return {
 			...physical,
 			mesh,
@@ -96,14 +95,13 @@ export class Physics {
 	/**
 	 * create a kinematic character controller capsule.
 	 */
-	character(spec: CharacterSpec): CharacterCapsule {
+	character(spec: CharacterSpec): PhysicalCharacterCapsule {
 		const {world} = this.#context
 		const controller = create_character_controller(this.#context, spec)
 		const physical = this.physical(character_desc(this.#context, spec))
 		const mesh = create_babylon_mesh_for_character(
 			this.#context, spec, physical,
 		)
-
 		return {
 			...physical,
 			mesh,

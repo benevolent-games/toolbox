@@ -29,16 +29,19 @@ export type PhysicalDesc = {
 }
 
 export type Physical = {
-	rigid: Rapier.RigidBody
-	collider: Rapier.Collider
-	position: Vector3
-	rotation: Quaternion
+	readonly rigid: Rapier.RigidBody
+	readonly collider: Rapier.Collider
+	readonly position: Vector3
+	readonly rotation: Quaternion
 	dispose: () => void
 }
 
-export type CharacterCapsule = {
+export type PhysicalBox = {
+	mesh: Mesh
+} & Physical
+
+export type PhysicalCharacterCapsule = {
 	mesh: Mesh,
-	dispose: () => void
 	applyMovement: (velocity: Vec3) => {
 		movement: Vec3
 		grounded: boolean
