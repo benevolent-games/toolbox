@@ -13,8 +13,9 @@ export function synchronize_character_animations(
 	const [,vertical] = choreo.gimbal
 	const {swivel, adjustment, ambulatory} = choreo
 
-	if (adjustment)
-		adjustment_anims.update(adjustment)
+	// // TODO fix anims
+	// if (adjustment)
+	// 	adjustment_anims.update(adjustment)
 
 	const mod = function modulate_leg_weight(w: number) {
 		return adjustment
@@ -42,7 +43,7 @@ export function synchronize_character_animations(
 	anims.spine_bend.weight = 1
 	anims.spine_bend.forceFrame(vertical * anims.spine_bend.to)
 
-	anims.hips_swivel.weight = 1
-	anims.hips_swivel.forceFrame(swivel * 1000)
+	// anims.hips_swivel.weight = 1
+	// anims.hips_swivel.forceFrame(swivel * 1000)
 }
 

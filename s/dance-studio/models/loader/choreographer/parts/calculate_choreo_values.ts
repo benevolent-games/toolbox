@@ -21,8 +21,11 @@ export function calculate_choreo_values(
 		choreo,
 		adjustment_anims,
 	)
-	choreo.swivel = swivel
 	choreo.adjustment = adjustment
+
+	// // TODO fix this broken swivel stuff
+	// choreo.swivel = swivel
+	choreo.swivel = original.settings.swivel.midpoint
 
 	return choreo
 }

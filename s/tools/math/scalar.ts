@@ -53,8 +53,8 @@ export namespace scalar {
 
 	export function between(n: number, min: number, max: number) {
 		const space = max - min
-		const amount = n - min
-		return amount / space
+		const value = space * n
+		return min + value
 	}
 
 	export function within(n: number, min: number = 0, max: number = 1) {

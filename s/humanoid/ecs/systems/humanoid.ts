@@ -17,6 +17,7 @@ import {Choreographer} from "../../../dance-studio/models/loader/choreographer/c
 
 export const humanoidSystem = house.rezzer([
 		"humanoid",
+		"debug",
 		"position",
 		"sensitivity",
 		"gimbal",
@@ -27,15 +28,16 @@ export const humanoidSystem = house.rezzer([
 
 	const {impulse, stage, colors} = realm
 	const {scene} = stage
-	const name = labeler("humanoid")
-	const halfHeight = state.humanoid.height / 2
+	const label = labeler("humanoid")
+	const {radius} = state.humanoid
+	const halfHeight = (state.humanoid.height - (2 * radius)) / 2
 
 	const capsule = realm.physics.character({
 		density: 1,
 		radius: state.humanoid.radius,
 		halfHeight,
 		snapToGround: {
-			distance: halfHeight,
+			distance: halfHeight / 2,
 		},
 		autostep: {
 			maxHeight: halfHeight,
@@ -48,11 +50,11 @@ export const humanoidSystem = house.rezzer([
 		},
 	})
 
-	const transform = new TransformNode(name("transform"), scene)
+	const transform = new TransformNode(label("transform"), scene)
 	transform.position = capsule.position
 
 	const torusDiameter = state.humanoid.height - 0.3
-	const torus = MeshBuilder.CreateTorus(name("torus"), {
+	const torus = MeshBuilder.CreateTorus(label("torus"), {
 		diameter: state.humanoid.height - 0.3,
 		thickness: 0.1,
 		tessellation: 48,
@@ -65,12 +67,12 @@ export const humanoidSystem = house.rezzer([
 	)
 
 	const headbox = MeshBuilder.CreateBox(
-		name("box"),
+		label("box"),
 		{size: 0.2},
 		scene,
 	)
 	const third_person_cam = new TargetCamera(
-		name("third_person_cam"),
+		label("third_person_cam"),
 		babylonian.from.vec3([0, 0, -4]),
 		scene,
 	)
@@ -84,7 +86,7 @@ export const humanoidSystem = house.rezzer([
 
 	const choreographer = new Choreographer(characterInstance)
 
-	const torusRoot = new TransformNode(name("torusRoot"), scene)
+	const torusRoot = new TransformNode(label("torusRoot"), scene)
 
 	// parenting
 	third_person_cam.parent = headbox
@@ -92,7 +94,13 @@ export const humanoidSystem = house.rezzer([
 	torus.setParent(torusRoot)
 	torusRoot.setParent(transform)
 	characterInstance.root.setParent(transform)
+
 	capsule.rigid.setTranslation(vec3.to.xyz(state.position), true)
+
+	const debug = !!state.debug
+	capsule.mesh.setEnabled(debug)
+	torus.setEnabled(debug)
+	headbox.setEnabled(debug)
 
 	console.log(capsule, characterInstance)
 

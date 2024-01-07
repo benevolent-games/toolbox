@@ -28,15 +28,17 @@ export const spawners = {
 		},
 	}),
 
-	humanoid: ({position}: {
+	humanoid: ({position, debug}: {
 			position: Vec3
+			debug: boolean
 		}) => {
 		const {intent, gimbal, ...choreography} = (
 			Choreographer.default_choreography()
 		)
 		return house.entities.create({
+			debug,
 			humanoid: {
-				height: 1.6,
+				height: 1.75,
 				mass: 70,
 				radius: 0.3,
 			},

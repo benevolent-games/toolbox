@@ -35,7 +35,7 @@ const realm = await nexus.context.realmOp.load(
 	async() => makeRealm({
 		glb_links: {
 			gym: "/temp/gym9.glb",
-			character: "/temp/knightanimations14.glb",
+			character: "/temp/knightanimations16.glb",
 		},
 	})
 )
@@ -64,7 +64,7 @@ house.entities.create({hemi: {
 }})
 
 spawners.spectator({position: [0, 1, -2]})
-spawners.humanoid({position: [0, 5, 0]})
+spawners.humanoid({position: [0, 5, 0], debug: false})
 spawners.physicsBox({
 	density: 1,
 	position: [0, 8, 3],

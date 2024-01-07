@@ -8,6 +8,8 @@ import {Speeds} from "../../impulse/trajectory/types/speeds.js"
 import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreographer/types.js"
 
 export type HumanoidSchema = Core.AsComponentSchema<{
+	debug: boolean
+
 	environment: {
 		name: keyof HumanoidContainers
 	}
@@ -35,6 +37,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	choreography: ChoreographyComponent
 	intent: ChoreoIntent
 	gimbal: Vec2
+	mouselook: true
 
 	position: Vec3
 	rotation: Quat
