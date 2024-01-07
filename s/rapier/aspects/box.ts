@@ -46,6 +46,7 @@ export function create_babylon_mesh_for_box(
 		{label, scene, colors}: PhysContext,
 		spec: BoxSpec,
 		physical: Physical,
+		material: Material,
 	) {
 
 	const [width, height, depth] = spec.scale
@@ -58,7 +59,7 @@ export function create_babylon_mesh_for_box(
 
 	mesh.position = physical.position
 	mesh.rotationQuaternion = physical.rotation
-	mesh.material = spec.material ?? colors.red
+	mesh.material = material
 
 	return mesh
 }

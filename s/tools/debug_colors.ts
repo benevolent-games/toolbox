@@ -1,28 +1,35 @@
 
-import {generate_id} from "@benev/slate"
+import {generate_id, ob} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {StandardMaterial} from "@babylonjs/core"
 import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 export type DebugColors = ReturnType<typeof debug_colors>
+type Vec4 = [number, number, number, number]
 
 export const debug_colors = (scene: Scene) => {
 	const X = 1
-	const o = .2
-	const _ = .4
+	const _ = .2
+	const a = .4
+	const bases = {
+		red:     [X, _, _, a] as Vec4,
+		yellow:  [X, X, _, a] as Vec4,
+		green:   [_, X, _, a] as Vec4,
+		cyan:    [_, X, X, a] as Vec4,
+		blue:    [_, _, X, a] as Vec4,
+		magenta: [X, _, X, a] as Vec4,
+	}
 	return {
-		red: std(scene, [X, o, o, _]),
-		blue: std(scene, [o, o, X, _]),
-		cyan: std(scene, [o, X, X, _]),
-		green: std(scene, [o, X, o, _]),
+		...ob(bases).map(vector => pbr_material(scene, vector)),
+		wireframe: ob(bases).map(vector => wireframe_material(scene, vector)),
 	}
 }
 
 //////////////////////////////////
 //////////////////////////////////
 
-function pbr(
+function pbr_material(
 		scene: Scene,
 		[r, g, b, a]: [number, number, number, number],
 	) {
@@ -40,7 +47,7 @@ function pbr(
 	return material
 }
 
-function std(
+function wireframe_material(
 		scene: Scene,
 		[r, g, b, a]: [number, number, number, number],
 	) {

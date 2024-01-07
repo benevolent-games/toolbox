@@ -4,6 +4,7 @@ import {Vec3, vec3} from "../../tools/math/vec3.js"
 import {gravitation} from "../parts/gravitation.js"
 import {PhysContext, Physical, PhysicalDesc} from "../types.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import { Material } from "@babylonjs/core/Materials/material.js"
 
 export interface CharacterSpec {
 	density: number
@@ -69,6 +70,7 @@ export function create_babylon_mesh_for_character(
 		{scene, label, colors}: PhysContext,
 		spec: CharacterSpec,
 		physical: Physical,
+		material: Material = colors.cyan,
 	) {
 
 	const mesh = MeshBuilder.CreateCapsule(
@@ -79,7 +81,7 @@ export function create_babylon_mesh_for_character(
 
 	mesh.position = physical.position
 	mesh.rotationQuaternion = physical.rotation
-	mesh.material = colors.cyan
+	mesh.material = material
 
 	return mesh
 }

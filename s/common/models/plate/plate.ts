@@ -6,7 +6,7 @@ import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color4, Vector3} from "@babylonjs/core/Maths/math.js"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
-import {SSAO2RenderingPipeline, SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/index.js"
+import {DefaultRenderingPipeline, SSAO2RenderingPipeline, SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/index.js"
 
 import {scalar} from "../../../tools/math/scalar.js"
 import {fix_animation_groups} from "../../../dance-studio/models/loader/character/utils/fix_animation_groups.js"
@@ -21,20 +21,39 @@ export class Plate {
 	onRender = pub<void>()
 	onTick = pub<void>()
 
+	ssr: SSRRenderingPipeline
+	ssao: SSAO2RenderingPipeline
+
 	constructor(canvas: HTMLCanvasElement) {
 		this.engine = new Engine(canvas)
 		this.scene = new Scene(this.engine)
 
 		this.scene.clearColor = new Color4(
-			0.1, 0.1, 0.1, 1,
+			// 0.1, 0.1, 0.1, 1,
+			.7, .8, 1, 1,
 		)
 
-		const ssao = new SSAO2RenderingPipeline("ssao", this.scene, 0.75)
-		ssao.totalStrength = 3
-		ssao.radius = 5
+		const defaultPipeline = new DefaultRenderingPipeline("default", true, this.scene)
+		defaultPipeline.bloomEnabled = true
+		defaultPipeline.bloomScale = 0.5
+		defaultPipeline.bloomKernel = 32
+		defaultPipeline.bloomThreshold = .6
 
-		const ssr = new SSRRenderingPipeline("ssr", this.scene)
-		ssr.reflectivityThreshold = 0
+		const ssao = new SSAO2RenderingPipeline("ssao", this.scene, 0.75)
+		ssao.totalStrength = 1
+		ssao.radius = 2
+		this.ssao = ssao
+
+		const ssr = new SSRRenderingPipeline("ssr", this.scene, undefined, false)
+		ssr.useFresnel = true
+		ssr.reflectivityThreshold = .02
+		ssr.reflectionSpecularFalloffExponent = 1.5
+		ssr.strength = 0.8
+		ssr.blurDownsample = 1
+		ssr.blurDispersionStrength = .08
+		this.ssr = ssr
+
+		console.log("postpro", {ssr, ssao, defaultPipeline})
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
@@ -81,6 +100,9 @@ export class Plate {
 	}
 
 	setCamera(camera: Camera = this.fallbackCamera) {
+		this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("default", camera)
+		this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", camera)
+		this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssr", camera)
 		this.scene.activeCamera = camera
 	}
 

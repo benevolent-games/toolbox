@@ -34,7 +34,8 @@ register_to_dom({BenevHumanoid})
 const realm = await nexus.context.realmOp.load(
 	async() => Realm.make({
 		glb_links: {
-			gym: "/temp/gym.glb",
+			// gym: "/temp/gym.glb",
+			gym: "/temp/gym9.glb",
 			character: "/temp/knightanimations14.glb",
 
 			// gym: "https://filebin.net/42013ycnu1eav4h6/gym.glb",
@@ -67,10 +68,10 @@ house.entities.create({hemi: {
 }})
 
 spawners.spectator({position: [0, 1, -2]})
-spawners.humanoid({position: [0, 3, 0]})
+// spawners.humanoid({position: [0, 15, 0]})
 spawners.physicsBox({
 	density: 1,
-	position: [0, 1, 3],
+	position: [0, 8, 3],
 	rotation: quat.identity(),
 	scale: [1, 1, 1],
 })
