@@ -2,7 +2,7 @@
 import {Effects} from "./types.js"
 import {Vec4} from "../tools/math/vec4.js"
 
-export const colors = {
+export const backgrounds = {
 	transparent: () => [0, 0, 0, 0] as Vec4,
 	black: () => [0, 0, 0, 1] as Vec4,
 	white: () => [1, 1, 1, 1] as Vec4,

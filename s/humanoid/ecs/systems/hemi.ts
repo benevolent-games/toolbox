@@ -5,7 +5,7 @@ import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 import {house} from "../house.js"
 
 export const hemiSystem = house.rezzer(["hemi"], ({realm}) => (entity, id) => {
-	const {scene} = realm.plate
+	const {scene} = realm.stage
 	const {direction, intensity} = entity.hemi
 
 	const light = new HemisphericLight(`hemi_${id}`, Vector3.FromArray(direction), scene)

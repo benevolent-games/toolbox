@@ -8,7 +8,9 @@ import {NetworkSession} from "./network/session.js"
 
 export const nexus = new Nexus(new class extends Context {
 	theme = theme
+
 	realmOp = signals.op<Realm>()
+
 	network: null | {
 		target: NetworkTarget
 		sessionOp: OpSignal<NetworkSession>,

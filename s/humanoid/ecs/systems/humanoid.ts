@@ -24,8 +24,8 @@ export const humanoidSystem = house.rezzer([
 		"choreography",
 	], ({realm}) => (state, id) => {
 
-	const {impulse, plate} = realm
-	const {scene} = plate
+	const {impulse, stage} = realm
+	const {scene} = stage
 	const name = (n: string) => `${n}::${id}`
 
 	const colors = {
@@ -103,7 +103,7 @@ export const humanoidSystem = house.rezzer([
 		scene,
 	)
 	third_person_cam.setTarget(headbox.position)
-	realm.plate.setCamera(third_person_cam)
+	stage.camera.set(third_person_cam)
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 

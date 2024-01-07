@@ -1,15 +1,14 @@
 
-import {Scene} from "@babylonjs/core/scene.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 import {Rapier} from "./rapier.js"
 import {labeler} from "../tools/labeler.js"
-import {Vec3, vec3} from "../tools/math/vec3.js"
+import {vec3} from "../tools/math/vec3.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
-import {CharacterCapsule, PhysContext, Physical, PhysicalDesc} from "./types.js"
+import {CharacterCapsule, PhysContext, Physical, PhysicalDesc, PhysicsOptions} from "./types.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
 import {BoxSpec, apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
 import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create_character_controller, make_apply_movement_fn} from "./aspects/character.js"
@@ -21,19 +20,14 @@ export class Physics {
 	#context: PhysContext
 
 	constructor({
+			hz,
 			scene,
 			gravity,
-			timestep,
 			contact_force_threshold = 0.2,
-		}: {
-			scene: Scene,
-			gravity: Vec3,
-			timestep: number,
-			contact_force_threshold?: number,
-		}) {
+		}: PhysicsOptions) {
 
 		const world = new Rapier.World(vec3.to.xyz(gravity))
-		world.timestep = timestep
+		world.timestep = 1 / hz
 
 		this.#context = {
 			scene,

@@ -16,30 +16,26 @@ import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
+import {quat} from "../tools/math/quat.js"
 import {spawners} from "./ecs/spawners.js"
-import {Realm} from "./models/realm/realm.js"
 import {hemiSystem} from "./ecs/systems/hemi.js"
 import {Base, Tick, house} from "./ecs/house.js"
+import {makeRealm} from "./models/realm/realm.js"
 import {humanoidSystem} from "./ecs/systems/humanoid.js"
 import {spectatorSystem} from "./ecs/systems/spectator.js"
 import {physicsBoxSystem} from "./ecs/systems/physics_box.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
-import { quat } from "../tools/math/quat.js"
 
 register_to_dom({BenevHumanoid})
 
 ;(window as any).nexus = nexus
 
 const realm = await nexus.context.realmOp.load(
-	async() => Realm.make({
+	async() => makeRealm({
 		glb_links: {
-			// gym: "/temp/gym.glb",
 			gym: "/temp/gym9.glb",
 			character: "/temp/knightanimations14.glb",
-
-			// gym: "https://filebin.net/42013ycnu1eav4h6/gym.glb",
-			// character: "https://filebin.net/yuuj502md0iwfxrn/bungledanimations18.glb",
 		},
 	})
 )
@@ -88,10 +84,13 @@ const executor = new Core.Executor<Base, Tick>(
 )
 
 let count = 0
-realm.plate.onTick(() => {
+
+realm.stage.remote.onTick(() => {
 	executor.tick({tick: count++})
 	realm.physics.step()
 })
+
+realm.stage.remote.start()
 
 console.log("realm", realm)
 

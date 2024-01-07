@@ -1,41 +1,62 @@
 
-import {AssetContainer} from "@babylonjs/core/assetContainer.js"
-
-import {make_realm} from "./make.js"
+import {Stage} from "../../../stage/stage.js"
 import {Physics} from "../../../rapier/physics.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
-import {Plate} from "../../../common/models/plate/plate.js"
+import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
-export type RealmContainers = {
+export interface HumanoidContainers {
 	gym: AssetContainer
 	character: CharacterContainer
 }
 
-export type RealmParams = {
+export interface Realm {
+	stage: Stage
 	porthole: Porthole
-	plate: Plate
-	containers: RealmContainers
 	physics: Physics
+	containers: HumanoidContainers
+	impulse: HumanoidImpulse
 }
 
-export class Realm {
-	static make = make_realm
+export async function makeRealm({glb_links}: {
+		glb_links: {
+			gym: string
+			character: string
+		},
+	}): Promise<Realm> {
 
-	#params: RealmParams
-	#impulse: HumanoidImpulse
+	const porthole = new Porthole()
 
-	get porthole() { return this.#params.porthole }
-	get plate() { return this.#params.plate }
-	get physics() { return this.#params.physics }
-	get containers() { return this.#params.containers }
-	get impulse() { return this.#impulse }
+	const stage = new Stage({
+		canvas: porthole.canvas,
+		background: Stage.backgrounds.sky(),
+		effects: Stage.effects.standard(),
+	})
 
-	constructor(params: RealmParams) {
-		this.#params = params
-		this.#impulse = new HumanoidImpulse()
-		params.plate.start()
+	const impulse = new HumanoidImpulse()
+
+	const physics = new Physics({
+		hz: 60,
+		scene: stage.scene,
+		gravity: [0, -9.81, 0],
+	})
+
+	const [gym, character] = await Promise.all([
+		stage.load_glb(glb_links.gym),
+		stage.load_glb(glb_links.character)
+			.then(container => new CharacterContainer(container)),
+	])
+
+	for (const light of gym.lights)
+		light.intensity /= 1000
+
+	return {
+		porthole,
+		stage,
+		impulse,
+		physics,
+		containers: {gym, character},
 	}
 }
 

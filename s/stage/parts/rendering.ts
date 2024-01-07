@@ -8,6 +8,31 @@ import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipe
 import {Effects, BloomEffect, SsaoEffect, SsrEffect} from "../types.js"
 
 export class Rendering {
+	pipelines: PostProcessRenderPipeline[] = []
+	defpipe: DefaultRenderingPipeline
+	ssao: SSAO2RenderingPipeline | null
+	ssr: SSRRenderingPipeline | null
+
+	constructor({scene, effects}: {
+			scene: Scene
+			effects: Effects
+		}) {
+
+		this.defpipe = this.pipe(Rendering.pipe_default(scene, effects.bloom))
+
+		this.ssao = effects.ssao
+			? this.pipe(Rendering.pipe_ssao(scene, effects.ssao))
+			: null
+
+		this.ssr = effects.ssr
+			? this.pipe(Rendering.pipe_ssr(scene, effects.ssr))
+			: null
+	}
+
+	pipe<P extends PostProcessRenderPipeline>(pipe: P) {
+		this.pipelines.push(pipe)
+		return pipe
+	}
 
 	static pipe_default(scene: Scene, effect: BloomEffect | null) {
 		const pipe = new DefaultRenderingPipeline("default", true, scene)
@@ -39,32 +64,6 @@ export class Rendering {
 		pipe.blurDownsample = effect.downsample
 		pipe.blurDispersionStrength = effect.blur
 		return pipe
-	}
-
-	pipelines: PostProcessRenderPipeline[] = []
-	defpipe: DefaultRenderingPipeline
-	ssao: SSAO2RenderingPipeline | null
-	ssr: SSRRenderingPipeline | null
-
-	pipe<P extends PostProcessRenderPipeline>(pipe: P) {
-		this.pipelines.push(pipe)
-		return pipe
-	}
-
-	constructor({scene, effects}: {
-			scene: Scene
-			effects: Effects
-		}) {
-
-		this.defpipe = this.pipe(Rendering.pipe_default(scene, effects.bloom))
-
-		this.ssao = effects.ssao
-			? this.pipe(Rendering.pipe_ssao(scene, effects.ssao))
-			: null
-
-		this.ssr = effects.ssr
-			? this.pipe(Rendering.pipe_ssr(scene, effects.ssr))
-			: null
 	}
 }
 

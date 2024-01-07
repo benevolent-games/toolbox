@@ -11,11 +11,11 @@ import {gather_input_vectors} from "./commons/gather_input_vectors.js"
 import {add_to_look_vector_but_cap_vertical_axis} from "../../../common/models/flycam/utils/add_to_look_vector_but_cap_vertical_axis.js"
 
 export const spectatorSystem = house.rezzer(["spectator", "position", "gimbal"], ({realm}) => (state, id) => {
-	const {impulse, plate} = realm
+	const {impulse, stage} = realm
 	const name = (n: string) => `${n}::${id}`
 
-	const transformA = new TransformNode(name("transform-a"), plate.scene, true)
-	const transformB = new TransformNode(name("transform-b"), plate.scene, true)
+	const transformA = new TransformNode(name("transform-a"), stage.scene, true)
+	const transformB = new TransformNode(name("transform-b"), stage.scene, true)
 	const camera = new TargetCamera(name("camera"), Vector3.Zero())
 
 	camera.ignoreParentScaling = true
@@ -24,7 +24,7 @@ export const spectatorSystem = house.rezzer(["spectator", "position", "gimbal"],
 
 	transformA.position.set(...state.position)
 
-	realm.plate.setCamera(camera)
+	stage.camera.set(camera)
 
 	function apply_movement_while_considering_gimbal_rotation(
 			position: Vec3,
@@ -71,8 +71,8 @@ export const spectatorSystem = house.rezzer(["spectator", "position", "gimbal"],
 			)
 		},
 		dispose() {
-			if (realm.plate.camera === camera)
-				realm.plate.setCamera()
+			if (stage.camera.current === camera)
+				stage.camera.set()
 			camera.dispose()
 			transformA.dispose()
 		},

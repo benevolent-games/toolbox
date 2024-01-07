@@ -2,9 +2,9 @@
 import {Rapier} from "../rapier.js"
 import {Vec3, vec3} from "../../tools/math/vec3.js"
 import {gravitation} from "../parts/gravitation.js"
+import {Material} from "@babylonjs/core/Materials/material.js"
 import {PhysContext, Physical, PhysicalDesc} from "../types.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
-import { Material } from "@babylonjs/core/Materials/material.js"
 
 export interface CharacterSpec {
 	density: number

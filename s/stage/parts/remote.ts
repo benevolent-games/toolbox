@@ -1,17 +1,18 @@
 
-import {Pub, interval} from "@benev/slate"
+import {interval, pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 
 export class Remote {
+	onTick = pub<void>()
+	onRender = pub<void>()
+
 	#running = false
 	#interval = () => {}
 
 	constructor(
 		private engine: Engine,
 		private scene: Scene,
-		private onTick: Pub<void>,
-		private onRender: Pub<void>,
 	) {}
 
 	get running() {

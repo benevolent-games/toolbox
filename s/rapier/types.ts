@@ -6,7 +6,14 @@ import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
-export interface PhysContext {
+export type PhysicsOptions = {
+	hz: number,
+	scene: Scene,
+	gravity: Vec3,
+	contact_force_threshold?: number,
+}
+
+export type PhysContext = {
 	scene: Scene
 	world: Rapier.World
 	label: (name: string) => string
