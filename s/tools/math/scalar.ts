@@ -18,6 +18,9 @@ export namespace scalar {
 			},
 		},
 		from: {
+			circle(c = 1) {
+				return c * (2 * Math.PI)
+			},
 			degrees(degrees: number) {
 				return degrees * Math.PI / 180
 			},
