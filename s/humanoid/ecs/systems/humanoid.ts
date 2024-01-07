@@ -9,8 +9,8 @@ import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 import {house} from "../house.js"
 import {vec2} from "../../../tools/math/vec2.js"
-import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {scalar} from "../../../tools/math/scalar.js"
+import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
 
@@ -24,16 +24,9 @@ export const humanoidSystem = house.rezzer([
 		"choreography",
 	], ({realm}) => (state, id) => {
 
-	const {impulse, stage} = realm
+	const {impulse, stage, colors} = realm
 	const {scene} = stage
 	const name = (n: string) => `${n}::${id}`
-
-	const colors = {
-		red: debugMaterial({scene, color: [1, .2, .2]}),
-		blue: debugMaterial({scene, color: [.2, .2, 1]}),
-		cyan: debugMaterial({scene, color: [.2, 1, 1]}),
-		green: debugMaterial({scene, color: [.2, 1, .2]}),
-	}
 
 	const halfHeight = state.humanoid.height / 2
 
@@ -54,30 +47,6 @@ export const humanoidSystem = house.rezzer([
 			maxClimbAngle: scalar.radians.from.degrees(46),
 		},
 	})
-
-	// const capsule = MeshBuilder.CreateCapsule(
-	// 	name("capsule"),
-	// 	{radius: humanoid.radius, height: humanoid.height},
-	// 	plate.scene,
-	// )
-
-	// capsule.material = colors.cyan
-
-	// const aggregate = new PhysicsAggregate(
-	// 	capsule,
-	// 	PhysicsShapeType.CAPSULE,
-	// 	{
-	// 		mass: humanoid.mass,
-	// 		restitution: 0,
-	// 		friction: 1000,
-	// 	},
-	// 	plate.scene,
-	// )
-	// aggregate.body.setMotionType(PhysicsMotionType.DYNAMIC)
-	// const {body} = aggregate
-	// body.setMassProperties({
-	// 	inertia: babylonian.from.vec3([0, 0, 0]),
-	// })
 
 	const torusDiameter = state.humanoid.height - 0.3
 	const torus = MeshBuilder.CreateTorus(name("torus"), {
@@ -107,9 +76,7 @@ export const humanoidSystem = house.rezzer([
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 
-	const characterInstance = realm
-		.containers
-		.character
+	const characterInstance = realm.containers.character
 		.instance([0, -(state.humanoid.height / 2), 0])
 
 	const choreographer = new Choreographer(characterInstance)

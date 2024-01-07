@@ -3,14 +3,15 @@ import {Rapier} from "./rapier.js"
 import {Vec3} from "../tools/math/vec3.js"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
-import {debug_colors} from "../tools/debug_colors.js"
+import {DebugColors, debug_colors} from "../tools/debug_colors.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 export type PhysicsOptions = {
-	hz: number,
-	scene: Scene,
-	gravity: Vec3,
-	contact_force_threshold?: number,
+	hz: number
+	scene: Scene
+	gravity: Vec3
+	colors?: DebugColors
+	contact_force_threshold?: number
 }
 
 export type PhysContext = {

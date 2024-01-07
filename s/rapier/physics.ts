@@ -22,6 +22,7 @@ export class Physics {
 	constructor({
 			hz,
 			scene,
+			colors,
 			gravity,
 			contact_force_threshold = 0.2,
 		}: PhysicsOptions) {
@@ -34,7 +35,7 @@ export class Physics {
 			world,
 			physicals: new Set(),
 			label: labeler("physics"),
-			colors: debug_colors(scene),
+			colors: colors ?? debug_colors(scene),
 			contact_force_threshold,
 		}
 	}
