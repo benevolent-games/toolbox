@@ -13,6 +13,7 @@ import {scalar} from "../../../tools/math/scalar.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
+import { labeler } from "../../../tools/labeler.js"
 
 export const humanoidSystem = house.rezzer([
 		"humanoid",
@@ -26,8 +27,7 @@ export const humanoidSystem = house.rezzer([
 
 	const {impulse, stage, colors} = realm
 	const {scene} = stage
-	const name = (n: string) => `${n}::${id}`
-
+	const name = labeler("humanoid")
 	const halfHeight = state.humanoid.height / 2
 
 	const capsule = realm.physics.character({
@@ -72,7 +72,7 @@ export const humanoidSystem = house.rezzer([
 		scene,
 	)
 	third_person_cam.setTarget(headbox.position)
-	stage.camera.set(third_person_cam)
+	stage.cameraRig.set(third_person_cam)
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 

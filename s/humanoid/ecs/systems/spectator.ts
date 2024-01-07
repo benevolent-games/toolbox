@@ -24,7 +24,7 @@ export const spectatorSystem = house.rezzer(["spectator", "position", "gimbal"],
 
 	transformA.position.set(...state.position)
 
-	stage.camera.set(camera)
+	stage.cameraRig.set(camera)
 
 	function apply_movement_while_considering_gimbal_rotation(
 			position: Vec3,
@@ -71,8 +71,8 @@ export const spectatorSystem = house.rezzer(["spectator", "position", "gimbal"],
 			)
 		},
 		dispose() {
-			if (stage.camera.current === camera)
-				stage.camera.set()
+			if (stage.cameraRig.current === camera)
+				stage.cameraRig.set()
 			camera.dispose()
 			transformA.dispose()
 		},

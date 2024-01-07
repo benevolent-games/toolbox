@@ -7,7 +7,7 @@ import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {Rendering} from "./rendering.js"
 import {scalar} from "../../tools/math/scalar.js"
 
-export class Cam {
+export class CameraRig {
 	#camera!: Camera
 	readonly fallback: ArcRotateCamera
 
