@@ -216,7 +216,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 					}])}
 					${NuiRange([{
 						label: "radius",
-						min: 0, max: 2, step: .1,
+						min: 0, max: 5, step: .1,
 						value: ssao.radius,
 						set: x => ssao.radius = x,
 					}])}

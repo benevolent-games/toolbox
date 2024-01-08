@@ -80,11 +80,22 @@ export class Rendering {
 
 		if (effects?.ssr)
 			this.#addPipe(pipes.ssr(effects.ssr))
+
+		this.#reattachCameras()
+	}
+
+	#reattachCameras() {
+		for (const pipe of this.#pipelines) {
+			this.#scene.postProcessRenderPipelineManager
+				.detachCamerasFromRenderPipeline(pipe.name, this.camera)
+
+			this.#scene.postProcessRenderPipelineManager
+				.attachCamerasToRenderPipeline(pipe.name, this.camera)
+		}
 	}
 
 	#addPipe(pipe: PostProcessRenderPipeline) {
 		// pipelines add themselves to the manager automatically on construction
-		this.#scene.postProcessRenderPipelineManager.addPipeline(pipe)
 		this.#pipelines.add(pipe)
 	}
 
