@@ -26,7 +26,7 @@ export const effects = {
 		},
 		ssao: {
 			ratio: .75,
-			blur: 1,
+			blur: .75,
 			strength: 1,
 			radius: 2,
 		},

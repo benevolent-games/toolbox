@@ -25,6 +25,12 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			font-weight: bold;
 			background: #1118;
 			padding: 0.2em 0.5em;
+			&[data-active] {
+				background: #0ac;
+				box-shadow: 0.1em 0.2em 0.2em #0004;
+				text-shadow: 0.1em 0.1em 0.1em #0008;
+				color: white;
+			}
 		}
 
 		article {
@@ -90,7 +96,6 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			effects.ssr = null
 
 		realm.stage.rendering.setEffects(effects)
-		console.log("SET EFFECETS", effects)
 	}))
 
 	use.mount(() => reactor.reaction(
@@ -117,7 +122,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			</article>
 
 			<article>
-				<header>
+				<header ?data-active="${active.default}">
 					${NuiCheckbox([{
 						label: "core",
 						checked: active.default,
@@ -125,7 +130,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 					}])}
 				</header>
 				<article ?data-hidden="${!active.default}">
-					<header>
+					<header ?data-active="${active.antialiasing}">
 						${NuiCheckbox([{
 							label: "antialiasing",
 							checked: active.antialiasing,
@@ -146,7 +151,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 						}])}
 					</section>
 
-					<header>
+					<header ?data-active="${active.bloom}">
 						${NuiCheckbox([{
 							label: "bloom",
 							checked: active.bloom,
@@ -183,7 +188,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			</article>
 
 			<article>
-				<header>
+				<header ?data-active="${active.ssao}">
 					${NuiCheckbox([{
 						label: "ssao",
 						checked: active.ssao,
@@ -219,7 +224,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			</article>
 
 			<article>
-				<header>
+				<header ?data-active="${active.ssr}">
 					${NuiCheckbox([{
 						label: "ssr",
 						checked: active.ssr,
