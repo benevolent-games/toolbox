@@ -84,6 +84,7 @@ export class Rendering {
 
 	#addPipe(pipe: PostProcessRenderPipeline) {
 		// pipelines add themselves to the manager automatically on construction
+		this.#scene.postProcessRenderPipelineManager.addPipeline(pipe)
 		this.#pipelines.add(pipe)
 	}
 

@@ -90,6 +90,7 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			effects.ssr = null
 
 		realm.stage.rendering.setEffects(effects)
+		console.log("SET EFFECETS", effects)
 	}))
 
 	use.mount(() => reactor.reaction(
