@@ -20,3 +20,4 @@ export function get_trajectory_from_cardinals(cardinals: Cardinals) {
 
 	return cap_vector_to_magnitude_1([strafe, stride])
 }
+

@@ -10,10 +10,6 @@ import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 
 import {register_to_dom} from "@benev/slate"
 
-// import {NetworkSession} from "./network/session.js"
-// import {network_connect} from "./network/connect.js"
-// import {parse_network_target_from_url} from "./network/target.js"
-
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
 import {quat} from "../tools/math/quat.js"
@@ -23,8 +19,10 @@ import {Base, Tick, house} from "./ecs/house.js"
 import {makeRealm} from "./models/realm/realm.js"
 import {humanoidSystem} from "./ecs/systems/humanoid.js"
 import {spectatorSystem} from "./ecs/systems/spectator.js"
+import {intentionSystem} from "./ecs/systems/intention.js"
 import {physicsBoxSystem} from "./ecs/systems/physics_box.js"
 import {environmentSystem} from "./ecs/systems/environment.js"
+import {choreographSystem} from "./ecs/systems/choreograph.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 
 register_to_dom({BenevHumanoid})
@@ -34,25 +32,13 @@ register_to_dom({BenevHumanoid})
 const realm = await nexus.context.realmOp.load(
 	async() => makeRealm({
 		glb_links: {
-			gym: "/temp/gym9.glb",
+			gym: "/temp/gym11.glb",
 			character: "/temp/knightanimations16.glb",
 		},
 	})
 )
 
-// const network = {
-// 	target: parse_network_target_from_url(window.location.href),
-// 	sessionOp: signals.op<NetworkSession>(),
-// }
-
-// nexus.context.network = network
-
-// network.sessionOp.load(async() =>
-// 	network_connect(network.target)
-// )
-
-// if (network.target.type === "host") {
-// }
+realm.porthole.resolution = 1
 
 house.entities.create({
 	environment: {name: "gym"},
@@ -63,7 +49,7 @@ house.entities.create({hemi: {
 	intensity: 0.6,
 }})
 
-spawners.spectator({position: [0, 1, -2]})
+// spawners.spectator({position: [0, 1, -2]})
 spawners.humanoid({position: [0, 5, 0], debug: false})
 spawners.physicsBox({
 	density: 1,
@@ -77,8 +63,10 @@ const executor = new Core.Executor<Base, Tick>(
 	[
 		hemiSystem,
 		environmentSystem,
+		intentionSystem,
 		spectatorSystem,
 		humanoidSystem,
+		choreographSystem,
 		physicsBoxSystem,
 	],
 )
@@ -86,8 +74,8 @@ const executor = new Core.Executor<Base, Tick>(
 let count = 0
 
 realm.stage.remote.onTick(() => {
-	executor.tick({tick: count++})
 	realm.physics.step()
+	executor.tick({tick: count++})
 })
 
 realm.stage.remote.start()

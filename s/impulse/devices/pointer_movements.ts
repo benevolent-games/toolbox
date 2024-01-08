@@ -3,14 +3,20 @@ import {pub} from "@benev/slate"
 
 import {Input} from "../input.js"
 import {Device} from "../device.js"
-import {Vec2} from "../../tools/math/vec2.js"
+import {Vec2, vec2} from "../../tools/math/vec2.js"
 
 export class PointerMovements extends Device {
 	dispose: () => void
-	movement: Vec2 = [0, 0]
-	coordinates: Vec2 = [0, 0]
+	movement: Vec2 = vec2.zero()
+	coordinates: Vec2 = vec2.zero()
 
 	onInput = pub<Input.Vector>()
+
+	clear_movement() {
+		const {movement} = this
+		this.movement = vec2.zero()
+		return movement
+	}
 
 	constructor(target: EventTarget, channel: string) {
 		super()
@@ -26,7 +32,7 @@ export class PointerMovements extends Device {
 				event.movementY,
 			]
 
-			this.movement = movement
+			this.movement = vec2.add(this.movement, movement)
 
 			this.onInput.publish({
 				kind: "vector",

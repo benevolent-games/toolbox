@@ -11,6 +11,7 @@ import {Rendering} from "./parts/rendering.js"
 import {CameraRig} from "./parts/camera_rig.js"
 import {backgrounds, effects} from "./standards.js"
 import {make_load_glb_fn} from "./parts/make_load_glb_fn.js"
+import { PointerLocker } from "./parts/pointer_locker.js"
 
 export class Stage {
 	static backgrounds = backgrounds
@@ -23,6 +24,7 @@ export class Stage {
 	cameraRig: CameraRig
 	rendering: Rendering
 	load_glb: (url: string) => Promise<AssetContainer>
+	pointerLocker: PointerLocker
 
 	constructor({canvas, background, effects}: StageOptions) {
 		const engine = this.engine = new Engine(canvas)
@@ -30,14 +32,15 @@ export class Stage {
 		scene.clearColor = new Color4(...background)
 
 		const rendering = this.rendering = new Rendering({scene, effects})
-		const cam = this.cameraRig = new CameraRig(scene, rendering)
+		const cameraRig = this.cameraRig = new CameraRig(scene, rendering)
 		const remote = this.remote = new Remote(engine, scene)
 		this.load_glb = make_load_glb_fn(scene)
+		this.pointerLocker = new PointerLocker(canvas)
 
 		remote.onTick(() => {
-			if (cam.current === cam.fallback) {
-				cam.fallback.alpha = scalar.wrap(
-					cam.fallback.alpha + scalar.radians.from.degrees(0.1),
+			if (cameraRig.current === cameraRig.fallback) {
+				cameraRig.fallback.alpha = scalar.wrap(
+					cameraRig.fallback.alpha + scalar.radians.from.degrees(0.1),
 					0,
 					scalar.radians.from.circle(1),
 				)

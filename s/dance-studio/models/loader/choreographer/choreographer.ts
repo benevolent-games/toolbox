@@ -80,6 +80,14 @@ export class Choreographer {
 		)
 		return choreo
 	}
+
+	// synchronize_animations(choreo: Choreography) {
+	// 	synchronize_character_animations(
+	// 		choreo,
+	// 		this.anims,
+	// 		this.adjustment_anims,
+	// 	)
+	// }
 }
 
 /////////////////////////////////

@@ -13,20 +13,20 @@ import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
-import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
 
 export const humanoidSystem = house.rezzer([
 		"humanoid",
 		"debug",
 		"position",
+		"rotation",
 		"sensitivity",
 		"gimbal",
 		"speeds",
 		"intent",
 		"choreography",
-	], ({realm}) => (state, id) => {
+	], ({realm}) => (state) => {
 
-	const {impulse, stage, colors} = realm
+	const {stage, colors} = realm
 	const {scene} = stage
 	const label = labeler("humanoid")
 	const {radius} = state.humanoid
@@ -81,11 +81,6 @@ export const humanoidSystem = house.rezzer([
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 
-	const characterInstance = realm.containers.character
-		.instance([0, -(state.humanoid.height / 2), 0])
-
-	const choreographer = new Choreographer(characterInstance)
-
 	const torusRoot = new TransformNode(label("torusRoot"), scene)
 
 	// parenting
@@ -93,8 +88,8 @@ export const humanoidSystem = house.rezzer([
 	headbox.setParent(torusRoot)
 	torus.setParent(torusRoot)
 	torusRoot.setParent(transform)
-	characterInstance.root.setParent(transform)
 
+	// initialize capsule position
 	capsule.rigid.setTranslation(vec3.to.xyz(state.position), true)
 
 	const debug = !!state.debug
@@ -102,76 +97,10 @@ export const humanoidSystem = house.rezzer([
 	torus.setEnabled(debug)
 	headbox.setEnabled(debug)
 
-	console.log(capsule, characterInstance)
-
-	// const camera = new TargetCamera(name("camera"), Vector3.Zero())
-
-	// camera.ignoreParentScaling = true
-	// // camera.parent = transformB
-
-	// realm.plate.setCamera(camera)
-
-	// function apply_movement_while_considering_gimbal_rotation(
-	// 		position: Vec3,
-	// 		move: Vec2,
-	// 	) {
-
-	// 	const [x, z] = move
-	// 	const translation = new Vector3(x, 0, z)
-
-	// 	const translation_considering_rotation = translation
-	// 		.applyRotationQuaternion(transformB.absoluteRotationQuaternion)
-
-	// 	return vec3.add(
-	// 		position,
-	// 		babylonian.to.vec3(translation_considering_rotation),
-	// 	)
-	// }
+	console.log(capsule)
 
 	return {
 		update(state) {
-			let look_x_change = 0
-			let look_y_change = 0
-
-			if (impulse.report.humanoid.buttons.left)
-				look_x_change -= 1
-
-			if (impulse.report.humanoid.buttons.right)
-				look_x_change += 1
-
-			if (impulse.report.humanoid.buttons.down)
-				look_y_change -= 1
-
-			if (impulse.report.humanoid.buttons.up)
-				look_y_change += 1
-
-			// update the intent
-			{
-				let x = 0
-				let y = 0
-
-				const {
-					forward,
-					backward,
-					leftward,
-					rightward,
-				} = impulse.report.humanoid.buttons
-
-				if (forward)
-					y += 1
-
-				if (backward)
-					y -= 1
-
-				if (leftward)
-					x -= 1
-
-				if (rightward)
-					x += 1
-
-				state.intent.amble = vec2.normalize([x, y])
-				state.intent.glance = [look_x_change, look_y_change]
-			}
 
 			// run physical movement
 			{
@@ -183,56 +112,19 @@ export const humanoidSystem = house.rezzer([
 					0, scalar.radians.from.circle(state.gimbal[0]), 0,
 				)
 				capsule.applyMovement(vec3.divideBy([x, 0, z], 10))
-				// body.applyImpulse(
-				// 	babylonian.from.vec3(vec3.multiplyBy([x, 0, z], 100)),
-				// 	capsule.absolutePosition,
-				// )
-			}
 
-			// run the choreographer
-			{
-				const {intent, gimbal, ...choreography} = choreographer.update({
-					...state.choreography,
-					intent: state.intent,
-					gimbal: state.gimbal,
-				})
-				state.gimbal = gimbal
-				state.choreography = choreography
+				state.position = babylonian.to.vec3(capsule.position)
+				state.rotation = babylonian.to.quat(transform.rotationQuaternion)
 			}
 
 			const a = state.gimbal[1]
 			// const b = scalar.map(a, [0.1, 0.7])
 			const b = scalar.spline.quickLinear(a, [0.1, 0.5, 0.7])
-			const toroidal = (Math.PI / 2) + (Math.PI * -b)
-			torusRoot.rotationQuaternion = Quaternion.RotationAlphaBetaGamma(
+			torusRoot.rotationQuaternion = Quaternion.FromEulerAngles(
+				(Math.PI / 2) + (Math.PI * -b),
 				0,
-				toroidal,
 				0,
 			)
-
-			// state.humanoid.gimbal = add_to_look_vector_but_cap_vertical_axis(
-			// 	state.spectator.gimbal,
-			// 	vec2.multiplyBy(look, 5 / 100),
-			// )
-
-			// state.spectator.position = (
-			// 	apply_movement_while_considering_gimbal_rotation(
-			// 		state.spectator.position,
-			// 		vec2.multiplyBy(move, 10 / 100),
-			// 	)
-			// )
-
-			// const {gimbal} = state.spectator
-
-			// transformA.position.set(...state.spectator.position)
-			// transformB.rotationQuaternion = (
-			// 	Quaternion
-			// 		.RotationYawPitchRoll(0, -gimbal[1], 0)
-			// )
-			// transformA.rotationQuaternion = (
-			// 	Quaternion
-			// 		.RotationYawPitchRoll(gimbal[0], 0, 0)
-			// )
 		},
 		dispose() {
 			// if (realm.plate.camera === camera)

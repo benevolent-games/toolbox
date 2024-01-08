@@ -2,7 +2,7 @@
 import {debounce} from "@benev/slate"
 
 export class Porthole {
-	#resolution = 0.25
+	#resolution = 1
 	readonly canvas = document.createElement("canvas")
 
 	constructor() {

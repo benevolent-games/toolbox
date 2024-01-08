@@ -1,7 +1,7 @@
 
 import {house} from "./house.js"
-import {Vec3} from "../../tools/math/vec3.js"
-import {Quat} from "../../tools/math/quat.js"
+import {Vec3, vec3} from "../../tools/math/vec3.js"
+import {Quat, quat} from "../../tools/math/quat.js"
 import {Choreographer} from "../../dance-studio/models/loader/choreographer/choreographer.js"
 
 export const spawners = {
@@ -46,10 +46,12 @@ export const spawners = {
 			intent,
 			gimbal,
 			position,
+			rotation: quat.identity(),
+			velocity: vec3.zero(),
 			sensitivity: {
-				keys: 10 / 100,
-				mouse: 10 / 100,
-				stick: 10 / 100,
+				keys: 1,
+				stick: 1,
+				mouse: 3 / 100,
 			},
 			speeds: {
 				base: 0.5,

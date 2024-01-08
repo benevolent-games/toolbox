@@ -33,11 +33,10 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		mass: number
 		radius: number
 	}
-
 	choreography: ChoreographyComponent
 	intent: ChoreoIntent
 	gimbal: Vec2
-	mouselook: true
+	velocity: Vec3
 
 	position: Vec3
 	rotation: Quat
