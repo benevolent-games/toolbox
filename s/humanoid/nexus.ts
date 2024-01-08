@@ -1,7 +1,7 @@
 
 import {Nexus, Context, signals, OpSignal} from "@benev/slate"
 
-import {theme} from "./theme.js"
+import {theme} from "../common/theme.js"
 import {Realm} from "./models/realm/realm.js"
 import {NetworkTarget} from "./network/target.js"
 import {NetworkSession} from "./network/session.js"

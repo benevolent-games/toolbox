@@ -20,5 +20,15 @@ canvas {
 	outline: 0;
 }
 
+[view="panel"] {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	background: #000a;
+	width: 28em;
+	max-width: 40%;
+	max-height: 90%;
+}
+
 `
 

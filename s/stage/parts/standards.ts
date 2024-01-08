@@ -1,6 +1,6 @@
 
-import {Effects} from "./types.js"
-import {Vec4} from "../tools/math/vec4.js"
+import {Effects} from "../types.js"
+import {Vec4} from "../../tools/math/vec4.js"
 
 export const backgrounds = {
 	transparent: () => [0, 0, 0, 0] as Vec4,
@@ -11,7 +11,7 @@ export const backgrounds = {
 }
 
 export const effects = {
-	standard: () => ({
+	everything: () => ({
 		bloom: {
 			scale: .5,
 			kernel: 32,

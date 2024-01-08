@@ -6,11 +6,14 @@ import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
 
 import {Effects} from "../types.js"
+import {effects} from "./standards.js"
 import {render_pipes} from "./render_pipes.js"
 import {labeler} from "../../tools/labeler.js"
 import {scalar} from "../../tools/math/scalar.js"
 
 export class Rendering {
+	static effects = effects
+
 	#camera!: Camera
 	#scene: Scene
 	#label = labeler("pipeline")
@@ -80,13 +83,13 @@ export class Rendering {
 	}
 
 	#addPipe(pipe: PostProcessRenderPipeline) {
-		this.#scene.postProcessRenderPipelineManager.addPipeline(pipe)
-		this.#scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline(pipe.name, this.camera)
+		// pipelines add themselves to the manager automatically on construction
 		this.#pipelines.add(pipe)
 	}
 
 	#deletePipe(pipe: PostProcessRenderPipeline) {
-		this.#scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline(pipe.name, this.camera)
+		// some pipelines remove themselves from the manager, some do not.
+		// to be safe, we call removePipeline in every case.
 		this.#scene.postProcessRenderPipelineManager.removePipeline(pipe.name)
 		pipe.dispose()
 		this.#pipelines.delete(pipe)
