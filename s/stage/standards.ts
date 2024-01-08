@@ -18,6 +18,8 @@ export const effects = {
 			threshold: .6,
 		},
 		ssao: {
+			ratio: .75,
+			blur: 1,
 			strength: 1,
 			radius: 2,
 		},

@@ -4,8 +4,8 @@ import {Physics} from "../../../rapier/physics.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
+import {DebugColors, debug_colors} from "../../../tools/debug_colors.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
-import { DebugColors, debug_colors } from "../../../tools/debug_colors.js"
 
 export interface HumanoidContainers {
 	gym: AssetContainer
@@ -33,7 +33,6 @@ export async function makeRealm({glb_links}: {
 	const stage = new Stage({
 		canvas: porthole.canvas,
 		background: Stage.backgrounds.sky(),
-		effects: Stage.effects.standard(),
 	})
 
 	const impulse = new HumanoidImpulse()

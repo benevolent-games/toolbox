@@ -4,7 +4,6 @@ import {Vec4} from "../tools/math/vec4.js"
 export interface StageOptions {
 	canvas: HTMLCanvasElement
 	background: Vec4
-	effects: Effects
 }
 
 export interface Effects {
@@ -20,6 +19,8 @@ export interface BloomEffect {
 }
 
 export interface SsaoEffect {
+	ratio: number
+	blur: number
 	strength: number
 	radius: number
 }

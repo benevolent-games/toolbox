@@ -77,7 +77,7 @@ export const humanoidSystem = house.rezzer([
 		scene,
 	)
 	third_person_cam.setTarget(headbox.position)
-	stage.cameraRig.set(third_person_cam)
+	stage.rendering.setCamera(third_person_cam)
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green
 
