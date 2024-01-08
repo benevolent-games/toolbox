@@ -1,5 +1,5 @@
 
-import {TransformNode} from "@babylonjs/core"
+import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {house} from "../house.js"
 import {babylonian} from "../../../tools/math/babylonian.js"

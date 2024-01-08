@@ -1,9 +1,9 @@
 
 import {generate_id, ob} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
-import {StandardMaterial} from "@babylonjs/core"
 import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
+import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 
 export type DebugColors = ReturnType<typeof debug_colors>
 type Vec4 = [number, number, number, number]
