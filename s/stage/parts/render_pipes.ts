@@ -5,17 +5,33 @@ import {SSAO2RenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeli
 import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline.js"
 
 import {Labeler} from "../../tools/labeler.js"
-import {BloomEffect, SsaoEffect, SsrEffect} from "../types.js"
+import {DefaultEffect, SsaoEffect, SsrEffect} from "../types.js"
 
 export const render_pipes = (scene: Scene, label: Labeler) => ({
-	def(effect: BloomEffect) {
+
+	default({antialiasing, bloom}: DefaultEffect) {
+
 		const pipe = new DefaultRenderingPipeline(label("default"), true, scene)
-		pipe.bloomEnabled = true
-		pipe.bloomScale = effect.scale
-		pipe.bloomKernel = effect.kernel
-		pipe.bloomThreshold = effect.threshold
+
+		if (antialiasing) {
+			pipe.samples = antialiasing.samples
+			pipe.fxaaEnabled = antialiasing.fxaa
+		}
+		else {
+			pipe.samples = 1
+		}
+
+		if (bloom) {
+			pipe.bloomEnabled = true
+			pipe.bloomWeight = bloom.weight
+			pipe.bloomScale = bloom.scale
+			pipe.bloomKernel = bloom.kernel
+			pipe.bloomThreshold = bloom.threshold
+		}
+
 		return pipe
 	},
+
 	ssao(effect: SsaoEffect) {
 		const options = {ssaoRatio: effect.ratio, blurRatio: effect.blur}
 		const pipe = new SSAO2RenderingPipeline(label("ssao"), scene, options)
@@ -23,6 +39,7 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 		pipe.radius = effect.radius
 		return pipe
 	},
+
 	ssr(effect: SsrEffect) {
 		const pipe = new SSRRenderingPipeline(label("ssr"), scene)
 		pipe.strength = effect.strength

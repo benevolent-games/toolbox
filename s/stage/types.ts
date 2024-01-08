@@ -7,12 +7,23 @@ export interface StageOptions {
 }
 
 export interface Effects {
-	bloom: BloomEffect | null
+	default: DefaultEffect | null
 	ssao: SsaoEffect | null
 	ssr: SsrEffect | null
 }
 
+export interface DefaultEffect {
+	antialiasing: AntialiasingEffect | null
+	bloom: BloomEffect | null
+}
+
+export interface AntialiasingEffect {
+	samples: number
+	fxaa: boolean
+}
+
 export interface BloomEffect {
+	weight: number
 	scale: number
 	kernel: number
 	threshold: number

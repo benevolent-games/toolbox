@@ -72,8 +72,8 @@ export class Rendering {
 		for (const pipe of [...this.#pipelines])
 			this.#deletePipe(pipe)
 
-		if (effects?.bloom)
-			this.#addPipe(pipes.def(effects.bloom))
+		if (effects?.default)
+			this.#addPipe(pipes.default(effects.default))
 
 		if (effects?.ssao)
 			this.#addPipe(pipes.ssao(effects.ssao))

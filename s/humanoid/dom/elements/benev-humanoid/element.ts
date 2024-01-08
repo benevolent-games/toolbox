@@ -12,7 +12,11 @@ export const BenevHumanoid = nexus.shadow_component(use => {
 	return html`
 		${render_op(use.context.realmOp.value, realm => html`
 			${realm.porthole.canvas}
-			${Panel([realm])}
+			<div class=panel>
+				<div>
+					${Panel([realm])}
+				</div>
+			</div>
 		`)}
 	`
 })

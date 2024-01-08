@@ -12,10 +12,17 @@ export const backgrounds = {
 
 export const effects = {
 	everything: () => ({
-		bloom: {
-			scale: .5,
-			kernel: 32,
-			threshold: .6,
+		default: {
+			antialiasing: {
+				samples: 4,
+				fxaa: true as boolean,
+			},
+			bloom: {
+				weight: .2,
+				scale: .5,
+				kernel: 32,
+				threshold: .6,
+			},
 		},
 		ssao: {
 			ratio: .75,
@@ -26,7 +33,7 @@ export const effects = {
 		ssr: {
 			strength: .8,
 			blur: .08,
-			fresnel: true,
+			fresnel: true as boolean,
 			threshold: .02,
 			falloff: 1.5,
 			downsample: 1,

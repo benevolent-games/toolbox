@@ -20,15 +20,26 @@ canvas {
 	outline: 0;
 }
 
-[view="panel"] {
+.panel {
 	position: absolute;
-	bottom: 0;
-	right: 0;
-	background: #000a;
+	top: 1em;
+	left: 1em;
 	width: 28em;
-	max-width: 40%;
-	max-height: 90%;
+	width: 40%;
+	height: 90%;
+	padding: 1em;
+
+	border-radius: 1em;
+	background: #222e;
+	backdrop-filter: blur(1em);
+	box-shadow: 0.3em 0.6em 0.5em #0004;
+
+	> div {
+		height: 100%;
+		overflow-y: auto;
+	}
 }
+
 
 `
 
