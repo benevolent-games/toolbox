@@ -1,5 +1,5 @@
 
-import {clone, css, debounce, html, ob, reactor} from "@benev/slate"
+import {clone, css, debounce, html, reactor} from "@benev/slate"
 
 import {nexus} from "../../../nexus.js"
 import {Effects} from "../../../../stage/types.js"
@@ -33,6 +33,10 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			}
 		}
 
+		* + header {
+			margin-top: 1em;
+		}
+
 		article {
 			background: #1114;
 			& + article {
@@ -51,13 +55,13 @@ export const Panel = nexus.shadow_view(use => (realm: Realm) => {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.5em;
-			justify-items: center;
-			align-items: center;
+			padding-left: 0.5em;
+
 			> * {
 				font-size: 0.8em;
 				flex: 0 0 auto;
 				width: 8rem;
-				padding: 0.8rem;
+				padding: 0.1rem;
 				max-width: 100%;
 			}
 		}
