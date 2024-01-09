@@ -43,6 +43,23 @@ export namespace vec3 {
 		return [x, y, z]
 	}
 
+	export function multiply([x, y, z]: Vec3, ...vectors: Vec3[]): Vec3 {
+		for (const [vx, vy, vz] of vectors) {
+			x *= vx
+			y *= vy
+			z *= vz
+		}
+		return [x, y, z]
+	}
+
+	export function subtract(a: Vec3, b: Vec3): Vec3 {
+		return [
+			a[0] - b[0],
+			a[1] - b[1],
+			a[2] - b[2],
+		]
+	}
+
 	function applyBy([x, y, z]: Vec3, action: (a: number) => number): Vec3 {
 		return [
 			action(x),
@@ -53,14 +70,6 @@ export namespace vec3 {
 
 	export function negate(vector: Vec3): Vec3 {
 		return applyBy(vector, a => a * -1)
-	}
-
-	export function subtract(a: Vec3, b: Vec3): Vec3 {
-		return [
-			a[0] - b[0],
-			a[1] - b[1],
-			a[2] - b[2],
-		]
 	}
 
 	export function addBy(vector: Vec3, delta: number): Vec3 {
