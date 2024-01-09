@@ -25,5 +25,14 @@ canvas {
 	inset: 0;
 }
 
+.framerate {
+	position: absolute;
+	top: 0.1em;
+	right: 0.5em;
+	color: white;
+	text-shadow: 1px 2px 2px #0008;
+	font-family: monospace;
+}
+
 `
 
