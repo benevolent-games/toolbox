@@ -21,11 +21,9 @@ export function calculate_choreo_values(
 		choreo,
 		adjustment_anims,
 	)
-	choreo.adjustment = adjustment
 
-	// // TODO fix this broken swivel stuff
-	// choreo.swivel = swivel
-	choreo.swivel = original.settings.swivel.midpoint
+	choreo.adjustment = adjustment
+	choreo.swivel = swivel
 
 	return choreo
 }
@@ -71,24 +69,7 @@ function handle_adjustments(
 	const {settings, ambulatory} = choreo
 	let swivel = structuredClone(choreo.swivel)
 	let adjustment = structuredClone(choreo.adjustment)
-
-	const adjustment_is_needed = !scalar.within(
-		swivel,
-		settings.swivel.readjustment_margin,
-		1 - settings.swivel.readjustment_margin,
-	)
-
-	if (!adjustment && adjustment_is_needed) {
-		adjustment = {
-			duration: settings.swivel.duration,
-			progress: 0,
-			initial_swivel: swivel,
-			direction: swivel < settings.swivel.midpoint
-				? "left"
-				: "right",
-		}
-		adjustment_anims.start(adjustment)
-	}
+	const character_is_ambulating = ambulatory.magnitude > 0.1
 
 	if (adjustment) {
 		const speed = 1 / adjustment.duration
@@ -101,21 +82,42 @@ function handle_adjustments(
 			adjustment = null
 		}
 	}
+	else {
+		if (character_is_ambulating) {
+			const {midpoint} = settings.swivel
+			const speed = calculate_swivel_speed(settings)
+			const diff = midpoint - swivel
 
-	if (!adjustment && ambulatory.magnitude > settings.swivel.readjustment_margin) {
-		const {midpoint} = settings.swivel
-		const speed = calculate_swivel_speed(settings)
-		const diff = midpoint - swivel
-
-		if (Math.abs(diff) <= speed)
-			swivel = midpoint
-		else
-			swivel += (diff < 0)
-				? -speed
-				: speed
+			if (Math.abs(diff) <= speed)
+				swivel = midpoint
+			else
+				swivel += (diff < 0)
+					? -speed
+					: speed
+		}
+		else if (adjustment_is_needed(swivel, settings)) {
+			adjustment = {
+				duration: settings.swivel.duration,
+				progress: 0,
+				initial_swivel: swivel,
+				direction: swivel < settings.swivel.midpoint
+					? "left"
+					: "right",
+			}
+			adjustment_anims.start(adjustment)
+		}
 	}
 
+	swivel = scalar.clamp(swivel)
 	return {swivel, adjustment}
+}
+
+export function adjustment_is_needed(swivel: number, settings: ChoreoSettings) {
+	return !scalar.within(
+		swivel,
+		settings.swivel.readjustment_margin,
+		1 - settings.swivel.readjustment_margin,
+	)
 }
 
 function calculate_adjustment_swivel(settings: ChoreoSettings, adjustment: ChoreoSwivelAdjustment) {

@@ -49,7 +49,7 @@ export const spawners = {
 			rotation: quat.identity(),
 			velocity: vec3.zero(),
 			sensitivity: {
-				keys: 1,
+				keys: 2,
 				stick: 1,
 				mouse: 3 / 100,
 			},

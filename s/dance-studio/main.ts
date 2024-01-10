@@ -14,6 +14,8 @@ register_to_dom({DanceStudio})
 
 ;(window as any).nexus = nexus
 
-// await nexus.context.loader.ingest_glb_from_url("/temp/knightanimations14.glb")
-await nexus.context.loader.ingest_glb_from_url("https://filebin.net/wn3s9gkxikqibf50/knightanimations14.glb")
+nexus.context.world.porthole.resolution = 1
+
+// await nexus.context.loader.ingest_glb_from_url("/temp/knightanimations19.glb")
+await nexus.context.loader.ingest_glb_from_url("https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb")
 
