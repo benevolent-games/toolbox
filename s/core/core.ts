@@ -1,10 +1,8 @@
 
-import {generate_id} from "@benev/slate"
+import {id_counter} from "../tools/id_counter.js"
 
 export namespace Core {
-	export const freshId = () => generate_id(32)
-
-	export type Id = string
+	export type Id = number
 	export type Component = any
 	export type Kind = string
 
@@ -78,6 +76,7 @@ export namespace Core {
 	}
 
 	export class Entities<CS extends ComponentSchema> {
+		#id = id_counter()
 		#map = new Map<Id, Partial<CS>>()
 
 		has(id: Id) {
@@ -92,7 +91,7 @@ export namespace Core {
 		}
 
 		create<E extends Partial<CS>>(entity: E) {
-			const id = freshId()
+			const id = this.#id()
 			this.#map.set(id, entity)
 			return id
 		}
