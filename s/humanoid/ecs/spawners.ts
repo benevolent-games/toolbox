@@ -1,22 +1,30 @@
 
-import {HumanoidContainers, Realm} from "../models/realm/realm.js"
+import {Core} from "../../core/core.js"
+import {HumanoidSchema} from "./schema.js"
 import {Vec3, vec3} from "../../tools/math/vec3.js"
 import {Quat, quat} from "../../tools/math/quat.js"
-import {Choreographer} from "../../dance-studio/models/loader/choreographer/choreographer.js"
+import {HumanoidContainers} from "../models/realm/realm.js"
 import {Sensitivity} from "../models/impulse/types.js"
+import {Choreographer} from "../../dance-studio/models/loader/choreographer/choreographer.js"
 
-export const spawners = (realm: Realm) => ({
+export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
+
+	hemi: ({direction, intensity}: {direction: Vec3, intensity: number}) => entities.create({
+		light: "hemi",
+		direction,
+		intensity,
+	}),
 
 	spectator: ({position, sensitivity}: {
 			position: Vec3,
 			sensitivity: Sensitivity
-		}) => realm.entities.create({
+		}) => entities.create({
 		spectator: {},
 		intent: {
 			amble: [0, 0],
 			glance: [0, 0],
 		},
-		gimbal: [0, 0.5],
+		gimbal: [0, 0],
 		position,
 		sensitivity,
 		speeds: {
@@ -36,7 +44,7 @@ export const spawners = (realm: Realm) => ({
 			position: Vec3
 			rotation: Quat
 			density: number
-		}) => realm.entities.create({
+		}) => entities.create({
 		physical: "dynamic",
 		shape: "box",
 		density,
@@ -45,41 +53,40 @@ export const spawners = (realm: Realm) => ({
 		scale,
 	}),
 
-	environment: (e: keyof HumanoidContainers) => realm.entities.create({
+	environment: (e: keyof HumanoidContainers) => entities.create({
 		environment: e,
 	}),
 
-	// humanoid: ({position, debug}: {
-	// 		position: Vec3
-	// 		debug: boolean
-	// 	}) => {
-	// 	const {intent, gimbal, ...choreography} = (
-	// 		Choreographer.default_choreography()
-	// 	)
-	// 	return realm.entities.create({
-	// 		debug,
-	// 		humanoid: {
-	// 			height: 1.75,
-	// 			mass: 70,
-	// 			radius: 0.3,
-	// 		},
-	// 		choreography,
-	// 		intent,
-	// 		gimbal,
-	// 		position,
-	// 		rotation: quat.identity(),
-	// 		velocity: vec3.zero(),
-	// 		sensitivity: {
-	// 			keys: 2,
-	// 			stick: 1,
-	// 			mouse: 3 / 100,
-	// 		},
-	// 		speeds: {
-	// 			base: 0.5,
-	// 			fast: 1.5,
-	// 			slow: 0.1,
-	// 		},
-	// 	})
-	// },
+	humanoid: ({position, debug}: {
+			position: Vec3
+			debug: boolean
+		}) => {
+		const {intent, gimbal, ...choreography} = (
+			Choreographer.default_choreography()
+		)
+		return entities.create({
+			humanoid: {},
+			debug,
+			height: 1.75,
+			mass: 70,
+			radius: 0.3,
+			choreography,
+			intent,
+			gimbal,
+			position,
+			rotation: quat.identity(),
+			velocity: vec3.zero(),
+			sensitivity: {
+				keys: 2,
+				stick: 1,
+				mouse: 3 / 100,
+			},
+			speeds: {
+				base: 0.5,
+				fast: 1.5,
+				slow: 0.1,
+			},
+		})
+	},
 })
 

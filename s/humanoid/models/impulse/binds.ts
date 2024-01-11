@@ -4,8 +4,15 @@ import {binds} from "../../../impulse/binds.js"
 export type HumanoidBinds = ReturnType<typeof humanoid_binds>
 
 export const humanoid_binds = () => binds(({
-		mode, buttons, b, modless, ctrl, shift,
+		mode, buttons, b, modless, ctrl, shift, alt,
 	}) => ({
+
+	universal: mode({
+		vectors: {},
+		buttons: {
+			respawn: buttons(b("KeyR")),
+		},
+	}),
 
 	humanoid: mode({
 		vectors: {

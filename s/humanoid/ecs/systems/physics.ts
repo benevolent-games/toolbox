@@ -37,11 +37,10 @@ export const physics_dynamic_system = rezzer(
 
 export const physics_fixed_system = rezzer(
 		"physical", "mesh", "position", "rotation", "scale",
-	)(realm => state => {
+	)(realm => (state, id) => {
 
-	const body = realm.physics.trimesh(
-		realm.meshStore.recall(state.mesh)
-	)
+	const mesh = realm.meshStore.recall(state.mesh)
+	const body = realm.physics.trimesh(mesh)
 
 	return {
 		update() {},

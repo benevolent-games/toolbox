@@ -1,24 +1,30 @@
 
-// import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
-// import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
+import {rezzer} from "../house.js"
+import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
+import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 
-// import {house} from "../house.js"
+export const lighting_system = rezzer(
+		"light", "direction", "intensity"
+	)(realm => (init, id) => {
+	const {scene} = realm.stage
 
-// export const hemiSystem = house.rezzer(["hemi"], ({realm}) => (entity, id) => {
-// 	const {scene} = realm.stage
-// 	const {direction, intensity} = entity.hemi
+	const light = new HemisphericLight(
+		`hemi_${id}`,
+		Vector3.FromArray(init.direction),
+		scene,
+	)
 
-// 	const light = new HemisphericLight(`hemi_${id}`, Vector3.FromArray(direction), scene)
-// 	light.intensity = intensity
+	light.intensity = init.intensity
+	light.direction.set(...init.direction)
 
-// 	return {
-// 		update(entity) {
-// 			light.intensity = entity.hemi.intensity
-// 			light.direction = Vector3.FromArray(entity.hemi.direction)
-// 		},
-// 		dispose() {
-// 			light.dispose()
-// 		},
-// 	}
-// })
+	return {
+		update(state) {
+			light.intensity = state.intensity
+			light.direction.set(...state.direction)
+		},
+		dispose() {
+			light.dispose()
+		},
+	}
+})
 

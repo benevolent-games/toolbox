@@ -19,6 +19,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 
 	light: "hemi"
 	density: number
+	mass: number
 	height: number
 	radius: number
 	direction: Vec3
@@ -44,6 +45,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	}
 
 	spectator: {}
+	humanoid: {}
 }>
 
 export type ChoreographyComponent = Omit<Choreography, "gimbal" | "intent">

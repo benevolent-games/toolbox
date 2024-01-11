@@ -1,6 +1,7 @@
 
 import {Core} from "../../../core/core.js"
 import {Stage} from "../../../stage/stage.js"
+import {spawners} from "../../ecs/spawners.js"
 import {MeshStore} from "./parts/mesh_store.js"
 import {Physics} from "../../../rapier/physics.js"
 import {HumanoidSchema} from "../../ecs/schema.js"
@@ -25,6 +26,7 @@ export async function makeRealm({glb_links}: {
 	}) {
 
 	const impulse = new HumanoidImpulse()
+
 	const porthole = new Porthole()
 	const stage = new Stage({
 		canvas: porthole.canvas,
@@ -47,15 +49,18 @@ export async function makeRealm({glb_links}: {
 	for (const light of gym.lights)
 		light.intensity /= 1000
 
+	const entities = new Core.Entities<HumanoidSchema>()
+
 	return {
 		porthole,
 		stage,
 		colors,
 		impulse,
 		physics,
+		entities,
+		spawn: spawners(entities),
 		meshStore: new MeshStore(),
 		containers: {gym, character},
-		entities: new Core.Entities<HumanoidSchema>(),
 	}
 }
 

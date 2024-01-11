@@ -1,7 +1,9 @@
 
 import {rezzer} from "../house.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
+import {babylonian} from "../../../tools/math/babylonian.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
+import {obtain_babylon_quaternion_from_mesh} from "../../../tools/obtain_babylon_quaternion_from_mesh.js"
 
 export const environment_system = rezzer("environment")(realm => ({environment}) => {
 
@@ -35,6 +37,11 @@ export const environment_system = rezzer("environment")(realm => ({environment})
 			const entityId = realm.entities.create({
 				physical: "fixed",
 				mesh: meshId,
+				scale: babylonian.to.vec3(mesh.scaling),
+				position: babylonian.to.vec3(mesh.position),
+				rotation: babylonian.to.quat(
+					obtain_babylon_quaternion_from_mesh(mesh)
+				),
 			})
 			disposables.add(() => {
 				realm.meshStore.forget(meshId)

@@ -12,13 +12,17 @@ import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
+import {spawners} from "./ecs/spawners.js"
 import {Realm, makeRealm} from "./models/realm/realm.js"
+import {spectator_system} from "./ecs/systems/spectator.js"
+import {intention_system} from "./ecs/systems/intention.js"
+import {physics_fixed_system} from "./ecs/systems/physics.js"
+import {environment_system} from "./ecs/systems/environment.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
-import { spawners } from "./ecs/spawners.js"
-import { environment_system } from "./ecs/systems/environment.js"
-import { physics_fixed_system } from "./ecs/systems/physics.js"
-import { spectator_system } from "./ecs/systems/spectator.js"
-import { intention_system } from "./ecs/systems/intention.js"
+import { lighting_system } from "./ecs/systems/hemi.js"
+import { governor_system } from "./ecs/systems/governor.js"
+import { humanoid_system } from "./ecs/systems/humanoid.js"
+import { choreography_system } from "./ecs/systems/choreography.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -27,27 +31,29 @@ register_to_dom({BenevHumanoid})
 const realm = await nexus.context.realmOp.load(
 	async() => makeRealm({
 		glb_links: {
-			// gym: "/temp/gym13.glb",
-			// character: "/temp/knightanimations19.glb",
+			gym: "/temp/gym13.glb",
+			character: "/temp/knightanimations19.glb",
 
-			gym: "https://filebin.net/l4csjluwubkar8fz/gym13.glb",
-			character: "https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb",
+			// gym: "https://filebin.net/l4csjluwubkar8fz/gym13.glb",
+			// character: "https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb",
 		},
 	})
 )
 
-realm.porthole.resolution = 1
+realm.porthole.resolution = 0.5
 
-const spawn = spawners(realm)
+const {spawn} = realm
 spawn.environment("gym")
-spawn.spectator({
-	position: [0, 1, -2],
-	sensitivity: {
-		keys: 5 / 100,
-		mouse: 10 / 100,
-		stick: 10 / 100,
-	},
-})
+spawn.hemi({direction: [.234, 1, .123], intensity: .6})
+
+// spawn.spectator({
+// 	position: [0, 1, -2],
+// 	sensitivity: {
+// 		keys: 5 / 100,
+// 		mouse: 10 / 100,
+// 		stick: 10 / 100,
+// 	},
+// })
 
 // house.entities.create({
 // 	environment: {name: "gym"},
@@ -70,10 +76,14 @@ spawn.spectator({
 const executor = new Core.Executor<Realm, Core.StdTick>(
 	realm,
 	[
+		governor_system,
 		intention_system,
 		environment_system,
+		lighting_system,
 		physics_fixed_system,
 		spectator_system,
+		humanoid_system,
+		choreography_system,
 
 		// environmentSystem,
 		// intentionSystem,

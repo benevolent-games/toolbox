@@ -52,7 +52,7 @@ export namespace Core {
 				const map = new Map<Id, RezzerLifecycle<K>>()
 				return system(realm => tick => {
 					for (const id of [...map.keys()]) {
-						if (!realm.entities.get(id)) {
+						if (!realm.entities.has(id)) {
 							const lifecycle = map.get(id)!
 							lifecycle.dispose(tick)
 							map.delete(id)
