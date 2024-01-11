@@ -3,15 +3,13 @@ import {Core} from "../../core/core.js"
 import {Vec2} from "../../tools/math/vec2.js"
 import {Vec3} from "../../tools/math/vec3.js"
 import {Quat} from "../../tools/math/quat.js"
+import {HumanoidContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
 import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreographer/types.js"
 
 export type HumanoidSchema = Core.AsComponentSchema<{
 	debug: boolean
-
-	environment: {
-		name: string
-	}
+	environment: keyof HumanoidContainers
 
 	position: Vec3
 	rotation: Quat
@@ -45,8 +43,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 		stick: number
 	}
 
-	// spectator: {}
-	// physicsBox: {}
+	spectator: {}
 }>
 
 export type ChoreographyComponent = Omit<Choreography, "gimbal" | "intent">

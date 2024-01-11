@@ -1,10 +1,10 @@
 
-import {house} from "../house.js"
+import {system} from "../hub.js"
 
-export const renderSystem = house.system(base => () => {
-	const {canvas, context} = house
+export const render_system = system(hub => () => {
+	const {canvas, context, entities} = hub
 
-	const query = base.entities.select("tile", "position")
+	const query = entities.select("tile", "position")
 	context.reset()
 	context.fillRect(0, 0, canvas.width, canvas.height)
 

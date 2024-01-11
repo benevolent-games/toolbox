@@ -1,21 +1,23 @@
 
 import {register_to_dom} from "@benev/slate"
 
-import {house} from "./ecs/house.js"
+import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
 import {loop2d} from "../tools/loopy.js"
-import {renderSystem} from "./ecs/systems/render.js"
+import {render_system} from "./ecs/systems/render.js"
 import {BenevIso} from "./dom/elements/benev-iso/element.js"
 
 register_to_dom({BenevIso})
 
 console.log("iso")
 
-for (const [x, y] of loop2d([4, 4]))
-	house.entities.create({tile: "cube", position: [x, y, 0]})
+const {hub} = nexus.context
 
-const executor = new Core.Executor({entities: house.entities}, [
-	renderSystem,
+for (const [x, y] of loop2d([4, 4]))
+	hub.entities.create({tile: "cube", position: [x, y, 0]})
+
+const executor = new Core.Executor(hub, [
+	render_system,
 ])
 
 let tick = 0

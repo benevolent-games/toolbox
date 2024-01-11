@@ -2,17 +2,8 @@
 import {IsoSchema} from "./schema.js"
 import {Core} from "../../core/core.js"
 
-export type Base = {
-	entities: Core.Entities<IsoSchema>
-}
-
-export type Tick = {
-	tick: number
-}
-
-export const house = new class House {
+export class Hub {
 	entities = new Core.Entities<IsoSchema>()
-	system = Core.configure_systems<Base, Tick>()
 	canvas = document.createElement("canvas")
 	context = this.canvas.getContext("2d", {
 		alpha: false,
@@ -20,4 +11,6 @@ export const house = new class House {
 		willReadFrequently: false,
 	} as CanvasRenderingContext2DSettings)!
 }
+
+export const {system, rezzer} = Core.configure_systems<IsoSchema, Hub, Core.StdTick>()
 

@@ -12,9 +12,13 @@ import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
-import {Base, Tick} from "./ecs/house.js"
-import {makeRealm} from "./models/realm/realm.js"
+import {Realm, makeRealm} from "./models/realm/realm.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
+import { spawners } from "./ecs/spawners.js"
+import { environment_system } from "./ecs/systems/environment.js"
+import { physics_fixed_system } from "./ecs/systems/physics.js"
+import { spectator_system } from "./ecs/systems/spectator.js"
+import { intention_system } from "./ecs/systems/intention.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -34,6 +38,17 @@ const realm = await nexus.context.realmOp.load(
 
 realm.porthole.resolution = 1
 
+const spawn = spawners(realm)
+spawn.environment("gym")
+spawn.spectator({
+	position: [0, 1, -2],
+	sensitivity: {
+		keys: 5 / 100,
+		mouse: 10 / 100,
+		stick: 10 / 100,
+	},
+})
+
 // house.entities.create({
 // 	environment: {name: "gym"},
 // })
@@ -52,9 +67,14 @@ realm.porthole.resolution = 1
 // 	scale: [1, 1, 1],
 // })
 
-const executor = new Core.Executor<Base, Tick>(
-	{realm, entities: house.entities},
+const executor = new Core.Executor<Realm, Core.StdTick>(
+	realm,
 	[
+		intention_system,
+		environment_system,
+		physics_fixed_system,
+		spectator_system,
+
 		// environmentSystem,
 		// intentionSystem,
 		// physicsSystem,

@@ -1,11 +1,12 @@
 
-import {house} from "../house.js"
+import {rezzer} from "../house.js"
+import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 
-export const environmentSystem = house.rezzer("environment")(({realm}) => ({environment}) => {
+export const environment_system = rezzer("environment")(realm => ({environment}) => {
 
 	const container = (() => {
-		switch (environment.name) {
+		switch (environment) {
 			case "gym":
 				return realm.containers.gym
 			default:
@@ -14,7 +15,7 @@ export const environmentSystem = house.rezzer("environment")(({realm}) => ({envi
 	})()
 
 	if (!container) {
-		console.error(`unknown environment name "${environment.name}"`)
+		console.error(`unknown environment "${environment}"`)
 		return {
 			update() {},
 			dispose() {},
@@ -27,21 +28,18 @@ export const environmentSystem = house.rezzer("environment")(({realm}) => ({envi
 	for (const root of instanced.rootNodes) {
 		const meshes = root
 			.getChildMeshes()
-			.filter(m => m instanceof InstancedMesh) as InstancedMesh[]
-			// .filter(m => (m instanceof Mesh) || (m instanceof InstancedMesh)) as (Mesh | InstancedMesh)[]
+			.filter(m => (m instanceof InstancedMesh) || (m instanceof Mesh)) as (Mesh | InstancedMesh)[]
 
 		for (const mesh of meshes) {
 			const meshId = realm.meshStore.keep(mesh)
-			const entityId = house.entities.create({
+			const entityId = realm.entities.create({
 				physical: "fixed",
 				mesh: meshId,
 			})
 			disposables.add(() => {
 				realm.meshStore.forget(meshId)
-				house.entities.delete(entityId)
+				realm.entities.delete(entityId)
 			})
-			// const body = realm.physics.trimesh(mesh)
-			// disposables.add(() => body.dispose())
 		}
 	}
 

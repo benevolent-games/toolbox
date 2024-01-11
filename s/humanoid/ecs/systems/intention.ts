@@ -1,18 +1,19 @@
 
-import {house} from "../house.js"
+import {rezzer} from "../house.js"
 import {vec2} from "../../../tools/math/vec2.js"
 import {get_trajectory_from_cardinals} from "../../../impulse/trajectory/get_trajectory_from_cardinals.js"
 
-export const intentionSystem = house.rezzer(
-	["intent", "sensitivity"],
-	({realm}) => state => {
+export const intention_system = rezzer(
+		"intent", "sensitivity",
+	)(realm => () => {
 
 	const {impulse, stage} = realm
 	const {buttons} = impulse.report.humanoid
-	const {sensitivity} = state
 
 	return {
-		update() {
+		update(state) {
+			const {sensitivity} = state
+
 			const mouselook = vec2.multiply(
 				impulse.devices.mouse.clear_movement(),
 				[1, -1],

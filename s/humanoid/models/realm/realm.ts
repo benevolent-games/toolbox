@@ -5,11 +5,17 @@ import {MeshStore} from "./parts/mesh_store.js"
 import {Physics} from "../../../rapier/physics.js"
 import {HumanoidSchema} from "../../ecs/schema.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
-import {Porthole} from "../../../common/models/porthole/porthole.js"
 import {debug_colors} from "../../../tools/debug_colors.js"
+import {AssetContainer} from "@babylonjs/core/assetContainer.js"
+import {Porthole} from "../../../common/models/porthole/porthole.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
 export type Realm = Awaited<ReturnType<typeof makeRealm>>
+
+export type HumanoidContainers = {
+	gym: AssetContainer
+	character: AssetContainer
+}
 
 export async function makeRealm({glb_links}: {
 		glb_links: {
