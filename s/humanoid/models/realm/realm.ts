@@ -1,44 +1,30 @@
 
+import {Core} from "../../../core/core.js"
 import {Stage} from "../../../stage/stage.js"
+import {MeshStore} from "./parts/mesh_store.js"
 import {Physics} from "../../../rapier/physics.js"
+import {HumanoidSchema} from "../../ecs/schema.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
-import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {Porthole} from "../../../common/models/porthole/porthole.js"
-import {DebugColors, debug_colors} from "../../../tools/debug_colors.js"
+import {debug_colors} from "../../../tools/debug_colors.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 
-export interface HumanoidContainers {
-	gym: AssetContainer
-	character: CharacterContainer
-}
-
-export interface Realm {
-	stage: Stage
-	porthole: Porthole
-	physics: Physics
-	colors: DebugColors
-	containers: HumanoidContainers
-	impulse: HumanoidImpulse
-}
+export type Realm = Awaited<ReturnType<typeof makeRealm>>
 
 export async function makeRealm({glb_links}: {
 		glb_links: {
 			gym: string
 			character: string
 		},
-	}): Promise<Realm> {
+	}) {
 
+	const impulse = new HumanoidImpulse()
 	const porthole = new Porthole()
-
 	const stage = new Stage({
 		canvas: porthole.canvas,
 		background: Stage.backgrounds.sky(),
 	})
-
-	const impulse = new HumanoidImpulse()
-
 	const colors = debug_colors(stage.scene)
-
 	const physics = new Physics({
 		hz: 60,
 		colors,
@@ -61,7 +47,9 @@ export async function makeRealm({glb_links}: {
 		colors,
 		impulse,
 		physics,
+		meshStore: new MeshStore(),
 		containers: {gym, character},
+		entities: new Core.Entities<HumanoidSchema>(),
 	}
 }
 

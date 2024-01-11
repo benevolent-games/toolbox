@@ -3,7 +3,6 @@ import {Core} from "../../core/core.js"
 import {Vec2} from "../../tools/math/vec2.js"
 import {Vec3} from "../../tools/math/vec3.js"
 import {Quat} from "../../tools/math/quat.js"
-import {HumanoidContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
 import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreographer/types.js"
 
@@ -11,49 +10,43 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	debug: boolean
 
 	environment: {
-		name: keyof HumanoidContainers
+		name: string
 	}
-
-	physics: {
-		gravity: number
-	}
-
-	prop: {
-		type: "box"
-		size: number
-	}
-
-	hemi: {
-		direction: Vec3
-		intensity: number
-	}
-
-	humanoid: {
-		height: number
-		mass: number
-		radius: number
-	}
-	choreography: ChoreographyComponent
-	intent: ChoreoIntent
-	gimbal: Vec2
-	velocity: Vec3
 
 	position: Vec3
 	rotation: Quat
 	scale: Vec3
-	density: number
 
+	mesh: number
+
+	light: "hemi"
+	density: number
+	height: number
+	radius: number
+	direction: Vec3
+	intensity: number
+
+	physical: "dynamic" | "fixed"
+	shape: "box"
+	offset: {
+		position: Vec3
+		rotation: Quat
+		scale: Vec3
+	}
+
+	intent: ChoreoIntent
+	gimbal: Vec2
+	choreography: ChoreographyComponent
+
+	speeds: Speeds
 	sensitivity: {
 		keys: number
 		mouse: number
 		stick: number
 	}
 
-	speeds: Speeds
-
-	spectator: {}
-
-	physicsBox: {}
+	// spectator: {}
+	// physicsBox: {}
 }>
 
 export type ChoreographyComponent = Omit<Choreography, "gimbal" | "intent">

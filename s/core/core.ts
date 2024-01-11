@@ -19,10 +19,62 @@ export namespace Core {
 			& Partial<CS>
 	)
 
-	export function configure_systems<Starter, Tick>() {
-		return function system(sys: PreSystem<Starter, Tick>) {
+	export type StdStarter<CS extends ComponentSchema> = {
+		entities: Entities<CS>
+	}
+
+	export type StdTick = {
+		tick: number
+	}
+
+	export function configure_systems<
+			CS extends ComponentSchema,
+			Starter extends StdStarter<CS>,
+			Tick,
+		>() {
+
+		type RezzerLifecycle<K extends keyof CS> = {
+			update(state: Selection<CS, K>, tick: Tick): void
+			dispose(tick: Tick): void
+		}
+
+		type RezzerFn<K extends keyof CS> = (
+			(starter: Starter, tick: Tick) => (
+				state: Selection<CS, K>,
+				id: Id,
+			) => RezzerLifecycle<K>
+		)
+
+		function system(sys: PreSystem<Starter, Tick>) {
 			return sys
 		}
+
+		function rezzer<K extends keyof CS>(...kinds: K[]) {
+			return (fn: RezzerFn<K>) => {
+				const map = new Map<Id, RezzerLifecycle<K>>()
+				return system(realm => tick => {
+					for (const id of [...map.keys()]) {
+						if (!realm.entities.get(id)) {
+							const lifecycle = map.get(id)!
+							lifecycle.dispose(tick)
+							map.delete(id)
+						}
+					}
+					for (const [id, entity] of realm.entities.select(...kinds)) {
+						if (map.has(id)) {
+							const lifecycle = map.get(id)!
+							lifecycle.update(entity, tick)
+						}
+						else {
+							const lifecycle = fn(realm, tick)(entity, id)
+							map.set(id, lifecycle)
+						}
+					}
+				})
+			}
+		}
+
+		return {system, rezzer}
 	}
 
 	export class Entities<CS extends ComponentSchema> {
