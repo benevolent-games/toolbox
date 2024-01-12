@@ -47,7 +47,7 @@ export const choreography_system = rezzer(
 				intent: state.intent,
 				gimbal: state.gimbal,
 			})
-			state.gimbal = gimbal
+			// state.gimbal = gimbal
 			state.choreography = choreography
 		},
 		dispose() {

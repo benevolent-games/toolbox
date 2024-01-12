@@ -47,6 +47,19 @@ export namespace Core {
 			return sys
 		}
 
+		function processor<K extends keyof CS>(...kinds: K[]) {
+			return (fn: (starter: Starter) => (state: Core.Selection<CS, K>, id: Core.Id, tick: Tick) => void) => {
+				return system(starter => {
+					const process = fn(starter)
+					return tick => {
+						for (const [id, state] of starter.entities.select(...kinds)) {
+							process(state, id, tick)
+						}
+					}
+				})
+			}
+		}
+
 		function rezzer<K extends keyof CS>(...kinds: K[]) {
 			return (fn: RezzerFn<K>) => {
 				const map = new Map<Id, RezzerLifecycle<K>>()
@@ -72,7 +85,7 @@ export namespace Core {
 			}
 		}
 
-		return {system, rezzer}
+		return {system, processor, rezzer}
 	}
 
 	export class Entities<CS extends ComponentSchema> {

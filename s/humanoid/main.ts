@@ -13,12 +13,13 @@ import {register_to_dom} from "@benev/slate"
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
 import {quat} from "../tools/math/quat.js"
-import {Realm, makeRealm} from "./models/realm/realm.js"
-import {spectator_system} from "./ecs/systems/spectator.js"
-import {intention_system} from "./ecs/systems/intention.js"
 import {lighting_system} from "./ecs/systems/hemi.js"
+import {Realm, makeRealm} from "./models/realm/realm.js"
 import {governor_system} from "./ecs/systems/governor.js"
 import {humanoid_system} from "./ecs/systems/humanoid.js"
+import {freelook_system} from "./ecs/systems/freelook.js"
+import {spectator_system} from "./ecs/systems/spectator.js"
+import {intention_system} from "./ecs/systems/intention.js"
 import {environment_system} from "./ecs/systems/environment.js"
 import {choreography_system} from "./ecs/systems/choreography.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
@@ -52,38 +53,12 @@ spawn.physicsBox({
 	rotation: quat.identity(),
 })
 
-// spawn.spectator({
-// 	position: [0, 1, -2],
-// 	sensitivity: {
-// 		keys: 5 / 100,
-// 		mouse: 10 / 100,
-// 		stick: 10 / 100,
-// 	},
-// })
-
-// house.entities.create({
-// 	environment: {name: "gym"},
-// })
-
-// house.entities.create({hemi: {
-// 	direction: [0.234, 1, 0.123],
-// 	intensity: 0.6,
-// }})
-
-// // spawners.spectator({position: [0, 1, -2]})
-// spawners.humanoid({position: [0, 5, 0], debug: false})
-// spawners.physicsBox({
-// 	density: 1,
-// 	position: [0, 8, 3],
-// 	rotation: quat.identity(),
-// 	scale: [1, 1, 1],
-// })
-
 const executor = new Core.Executor<Realm, Core.StdTick>(
 	realm,
 	[
 		governor_system,
 		intention_system,
+		freelook_system,
 		environment_system,
 		lighting_system,
 		physics_fixed_system,
@@ -91,19 +66,6 @@ const executor = new Core.Executor<Realm, Core.StdTick>(
 		spectator_system,
 		humanoid_system,
 		choreography_system,
-
-		// environmentSystem,
-		// intentionSystem,
-		// physicsSystem,
-		// spawningSystem,
-
-		// hemiSystem,
-		// environmentSystem,
-		// intentionSystem,
-		// spectatorSystem,
-		// humanoidSystem,
-		// choreographSystem,
-		// physicsBoxSystem,
 	],
 )
 

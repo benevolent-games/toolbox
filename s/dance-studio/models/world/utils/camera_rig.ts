@@ -34,12 +34,12 @@ export class CameraRig {
 	set zoom(n: number) {
 		this.#zoom = scalar.clamp(n)
 		this.#camera.radius = scalar.map(this.#zoom, [1.5, 5])
-		this.#camera.beta = scalar.map(this.#zoom, [scalar.pi(0.5), scalar.pi(0)])
+		this.#camera.beta = scalar.map(this.#zoom, [scalar.xpi(0.5), scalar.xpi(0)])
 	}
 
 	set swivel(n: number) {
 		this.#swivel = scalar.wrap(n)
-		this.#camera.alpha = scalar.map(this.#swivel, [0, scalar.pi(2)])
+		this.#camera.alpha = scalar.map(this.#swivel, [0, scalar.xpi(2)])
 	}
 }
 

@@ -106,8 +106,6 @@ export const humanoid_system = rezzer(
 	torus.setEnabled(debug)
 	headbox.setEnabled(debug)
 
-	console.log(capsule)
-
 	return {
 		update(state) {
 

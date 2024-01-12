@@ -8,6 +8,7 @@ import {Vec2, vec2} from "../../../tools/math/vec2.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {add_to_look_vector_but_cap_vertical_axis} from "../../../common/models/flycam/utils/add_to_look_vector_but_cap_vertical_axis.js"
+import { scalar } from "../../../tools/math/scalar.js"
 
 export const spectator_system = rezzer(
 		"spectator", "intent", "gimbal", "position",
@@ -47,12 +48,7 @@ export const spectator_system = rezzer(
 
 	return {
 		update(state) {
-			const {intent, sensitivity} = state
-
-			state.gimbal = add_to_look_vector_but_cap_vertical_axis(
-				state.gimbal,
-				intent.glance,
-			)
+			const {intent} = state
 
 			state.position = (
 				apply_movement_while_considering_gimbal_rotation(
@@ -62,14 +58,26 @@ export const spectator_system = rezzer(
 			)
 
 			const {gimbal} = state
+			const [gimbalX, gimbalY] = state.gimbal
+
+			const rotationHorizontal = scalar.map(gimbalX, [
+				scalar.radians.from.degrees(-180),
+				scalar.radians.from.degrees(180),
+			])
+
+			const rotationVertical = scalar.map(gimbalY, [
+				scalar.radians.from.degrees(-90),
+				scalar.radians.from.degrees(90),
+			])
+
 			transformA.position.set(...state.position)
 			transformB.rotationQuaternion = (
 				Quaternion
-					.RotationYawPitchRoll(0, -gimbal[1], 0)
+					.RotationYawPitchRoll(0, -rotationVertical, 0)
 			)
 			transformA.rotationQuaternion = (
 				Quaternion
-					.RotationYawPitchRoll(gimbal[0], 0, 0)
+					.RotationYawPitchRoll(rotationHorizontal, 0, 0)
 			)
 		},
 		dispose() {

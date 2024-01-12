@@ -7,22 +7,21 @@ export namespace scalar {
 	// units and conversions
 	//
 
-	export function pi(n: number = 1) {
-		return n * Math.PI
-	}
+	export const pi = Math.PI
+	export const xpi = (n: number = 1) => n * pi
 
 	export const radians = {
 		to: {
 			degrees(radians: number) {
-				return radians * 180 / Math.PI
+				return radians * (180 / pi)
 			},
 		},
 		from: {
-			circle(c = 1) {
-				return c * (2 * Math.PI)
+			circle(fraction = 1) {
+				return fraction * (2 * Math.PI)
 			},
 			degrees(degrees: number) {
-				return degrees * Math.PI / 180
+				return degrees * (pi / 180)
 			},
 		},
 	}

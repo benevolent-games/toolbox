@@ -48,8 +48,6 @@ export class Choreographer {
 			anims.tpose.group.goToFrame(0)
 		}
 
-		console.log("anims", this.anims)
-
 		this.adjustment_anims = {
 			start: () => {},
 			stop: () => {
