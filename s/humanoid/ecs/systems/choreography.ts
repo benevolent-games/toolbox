@@ -1,9 +1,20 @@
 
+import {Scene} from "@babylonjs/core/scene.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
-import {Choreographer} from "../../../dance-studio/models/loader/choreographer/choreographer.js"
+import {labeler} from "../../../tools/labeler.js"
+import {Vec3, vec3} from "../../../tools/math/vec3.js"
+import {Quat} from "../../../tools/math/quat.js"
+import {scalar} from "../../../tools/math/scalar.js"
+import {sync_character_anims} from "./choreography/sync_character_anims.js"
+import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
+import {AdjustmentAnims, AdjustmentDirection} from "../../../dance-studio/models/loader/choreographer/types.js"
+import {calculate_ambulatory_report, apply_adjustments, swivel_effected_by_glance} from "./choreography/calculations.js"
+import {CharacterAnims, setup_character_anims} from "../../../dance-studio/models/loader/choreographer/parts/setup_character_anims.js"
+import {calculate_adjustment_weight} from "../../../dance-studio/models/loader/choreographer/parts/utils/calculate_adjustment_weight.js"
+import { gimbaltool } from "./utils/gimbaltool.js"
 
 export const choreography_system = rezzer(
 		"humanoid",
@@ -12,19 +23,99 @@ export const choreography_system = rezzer(
 		"rotation",
 		"gimbal",
 		"intent",
+		"velocity",
 		"choreography",
-	)(realm => (state, id) => {
+	)(realm => init => {
 
-	const disposables = new Set<() => void>()
+	const babylon = prepare_choreographer_babylon_parts({
+		scene: realm.stage.scene,
+		characterContainer: realm.containers.character,
+		state: init,
+	})
 
-	const transform = new TransformNode(`transform::${id}`, realm.stage.scene)
-	disposables.add(() => transform.dispose())
+	const anims = setup_character_anims(babylon.characterInstance)
 
-	const characterInstance = realm.containers.character
-		.instance([0, -(state.height / 2), 0])
-	disposables.add(() => characterInstance.dispose())
+	// initialize with tpose
+	if (anims.tpose.group) {
+		anims.tpose.group.weight = -1
+		anims.tpose.group.play(false)
+		anims.tpose.group.pause()
+		anims.tpose.group.goToFrame(0)
+	}
 
-	characterInstance.root.setParent(transform)
+	const adjustment_anims: AdjustmentAnims = {
+		start: () => {},
+		stop: () => {
+			anims.stand_legadjust_left.weight = 0
+			anims.stand_legadjust_right.weight = 0
+		},
+		update: ({direction, progress}) => {
+			const anim = adjustment_anim_for_direction(anims, direction)
+			const frame = scalar.map(progress, [
+				anim.from,
+				anim.to,
+			])
+			anim.weight = calculate_adjustment_weight(progress)
+			anim.forceFrame(frame)
+		},
+	}
+
+	return {
+		update(state) {
+			babylon.position.set(...state.position)
+			babylon.rotation.set(...state.rotation)
+
+			const {intent, choreography, velocity} = state
+
+			choreography.swivel = swivel_effected_by_glance(
+				choreography.swivel,
+				intent.glance,
+			)
+
+			const [vx,,vz] = vec3.multiplyBy(velocity, 15)
+			const velocity_localized = gimbaltool(state.gimbal).horizontal_unrotate([vx, vz])
+			const ambulatory = calculate_ambulatory_report(velocity_localized)
+
+			apply_adjustments(
+				adjustment_anims,
+				ambulatory,
+				choreography,
+			)
+
+			sync_character_anims(
+				state.gimbal,
+				choreography,
+				ambulatory,
+				anims,
+				adjustment_anims,
+			)
+		},
+		dispose() {
+			babylon.dispose()
+		},
+	}
+})
+
+///////////////////////////////////////
+///////////////////////////////////////
+
+const label = labeler("choreography")
+
+export function prepare_choreographer_babylon_parts(o: {
+		scene: Scene
+		characterContainer: CharacterContainer
+		state: {
+			height: number
+			position: Vec3
+			rotation: Quat
+		}
+	}) {
+
+	const {scene, characterContainer, state} = o
+
+	const transform = new TransformNode(label("transform"), scene)
+	const character = characterContainer.instance([0, -(state.height / 2), 0])
+	character.root.setParent(transform)
 
 	const position
 		= transform.position
@@ -34,26 +125,25 @@ export const choreography_system = rezzer(
 		= transform.rotationQuaternion
 		= babylonian.from.quat(state.rotation)
 
-	const choreographer = new Choreographer(characterInstance)
-
 	return {
-		update(state) {
-			position.set(...state.position)
-			rotation.set(...state.rotation)
-
-			// run the choreographer
-			const {intent, gimbal, ...choreography} = choreographer.update({
-				...state.choreography,
-				intent: state.intent,
-				gimbal: state.gimbal,
-			})
-			// state.gimbal = gimbal
-			state.choreography = choreography
-		},
+		transform,
+		characterInstance: character,
+		position,
+		rotation,
 		dispose() {
-			for (const dispose of disposables)
-				dispose()
+			character.dispose()
+			transform.dispose()
 		},
 	}
-})
+}
+
+function adjustment_anim_for_direction(
+		anims: CharacterAnims,
+		direction: AdjustmentDirection,
+	) {
+	return direction === "left"
+		? anims.stand_legadjust_left
+		: anims.stand_legadjust_right
+}
+
 

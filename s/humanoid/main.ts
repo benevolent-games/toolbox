@@ -23,6 +23,7 @@ import {intention_system} from "./ecs/systems/intention.js"
 import {environment_system} from "./ecs/systems/environment.js"
 import {choreography_system} from "./ecs/systems/choreography.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
+import {velocity_calculator_system} from "./ecs/systems/velocity_calculator.js"
 import {physics_dynamic_system, physics_fixed_system} from "./ecs/systems/physics.js"
 
 register_to_dom({BenevHumanoid})
@@ -65,6 +66,7 @@ const executor = new Core.Executor<Realm, Core.StdTick>(
 		physics_dynamic_system,
 		spectator_system,
 		humanoid_system,
+		velocity_calculator_system,
 		choreography_system,
 	],
 )

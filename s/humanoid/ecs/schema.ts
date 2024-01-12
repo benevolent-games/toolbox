@@ -5,7 +5,8 @@ import {Vec3} from "../../tools/math/vec3.js"
 import {Quat} from "../../tools/math/quat.js"
 import {HumanoidContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
-import {ChoreoIntent, Choreography} from "../../dance-studio/models/loader/choreographer/types.js"
+import {Choreography} from "./systems/choreography/calculations.js"
+import {ChoreoIntent} from "../../dance-studio/models/loader/choreographer/types.js"
 
 export type HumanoidSchema = Core.AsComponentSchema<{
 	debug: boolean
@@ -14,6 +15,7 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	position: Vec3
 	rotation: Quat
 	scale: Vec3
+	velocity: Vec3
 
 	mesh: number
 
@@ -27,15 +29,12 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 
 	physical: "dynamic" | "fixed"
 	shape: "box"
-	offset: {
-		position: Vec3
-		rotation: Quat
-		scale: Vec3
-	}
 
 	intent: ChoreoIntent
+	force: Vec3
 	gimbal: Vec2
-	choreography: ChoreographyComponent
+
+	choreography: Choreography
 
 	speeds: Speeds
 	sensitivity: {

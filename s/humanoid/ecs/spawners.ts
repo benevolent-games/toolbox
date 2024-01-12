@@ -5,7 +5,6 @@ import {Vec3, vec3} from "../../tools/math/vec3.js"
 import {Quat, quat} from "../../tools/math/quat.js"
 import {Sensitivity} from "../models/impulse/types.js"
 import {HumanoidContainers} from "../models/realm/realm.js"
-import {Choreographer} from "../../dance-studio/models/loader/choreographer/choreographer.js"
 
 export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 
@@ -62,18 +61,26 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 			position: Vec3
 			sensitivity: Sensitivity
 		}) => {
-		const {intent, gimbal, ...choreography} = (
-			Choreographer.default_choreography()
-		)
 		return entities.create({
 			humanoid: {},
 			debug,
 			height: 1.75,
 			mass: 70,
 			radius: 0.3,
-			choreography,
-			intent,
-			gimbal,
+			intent: {
+				amble: [0, 0],
+				glance: [0, 0],
+			},
+			force: [0, 0, 0],
+			gimbal: [0, 0.5],
+			choreography: {
+				swivel: 0.5,
+				adjustment: null,
+				settings: {
+					swivel_readjustment_margin: 0.1,
+					swivel_duration: 20,
+				},
+			},
 			position,
 			rotation: quat.identity(),
 			velocity: vec3.zero(),

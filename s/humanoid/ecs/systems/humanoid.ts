@@ -10,6 +10,7 @@ import {vec3} from "../../../tools/math/vec3.js"
 import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
+import { gimbaltool } from "./utils/gimbaltool.js"
 
 export const humanoid_system = rezzer(
 		"humanoid",
@@ -111,10 +112,7 @@ export const humanoid_system = rezzer(
 
 			// run physical movement
 			{
-				const [x, z] = vec2.rotate(
-					state.intent.amble,
-					-scalar.map(state.gimbal[0], [0, 2 * Math.PI]),
-				)
+				const [x, z] = gimbaltool(state.gimbal).horizontal_rotate(state.intent.amble)
 				transform.rotationQuaternion = Quaternion.FromEulerAngles(
 					0, scalar.radians.from.circle(state.gimbal[0]), 0,
 				)
@@ -125,7 +123,6 @@ export const humanoid_system = rezzer(
 			}
 
 			const a = state.gimbal[1]
-			// const b = scalar.map(a, [0.1, 0.7])
 			const b = scalar.spline.quickLinear(a, [0.1, 0.5, 0.7])
 			torusRoot.rotationQuaternion = Quaternion.FromEulerAngles(
 				(Math.PI / 2) + (Math.PI * -b),
