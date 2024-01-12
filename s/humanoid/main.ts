@@ -31,16 +31,16 @@ register_to_dom({BenevHumanoid})
 const realm = await nexus.context.realmOp.load(
 	async() => makeRealm({
 		glb_links: {
-			gym: "/temp/gym13.glb",
-			character: "/temp/knightanimations19.glb",
+			// gym: "/temp/gym13.glb",
+			// character: "/temp/knightanimations19.glb",
 
-			// gym: "https://filebin.net/l4csjluwubkar8fz/gym13.glb",
-			// character: "https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb",
+			gym: "https://filebin.net/l4csjluwubkar8fz/gym13.glb",
+			character: "https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb",
 		},
 	})
 )
 
-realm.porthole.resolution = 0.5
+realm.porthole.resolution = 1
 
 const {spawn} = realm
 spawn.environment("gym")
