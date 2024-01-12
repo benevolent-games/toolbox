@@ -12,17 +12,17 @@ import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
-import {spawners} from "./ecs/spawners.js"
+import {quat} from "../tools/math/quat.js"
 import {Realm, makeRealm} from "./models/realm/realm.js"
 import {spectator_system} from "./ecs/systems/spectator.js"
 import {intention_system} from "./ecs/systems/intention.js"
-import {physics_fixed_system} from "./ecs/systems/physics.js"
+import {lighting_system} from "./ecs/systems/hemi.js"
+import {governor_system} from "./ecs/systems/governor.js"
+import {humanoid_system} from "./ecs/systems/humanoid.js"
 import {environment_system} from "./ecs/systems/environment.js"
+import {choreography_system} from "./ecs/systems/choreography.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
-import { lighting_system } from "./ecs/systems/hemi.js"
-import { governor_system } from "./ecs/systems/governor.js"
-import { humanoid_system } from "./ecs/systems/humanoid.js"
-import { choreography_system } from "./ecs/systems/choreography.js"
+import {physics_dynamic_system, physics_fixed_system} from "./ecs/systems/physics.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -45,6 +45,12 @@ realm.porthole.resolution = 0.5
 const {spawn} = realm
 spawn.environment("gym")
 spawn.hemi({direction: [.234, 1, .123], intensity: .6})
+spawn.physicsBox({
+	density: 3,
+	position: [0, 5, 2],
+	scale: [1, 1, 1],
+	rotation: quat.identity(),
+})
 
 // spawn.spectator({
 // 	position: [0, 1, -2],
@@ -81,6 +87,7 @@ const executor = new Core.Executor<Realm, Core.StdTick>(
 		environment_system,
 		lighting_system,
 		physics_fixed_system,
+		physics_dynamic_system,
 		spectator_system,
 		humanoid_system,
 		choreography_system,
