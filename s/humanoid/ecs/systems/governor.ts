@@ -43,6 +43,6 @@ export const governor_system = system(realm => {
 			next()
 	})
 
-	return tick => {}
+	return () => {}
 })
 
