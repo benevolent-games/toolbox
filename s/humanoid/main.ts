@@ -33,20 +33,27 @@ register_to_dom({BenevHumanoid})
 
 ;(window as any).nexus = nexus
 
+const localTesting = (
+	window.location.host.startsWith("localhost") ||
+	window.location.host.startsWith("192")
+)
+
 const realm = await nexus.context.realmOp.load(
 	async() => makeRealm({
 		tickrate: 60,
-		glb_links: {
+		glb_links: localTesting ? {
 			gym: "/temp/gym13.glb",
 			character: "/temp/knightanimations19.glb",
-
-			// gym: "https://filebin.net/l4csjluwubkar8fz/gym13.glb",
-			// character: "https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb",
+		} : {
+			gym: "https://filebin.net/l4csjluwubkar8fz/gym13.glb",
+			character: "https://filebin.net/djmvhh1pq40t6uyk/knightanimations19.glb",
 		},
 	})
 )
 
-realm.porthole.resolution = 0.5
+realm.porthole.resolution = localTesting
+	? 0.5
+	: 1
 
 const {spawn} = realm
 spawn.environment("gym")
