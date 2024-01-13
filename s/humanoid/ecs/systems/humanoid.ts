@@ -17,7 +17,7 @@ export const humanoid_system = rezzer(
 		"debug",
 		"humanoid",
 		"third_person_cam_distance",
-		"fov",
+		"camera",
 		"radius",
 		"height",
 		"mass",
@@ -82,7 +82,9 @@ export const humanoid_system = rezzer(
 		scene,
 	)
 	third_person_cam.setTarget(headbox.position)
-	third_person_cam.fov = scalar.radians.from.degrees(init.fov)
+	third_person_cam.fov = scalar.radians.from.degrees(init.camera.fov)
+	third_person_cam.minZ = init.camera.minZ
+	third_person_cam.maxZ = init.camera.maxZ
 	stage.rendering.setCamera(third_person_cam)
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green

@@ -12,7 +12,7 @@ import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
 export const spectator_system = rezzer(
-		"spectator", "force", "gimbal", "position", "speeds", "fov",
+		"spectator", "force", "gimbal", "position", "speeds", "camera",
 	)(realm => (state, id) => {
 
 	const {stage} = realm
@@ -22,7 +22,9 @@ export const spectator_system = rezzer(
 	const transformB = new TransformNode(name("transform-b"), stage.scene, true)
 	const camera = new TargetCamera(name("camera"), Vector3.Zero())
 
-	camera.fov = scalar.radians.from.degrees(state.fov)
+	camera.fov = scalar.radians.from.degrees(state.camera.fov)
+	camera.minZ = state.camera.minZ
+	camera.maxZ = state.camera.maxZ
 	camera.ignoreParentScaling = true
 	camera.parent = transformB
 	transformB.parent = transformA

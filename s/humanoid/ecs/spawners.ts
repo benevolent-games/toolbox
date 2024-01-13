@@ -20,7 +20,11 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 			sensitivity: Sensitivity
 		}) => entities.create({
 		spectator: {},
-		fov: 90,
+		camera: {
+			fov: 90,
+			minZ: 0.1,
+			maxZ: 1_000,
+		},
 		intent: {
 			amble: vec3.zero(),
 			glance: vec2.zero(),
@@ -69,7 +73,11 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 		}) => entities.create({
 		humanoid: {},
 		third_person_cam_distance: 1.5,
-		fov: 90,
+		camera: {
+			fov: 90,
+			minZ: 0.1,
+			maxZ: 1_000,
+		},
 		debug,
 		height: 1.75,
 		mass: 70,
