@@ -25,13 +25,23 @@ canvas {
 	inset: 0;
 }
 
-.framerate {
+.info {
 	position: absolute;
 	top: 0.1em;
 	right: 0.5em;
 	color: white;
 	text-shadow: 1px 2px 2px #0008;
 	font-family: monospace;
+	display: flex;
+	gap: 0.5em;
+
+	> * {
+		text-align: center;
+	}
+
+	.framerate { min-width: 2em; color: white; }
+	.spacer { opacity: 0.5; }
+	.tickrate { min-width: 2em; color: yellow; }
 }
 
 `

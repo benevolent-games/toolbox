@@ -23,6 +23,14 @@ export class Stage {
 	pointerLocker: PointerLocker
 	load_glb: (url: string) => Promise<AssetContainer>
 
+	#last_tick_time: number
+	#tick_counter: number = 0
+	#tick_rate: number = 0
+
+	get measured_tick_rate() {
+		return this.#tick_rate
+	}
+
 	constructor({canvas, background, tickrate}: StageOptions) {
 		const engine = this.engine = new Engine(canvas)
 		const scene = this.scene = new Scene(engine)
@@ -33,7 +41,17 @@ export class Stage {
 		this.load_glb = make_load_glb_fn(scene)
 		this.pointerLocker = new PointerLocker(canvas)
 
+		this.#last_tick_time = performance.now()
+
 		remote.onTick(() => {
+			this.#tick_counter++
+			const currentTime = performance.now()
+			if (currentTime - this.#last_tick_time >= 1000) {
+				this.#tick_rate = this.#tick_counter
+				this.#tick_counter = 0
+				this.#last_tick_time = currentTime
+			}
+
 			if (rendering.camera === rendering.fallbackCamera) {
 				rendering.fallbackCamera.alpha = scalar.wrap(
 					rendering.fallbackCamera.alpha + scalar.radians.from.degrees(0.1),
