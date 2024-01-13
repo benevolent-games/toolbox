@@ -80,7 +80,7 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 			fast: false,
 			slow: false,
 		},
-		smoothing: 2,
+		smoothing: 4,
 		force: vec3.zero(),
 		gimbal: [0, 0.5],
 		choreography: {

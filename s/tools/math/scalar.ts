@@ -30,13 +30,13 @@ export namespace scalar {
 	// constraints and boundaries
 	//
 
-	export function bottom(n: number, min: number) {
+	export function bottom(n: number, min: number = 0) {
 		return n < min
 			? min
 			: n
 	}
 
-	export function top(n: number, max: number) {
+	export function top(n: number, max: number = 1) {
 		return n > max
 			? max
 			: n

@@ -36,10 +36,14 @@ export function calculate_ambulatory_report(velocity: Vec2): Ambulatory {
 	const magnitude = scalar.clamp(vec2.magnitude(velocity))
 	const stillness = scalar.clamp(1 - magnitude)
 	const [x, y] = velocity
-	const north = scalar.clamp(y, 0, 1)
-	const west = -scalar.clamp(x, -1, 0)
-	const south = -scalar.clamp(y, -1, 0)
-	const east = scalar.clamp(x, 0, 1)
+	const north = y
+	const west = -x
+	const south = -y
+	const east = x
+	// const north = scalar.clamp(y, 0, 1)
+	// const west = -scalar.clamp(x, -1, 0)
+	// const south = -scalar.clamp(y, -1, 0)
+	// const east = scalar.clamp(x, 0, 1)
 	return {magnitude, stillness, north, west, south, east}
 }
 

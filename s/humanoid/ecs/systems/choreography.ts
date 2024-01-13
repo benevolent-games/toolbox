@@ -65,15 +65,16 @@ export const choreography_system = rezzer(
 		anims.twohander_rightward,
 	]
 
-	const master_anim = make_dummy_anim_group({
+	const boss_anim = make_dummy_anim_group({
 		scene: realm.stage.scene,
 		frames: anims.stand_forward.to,
 		framerate: 60,
 	})
-	master_anim.play(true)
-	for (const anim of ambulation_anims) {
-		anim.group?.syncAllAnimationsWith(master_anim.animatables[0])
-	}
+
+	boss_anim.play(true)
+
+	for (const anim of ambulation_anims)
+		anim.group?.syncAllAnimationsWith(boss_anim.animatables[0])
 
 	// initialize with tpose
 	if (anims.tpose.group) {
@@ -132,7 +133,7 @@ export const choreography_system = rezzer(
 				choreo: state.choreography,
 				anims,
 				ambulatory,
-				master_anim,
+				boss_anim,
 				adjustment_anims,
 				anim_speed_modifier: 1.3,
 			})

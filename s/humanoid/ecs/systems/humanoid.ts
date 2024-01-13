@@ -131,7 +131,7 @@ export const humanoid_system = rezzer(
 			capsule.applyMovement(localForce)
 
 			smoothed_y = molasses(
-				state.smoothing * 2,
+				3,
 				smoothed_y,
 				capsule.position.y,
 			)
