@@ -4,14 +4,14 @@ import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
+import {flatten} from "./utils/flatten.js"
+import {scalar} from "../../../tools/math/scalar.js"
 import {Vec2, vec2} from "../../../tools/math/vec2.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
-import {add_to_look_vector_but_cap_vertical_axis} from "../../../common/models/flycam/utils/add_to_look_vector_but_cap_vertical_axis.js"
-import { scalar } from "../../../tools/math/scalar.js"
 
 export const spectator_system = rezzer(
-		"spectator", "intent", "gimbal", "position",
+		"spectator", "force", "gimbal", "position",
 	)(realm => (state, id) => {
 
 	const {stage} = realm
@@ -48,16 +48,15 @@ export const spectator_system = rezzer(
 
 	return {
 		update(state) {
-			const {intent} = state
+			const {force} = state
 
 			state.position = (
 				apply_movement_while_considering_gimbal_rotation(
 					state.position,
-					vec2.multiplyBy(intent.amble, 3 / 10),
+					vec2.multiplyBy(flatten(force), 3 / 10),
 				)
 			)
 
-			const {gimbal} = state
 			const [gimbalX, gimbalY] = state.gimbal
 
 			const rotationHorizontal = scalar.map(gimbalX, [

@@ -6,7 +6,6 @@ import {Quat} from "../../tools/math/quat.js"
 import {HumanoidContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
 import {Choreography} from "./systems/choreography/calculations.js"
-import {ChoreoIntent} from "../../dance-studio/models/loader/choreographer/types.js"
 
 export type HumanoidSchema = Core.AsComponentSchema<{
 	debug: boolean
@@ -30,7 +29,11 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	physical: "dynamic" | "fixed"
 	shape: "box"
 
-	intent: ChoreoIntent
+	intent: {
+		amble: Vec3
+		glance: Vec2
+	}
+	smoothing: number
 	force: Vec3
 	gimbal: Vec2
 

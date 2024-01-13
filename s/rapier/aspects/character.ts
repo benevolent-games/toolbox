@@ -7,7 +7,7 @@ import {PhysContext, Physical, PhysicalDesc} from "../types.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 export interface CharacterSpec {
-	density: number
+	mass: number
 	radius: number
 	halfHeight: number
 	slopes: {
@@ -58,6 +58,7 @@ export function character_desc(
 
 		collider: Rapier.ColliderDesc
 			.capsule(spec.halfHeight, spec.radius)
+			.setMass(spec.mass)
 			.setContactForceEventThreshold(context.contact_force_threshold)
 			.setActiveEvents(
 				Rapier.ActiveEvents.COLLISION_EVENTS |

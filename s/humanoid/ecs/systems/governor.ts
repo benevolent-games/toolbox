@@ -6,9 +6,9 @@ export const governor_system = system(realm => {
 	realm.impulse.modes.assign("universal", "humanoid")
 
 	const sensitivity = (): Sensitivity => ({
-		keys: 10 / 1000,
-		mouse: 5 / 1000,
-		stick: 10 / 1000,
+		keys: 100 / 10_000,
+		mouse: 5 / 10_000,
+		stick: 100 / 10_000,
 	})
 
 	let next: () => void = () => {}
@@ -26,7 +26,7 @@ export const governor_system = system(realm => {
 
 	function humanoidState() {
 		const id = realm.spawn.humanoid({
-			debug: true,
+			debug: false,
 			position: [0, 5, 0],
 			sensitivity: sensitivity(),
 		})

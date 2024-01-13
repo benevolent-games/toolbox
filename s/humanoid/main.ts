@@ -13,6 +13,7 @@ import {register_to_dom} from "@benev/slate"
 import {nexus} from "./nexus.js"
 import {Core} from "../core/core.js"
 import {quat} from "../tools/math/quat.js"
+import {force_system} from "./ecs/systems/force.js"
 import {lighting_system} from "./ecs/systems/hemi.js"
 import {Realm, makeRealm} from "./models/realm/realm.js"
 import {governor_system} from "./ecs/systems/governor.js"
@@ -48,7 +49,7 @@ const {spawn} = realm
 spawn.environment("gym")
 spawn.hemi({direction: [.234, 1, .123], intensity: .6})
 spawn.physicsBox({
-	density: 3,
+	density: 1000,
 	position: [0, 5, 2],
 	scale: [1, 1, 1],
 	rotation: quat.identity(),
@@ -59,6 +60,7 @@ const executor = new Core.Executor<Realm, Core.StdTick>(
 	[
 		governor_system,
 		intention_system,
+		force_system,
 		freelook_system,
 		environment_system,
 		lighting_system,

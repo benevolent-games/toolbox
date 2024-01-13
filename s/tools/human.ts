@@ -46,5 +46,13 @@ export const human = {
 
 		return `${(bytes / 1e12).toFixed(2)} TB`
 	},
+
+	vec: (vector: number[]) => `[${
+		vector.map(n =>
+			((n % 1) === 0)
+				? n.toString()
+				: n.toFixed(2)
+		)
+	}]`,
 }
 

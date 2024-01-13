@@ -1,13 +1,8 @@
 
-import {rezzer} from "../house.js"
+import {processor} from "../house.js"
+import {molasses3d} from "./utils/molasses.js"
 
-export const force_system = rezzer("intent", "force")(realm => init => {
-
-	return {
-		update(state) {
-			// state.force = molasses2d(10 / 100, state.force, state.intent)
-		},
-		dispose() {},
-	}
+export const force_system = processor("force", "intent", "smoothing")(() => state => {
+	state.force = molasses3d(1 / state.smoothing, state.force, state.intent.amble)
 })
 

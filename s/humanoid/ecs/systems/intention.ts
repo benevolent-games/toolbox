@@ -33,12 +33,14 @@ export const intention_system = rezzer(
 					: vec2.zero(),
 			)
 
-			state.intent.amble = get_trajectory_from_cardinals({
+			const [x, z] = get_trajectory_from_cardinals({
 				north: buttons.forward,
 				south: buttons.backward,
 				west: buttons.leftward,
 				east: buttons.rightward,
 			})
+
+			state.intent.amble = [x, 0, z]
 		},
 		dispose() {},
 	}

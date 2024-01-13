@@ -3,18 +3,19 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
-import {babylonian} from "../../../tools/math/babylonian.js"
-import {labeler} from "../../../tools/labeler.js"
-import {Vec3, vec3} from "../../../tools/math/vec3.js"
+import {molasses3d} from "./utils/molasses.js"
 import {Quat} from "../../../tools/math/quat.js"
+import {gimbaltool} from "./utils/gimbaltool.js"
+import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
+import {Vec3, vec3} from "../../../tools/math/vec3.js"
+import {babylonian} from "../../../tools/math/babylonian.js"
 import {sync_character_anims} from "./choreography/sync_character_anims.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 import {AdjustmentAnims, AdjustmentDirection} from "../../../dance-studio/models/loader/choreographer/types.js"
 import {calculate_ambulatory_report, apply_adjustments, swivel_effected_by_glance} from "./choreography/calculations.js"
 import {CharacterAnims, setup_character_anims} from "../../../dance-studio/models/loader/choreographer/parts/setup_character_anims.js"
 import {calculate_adjustment_weight} from "../../../dance-studio/models/loader/choreographer/parts/utils/calculate_adjustment_weight.js"
-import { gimbaltool } from "./utils/gimbaltool.js"
 
 export const choreography_system = rezzer(
 		"humanoid",
@@ -23,6 +24,7 @@ export const choreography_system = rezzer(
 		"rotation",
 		"gimbal",
 		"intent",
+		"smoothing",
 		"velocity",
 		"choreography",
 	)(realm => init => {
@@ -60,31 +62,37 @@ export const choreography_system = rezzer(
 		},
 	}
 
+	let smoothed_velocity = init.velocity
+
 	return {
 		update(state) {
 			babylon.position.set(...state.position)
 			babylon.rotation.set(...state.rotation)
 
-			const {intent, choreography, velocity} = state
-
-			choreography.swivel = swivel_effected_by_glance(
-				choreography.swivel,
-				intent.glance,
+			smoothed_velocity = molasses3d(
+				1 / state.smoothing,
+				smoothed_velocity,
+				vec3.multiplyBy(state.velocity, 10),
 			)
 
-			const [vx,,vz] = vec3.multiplyBy(velocity, 15)
+			state.choreography.swivel = swivel_effected_by_glance(
+				state.choreography.swivel,
+				state.intent.glance,
+			)
+
+			const [vx,,vz] = smoothed_velocity
 			const velocity_localized = gimbaltool(state.gimbal).horizontal_unrotate([vx, vz])
 			const ambulatory = calculate_ambulatory_report(velocity_localized)
 
 			apply_adjustments(
 				adjustment_anims,
 				ambulatory,
-				choreography,
+				state.choreography,
 			)
 
 			sync_character_anims(
 				state.gimbal,
-				choreography,
+				state.choreography,
 				ambulatory,
 				anims,
 				adjustment_anims,

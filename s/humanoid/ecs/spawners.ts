@@ -1,6 +1,7 @@
 
 import {Core} from "../../core/core.js"
 import {HumanoidSchema} from "./schema.js"
+import {vec2} from "../../tools/math/vec2.js"
 import {Vec3, vec3} from "../../tools/math/vec3.js"
 import {Quat, quat} from "../../tools/math/quat.js"
 import {Sensitivity} from "../models/impulse/types.js"
@@ -20,9 +21,11 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 		}) => entities.create({
 		spectator: {},
 		intent: {
-			amble: [0, 0],
-			glance: [0, 0],
+			amble: vec3.zero(),
+			glance: vec2.zero(),
 		},
+		smoothing: 10,
+		force: vec3.zero(),
 		gimbal: [0, 0.5],
 		position,
 		sensitivity,
@@ -68,10 +71,11 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 			mass: 70,
 			radius: 0.3,
 			intent: {
-				amble: [0, 0],
-				glance: [0, 0],
+				amble: vec3.zero(),
+				glance: vec2.zero(),
 			},
-			force: [0, 0, 0],
+			smoothing: 10,
+			force: vec3.zero(),
 			gimbal: [0, 0.5],
 			choreography: {
 				swivel: 0.5,

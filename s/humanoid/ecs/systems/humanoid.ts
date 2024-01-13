@@ -5,12 +5,12 @@ import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
-import {vec2} from "../../../tools/math/vec2.js"
+import {flatten} from "./utils/flatten.js"
 import {vec3} from "../../../tools/math/vec3.js"
+import {gimbaltool} from "./utils/gimbaltool.js"
 import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
-import { gimbaltool } from "./utils/gimbaltool.js"
 
 export const humanoid_system = rezzer(
 		"humanoid",
@@ -23,7 +23,7 @@ export const humanoid_system = rezzer(
 		"sensitivity",
 		"gimbal",
 		"speeds",
-		"intent",
+		"force",
 		"choreography",
 	)(realm => (state) => {
 
@@ -35,7 +35,7 @@ export const humanoid_system = rezzer(
 	const disposables = new Set<() => void>()
 
 	const capsule = realm.physics.character({
-		density: 1,
+		mass: 70,
 		radius: state.radius,
 		halfHeight,
 		snapToGround: {
@@ -112,10 +112,13 @@ export const humanoid_system = rezzer(
 
 			// run physical movement
 			{
-				const [x, z] = gimbaltool(state.gimbal).horizontal_rotate(state.intent.amble)
+				const [x, z] = gimbaltool(state.gimbal)
+					.horizontal_rotate(flatten(state.force))
+
 				transform.rotationQuaternion = Quaternion.FromEulerAngles(
 					0, scalar.radians.from.circle(state.gimbal[0]), 0,
 				)
+
 				capsule.applyMovement(vec3.divideBy([x, 0, z], 10))
 
 				state.position = babylonian.to.vec3(capsule.position)
