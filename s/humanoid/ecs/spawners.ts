@@ -105,8 +105,8 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 		sensitivity,
 		speeds: {
 			base: 3,
-			fast: 7,
-			slow: 1,
+			fast: 6,
+			slow: 1.5,
 		},
 	}),
 })

@@ -8,24 +8,28 @@ export const force_system = processor(
 	)(_realm => (state, _id, tick) => {
 
 	const {force, intent, smoothing, speeds} = state
-	let [x, y, z] = intent.amble
+	const [x, y, z] = intent.amble
+
+	let cool = vec3.zero()
 
 	if (z > 0 && intent.fast) {
-		x *= speeds.slow
-		y *= speeds.slow
-		z *= speeds.fast
+		cool = vec3.multiplyBy(
+			vec3.normalize([
+				x / 2,
+				y / 2,
+				z,
+			]),
+			speeds.fast,
+		)
 	}
 	else {
 		const foundation_speed = (intent.slow)
 			? speeds.slow
 			: speeds.base
-
-		x *= foundation_speed
-		y *= foundation_speed
-		z *= foundation_speed
+		cool = vec3.multiplyBy(intent.amble, foundation_speed)
 	}
 
-	const target = vec3.multiplyBy([x, y, z], tick.deltaTime)
+	const target = vec3.multiplyBy(cool, tick.deltaTime)
 	state.force = molasses3d(smoothing, force, target)
 })
 
