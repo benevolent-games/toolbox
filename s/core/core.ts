@@ -109,6 +109,10 @@ export namespace Core {
 			return id
 		}
 
+		delete(id: Id) {
+			this.#map.delete(id)
+		}
+
 		*all() {
 			yield* this.#map.entries()
 		}
@@ -137,10 +141,6 @@ export namespace Core {
 			if (!entity)
 				throw new Error(`missing required singleton (${kinds.join(", ")})`)
 			return entity
-		}
-
-		delete(id: Id) {
-			this.#map.delete(id)
 		}
 
 		serialize() {
