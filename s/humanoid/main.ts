@@ -26,6 +26,8 @@ import {choreography_system} from "./ecs/systems/choreography.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
 import {velocity_calculator_system} from "./ecs/systems/velocity_calculator.js"
 import {physics_dynamic_system, physics_fixed_system} from "./ecs/systems/physics.js"
+import { HumanoidTick } from "./ecs/house.js"
+import { scalar } from "../tools/math/scalar.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -56,7 +58,7 @@ spawn.physicsBox({
 	rotation: quat.identity(),
 })
 
-const executor = new Core.Executor<Realm, Core.StdTick>(
+const executor = new Core.Executor<Realm, HumanoidTick>(
 	realm,
 	[
 		governor_system,
@@ -75,10 +77,19 @@ const executor = new Core.Executor<Realm, Core.StdTick>(
 )
 
 let count = 0
+let last_time = performance.now()
 
 realm.stage.remote.onTick(() => {
 	realm.physics.step()
-	executor.tick({tick: count++})
+	const last = last_time
+	executor.tick({
+		tick: count++,
+		deltaTime: scalar.clamp(
+			((last_time = performance.now()) - last),
+			0,
+			100, // clamp to 100ms delta to avoid large over-corrections
+		)/ 1000,
+	})
 })
 
 realm.stage.remote.start()

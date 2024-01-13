@@ -54,7 +54,6 @@ export async function makeRealm({tickrate, glb_links}: {
 	const entities = new Core.Entities<HumanoidSchema>()
 
 	return {
-		tickrate,
 		porthole,
 		stage,
 		colors,

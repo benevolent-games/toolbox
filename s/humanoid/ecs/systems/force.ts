@@ -5,7 +5,7 @@ import {vec3} from "../../../tools/math/vec3.js"
 
 export const force_system = processor(
 		"force", "intent", "smoothing", "speeds",
-	)(realm => state => {
+	)(_realm => (state, _id, tick) => {
 
 	const {force, intent, smoothing, speeds} = state
 	let [x, y, z] = intent.amble
@@ -25,7 +25,7 @@ export const force_system = processor(
 		z *= foundation_speed
 	}
 
-	const target = vec3.divideBy([x, y, z], realm.tickrate)
+	const target = vec3.multiplyBy([x, y, z], tick.deltaTime)
 	state.force = molasses3d(smoothing, force, target)
 })
 

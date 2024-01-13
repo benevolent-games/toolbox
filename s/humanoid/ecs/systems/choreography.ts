@@ -104,14 +104,14 @@ export const choreography_system = rezzer(
 	let smoothed_velocity = init.velocity
 
 	return {
-		update(state) {
+		update(state, tick) {
 			babylon.position.set(...state.position)
 			babylon.rotation.set(...state.rotation)
 
 			smoothed_velocity = molasses3d(
 				5,
 				smoothed_velocity,
-				vec3.divideBy(state.velocity, state.speeds.base / realm.tickrate),
+				vec3.divideBy(state.velocity, state.speeds.base * tick.deltaTime),
 			)
 
 			state.choreography.swivel = swivel_effected_by_glance(
