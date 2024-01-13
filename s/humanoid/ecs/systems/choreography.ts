@@ -3,7 +3,7 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
-import {molasses3d} from "./utils/molasses.js"
+import {molasses, molasses3d} from "./utils/molasses.js"
 import {Quat} from "../../../tools/math/quat.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
 import {labeler} from "../../../tools/labeler.js"
@@ -20,6 +20,7 @@ import {calculate_adjustment_weight} from "../../../dance-studio/models/loader/c
 export const choreography_system = rezzer(
 		"humanoid",
 		"height",
+		"speeds",
 		"position",
 		"rotation",
 		"gimbal",
@@ -70,9 +71,9 @@ export const choreography_system = rezzer(
 			babylon.rotation.set(...state.rotation)
 
 			smoothed_velocity = molasses3d(
-				1 / state.smoothing,
+				5,
 				smoothed_velocity,
-				vec3.multiplyBy(state.velocity, 10),
+				vec3.divideBy(state.velocity, state.speeds.base / realm.tickrate),
 			)
 
 			state.choreography.swivel = swivel_effected_by_glance(

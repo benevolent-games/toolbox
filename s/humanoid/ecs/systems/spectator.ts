@@ -11,7 +11,7 @@ import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
 export const spectator_system = rezzer(
-		"spectator", "force", "gimbal", "position",
+		"spectator", "force", "gimbal", "position", "speeds",
 	)(realm => (state, id) => {
 
 	const {stage} = realm
@@ -53,16 +53,17 @@ export const spectator_system = rezzer(
 			state.position = (
 				apply_movement_while_considering_gimbal_rotation(
 					state.position,
-					vec2.multiplyBy(flatten(force), 3 / 10),
+					vec2.multiplyBy(flatten(force), state.speeds.base / realm.tickrate),
 				)
 			)
 
 			const [gimbalX, gimbalY] = state.gimbal
 
-			const rotationHorizontal = scalar.map(gimbalX, [
-				scalar.radians.from.degrees(-180),
-				scalar.radians.from.degrees(180),
-			])
+			const rotationHorizontal = scalar.radians.from.circle(gimbalX)
+			// const rotationHorizontal = scalar.map(gimbalX, [
+			// 	scalar.radians.from.degrees(-180),
+			// 	scalar.radians.from.degrees(180),
+			// ])
 
 			const rotationVertical = scalar.map(gimbalY, [
 				scalar.radians.from.degrees(-90),

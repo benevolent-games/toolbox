@@ -23,12 +23,12 @@ export class Stage {
 	pointerLocker: PointerLocker
 	load_glb: (url: string) => Promise<AssetContainer>
 
-	constructor({canvas, background}: StageOptions) {
+	constructor({canvas, background, tickrate}: StageOptions) {
 		const engine = this.engine = new Engine(canvas)
 		const scene = this.scene = new Scene(engine)
 		scene.clearColor = new Color4(...background)
 
-		const remote = this.remote = new Remote(engine, scene)
+		const remote = this.remote = new Remote(engine, scene, tickrate)
 		const rendering = this.rendering = new Rendering(scene)
 		this.load_glb = make_load_glb_fn(scene)
 		this.pointerLocker = new PointerLocker(canvas)

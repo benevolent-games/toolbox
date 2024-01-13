@@ -13,6 +13,7 @@ export class Remote {
 	constructor(
 		private engine: Engine,
 		private scene: Scene,
+		public readonly tickrate: number,
 	) {}
 
 	get running() {
@@ -29,7 +30,7 @@ export class Remote {
 	start() {
 		if (!this.#running) {
 			this.#running = true
-			this.#interval = interval(60, () => this.onTick.publish())
+			this.#interval = interval(this.tickrate, () => this.onTick.publish())
 			this.engine.runRenderLoop(() => {
 				this.onRender.publish()
 				this.scene.render()

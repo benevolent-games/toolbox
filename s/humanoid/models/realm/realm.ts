@@ -18,7 +18,8 @@ export type HumanoidContainers = {
 	character: AssetContainer
 }
 
-export async function makeRealm({glb_links}: {
+export async function makeRealm({tickrate, glb_links}: {
+		tickrate: number
 		glb_links: {
 			gym: string
 			character: string
@@ -31,6 +32,7 @@ export async function makeRealm({glb_links}: {
 	const stage = new Stage({
 		canvas: porthole.canvas,
 		background: Stage.backgrounds.sky(),
+		tickrate,
 	})
 	const colors = debug_colors(stage.scene)
 	const physics = new Physics({
@@ -52,6 +54,7 @@ export async function makeRealm({glb_links}: {
 	const entities = new Core.Entities<HumanoidSchema>()
 
 	return {
+		tickrate,
 		porthole,
 		stage,
 		colors,

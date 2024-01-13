@@ -1,30 +1,25 @@
 
-import {scalar} from "../../../../tools/math/scalar.js"
-import {Vec2, vec2} from "../../../../tools/math/vec2.js"
-import {Vec3, vec3} from "../../../../tools/math/vec3.js"
+import {Vec2} from "../../../../tools/math/vec2.js"
+import {Vec3} from "../../../../tools/math/vec3.js"
 
-export function molasses2d(delta: number, from: Vec2, to: Vec2) {
-	const [x, y] = vec2.subtract(to, from)
-	return vec2.add(from, [
-		clamp_scalar_to_delta_positive_or_negative(x, delta),
-		clamp_scalar_to_delta_positive_or_negative(y, delta),
-	])
+export function molasses(smoothing: number, from: number, to: number) {
+	return smoothing <= 1
+		? to
+		: from + ((to - from) / smoothing)
 }
 
-export function molasses3d(delta: number, from: Vec3, to: Vec3) {
-	const [x, y, z] = vec3.subtract(to, from)
-	return vec3.add(from, [
-		clamp_scalar_to_delta_positive_or_negative(x, delta),
-		clamp_scalar_to_delta_positive_or_negative(y, delta),
-		clamp_scalar_to_delta_positive_or_negative(z, delta),
-	])
+export function molasses2d(smoothing: number, from: Vec2, to: Vec2): Vec2 {
+	return [
+		molasses(smoothing, from[0], to[0]),
+		molasses(smoothing, from[1], to[1]),
+	]
 }
 
-function clamp_scalar_to_delta_positive_or_negative(n: number, delta: number) {
-	return scalar.within(n, -delta, delta)
-		? n
-		: n < 0
-			? -delta
-			: delta
+export function molasses3d(smoothing: number, from: Vec3, to: Vec3): Vec3 {
+	return [
+		molasses(smoothing, from[0], to[0]),
+		molasses(smoothing, from[1], to[1]),
+		molasses(smoothing, from[2], to[2]),
+	]
 }
 

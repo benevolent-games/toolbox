@@ -33,6 +33,7 @@ register_to_dom({BenevHumanoid})
 
 const realm = await nexus.context.realmOp.load(
 	async() => makeRealm({
+		tickrate: 60,
 		glb_links: {
 			gym: "/temp/gym13.glb",
 			character: "/temp/knightanimations19.glb",
