@@ -6,17 +6,18 @@ import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
 import {flatten} from "./utils/flatten.js"
-import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
 import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
+import {Vec3, vec3} from "../../../tools/math/vec3.js"
+import {molasses, molasses3d} from "./utils/molasses.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
-import { molasses, molasses3d } from "./utils/molasses.js"
-import { human } from "../../../tools/human.js"
 
 export const humanoid_system = rezzer(
-		"humanoid",
 		"debug",
+		"humanoid",
+		"third_person_cam_distance",
+		"fov",
 		"radius",
 		"height",
 		"mass",
@@ -77,10 +78,11 @@ export const humanoid_system = rezzer(
 	)
 	const third_person_cam = new TargetCamera(
 		label("third_person_cam"),
-		babylonian.from.vec3([0, 0, -4]),
+		babylonian.from.vec3([0, 0, -init.third_person_cam_distance]),
 		scene,
 	)
 	third_person_cam.setTarget(headbox.position)
+	third_person_cam.fov = scalar.radians.from.degrees(init.fov)
 	stage.rendering.setCamera(third_person_cam)
 	headbox.position.y = torusDiameter / 2
 	headbox.material = colors.green

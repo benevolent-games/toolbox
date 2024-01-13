@@ -25,6 +25,8 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	radius: number
 	direction: Vec3
 	intensity: number
+	third_person_cam_distance: number
+	fov: number
 
 	physical: "dynamic" | "fixed"
 	shape: "box"
