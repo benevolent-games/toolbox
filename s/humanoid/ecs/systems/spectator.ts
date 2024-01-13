@@ -1,12 +1,13 @@
 
-import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.js"
+import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
 import {flatten} from "./utils/flatten.js"
+import {Vec2} from "../../../tools/math/vec2.js"
+import {gimbaltool} from "./utils/gimbaltool.js"
 import {scalar} from "../../../tools/math/scalar.js"
-import {Vec2, vec2} from "../../../tools/math/vec2.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
@@ -30,7 +31,7 @@ export const spectator_system = rezzer(
 
 	stage.rendering.setCamera(camera)
 
-	function apply_movement_while_considering_gimbal_rotation(
+	function apply_3d_rotation_to_movement(
 			position: Vec3,
 			move: Vec2,
 		) {
@@ -50,36 +51,18 @@ export const spectator_system = rezzer(
 	return {
 		update(state) {
 			const {force} = state
+			const quaternions = gimbaltool(state.gimbal).quaternions()
 
 			state.position = (
-				apply_movement_while_considering_gimbal_rotation(
+				apply_3d_rotation_to_movement(
 					state.position,
-					vec2.multiplyBy(flatten(force), state.speeds.base / realm.tickrate),
+					flatten(force),
 				)
 			)
 
-			const [gimbalX, gimbalY] = state.gimbal
-
-			const rotationHorizontal = scalar.radians.from.circle(gimbalX)
-			// const rotationHorizontal = scalar.map(gimbalX, [
-			// 	scalar.radians.from.degrees(-180),
-			// 	scalar.radians.from.degrees(180),
-			// ])
-
-			const rotationVertical = scalar.map(gimbalY, [
-				scalar.radians.from.degrees(-90),
-				scalar.radians.from.degrees(90),
-			])
-
 			transformA.position.set(...state.position)
-			transformB.rotationQuaternion = (
-				Quaternion
-					.RotationYawPitchRoll(0, -rotationVertical, 0)
-			)
-			transformA.rotationQuaternion = (
-				Quaternion
-					.RotationYawPitchRoll(rotationHorizontal, 0, 0)
-			)
+			transformB.rotationQuaternion = quaternions.vertical
+			transformA.rotationQuaternion = quaternions.horizontal
 		},
 		dispose() {
 			if (stage.rendering.camera === camera)

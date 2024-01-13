@@ -12,10 +12,13 @@ export class PointerMovements extends Device {
 
 	onInput = pub<Input.Vector>()
 
-	clear_movement() {
-		const {movement} = this
-		this.movement = vec2.zero()
-		return movement
+	make_accumulator() {
+		const accumulator = new MovementAccumulator(
+			this.onInput(input => {
+				accumulator.add(input.vector)
+			})
+		)
+		return accumulator
 	}
 
 	constructor(target: EventTarget, channel: string) {
@@ -46,6 +49,29 @@ export class PointerMovements extends Device {
 		this.dispose = () => {
 			target.removeEventListener("pointermove", listener as any)
 		}
+	}
+}
+
+export class MovementAccumulator {
+	#movement = vec2.zero()
+	#dispose: () => void
+
+	constructor(dispose: () => void) {
+		this.#dispose = dispose
+	}
+
+	add(move: Vec2) {
+		this.#movement = vec2.add(this.#movement, move)
+	}
+
+	steal() {
+		const movement = this.#movement
+		this.#movement = vec2.zero()
+		return movement
+	}
+
+	dispose() {
+		this.#dispose()
 	}
 }
 

@@ -10,7 +10,7 @@ export const humanoid_binds = () => binds(({
 	universal: mode({
 		vectors: {},
 		buttons: {
-			respawn: buttons(b("KeyR")),
+			respawn: buttons(b("Tab")),
 		},
 	}),
 
@@ -29,8 +29,8 @@ export const humanoid_binds = () => binds(({
 			crouch: buttons(modless("KeyC")),
 			jump: buttons(modless("Space")),
 
-			fast: buttons(modless("Shift")),
-			slow: buttons(modless("Shift")),
+			fast: buttons(modless("ShiftLeft")),
+			slow: buttons(modless("AltLeft")),
 
 			up: buttons(modless("KeyI")),
 			down: buttons(modless("KeyK")),

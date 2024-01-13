@@ -34,6 +34,8 @@ export type HumanoidSchema = Core.AsComponentSchema<{
 	intent: {
 		amble: Vec3
 		glance: Vec2
+		fast: boolean
+		slow: boolean
 	}
 	smoothing: number
 	force: Vec3

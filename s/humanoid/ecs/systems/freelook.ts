@@ -7,7 +7,13 @@ export const freelook_system = processor("intent", "gimbal")(() => state => {
 	const [glanceX, glanceY] = state.intent.glance
 
 	const x = gimbalX + glanceX
-	const y = gimbalY + glanceY
+
+	// y must be twice as sensitive.
+	//  - x axis traverses 360 degrees.
+	//  - y axis traverses 180 degrees.
+	//  - therefore gimbalX packs "double the punch" of gimbalY.
+	//  - thus, to compensate, we double our influence on gimbalY.
+	const y = gimbalY + (glanceY * 2)
 
 	state.gimbal = [
 		scalar.wrap(x),

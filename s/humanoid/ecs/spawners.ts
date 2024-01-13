@@ -24,6 +24,8 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 		intent: {
 			amble: vec3.zero(),
 			glance: vec2.zero(),
+			fast: false,
+			slow: false,
 		},
 		smoothing: 5,
 		force: vec3.zero(),
@@ -64,40 +66,40 @@ export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
 			debug: boolean
 			position: Vec3
 			sensitivity: Sensitivity
-		}) => {
-		return entities.create({
-			humanoid: {},
-			third_person_cam_distance: 1.5,
-			fov: 90,
-			debug,
-			height: 1.75,
-			mass: 70,
-			radius: .3,
-			intent: {
-				amble: vec3.zero(),
-				glance: vec2.zero(),
+		}) => entities.create({
+		humanoid: {},
+		third_person_cam_distance: 1.5,
+		fov: 90,
+		debug,
+		height: 1.75,
+		mass: 70,
+		radius: .3,
+		intent: {
+			amble: vec3.zero(),
+			glance: vec2.zero(),
+			fast: false,
+			slow: false,
+		},
+		smoothing: 2,
+		force: vec3.zero(),
+		gimbal: [0, 0.5],
+		choreography: {
+			swivel: .5,
+			adjustment: null,
+			settings: {
+				swivel_readjustment_margin: .1,
+				swivel_duration: 20,
 			},
-			smoothing: 2,
-			force: vec3.zero(),
-			gimbal: [0, 0.5],
-			choreography: {
-				swivel: .5,
-				adjustment: null,
-				settings: {
-					swivel_readjustment_margin: .1,
-					swivel_duration: 20,
-				},
-			},
-			position,
-			rotation: quat.identity(),
-			velocity: vec3.zero(),
-			sensitivity,
-			speeds: {
-				base: 4,
-				fast: 8,
-				slow: 0.5,
-			},
-		})
-	},
+		},
+		position,
+		rotation: quat.identity(),
+		velocity: vec3.zero(),
+		sensitivity,
+		speeds: {
+			base: 3,
+			fast: 7,
+			slow: 1,
+		},
+	}),
 })
 

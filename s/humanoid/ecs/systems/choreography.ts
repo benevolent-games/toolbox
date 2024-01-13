@@ -3,7 +3,8 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
-import {molasses, molasses3d} from "./utils/molasses.js"
+import {flatten} from "./utils/flatten.js"
+import {molasses3d} from "./utils/molasses.js"
 import {Quat} from "../../../tools/math/quat.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
 import {labeler} from "../../../tools/labeler.js"
@@ -81,9 +82,8 @@ export const choreography_system = rezzer(
 				state.intent.glance,
 			)
 
-			const [vx,,vz] = smoothed_velocity
-			const velocity_localized = gimbaltool(state.gimbal).horizontal_unrotate([vx, vz])
-			const ambulatory = calculate_ambulatory_report(velocity_localized)
+			const local_velocity = gimbaltool(state.gimbal).unrotate(smoothed_velocity)
+			const ambulatory = calculate_ambulatory_report(flatten(local_velocity))
 
 			apply_adjustments(
 				adjustment_anims,

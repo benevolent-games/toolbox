@@ -5,7 +5,7 @@ import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
-import {flatten} from "./utils/flatten.js"
+import {Vec2} from "../../../tools/math/vec2.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
 import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
@@ -112,54 +112,45 @@ export const humanoid_system = rezzer(
 	torus.setEnabled(debug)
 	headbox.setEnabled(debug)
 
+	function modGimbal([x, y]: Vec2): Vec2 {
+		y = scalar.spline.quickLinear(y, [0.1, 0.5, 0.7])
+		return [x, y]
+	}
+
 	let smoothed_y = init.position[1]
 
 	return {
 		update(state) {
+			const moddedGimbal = modGimbal(state.gimbal)
+			const localForce = gimbaltool(moddedGimbal).rotate(state.force)
+			const quaternions = gimbaltool(moddedGimbal).quaternions()
 
-			// run physical movement
-			{
+			transform.rotationQuaternion = quaternions.horizontal
+			torusRoot.rotationQuaternion = quaternions.vertical
 
-				const [x, z] = gimbaltool(state.gimbal)
-					.horizontal_rotate(flatten(state.force))
+			capsule.applyMovement(localForce)
 
-				transform.rotationQuaternion = Quaternion.FromEulerAngles(
-					0, scalar.radians.from.circle(state.gimbal[0]), 0,
+			smoothed_y = molasses(
+				state.smoothing * 2,
+				smoothed_y,
+				capsule.position.y,
+			)
+
+			const smoothed_position: Vec3 = [
+				capsule.position.x,
+				smoothed_y,
+				capsule.position.z,
+			]
+
+			state.position = smoothed_position
+			state.rotation = babylonian.to.quat(transform.rotationQuaternion)
+
+			transform.position = babylonian.from.vec3(
+				molasses3d(
+					state.smoothing,
+					babylonian.to.vec3(transform.position),
+					state.position,
 				)
-
-				const hustle = vec3.multiplyBy([x, 0, z], state.speeds.base / realm.tickrate)
-				capsule.applyMovement(hustle)
-
-				smoothed_y = molasses(
-					state.smoothing * 2,
-					smoothed_y,
-					capsule.position.y,
-				)
-
-				const smoothed_position: Vec3 = [
-					capsule.position.x,
-					smoothed_y,
-					capsule.position.z,
-				]
-
-				state.position = smoothed_position
-				state.rotation = babylonian.to.quat(transform.rotationQuaternion)
-
-				transform.position = babylonian.from.vec3(
-					molasses3d(
-						state.smoothing,
-						babylonian.to.vec3(transform.position),
-						state.position,
-					)
-				)
-			}
-
-			const a = state.gimbal[1]
-			const b = scalar.spline.quickLinear(a, [0.1, 0.5, 0.7])
-			torusRoot.rotationQuaternion = Quaternion.FromEulerAngles(
-				(Math.PI / 2) + (Math.PI * -b),
-				0,
-				0,
 			)
 		},
 		dispose() {

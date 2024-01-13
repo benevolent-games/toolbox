@@ -1,6 +1,7 @@
 
 import {rezzer} from "../house.js"
-import {vec2} from "../../../tools/math/vec2.js"
+import {Vec3} from "../../../tools/math/vec3.js"
+import {Vec2, vec2} from "../../../tools/math/vec2.js"
 import {get_trajectory_from_cardinals} from "../../../impulse/trajectory/get_trajectory_from_cardinals.js"
 
 export const intention_system = rezzer(
@@ -9,15 +10,14 @@ export const intention_system = rezzer(
 
 	const {impulse, stage} = realm
 	const {buttons} = impulse.report.humanoid
+	const mouseMovement = impulse.devices.mouse.make_accumulator()
+	const invert_y_axis = (v: Vec2) => vec2.multiply(v, [1, -1])
 
 	return {
 		update(state) {
 			const {sensitivity} = state
 
-			const mouselook = vec2.multiply(
-				impulse.devices.mouse.clear_movement(),
-				[1, -1],
-			)
+			const mouselook = invert_y_axis(mouseMovement.steal())
 
 			const keylook = get_trajectory_from_cardinals({
 				north: buttons.up,
@@ -26,7 +26,7 @@ export const intention_system = rezzer(
 				east: buttons.right,
 			})
 
-			state.intent.glance = vec2.add(
+			const glance = vec2.add(
 				vec2.multiplyBy(keylook, sensitivity.keys),
 				stage.pointerLocker.locked
 					? vec2.multiplyBy(mouselook, sensitivity.mouse)
@@ -40,9 +40,18 @@ export const intention_system = rezzer(
 				east: buttons.rightward,
 			})
 
-			state.intent.amble = [x, 0, z]
+			const amble: Vec3 = [x, 0, z]
+
+			state.intent = {
+				amble,
+				glance,
+				fast: impulse.report.humanoid.buttons.fast,
+				slow: impulse.report.humanoid.buttons.slow,
+			}
 		},
-		dispose() {},
+		dispose() {
+			mouseMovement.dispose()
+		},
 	}
 })
 
