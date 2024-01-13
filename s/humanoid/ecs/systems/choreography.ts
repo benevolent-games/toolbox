@@ -27,7 +27,6 @@ export const choreography_system = rezzer(
 		"rotation",
 		"gimbal",
 		"intent",
-		"smoothing",
 		"velocity",
 		"choreography",
 	)(realm => init => {
@@ -126,6 +125,7 @@ export const choreography_system = rezzer(
 				adjustment_anims,
 				ambulatory,
 				state.choreography,
+				10,
 			)
 
 			sync_character_anims({

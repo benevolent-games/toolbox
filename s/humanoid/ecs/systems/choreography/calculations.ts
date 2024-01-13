@@ -1,4 +1,5 @@
 
+import {molasses} from "../utils/molasses.js"
 import {scalar} from "../../../../tools/math/scalar.js"
 import {Vec2, vec2} from "../../../../tools/math/vec2.js"
 import {AdjustmentAnims, ChoreoSwivelAdjustment} from "../../../../dance-studio/models/loader/choreographer/types.js"
@@ -40,10 +41,6 @@ export function calculate_ambulatory_report(velocity: Vec2): Ambulatory {
 	const west = -x
 	const south = -y
 	const east = x
-	// const north = scalar.clamp(y, 0, 1)
-	// const west = -scalar.clamp(x, -1, 0)
-	// const south = -scalar.clamp(y, -1, 0)
-	// const east = scalar.clamp(x, 0, 1)
 	return {magnitude, stillness, north, west, south, east}
 }
 
@@ -51,6 +48,7 @@ export function apply_adjustments(
 		adjustment_anims: AdjustmentAnims,
 		ambulatory: Ambulatory,
 		choreo: Choreography,
+		smoothing: number,
 	) {
 
 	const {adjustment, settings} = choreo
@@ -69,15 +67,7 @@ export function apply_adjustments(
 	}
 	else {
 		if (character_is_ambulating) {
-			const speed = calculate_swivel_speed(settings)
-			const diff = swivel_midpoint - choreo.swivel
-
-			if (Math.abs(diff) <= speed)
-				choreo.swivel = swivel_midpoint
-			else
-				choreo.swivel += (diff < 0)
-					? -speed
-					: speed
+			choreo.swivel = molasses(smoothing, choreo.swivel, swivel_midpoint)
 		}
 		else if (adjustment_is_needed(choreo.swivel, settings.swivel_readjustment_margin)) {
 			choreo.adjustment = {
@@ -108,12 +98,5 @@ function calculate_adjustment_swivel(adjustment: ChoreoSwivelAdjustment) {
 		adjustment.initial_swivel,
 		swivel_midpoint,
 	])
-}
-
-function calculate_swivel_speed({
-		swivel_duration,
-		swivel_readjustment_margin,
-	}: Choreography["settings"]) {
-	return (swivel_midpoint - swivel_readjustment_margin) / swivel_duration
 }
 
