@@ -33,7 +33,7 @@ export function swivel_effected_by_glance(swivel: number, [x]: Vec2) {
 }
 
 export function calculate_ambulatory_report(velocity: Vec2): Ambulatory {
-	const magnitude = vec2.magnitude(velocity)
+	const magnitude = scalar.clamp(vec2.magnitude(velocity))
 	const stillness = scalar.clamp(1 - magnitude)
 	const [x, y] = velocity
 	const north = scalar.clamp(y, 0, 1)

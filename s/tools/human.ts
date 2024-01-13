@@ -52,7 +52,7 @@ export const human = {
 			((n % 1) === 0)
 				? n.toString()
 				: n.toFixed(2)
-		)
+		).join(", ")
 	}]`,
 }
 

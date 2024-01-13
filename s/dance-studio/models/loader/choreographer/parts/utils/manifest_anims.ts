@@ -15,7 +15,7 @@ export function manifest_anims<M extends Pojo<AnimManifestFn<Anim>>>(
 	Object.keys(manifest).forEach((name, index) => {
 		const group = getAnimationGroup(name)
 		if (group)
-			group.playOrder = index
+			group.playOrder = index + 1
 	})
 
 
