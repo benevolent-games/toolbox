@@ -7,8 +7,8 @@ import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPip
 
 import {Effects} from "../types.js"
 import {effects} from "./standards.js"
+import {labeler} from "../../tools/label.js"
 import {render_pipes} from "./render_pipes.js"
-import {labeler} from "../../tools/labeler.js"
 import {scalar} from "../../tools/math/scalar.js"
 
 export class Rendering {

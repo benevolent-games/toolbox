@@ -4,7 +4,7 @@ import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 import {Rapier} from "./rapier.js"
-import {labeler} from "../tools/labeler.js"
+import {labeler} from "../tools/label.js"
 import {vec3} from "../tools/math/vec3.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"

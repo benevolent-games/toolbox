@@ -4,10 +4,10 @@ import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {rezzer} from "../house.js"
 import {flatten} from "./utils/flatten.js"
+import {label} from "../../../tools/label.js"
 import {molasses3d} from "./utils/molasses.js"
 import {Quat} from "../../../tools/math/quat.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
-import {labeler} from "../../../tools/labeler.js"
 import {scalar} from "../../../tools/math/scalar.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
@@ -146,8 +146,6 @@ export const choreography_system = rezzer(
 ///////////////////////////////////////
 ///////////////////////////////////////
 
-const label = labeler("choreography")
-
 export function prepare_choreographer_babylon_parts(o: {
 		scene: Scene
 		characterContainer: CharacterContainer
@@ -160,7 +158,7 @@ export function prepare_choreographer_babylon_parts(o: {
 
 	const {scene, characterContainer, state} = o
 
-	const transform = new TransformNode(label("transform"), scene)
+	const transform = new TransformNode(label("choreographyTransform"), scene)
 	const character = characterContainer.instance([0, -(state.height / 2), 0])
 	character.root.setParent(transform)
 

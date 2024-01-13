@@ -4,7 +4,7 @@ import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {Animation} from "@babylonjs/core/Animations/animation.js"
 import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
-import {label} from "../../../../tools/labeler.js"
+import {label} from "../../../../tools/label.js"
 
 export function make_dummy_anim_group({scene, frames, framerate}: {
 		scene: Scene

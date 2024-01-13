@@ -7,9 +7,7 @@ export function label(tag: string) {
 	return `${tag}::${count++}`
 }
 
-export function labeler(tag: string): Labeler {
-	return function label(name: string) {
-		return `${name}::${tag}::${count++}`
-	}
+export function labeler(tag: string) {
+	return (s: string) => label(`${tag}:${s}`)
 }
 

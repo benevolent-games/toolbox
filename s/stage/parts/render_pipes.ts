@@ -4,7 +4,7 @@ import {SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline
 import {SSAO2RenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/ssao2RenderingPipeline.js"
 import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline.js"
 
-import {Labeler} from "../../tools/labeler.js"
+import {Labeler} from "../../tools/label.js"
 import {DefaultEffect, SsaoEffect, SsrEffect} from "../types.js"
 
 export const render_pipes = (scene: Scene, label: Labeler) => ({
