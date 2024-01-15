@@ -100,8 +100,8 @@ export namespace scalar {
 			if (points.length < 2)
 				throw new Error("need at least two points, come on")
 
-			const [,first] = points.at(0)!
-			const [,last] = points.at(-1)!
+			const [first] = points.at(0)!
+			const [last] = points.at(-1)!
 
 			x = clamp(x, first, last)
 
