@@ -6,6 +6,7 @@ import {scalar} from "../../../../tools/math/scalar.js"
 import {CharacterAnims} from "./setup_character_anims.js"
 import {Ambulatory, Choreography} from "./calculations.js"
 import {AdjustmentAnims} from "../../../../dance-studio/models/loader/choreographer/types.js"
+import { human } from "../../../../tools/human.js"
 
 export function sync_character_anims({
 		gimbal: [,vertical],
@@ -50,7 +51,16 @@ export function sync_character_anims({
 	const sprint = scalar.clamp(ambulatory.north - 1)
 	const noSprint = 1 - sprint
 
-	setSpeed(ambulatory.magnitude)
+	const mag = scalar.spline.linear(
+		ambulatory.magnitude,
+		[
+			[0.0, 0.0],
+			[1.0, 1.0],
+			[3.0, 1.75],
+		],
+	)
+
+	setSpeed(mag)
 
 	anims.stand.weight = ambulatory.stillness
 	anims.twohander.weight = ambulatory.stillness

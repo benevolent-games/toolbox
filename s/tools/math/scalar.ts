@@ -93,14 +93,17 @@ export namespace scalar {
 					[clamp(index / (points.length - 1)), p]
 			)
 
-			return linear(x, points2)
+			return linear(clamp(x), points2)
 		}
 
 		export function linear(x: number, points: Vec2[]): number {
 			if (points.length < 2)
 				throw new Error("need at least two points, come on")
 
-			x = clamp(x)
+			const [,first] = points.at(0)!
+			const [,last] = points.at(-1)!
+
+			x = clamp(x, first, last)
 
 			for (let i = 0; i < points.length - 1; i++) {
 				const [x0, y0] = points[i]
