@@ -3,10 +3,9 @@ import {AnimationGroup} from "@babylonjs/core/Animations/animationGroup.js"
 
 import {Vec2} from "../../../../tools/math/vec2.js"
 import {scalar} from "../../../../tools/math/scalar.js"
+import {CharacterAnims} from "./setup_character_anims.js"
 import {Ambulatory, Choreography} from "./calculations.js"
 import {AdjustmentAnims} from "../../../../dance-studio/models/loader/choreographer/types.js"
-import {CharacterAnims} from "../../../../dance-studio/models/loader/choreographer/parts/setup_character_anims.js"
-import { human } from "../../../../tools/human.js"
 
 export function sync_character_anims({
 		gimbal: [,vertical],

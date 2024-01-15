@@ -13,10 +13,10 @@ import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {make_dummy_anim_group} from "./choreography/dummy_anim_group.js"
 import {sync_character_anims} from "./choreography/sync_character_anims.js"
+import {CharacterAnims, setup_character_anims} from "./choreography/setup_character_anims.js"
 import {CharacterContainer} from "../../../dance-studio/models/loader/character/container.js"
 import {AdjustmentAnims, AdjustmentDirection} from "../../../dance-studio/models/loader/choreographer/types.js"
 import {calculate_ambulatory_report, apply_adjustments, swivel_effected_by_glance} from "./choreography/calculations.js"
-import {CharacterAnims, setup_character_anims} from "../../../dance-studio/models/loader/choreographer/parts/setup_character_anims.js"
 import {calculate_adjustment_weight} from "../../../dance-studio/models/loader/choreographer/parts/utils/calculate_adjustment_weight.js"
 
 export const choreography_system = rezzer(
@@ -38,6 +38,8 @@ export const choreography_system = rezzer(
 	})
 
 	const anims = setup_character_anims(babylon.characterInstance)
+
+	console.log("anims", anims)
 
 	const ambulation_anims = [
 		anims.stand_forward,
@@ -62,6 +64,7 @@ export const choreography_system = rezzer(
 		anims.twohander_backward,
 		anims.twohander_leftward,
 		anims.twohander_rightward,
+		anims.twohander_sprint,
 	]
 
 	const boss_anim = make_dummy_anim_group({
@@ -191,5 +194,4 @@ function adjustment_anim_for_direction(
 		? anims.stand_legadjust_left
 		: anims.stand_legadjust_right
 }
-
 
