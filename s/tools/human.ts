@@ -2,6 +2,10 @@
 /** utility for displaying data as human-friendly strings */
 export const human = {
 
+	number(n: number) {
+		return n.toLocaleString("en-us")
+	},
+
 	millions(n: number) {
 		return `${(n / 1_000_000).toFixed(2)} million`
 	},
@@ -12,6 +16,12 @@ export const human = {
 
 	percent(fraction: number) {
 		return `${(fraction * 100).toFixed(0)}%`
+	},
+
+	performance(ms: number) {
+		return (ms < 1000)
+			? `${ms.toFixed(5)} ms`
+			: `${(ms / 1000).toFixed(2)} seconds`
 	},
 
 	time(ms: number) {

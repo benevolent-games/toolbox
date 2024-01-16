@@ -125,7 +125,7 @@ realm.stage.remote.onTick(() => {
 	}
 
 	let time = performance.now() - start
-	log100(`tick ${time.toFixed(2)} ms`)
+	// log100(`tick ${time.toFixed(2)} ms`)
 
 	// executor.tick({
 	// 	tick: count++,
