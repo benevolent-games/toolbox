@@ -1,23 +1,19 @@
 
 import {Ecs} from "../../ecs/ecs.js"
-import {HumanoidSchema} from "./schema.js"
 import {Realm} from "../models/realm/realm.js"
+import {HumanoidSchema, HumanoidTick} from "./schema.js"
 
 export type ThreadBase = {}
 
-export type Tick = {
-	deltaTime: number
-}
-
 export const mainthread = new Ecs.Hub<
 	Realm,
-	Tick,
+	HumanoidTick,
 	HumanoidSchema
 >()
 
 export const threadable = new Ecs.Hub<
 	ThreadBase,
-	Tick,
+	HumanoidTick,
 	HumanoidSchema
 >()
 

@@ -1,5 +1,5 @@
 
-import {Core} from "../../../core/core.js"
+import {Ecs} from "../../../ecs/ecs.js"
 import {Stage} from "../../../stage/stage.js"
 import {spawners} from "../../ecs/spawners.js"
 import {MeshStore} from "./parts/mesh_store.js"
@@ -51,7 +51,8 @@ export async function makeRealm({tickrate, glb_links}: {
 	for (const light of gym.lights)
 		light.intensity /= 1000
 
-	const entities = new Core.Entities<HumanoidSchema>()
+	const entities = new Ecs.Entities<HumanoidSchema>()
+	// const entities = new Core.Entities<HumanoidSchema>()
 
 	return {
 		porthole,

@@ -7,6 +7,11 @@ import {HumanoidContainers} from "../models/realm/realm.js"
 import {Speeds} from "../../impulse/trajectory/types/speeds.js"
 import {Choreography} from "./systems/choreography/calculations.js"
 
+export type HumanoidTick = {
+	tick: number
+	deltaTime: number
+}
+
 export type HumanoidSchema = Core.AsComponentSchema<{
 	debug: boolean
 	environment: keyof HumanoidContainers

@@ -1,5 +1,7 @@
 
+import {pub} from "@benev/slate"
 import {id_counter} from "../tools/id_counter.js"
+import { log100 } from "../tools/limited_logger.js"
 
 export namespace Ecs {
 	export type Id = number
@@ -12,13 +14,10 @@ export namespace Ecs {
 	export class Entities<Sc extends Schema> {
 		#id = id_counter()
 		#states = new Map<Id, Partial<Sc>>()
-		#cache = new Map<System<any, Sc, keyof Sc>, Set<Id>>()
 
-		constructor(pipelines: Pipeline<any, Sc>[]) {
-			for (const pipeline of pipelines)
-				for (const system of pipeline.systems)
-					this.#cache.set(system, new Set())
-		}
+		onCreate = pub<[Id, Partial<Sc>]>()
+		onUpdate = pub<[Id, Partial<Sc>]>()
+		onDelete = pub<Id>()
 
 		has(id: Id) {
 			return this.#states.has(id)
@@ -31,6 +30,43 @@ export namespace Ecs {
 			return state as State
 		}
 
+		create<State extends Partial<Sc>>(state: State) {
+			const id = this.#id()
+			this.#states.set(id, state)
+			this.onCreate.publish([id, state])
+			return id
+		}
+
+		update<State extends Partial<Sc>>(id: Id, state: State) {
+			this.#states.set(id, state)
+			this.onUpdate.publish([id, state])
+		}
+
+		delete(id: Id) {
+			this.#states.delete(id)
+			this.onDelete.publish(id)
+		}
+
+		*all() {
+			yield* this.#states.entries()
+		}
+	}
+
+	export class EntityCache<Sc extends Schema> {
+		#entities: Entities<Sc>
+		#cache = new Map<System<any, Sc, keyof Sc>, Set<Id>>()
+
+		constructor(entities: Entities<Sc>, pipelines: Pipeline<any, Sc>[]) {
+			this.#entities = entities
+			for (const pipeline of pipelines)
+				for (const system of pipeline.systems)
+					this.#cache.set(system, new Set())
+
+			entities.onCreate(([id, state]) => this.#updateCache(id, state))
+			entities.onUpdate(([id, state]) => this.#updateCache(id, state))
+			entities.onDelete(id => this.#delete(id))
+		}
+
 		#updateCache<State extends Partial<Sc>>(id: Id, state: State) {
 			for (const [system, ids] of this.#cache) {
 				if (system.match(Object.keys(state)))
@@ -40,26 +76,19 @@ export namespace Ecs {
 			}
 		}
 
-		create<State extends Partial<Sc>>(state: State) {
-			const id = this.#id()
-			this.#states.set(id, state)
-			this.#updateCache(id, state)
-			return id
-		}
-
-		update<State extends Partial<Sc>>(id: Id, state: State) {
-			this.#states.set(id, state)
-			this.#updateCache(id, state)
-		}
-
-		delete(id: Id) {
-			this.#states.delete(id)
+		#delete(id: Id) {
 			for (const [,ids] of this.#cache)
 				ids.delete(id)
 		}
 
-		*all() {
-			yield* this.#states.entries()
+		*obtain(system: System<any, Sc, keyof Sc>) {
+			const set = this.#cache.get(system)
+			if (!set)
+				throw new Error("unknown system")
+			for (const id of set) {
+				const state = this.#entities.get(id)
+				yield [id, state] as [Id, Partial<Sc>]
+			}
 		}
 	}
 
@@ -108,7 +137,7 @@ export namespace Ecs {
 
 		constructor(
 				kinds: K[],
-				public execute: (tick: Tick, entities: EntityReport<Sc, K>[]) => void,
+				public execute: (tick: Tick, entities: [Id, Partial<Sc>][]) => void,
 			) {
 
 			this.kinds = new Set(kinds)
@@ -137,7 +166,7 @@ export namespace Ecs {
 			}
 		}
 
-		execute(tick: Tick, entities: EntityReport<Sc, keyof Sc>[]) {
+		execute(tick: Tick, entities: [Id, Partial<Sc>][]) {
 			for (const system of this.systems)
 				system.execute(tick, entities)
 		}
@@ -163,28 +192,27 @@ export namespace Ecs {
 			<K extends keyof Sc>(...kinds: K[]) =>
 				(fn: SystemFn<Base, Tick, Sc, K>) =>
 					(base: Base) =>
-						new System<Tick, Sc, K>(kinds, fn(base))
+						new System<Tick, Sc, K>(kinds, fn(base) as any)
 		)
 
 		processor = (
 			<K extends keyof Sc>(...kinds: K[]) =>
-				(fn: ProcessorFn<Base, Tick, Sc, K>) =>
-					this.system<K>(...kinds)(base => {
-						const fn2 = fn(base)
-						return tick => {
-							const fn3 = fn2(tick)
-							for (const [id, state] of [] as any)
-								fn3(state, id)
-						}
-					})
+				(fn: ProcessorFn<Base, Tick, Sc, K>) => this.system<K>(...kinds)(base => {
+					const fn2 = fn(base)
+					return (tick, entities) => {
+						const fn3 = fn2(tick)
+						for (const [id, state] of entities)
+							fn3(state, id)
+					}
+				})
 		)
 
 		lifecycle = (
 			<K extends keyof Sc>(...kinds: K[]) =>
-				(fn: LifecycleFn<Base, Tick, Sc, K>) => (base: Base) => {
+				(fn: LifecycleFn<Base, Tick, Sc, K>) => this.system<K>(...kinds)(base => {
 					const fn2 = fn(base)
 					const map = new Map<Id, Lifecycle<Tick, Sc, K>>
-					return new System<Tick, Sc, K>(kinds, (tick, entities) => {
+					return (tick, entities) => {
 
 						// prune missing entities
 						for (const id of [...map.keys()]) {
@@ -201,17 +229,17 @@ export namespace Ecs {
 							// update existing entities
 							if (map.has(id)) {
 								const lifecycle = map.get(id)!
-								lifecycle.update(tick, state, id)
+								lifecycle.update(tick, state as any, id)
 							}
 
 							// initialize entities
 							else {
-								const lifecycle = fn2(state, id)
+								const lifecycle = fn2(state as any, id)
 								map.set(id, lifecycle)
 							}
 						}
-					})
-				}
+					}
+				})
 		)
 	}
 }

@@ -11,11 +11,15 @@ import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
+import {Ecs} from "../ecs/ecs.js"
 import {quat} from "../tools/math/quat.js"
+import {HumanoidTick} from "./ecs/schema.js"
+import {scalar} from "../tools/math/scalar.js"
 import {makeRealm} from "./models/realm/realm.js"
 import {Sensitivity} from "./models/impulse/types.js"
 import {make_mainpipe} from "./ecs/pipelines/sketch.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
+import { log100 } from "../tools/limited_logger.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -42,6 +46,9 @@ const realm = await nexus.context.realmOp.load(
 realm.porthole.resolution = localTesting
 	? 0.5
 	: 1
+
+const mainpipe = make_mainpipe(realm)
+const entityCache = new Ecs.EntityCache(realm.entities, [mainpipe])
 
 const {spawn} = realm
 spawn.environment("gym")
@@ -95,25 +102,40 @@ spawn.physicsBox({
 	})
 }
 
-const mainpipe = make_mainpipe(realm)
+let count = 0
+let last_time = performance.now()
 
-console.log("mainpipe", mainpipe)
+realm.stage.remote.onTick(() => {
+	realm.physics.step()
+	const last = last_time
+	let start = performance.now()
 
-// let count = 0
-// let last_time = performance.now()
+	const tick: HumanoidTick = {
+		tick: count++,
+		deltaTime: scalar.clamp(
+			((last_time = performance.now()) - last),
+			0,
+			100, // clamp to 100ms delta to avoid large over-corrections
+		) / 1000,
+	}
 
-// realm.stage.remote.onTick(() => {
-// 	realm.physics.step()
-// 	const last = last_time
-// 	executor.tick({
-// 		tick: count++,
-// 		deltaTime: scalar.clamp(
-// 			((last_time = performance.now()) - last),
-// 			0,
-// 			100, // clamp to 100ms delta to avoid large over-corrections
-// 		) / 1000,
-// 	})
-// })
+	for (const system of mainpipe.systems) {
+		const entities = [...entityCache.obtain(system)]
+		system.execute(tick, entities as any)
+	}
+
+	let time = performance.now() - start
+	log100(`tick ${time.toFixed(2)} ms`)
+
+	// executor.tick({
+	// 	tick: count++,
+	// 	deltaTime: scalar.clamp(
+	// 		((last_time = performance.now()) - last),
+	// 		0,
+	// 		100, // clamp to 100ms delta to avoid large over-corrections
+	// 	) / 1000,
+	// })
+})
 
 realm.stage.remote.start()
 

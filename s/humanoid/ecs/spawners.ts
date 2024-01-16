@@ -1,5 +1,5 @@
 
-import {Core} from "../../core/core.js"
+import {Ecs} from "../../ecs/ecs.js"
 import {HumanoidSchema} from "./schema.js"
 import {vec2} from "../../tools/math/vec2.js"
 import {Vec3, vec3} from "../../tools/math/vec3.js"
@@ -7,7 +7,7 @@ import {Quat, quat} from "../../tools/math/quat.js"
 import {Sensitivity} from "../models/impulse/types.js"
 import {HumanoidContainers} from "../models/realm/realm.js"
 
-export const spawners = (entities: Core.Entities<HumanoidSchema>) => ({
+export const spawners = (entities: Ecs.Entities<HumanoidSchema>) => ({
 
 	hemi: ({direction, intensity}: {direction: Vec3, intensity: number}) => entities.create({
 		light: "hemi",

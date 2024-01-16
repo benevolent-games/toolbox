@@ -8,3 +8,5 @@ export function make_limited_logger(n: number) {
 	}
 }
 
+export const log100 = make_limited_logger(100)
+
