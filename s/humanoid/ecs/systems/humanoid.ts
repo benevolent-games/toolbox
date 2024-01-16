@@ -4,7 +4,7 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
-import {rezzer} from "../house.js"
+import {mainthread} from "../hub.js"
 import {labeler} from "../../../tools/label.js"
 import {Vec2} from "../../../tools/math/vec2.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
@@ -13,7 +13,7 @@ import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {molasses, molasses3d} from "./utils/molasses.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
-export const humanoid_system = rezzer(
+export const humanoid_system = mainthread.lifecycle(
 		"debug",
 		"humanoid",
 		"third_person_cam_distance",
@@ -122,7 +122,7 @@ export const humanoid_system = rezzer(
 	let smoothed_y = init.position[1]
 
 	return {
-		update(state) {
+		update(_tick, state) {
 			const moddedGimbal = modGimbal(state.gimbal)
 			const localForce = gimbaltool(moddedGimbal).rotate(state.force)
 			const quaternions = gimbaltool(moddedGimbal).quaternions()

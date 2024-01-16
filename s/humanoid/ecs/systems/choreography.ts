@@ -2,7 +2,6 @@
 import {Scene} from "@babylonjs/core/scene.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
-import {rezzer} from "../house.js"
 import {flatten} from "./utils/flatten.js"
 import {label} from "../../../tools/label.js"
 import {molasses3d} from "./utils/molasses.js"
@@ -18,8 +17,9 @@ import {CharacterContainer} from "../../../dance-studio/models/loader/character/
 import {AdjustmentAnims, AdjustmentDirection} from "../../../dance-studio/models/loader/choreographer/types.js"
 import {calculate_ambulatory_report, apply_adjustments, swivel_effected_by_glance} from "./choreography/calculations.js"
 import {calculate_adjustment_weight} from "../../../dance-studio/models/loader/choreographer/parts/utils/calculate_adjustment_weight.js"
+import { mainthread } from "../hub.js"
 
-export const choreography_system = rezzer(
+export const choreography_system = mainthread.lifecycle(
 		"humanoid",
 		"height",
 		"speeds",
@@ -106,7 +106,7 @@ export const choreography_system = rezzer(
 	let smoothed_velocity = init.velocity
 
 	return {
-		update(state, tick) {
+		update(tick, state) {
 			babylon.position.set(...state.position)
 			babylon.rotation.set(...state.rotation)
 

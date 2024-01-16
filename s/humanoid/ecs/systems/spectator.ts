@@ -3,7 +3,7 @@ import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {TargetCamera} from "@babylonjs/core/Cameras/targetCamera.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
-import {rezzer} from "../house.js"
+import {mainthread} from "../hub.js"
 import {flatten} from "./utils/flatten.js"
 import {Vec2} from "../../../tools/math/vec2.js"
 import {gimbaltool} from "./utils/gimbaltool.js"
@@ -11,8 +11,13 @@ import {scalar} from "../../../tools/math/scalar.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
-export const spectator_system = rezzer(
-		"spectator", "force", "gimbal", "position", "speeds", "camera",
+export const spectator_system = mainthread.lifecycle(
+		"spectator",
+		"force",
+		"gimbal",
+		"position",
+		"speeds",
+		"camera",
 	)(realm => (state, id) => {
 
 	const {stage} = realm
@@ -51,7 +56,7 @@ export const spectator_system = rezzer(
 	}
 
 	return {
-		update(state) {
+		update(_tick, state) {
 			const {force} = state
 			const quaternions = gimbaltool(state.gimbal).quaternions()
 

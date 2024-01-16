@@ -1,11 +1,14 @@
 
-import {processor} from "../house.js"
+import {threadable} from "../hub.js"
 import {molasses3d} from "./utils/molasses.js"
 import {vec3} from "../../../tools/math/vec3.js"
 
-export const force_system = processor(
-		"force", "intent", "smoothing", "speeds",
-	)(_realm => (state, _id, tick) => {
+export const force_system = threadable.processor(
+		"force",
+		"intent",
+		"smoothing",
+		"speeds",
+	)(() => tick => state => {
 
 	const {force, intent, smoothing, speeds} = state
 	const [x, y, z] = intent.amble

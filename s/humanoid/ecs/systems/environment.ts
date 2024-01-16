@@ -1,11 +1,13 @@
 
-import {rezzer} from "../house.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
-import {babylonian} from "../../../tools/math/babylonian.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
+
+import {mainthread} from "../hub.js"
+import {babylonian} from "../../../tools/math/babylonian.js"
 import {obtain_babylon_quaternion_from_mesh} from "../../../tools/obtain_babylon_quaternion_from_mesh.js"
 
-export const environment_system = rezzer("environment")(realm => ({environment}) => {
+export const environment_system = mainthread.lifecycle("environment")
+	(realm => ({environment}) => {
 
 	const container = (() => {
 		switch (environment) {

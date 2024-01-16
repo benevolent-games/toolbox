@@ -1,8 +1,10 @@
 
-import {processor} from "../house.js"
+import {threadable} from "../hub.js"
 import {scalar} from "../../../tools/math/scalar.js"
 
-export const freelook_system = processor("intent", "gimbal")(() => state => {
+export const freelook_system = threadable.processor("intent", "gimbal")
+	(() => () => state => {
+
 	const [gimbalX, gimbalY] = state.gimbal
 	const [glanceX, glanceY] = state.intent.glance
 

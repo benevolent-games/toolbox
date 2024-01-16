@@ -11,23 +11,11 @@ import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 import {register_to_dom} from "@benev/slate"
 
 import {nexus} from "./nexus.js"
-import {Core} from "../core/core.js"
 import {quat} from "../tools/math/quat.js"
-import {HumanoidTick} from "./ecs/house.js"
-import {scalar} from "../tools/math/scalar.js"
-import {force_system} from "./ecs/systems/force.js"
-import {lighting_system} from "./ecs/systems/hemi.js"
-import {Realm, makeRealm} from "./models/realm/realm.js"
-import {governor_system} from "./ecs/systems/governor.js"
-import {humanoid_system} from "./ecs/systems/humanoid.js"
-import {freelook_system} from "./ecs/systems/freelook.js"
-import {spectator_system} from "./ecs/systems/spectator.js"
-import {intention_system} from "./ecs/systems/intention.js"
-import {environment_system} from "./ecs/systems/environment.js"
-import {choreography_system} from "./ecs/systems/choreography.js"
+import {makeRealm} from "./models/realm/realm.js"
+import {Sensitivity} from "./models/impulse/types.js"
+import {make_mainpipe} from "./ecs/pipelines/sketch.js"
 import {BenevHumanoid} from "./dom/elements/benev-humanoid/element.js"
-import {velocity_calculator_system} from "./ecs/systems/velocity_calculator.js"
-import {physics_dynamic_system, physics_fixed_system} from "./ecs/systems/physics.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -65,39 +53,67 @@ spawn.physicsBox({
 	rotation: quat.identity(),
 })
 
-const executor = new Core.Executor<Realm, HumanoidTick>(
-	realm,
-	[
-		governor_system,
-		intention_system,
-		force_system,
-		freelook_system,
-		environment_system,
-		lighting_system,
-		physics_fixed_system,
-		physics_dynamic_system,
-		spectator_system,
-		humanoid_system,
-		velocity_calculator_system,
-		choreography_system,
-	],
-)
+{
+	realm.impulse.modes.assign("universal", "humanoid")
 
-let count = 0
-let last_time = performance.now()
-
-realm.stage.remote.onTick(() => {
-	realm.physics.step()
-	const last = last_time
-	executor.tick({
-		tick: count++,
-		deltaTime: scalar.clamp(
-			((last_time = performance.now()) - last),
-			0,
-			100, // clamp to 100ms delta to avoid large over-corrections
-		) / 1000,
+	const sensitivity = (): Sensitivity => ({
+		keys: 100 / 10_000,
+		mouse: 5 / 10_000,
+		stick: 100 / 10_000,
 	})
-})
+
+	let next: () => void = () => {}
+
+	function spectatorState() {
+		const id = realm.spawn.spectator({
+			position: [0, 1, -2],
+			sensitivity: sensitivity(),
+		})
+		next = () => {
+			realm.entities.delete(id)
+			humanoidState()
+		}
+	}
+
+	function humanoidState() {
+		const id = realm.spawn.humanoid({
+			debug: false,
+			position: [0, 5, 0],
+			sensitivity: sensitivity(),
+		})
+		next = () => {
+			realm.entities.delete(id)
+			spectatorState()
+		}
+	}
+
+	humanoidState()
+
+	realm.impulse.on.universal.buttons.respawn(input => {
+		if (input.down)
+			next()
+	})
+}
+
+const mainpipe = make_mainpipe(realm)
+
+console.log("mainpipe", mainpipe)
+
+// let count = 0
+// let last_time = performance.now()
+
+// realm.stage.remote.onTick(() => {
+// 	realm.physics.step()
+// 	const last = last_time
+// 	executor.tick({
+// 		tick: count++,
+// 		deltaTime: scalar.clamp(
+// 			((last_time = performance.now()) - last),
+// 			0,
+// 			100, // clamp to 100ms delta to avoid large over-corrections
+// 		) / 1000,
+// 	})
+// })
 
 realm.stage.remote.start()
 
