@@ -18,7 +18,8 @@ export type HumanoidContainers = {
 	character: AssetContainer
 }
 
-export async function makeRealm({tickrate, glb_links}: {
+export async function makeRealm({entities, tickrate, glb_links}: {
+		entities: Ecs.Entities<HumanoidSchema>
 		tickrate: number
 		glb_links: {
 			gym: string
@@ -51,9 +52,8 @@ export async function makeRealm({tickrate, glb_links}: {
 	for (const light of gym.lights)
 		light.intensity /= 1000
 
-	const entities = new Ecs.Entities<HumanoidSchema>()
-
 	return {
+		tickrate,
 		porthole,
 		stage,
 		colors,

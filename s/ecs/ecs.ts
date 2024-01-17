@@ -98,7 +98,6 @@ export namespace Ecs {
 
 	export class Executor<Tick, Sc extends Schema> {
 		#index = new Map<System<Tick, Sc>, Map<Id, Partial<Sc>>>()
-		diagnostics = new Map<System<Tick, Sc>, number>
 
 		constructor(events: EntityEventPubs<Sc>, public systems: System<Tick, Sc>[]) {
 			for (const system of systems)
@@ -120,11 +119,17 @@ export namespace Ecs {
 			})
 		}
 
-		execute_all_systems(tick: Tick) {
-			for (const [system, entities] of this.#index) {
-				this.diagnostics.set(system, measure(() => {
+		execute_all_systems(tick: Tick, diagnostics?: Map<System<Tick, Sc>, number>) {
+			if (diagnostics) {
+				for (const [system, entities] of this.#index) {
+					diagnostics.set(system, measure(() => {
+						system.execute(tick, [...entities.entries()] as Entity<Sc>[])
+					}))
+				}
+			}
+			else {
+				for (const [system, entities] of this.#index)
 					system.execute(tick, [...entities.entries()] as Entity<Sc>[])
-				}))
 			}
 		}
 	}
