@@ -2,7 +2,7 @@
 import {threadable} from "../hub.js"
 import {scalar} from "../../../tools/math/scalar.js"
 
-export const freelook_system = threadable.processor("intent", "gimbal")
+export const freelook_system = threadable.processor("freelook")("intent", "gimbal")
 	(() => () => state => {
 
 	const [gimbalX, gimbalY] = state.gimbal

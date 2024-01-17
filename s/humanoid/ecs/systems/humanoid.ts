@@ -13,7 +13,7 @@ import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {molasses, molasses3d} from "./utils/molasses.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
-export const humanoid_system = mainthread.lifecycle(
+export const humanoid_system = mainthread.lifecycle("humanoid")(
 		"debug",
 		"humanoid",
 		"third_person_cam_distance",

@@ -6,7 +6,7 @@ import {mainthread} from "../hub.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 import {obtain_babylon_quaternion_from_mesh} from "../../../tools/obtain_babylon_quaternion_from_mesh.js"
 
-export const environment_system = mainthread.lifecycle("environment")
+export const environment_system = mainthread.lifecycle("environment")("environment")
 	(realm => ({environment}) => {
 
 	const container = (() => {

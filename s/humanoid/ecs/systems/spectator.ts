@@ -11,7 +11,7 @@ import {scalar} from "../../../tools/math/scalar.js"
 import {Vec3, vec3} from "../../../tools/math/vec3.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
-export const spectator_system = mainthread.lifecycle(
+export const spectator_system = mainthread.lifecycle("spectator")(
 		"spectator",
 		"force",
 		"gimbal",

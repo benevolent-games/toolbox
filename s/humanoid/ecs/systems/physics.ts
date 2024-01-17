@@ -3,7 +3,7 @@ import {mainthread} from "../hub.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {babylonian} from "../../../tools/math/babylonian.js"
 
-export const physics_dynamic_system = mainthread.lifecycle(
+export const physics_dynamic_system = mainthread.lifecycle("physics_dynamic")(
 		"physical",
 		"shape",
 		"position",
@@ -40,7 +40,7 @@ export const physics_dynamic_system = mainthread.lifecycle(
 	}
 })
 
-export const physics_fixed_system = mainthread.lifecycle(
+export const physics_fixed_system = mainthread.lifecycle("physics_fixed")(
 		"physical",
 		"mesh",
 		"position",

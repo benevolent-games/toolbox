@@ -4,7 +4,7 @@ import {Vec3} from "../../../tools/math/vec3.js"
 import {Vec2, vec2} from "../../../tools/math/vec2.js"
 import {get_trajectory_from_cardinals} from "../../../impulse/trajectory/get_trajectory_from_cardinals.js"
 
-export const intention_system = mainthread.lifecycle(
+export const intention_system = mainthread.lifecycle("intention")(
 		"intent",
 		"sensitivity",
 	)(realm => () => {

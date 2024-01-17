@@ -49,7 +49,8 @@ realm.porthole.resolution = localTesting
 	? 0.5
 	: 1
 
-realm.entities.registerSystems(mainpipe(realm))
+const all_systems = mainpipe(realm)
+realm.entities.registerSystems(all_systems)
 
 const {spawn} = realm
 spawn.environment("gym")
@@ -106,14 +107,36 @@ spawn.physicsBox({
 let count = 0
 let last_time = performance.now()
 
+function makeBlankMeasurements() {
+	const systems = new Map<string, number>()
+	for (const system of all_systems)
+		systems.set(system.name, 0)
+	return {
+		physics: 0,
+		tick: 0,
+		systems,
+	}
+}
+
+let measurements = makeBlankMeasurements()
+
+function logMeasurements() {
+	console.log("\nmeasurements")
+	console.log(`- physics ${human.performance(measurements.physics / 200)}`)
+	console.log(`- tick    ${human.performance(measurements.tick / 200)}`)
+	console.log(`- systems:`)
+	for (const [system, time] of measurements.systems)
+		console.log(`  - ${system} ${human.performance(time / 200)}`)
+}
+
 realm.stage.remote.onTick(() => {
 	const last = last_time
 
-	const physicsTime = measure(() => {
+	measurements.physics += measure(() => {
 		realm.physics.step()
 	})
 
-	const tickTime = measure(() => {
+	measurements.tick += measure(() => {
 		const tick: HumanoidTick = {
 			tick: count++,
 			deltaTime: scalar.clamp(
@@ -125,9 +148,16 @@ realm.stage.remote.onTick(() => {
 		realm.entities.execute_all_systems(tick)
 	})
 
-	log100(`tick ${count}`)
-	log100(` - physics ${human.performance(physicsTime)}`)
-	log100(` - systems ${human.performance(tickTime)}`)
+	for (const [system, systemTime] of realm.entities.diagnostics) {
+		const previous = (measurements.systems.get(system.name) ?? 0)
+		measurements.systems.set(system.name, previous + systemTime)
+	}
+
+	if (count === 10)
+		measurements = makeBlankMeasurements()
+
+	if (count === 210)
+		logMeasurements()
 })
 
 realm.stage.remote.start()

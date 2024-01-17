@@ -1,14 +1,6 @@
 
+import {measure} from "../tools/measure.js"
 import {id_counter} from "../tools/id_counter.js"
-
-/*
-
-[base] <--- [systems]
-    \        ^
-     v      /
-    [entities]
-
-*/
 
 export namespace Ecs {
 	export type Id = number
@@ -49,6 +41,7 @@ export namespace Ecs {
 
 	export class System<Tick, Sc extends Schema, K extends keyof Sc = keyof Sc> {
 		constructor(
+			public name: string,
 			public kinds: K[],
 			public execute: (tick: Tick, entities: Entity<Sc, K>[]) => void
 		) {}
@@ -63,6 +56,8 @@ export namespace Ecs {
 
 	export class Entities<Tick, Sc extends Schema> extends EntityStore<Sc> {
 		#index = new Map<System<Tick, Sc>, Map<Id, Partial<Sc>>>()
+
+		diagnostics = new Map<System<Tick, Sc>, number>
 
 		registerSystems(systems: System<Tick, Sc>[]) {
 			for (const system of systems)
@@ -85,8 +80,11 @@ export namespace Ecs {
 		}
 
 		execute_all_systems(tick: Tick) {
-			for (const [system, entities] of this.#index)
-				system.execute(tick, [...entities.entries()] as Entity<Sc>[])
+			for (const [system, entities] of this.#index) {
+				this.diagnostics.set(system, measure(() => {
+					system.execute(tick, [...entities.entries()] as Entity<Sc>[])
+				}))
+			}
 		}
 	}
 
@@ -112,10 +110,10 @@ export namespace Ecs {
 			(base: Base) => presystems.map(fn => fn(base))
 		)
 
-		processor = (<K extends keyof Sc>(...kinds: K[]) =>
+		processor = (name: string) => (<K extends keyof Sc>(...kinds: K[]) =>
 			(fn: ProcessorFn<Base, Tick, Sc, K>) => (base: Base) => {
 				const fn2 = fn(base)
-				return new System<Tick, Sc, K>(kinds, (tick, entities) => {
+				return new System<Tick, Sc, K>(name, kinds, (tick, entities) => {
 					const fn3 = fn2(tick)
 					for (const [id, state] of entities)
 						fn3(state, id)
@@ -123,11 +121,11 @@ export namespace Ecs {
 			}
 		)
 
-		lifecycle = (<K extends keyof Sc>(...kinds: K[]) =>
+		lifecycle = ((name: string) => <K extends keyof Sc>(...kinds: K[]) =>
 			(fn: LifecycleFn<Base, Tick, Sc, K>) => (base: Base) => {
 				const fn2 = fn(base)
 				const map = new Map<Id, Life<Tick, Sc, K>>()
-				return new System<Tick, Sc, K>(kinds, (tick, entities) => {
+				return new System<Tick, Sc, K>(name, kinds, (tick, entities) => {
 
 					// prune missing entities
 					for (const id of [...map.keys()]) {

@@ -19,7 +19,7 @@ import {calculate_ambulatory_report, apply_adjustments, swivel_effected_by_glanc
 import {calculate_adjustment_weight} from "../../../dance-studio/models/loader/choreographer/parts/utils/calculate_adjustment_weight.js"
 import { mainthread } from "../hub.js"
 
-export const choreography_system = mainthread.lifecycle(
+export const choreography_system = mainthread.lifecycle("choreography")(
 		"humanoid",
 		"height",
 		"speeds",
