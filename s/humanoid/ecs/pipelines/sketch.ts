@@ -11,7 +11,7 @@ import {choreography_system} from "../systems/choreography.js"
 import {velocity_calculator_system} from "../systems/velocity_calculator.js"
 import {physics_dynamic_system, physics_fixed_system} from "../systems/physics.js"
 
-export const make_mainpipe = mainthread.pipeline(
+export const mainpipe = mainthread.systematize(
 	intention_system,
 	force_system,
 	freelook_system,

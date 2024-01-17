@@ -4,7 +4,7 @@ import {Stage} from "../../../stage/stage.js"
 import {spawners} from "../../ecs/spawners.js"
 import {MeshStore} from "./parts/mesh_store.js"
 import {Physics} from "../../../rapier/physics.js"
-import {HumanoidSchema} from "../../ecs/schema.js"
+import {HumanoidSchema, HumanoidTick} from "../../ecs/schema.js"
 import {HumanoidImpulse} from "../impulse/impulse.js"
 import {debug_colors} from "../../../tools/debug_colors.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
@@ -51,8 +51,7 @@ export async function makeRealm({tickrate, glb_links}: {
 	for (const light of gym.lights)
 		light.intensity /= 1000
 
-	const entities = new Ecs.Entities<HumanoidSchema>()
-	// const entities = new Core.Entities<HumanoidSchema>()
+	const entities = new Ecs.Entities<HumanoidTick, HumanoidSchema>()
 
 	return {
 		porthole,
