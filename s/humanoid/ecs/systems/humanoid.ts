@@ -122,7 +122,7 @@ export const humanoid_system = mainthread.lifecycle("humanoid")(
 	let smoothed_y = init.position[1]
 
 	return {
-		update(_tick, state) {
+		execute(_tick, state) {
 			const moddedGimbal = modGimbal(state.gimbal)
 			const localForce = gimbaltool(moddedGimbal).rotate(state.force)
 			const quaternions = gimbaltool(moddedGimbal).quaternions()

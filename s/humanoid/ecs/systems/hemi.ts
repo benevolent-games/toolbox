@@ -21,7 +21,7 @@ export const lighting_system = mainthread.lifecycle("lighting")(
 	light.direction.set(...init.direction)
 
 	return {
-		update(_tick, state) {
+		execute(_tick, state) {
 			light.intensity = state.intensity
 			light.direction.set(...state.direction)
 		},

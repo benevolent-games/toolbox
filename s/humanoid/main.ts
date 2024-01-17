@@ -22,6 +22,7 @@ import { Ecs } from "../ecs/ecs.js"
 import { log100 } from "../tools/limited_logger.js"
 import { human } from "../tools/human.js"
 import { measure } from "../tools/measure.js"
+import { mainthread } from "./ecs/hub.js"
 
 register_to_dom({BenevHumanoid})
 
@@ -49,8 +50,7 @@ realm.porthole.resolution = localTesting
 	? 0.5
 	: 1
 
-const all_systems = mainpipe(realm)
-realm.entities.registerSystems(all_systems)
+const executor = mainthread.executor(realm, realm.entities, mainpipe)
 
 const {spawn} = realm
 spawn.environment("gym")
@@ -109,7 +109,7 @@ let last_time = performance.now()
 
 function makeBlankMeasurements() {
 	const systems = new Map<string, number>()
-	for (const system of all_systems)
+	for (const system of executor.systems)
 		systems.set(system.name, 0)
 	return {
 		physics: 0,
@@ -145,10 +145,10 @@ realm.stage.remote.onTick(() => {
 				100, // clamp to 100ms delta to avoid large over-corrections
 			) / 1000,
 		}
-		realm.entities.execute_all_systems(tick)
+		executor.execute_all_systems(tick)
 	})
 
-	for (const [system, systemTime] of realm.entities.diagnostics) {
+	for (const [system, systemTime] of executor.diagnostics) {
 		const previous = (measurements.systems.get(system.name) ?? 0)
 		measurements.systems.set(system.name, previous + systemTime)
 	}

@@ -15,7 +15,7 @@ export const intention_system = mainthread.lifecycle("intention")(
 	const invert_y_axis = (v: Vec2) => vec2.multiply(v, [1, -1])
 
 	return {
-		update(_tick, state) {
+		execute(_tick, state) {
 			const {sensitivity} = state
 
 			const mouselook = invert_y_axis(mouseMovement.steal())

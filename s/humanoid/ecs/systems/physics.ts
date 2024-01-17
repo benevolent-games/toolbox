@@ -33,7 +33,7 @@ export const physics_dynamic_system = mainthread.lifecycle("physics_dynamic")(
 
 	return {
 		dispose,
-		update(_tick, state) {
+		execute(_tick, state) {
 			state.position = babylonian.to.vec3(mesh.position)
 			state.rotation = babylonian.to.quat(mesh.absoluteRotationQuaternion)
 		},
@@ -52,7 +52,7 @@ export const physics_fixed_system = mainthread.lifecycle("physics_fixed")(
 	const body = realm.physics.trimesh(mesh)
 
 	return {
-		update() {},
+		execute() {},
 		dispose() {
 			body.dispose()
 		},

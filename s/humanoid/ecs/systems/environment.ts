@@ -21,7 +21,7 @@ export const environment_system = mainthread.lifecycle("environment")("environme
 	if (!container) {
 		console.error(`unknown environment "${environment}"`)
 		return {
-			update() {},
+			execute() {},
 			dispose() {},
 		}
 	}
@@ -53,7 +53,7 @@ export const environment_system = mainthread.lifecycle("environment")("environme
 	}
 
 	return {
-		update() {},
+		execute() {},
 		dispose() {
 			for (const dispose of disposables)
 				dispose()

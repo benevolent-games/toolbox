@@ -56,7 +56,7 @@ export const spectator_system = mainthread.lifecycle("spectator")(
 	}
 
 	return {
-		update(_tick, state) {
+		execute(_tick, state) {
 			const {force} = state
 			const quaternions = gimbaltool(state.gimbal).quaternions()
 

@@ -106,7 +106,7 @@ export const choreography_system = mainthread.lifecycle("choreography")(
 	let smoothed_velocity = init.velocity
 
 	return {
-		update(tick, state) {
+		execute(tick, state) {
 			babylon.position.set(...state.position)
 			babylon.rotation.set(...state.rotation)
 

@@ -10,7 +10,7 @@ export const velocity_calculator_system = threadable.lifecycle("velocity_calcula
 	let previous_position = vec3.zero()
 
 	return {
-		update(_tick, state) {
+		execute(_tick, state) {
 			state.velocity = vec3.subtract(state.position, previous_position)
 			previous_position = state.position
 		},
