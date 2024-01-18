@@ -8,11 +8,12 @@ import {StageOptions} from "./types.js"
 import {Remote} from "./parts/remote.js"
 import {scalar} from "../tools/math/scalar.js"
 import {Rendering} from "./parts/rendering.js"
-import {backgrounds} from "./parts/standards.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
+import {backgrounds, effects} from "./parts/standards.js"
 import {make_load_glb_fn} from "./parts/make_load_glb_fn.js"
 
 export class Stage {
+	static effects = effects
 	static backgrounds = backgrounds
 
 	engine: Engine

@@ -5,7 +5,7 @@ import {styles} from "./styles.js"
 import {nexus} from "../../../nexus.js"
 import {anim_title} from "./utils/anim_title.js"
 import {human} from "../../../../tools/human.js"
-import {render_op} from "../../../utils/render_op.js"
+import {op_effect} from "../../../../tools/op_effect.js"
 import {Glb} from "../../../models/loader/utils/types.js"
 
 export const GlbPanel = nexus.shadow_view(use => () => {
@@ -59,7 +59,7 @@ export const GlbPanel = nexus.shadow_view(use => () => {
 	}
 
 	return html`
-		${render_op(loader.glb.value, glb => glb
+		${op_effect.braille(loader.glb.value, glb => glb
 			? render_glb(glb)
 			: render_no_glb())}
 	`

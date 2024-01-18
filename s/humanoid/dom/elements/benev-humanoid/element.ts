@@ -4,7 +4,7 @@ import {html, interval} from "@benev/slate"
 import {styles} from "./styles.js"
 import {nexus} from "../../../nexus.js"
 import {Panel} from "../../views/panel/view.js"
-import {render_op} from "../../../../dance-studio/utils/render_op.js"
+import {op_effect} from "../../../../tools/op_effect.js"
 
 export const BenevHumanoid = nexus.shadow_component(use => {
 	use.styles(styles)
@@ -18,7 +18,7 @@ export const BenevHumanoid = nexus.shadow_component(use => {
 	}))
 
 	return html`
-		${render_op(use.context.realmOp.value, realm => html`
+		${op_effect.braille(use.context.realmOp.value, realm => html`
 			${realm.porthole.canvas}
 			${Panel([realm])}
 			<span class=info>
