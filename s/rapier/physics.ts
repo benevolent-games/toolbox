@@ -3,21 +3,21 @@ import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
+import {Phys} from "./types.js"
 import {Rapier} from "./rapier.js"
 import {labeler} from "../tools/label.js"
 import {Vec3, vec3} from "../tools/math/vec3.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
-import {BoxSpec, apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
-import {PhysicalCharacterCapsule, PhysContext, Physical, PhysicalDesc, PhysicsOptions, PhysicalBox, Joint} from "./types.js"
+import {apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
 import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create_character_controller, make_apply_movement_fn} from "./aspects/character.js"
 
 /**
  * rapier physics integration for babylon.
  */
 export class Physics {
-	#context: PhysContext
+	#context: Phys.Context
 
 	constructor({
 			hz,
@@ -25,7 +25,7 @@ export class Physics {
 			colors,
 			gravity,
 			contact_force_threshold = 0.2,
-		}: PhysicsOptions) {
+		}: Phys.Options) {
 
 		const world = new Rapier.World(vec3.to.xyz(gravity))
 		world.timestep = 1 / hz
@@ -53,11 +53,11 @@ export class Physics {
 	 * add a rigidbody to the physics simulation,
 	 * which is synchronized with a babylon position and rotation.
 	 */
-	physical(desc: PhysicalDesc): Physical {
+	actor(desc: Phys.ActorDesc): Phys.Actor {
 		const {world, physicals} = this.#context
 		const rigid = this.#context.world.createRigidBody(desc.rigid)
 		const collider = this.#context.world.createCollider(desc.collider, rigid)
-		const physical: Physical = {
+		const physical: Phys.Actor = {
 			rigid,
 			collider,
 			position: Vector3.Zero(),
@@ -75,8 +75,8 @@ export class Physics {
 	/**
 	 * create a box physics simulation.
 	 */
-	box(spec: BoxSpec): PhysicalBox {
-		const physical = this.physical(box_desc(this.#context, spec))
+	box(spec: Phys.BoxSpec): Phys.BoxActor {
+		const physical = this.actor(box_desc(this.#context, spec))
 		apply_position_and_rotation(spec, physical)
 		synchronize_to_babylon_position_and_rotation(physical)
 		const mesh = create_babylon_mesh_for_box(
@@ -95,10 +95,10 @@ export class Physics {
 	/**
 	 * create a kinematic character controller capsule.
 	 */
-	character(spec: CharacterSpec): PhysicalCharacterCapsule {
+	character(spec: CharacterSpec): Phys.CharacterActor {
 		const {world} = this.#context
 		const controller = create_character_controller(this.#context, spec)
-		const physical = this.physical(character_desc(this.#context, spec))
+		const physical = this.actor(character_desc(this.#context, spec))
 		const mesh = create_babylon_mesh_for_character(
 			this.#context, spec, physical,
 		)
@@ -139,7 +139,7 @@ export class Physics {
 	joint_spherical({anchors: [a1, a2], bodies: [b1, b2]}: {
 			anchors: [Vec3, Vec3]
 			bodies: [Rapier.RigidBody, Rapier.RigidBody]
-		}): Joint {
+		}): Phys.Joint {
 
 		const {world} = this.#context
 

@@ -1,20 +1,12 @@
 
+import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
-import {Quat, quat} from "../../tools/math/quat.js"
-import {Vec3, vec3} from "../../tools/math/vec3.js"
+import {quat} from "../../tools/math/quat.js"
+import {vec3} from "../../tools/math/vec3.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
-import {PhysContext, Physical, PhysicalDesc} from "../types.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
-export interface BoxSpec {
-	scale: Vec3
-	density: number
-	position?: Vec3
-	rotation?: Quat
-	material?: Material
-}
-
-export function box_desc(context: PhysContext, spec: BoxSpec): PhysicalDesc {
+export function box_desc(context: Phys.Context, spec: Phys.BoxSpec): Phys.ActorDesc {
 	return {
 		rigid: Rapier.RigidBodyDesc
 			.dynamic(),
@@ -31,21 +23,21 @@ export function box_desc(context: PhysContext, spec: BoxSpec): PhysicalDesc {
 }
 
 export function apply_position_and_rotation(
-		spec: BoxSpec,
-		physical: Physical,
+		spec: Phys.BoxSpec,
+		actor: Phys.Actor,
 	) {
 
 	if (spec.position)
-		physical.rigid.setTranslation(vec3.to.xyz(spec.position), true)
+		actor.rigid.setTranslation(vec3.to.xyz(spec.position), true)
 
 	if (spec.rotation)
-		physical.rigid.setRotation(quat.to.xyzw(spec.rotation), true)
+		actor.rigid.setRotation(quat.to.xyzw(spec.rotation), true)
 }
 
 export function create_babylon_mesh_for_box(
-		{label, scene}: PhysContext,
-		spec: BoxSpec,
-		physical: Physical,
+		{label, scene}: Phys.Context,
+		spec: Phys.BoxSpec,
+		actor: Phys.Actor,
 		material: Material,
 	) {
 
@@ -57,8 +49,8 @@ export function create_babylon_mesh_for_box(
 		scene,
 	)
 
-	mesh.position = physical.position
-	mesh.rotationQuaternion = physical.rotation
+	mesh.position = actor.position
+	mesh.rotationQuaternion = actor.rotation
 	mesh.material = material
 
 	return mesh

@@ -1,13 +1,13 @@
 
+import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
-import {PhysContext} from "../types.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {transform_vertex_data} from "../parts/transform_vertex_data.js"
 
 export function make_trimesh_rigid_and_collider(
-		{world}: PhysContext,
+		{world}: Phys.Context,
 		mesh: Mesh | InstancedMesh,
 	) {
 

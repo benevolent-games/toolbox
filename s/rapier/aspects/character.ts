@@ -1,9 +1,9 @@
 
+import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
 import {Vec3, vec3} from "../../tools/math/vec3.js"
 import {gravitation} from "../parts/gravitation.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
-import {PhysContext, Physical, PhysicalDesc} from "../types.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 export interface CharacterSpec {
@@ -25,7 +25,7 @@ export interface CharacterSpec {
 }
 
 export function create_character_controller(
-		{world}: PhysContext,
+		{world}: Phys.Context,
 		spec: CharacterSpec,
 	) {
 
@@ -49,9 +49,9 @@ export function create_character_controller(
 }
 
 export function character_desc(
-		context: PhysContext,
+		context: Phys.Context,
 		spec: CharacterSpec,
-	): PhysicalDesc {
+	): Phys.ActorDesc {
 	return {
 		rigid: Rapier.RigidBodyDesc
 			.kinematicPositionBased(),
@@ -68,9 +68,9 @@ export function character_desc(
 }
 
 export function create_babylon_mesh_for_character(
-		{scene, label, colors}: PhysContext,
+		{scene, label, colors}: Phys.Context,
 		spec: CharacterSpec,
-		physical: Physical,
+		actor: Phys.Actor,
 		material: Material = colors.cyan,
 	) {
 
@@ -80,8 +80,8 @@ export function create_babylon_mesh_for_character(
 		scene,
 	)
 
-	mesh.position = physical.position
-	mesh.rotationQuaternion = physical.rotation
+	mesh.position = actor.position
+	mesh.rotationQuaternion = actor.rotation
 	mesh.material = material
 
 	return mesh
@@ -90,7 +90,7 @@ export function create_babylon_mesh_for_character(
 export function make_apply_movement_fn(
 		world: Rapier.World,
 		controller: Rapier.KinematicCharacterController,
-		physical: Physical,
+		actor: Phys.Actor,
 	) {
 
 	return (velocity: Vec3) => {
@@ -100,16 +100,16 @@ export function make_apply_movement_fn(
 		)
 
 		controller.computeColliderMovement(
-			physical.collider,
+			actor.collider,
 			vec3.to.xyz(velocity_with_gravity),
 		)
 
-		const originalPosition = vec3.from.xyz(physical.rigid.translation())
+		const originalPosition = vec3.from.xyz(actor.rigid.translation())
 		const grounded = controller.computedGrounded()
 		const movement = vec3.from.xyz(controller.computedMovement())
 		const newPosition = vec3.add(originalPosition, movement)
 
-		physical.rigid.setNextKinematicTranslation(vec3.to.xyz(newPosition))
+		actor.rigid.setNextKinematicTranslation(vec3.to.xyz(newPosition))
 
 		return {
 			grounded,
