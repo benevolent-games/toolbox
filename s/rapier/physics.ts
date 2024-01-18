@@ -5,12 +5,12 @@ import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 import {Rapier} from "./rapier.js"
 import {labeler} from "../tools/label.js"
-import {vec3} from "../tools/math/vec3.js"
+import {Vec3, vec3} from "../tools/math/vec3.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
 import {BoxSpec, apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
-import {PhysicalCharacterCapsule, PhysContext, Physical, PhysicalDesc, PhysicsOptions, PhysicalBox} from "./types.js"
+import {PhysicalCharacterCapsule, PhysContext, Physical, PhysicalDesc, PhysicsOptions, PhysicalBox, Joint} from "./types.js"
 import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create_character_controller, make_apply_movement_fn} from "./aspects/character.js"
 
 /**
@@ -53,7 +53,7 @@ export class Physics {
 	 * add a rigidbody to the physics simulation,
 	 * which is synchronized with a babylon position and rotation.
 	 */
-	physical(desc: PhysicalDesc) {
+	physical(desc: PhysicalDesc): Physical {
 		const {world, physicals} = this.#context
 		const rigid = this.#context.world.createRigidBody(desc.rigid)
 		const collider = this.#context.world.createCollider(desc.collider, rigid)
@@ -132,6 +132,30 @@ export class Physics {
 			dispose: () => {
 				world.removeCollider(collider, false)
 				world.removeRigidBody(rigid)
+			},
+		}
+	}
+
+	joint_spherical({anchors: [a1, a2], bodies: [b1, b2]}: {
+			anchors: [Vec3, Vec3]
+			bodies: [Rapier.RigidBody, Rapier.RigidBody]
+		}): Joint {
+
+		const {world} = this.#context
+
+		const joint = world.createImpulseJoint(
+			Rapier.JointData.spherical(
+				vec3.to.xyz(a1),
+				vec3.to.xyz(a2),
+			),
+			b1,
+			b2,
+			true,
+		)
+
+		return {
+			dispose: () => {
+				world.removeImpulseJoint(joint, true)
 			},
 		}
 	}

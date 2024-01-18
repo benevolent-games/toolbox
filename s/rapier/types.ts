@@ -36,6 +36,10 @@ export type Physical = {
 	dispose: () => void
 }
 
+export type Joint = {
+	dispose: () => void
+}
+
 export type PhysicalBox = {
 	mesh: Mesh
 } & Physical
