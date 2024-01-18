@@ -1,9 +1,11 @@
 
+import {Ecs} from "../../ecs/ecs.js"
 import {IsoSchema} from "./schema.js"
-import {Core} from "../../core/core.js"
 
-export class Hub {
-	entities = new Core.Entities<IsoSchema>()
+export const hub = new Ecs.Hub<IsoBase, IsoTick, IsoSchema>()
+
+export class IsoBase {
+	entities = hub.entities()
 	canvas = document.createElement("canvas")
 	context = this.canvas.getContext("2d", {
 		alpha: false,
@@ -12,5 +14,7 @@ export class Hub {
 	} as CanvasRenderingContext2DSettings)!
 }
 
-export const {system, rezzer} = Core.configure_systems<IsoSchema, Hub, Core.StdTick>()
+export type IsoTick = {
+	tick: number
+}
 

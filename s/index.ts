@@ -1,5 +1,5 @@
 
-export * from "./common/models/porthole/porthole.js"
+export * from "./common/porthole/porthole.js"
 export * from "./common/theme.js"
 
 export * from "./ecs/ecs.js"

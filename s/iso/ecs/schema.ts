@@ -1,8 +1,8 @@
 
-import {Core} from "../../core/core.js"
+import {Ecs} from "../../ecs/ecs.js"
 import {Vec3} from "../../tools/math/vec3.js"
 
-export type IsoSchema = Core.AsComponentSchema<{
+export type IsoSchema = Ecs.AsSchema<{
 	position: Vec3
 	tile: "cube"
 }>

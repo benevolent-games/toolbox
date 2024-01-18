@@ -1,7 +1,7 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
-import {fix_animation_groups} from "../../dance-studio/models/loader/character/utils/fix_animation_groups.js"
+import {fix_animation_groups} from "../utils/fix_animation_groups.js"
 
 export function make_load_glb_fn(scene: Scene) {
 	return async function load_glb(url: string) {

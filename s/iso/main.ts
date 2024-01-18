@@ -1,32 +1,32 @@
 
 import {register_to_dom} from "@benev/slate"
 
+import {hub} from "./ecs/hub.js"
 import {nexus} from "./nexus.js"
-import {Core} from "../core/core.js"
 import {loop2d} from "../tools/loopy.js"
-import {render_system} from "./ecs/systems/render.js"
+import {renderizer} from "./ecs/systems/render.js"
 import {BenevIso} from "./dom/elements/benev-iso/element.js"
 
 register_to_dom({BenevIso})
 
-console.log("iso")
-
-const {hub} = nexus.context
+const {base} = nexus.context
 
 for (const [x, y] of loop2d([4, 4]))
-	hub.entities.create({tile: "cube", position: [x, y, 0]})
+	base.entities.create({tile: "cube", position: [x, y, 0]})
 
-const executor = new Core.Executor(hub, [
-	render_system,
+const executor = hub.executor(base, base.entities, [
+	renderizer,
 ])
 
 let tick = 0
 
 function tickloop() {
 	tick += 1
-	executor.tick({tick})
+	executor.execute_all_systems({tick})
 	requestAnimationFrame(tickloop)
 }
 
 tickloop()
+
+console.log("iso")
 

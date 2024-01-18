@@ -23,20 +23,7 @@ export default template(async basic => {
 			<div class=content>
 				<p>toolbox helps us make web games. maybe it can help you too.</p>
 				<p>it's on <a href="https://github.com/benevolent-games/toolbox">github</a> and <a href="https://www.npmjs.com/package/@benev/toolbox">npm</a>.</p>
-				<p>toolbox also hosts some standalone apps:</p>
 			</div>
-			<ul>
-				<li>
-					<a href="/dance-studio/">
-						<strong>dance-studio</strong>
-						<span>character animation testing</span>
-					</a>
-					<a href="/humanoid/">
-						<strong>humanoid</strong>
-						<span>character controller gym</span>
-					</a>
-				</li>
-			</ul>
 		`,
 	})
 })
