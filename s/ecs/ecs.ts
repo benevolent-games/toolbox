@@ -99,7 +99,11 @@ export namespace Ecs {
 	export class Executor<Tick, Sc extends Schema> {
 		#index = new Map<System<Tick, Sc>, Map<Id, Partial<Sc>>>()
 
-		constructor(events: EntityEventPubs<Sc>, public systems: System<Tick, Sc>[]) {
+		constructor(
+				events: EntityEventPubs<Sc>,
+				public systems: System<Tick, Sc>[],
+			) {
+
 			for (const system of systems)
 				this.#index.set(system, new Map())
 
@@ -114,8 +118,10 @@ export namespace Ecs {
 			events.onEntityUpdated(() => {})
 
 			events.onEntityDeleted(id => {
-				for (const [,entities] of this.#index)
+				for (const [system, entities] of this.#index) {
+					system.events.onEntityDeleted(id)
 					entities.delete(id)
+				}
 			})
 		}
 
@@ -208,9 +214,11 @@ export namespace Ecs {
 						onEntityCreated() {},
 						onEntityUpdated() {},
 						onEntityDeleted(id) {
-							const lifecycle = map.get(id)!
-							lifecycle.dispose()
-							map.delete(id)
+							const lifecycle = map.get(id)
+							if (lifecycle) {
+								lifecycle.dispose()
+								map.delete(id)
+							}
 						},
 					},
 				})
