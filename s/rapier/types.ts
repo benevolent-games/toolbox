@@ -40,10 +40,11 @@ export namespace Phys {
 	}
 
 	export type Joint = {
+		readonly joint: Rapier.ImpulseJoint
 		dispose: () => void
 	}
 
-	export interface BoxSpec {
+	export type BoxSpec = {
 		scale: Vec3
 		density: number
 		position?: Vec3

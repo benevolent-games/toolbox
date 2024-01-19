@@ -154,6 +154,7 @@ export class Physics {
 		)
 
 		return {
+			joint,
 			dispose: () => {
 				world.removeImpulseJoint(joint, true)
 			},
