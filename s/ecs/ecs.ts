@@ -190,6 +190,70 @@ export namespace Ecs {
 			}
 		)
 
+		behavior = (name: string) => ({
+			select: <K extends keyof Sc>(...kinds: K[]) => ({
+
+				system: (
+						fn: (base: Base) => ExecuteFn<Tick, Sc, K>,
+						events?: EntityEventFns<Sc>,
+					) => (base: Base) => {
+					const fn2 = fn(base)
+					return new System<Tick, Sc, K>({
+						name,
+						kinds,
+						events,
+						execute: fn2,
+					})
+				},
+
+				act: (fn: ProcessorFn<Base, Tick, Sc, K>) => (base: Base) => {
+					const fn2 = fn(base)
+					return new System<Tick, Sc, K>({
+						name,
+						kinds,
+						execute(tick, entities) {
+							const fn3 = fn2(tick)
+							for (const [id, state] of entities)
+								fn3(state, id)
+						},
+					})
+				},
+
+				lifecycle: (fn: LifecycleFn<Base, Tick, Sc, K>) => (base: Base) => {
+					const fn2 = fn(base)
+					const map = new Map<Id, Life<Tick, Sc, K>>()
+					return new System<Tick, Sc, K>({
+						name,
+						kinds,
+						execute(tick, entities) {
+							for (const [id, state] of entities) {
+								const lifecycle = map.get(id)
+
+								// update existing entities
+								if (lifecycle)
+									lifecycle.execute(tick, state, id)
+
+								// initialize entities
+								else
+									map.set(id, fn2(state, id))
+							}
+						},
+						events: {
+							onEntityCreated() {},
+							onEntityUpdated() {},
+							onEntityDeleted(id) {
+								const lifecycle = map.get(id)
+								if (lifecycle) {
+									lifecycle.dispose()
+									map.delete(id)
+								}
+							},
+						},
+					})
+				},
+			})
+		})
+
 		lifecycle = ((name: string) => <K extends keyof Sc>(...kinds: K[]) =>
 			(fn: LifecycleFn<Base, Tick, Sc, K>) => (base: Base) => {
 				const fn2 = fn(base)
