@@ -4,6 +4,7 @@ export * from "./common/theme.js"
 
 export * from "./ecs/ecs.js"
 export * from "./ecs/ecs2.js"
+export * from "./ecs/ecs3.js"
 
 export * from "./impulse/devices/keyboard.js"
 export * from "./impulse/devices/pointer_buttons.js"
