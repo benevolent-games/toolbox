@@ -22,7 +22,7 @@ let tick = 0
 
 function tickloop() {
 	tick += 1
-	executor.execute_all_systems({tick})
+	executor.execute_all({tick})
 	requestAnimationFrame(tickloop)
 }
 
