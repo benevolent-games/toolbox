@@ -1,6 +1,7 @@
 
 import {Pub, pub} from "@benev/slate"
 import {id_counter} from "../tools/id_counter.js"
+import { measure } from "../tools/measure.js"
 
 export namespace Ecs3 {
 	export type Id = number
@@ -55,6 +56,7 @@ export namespace Ecs3 {
 		update<State extends Partial<Sc>>(id: Id, state: State) {
 			this.#map.set(id, state)
 			this.events.updated.publish([id, state as any])
+			return state
 		}
 
 		delete(id: Id) {
@@ -125,6 +127,13 @@ export namespace Ecs3 {
 			const states = this.#map.get(query)!
 			states.delete(id)
 		}
+
+		get(query: Query<Sc>) {
+			const entities = this.#map.get(query)!
+			if (!entities)
+				throw new Error(`failed to fetch entities for query`)
+			return entities
+		}
 	}
 
 	export class Executor<Tick, Sc extends Schema> {
@@ -172,6 +181,29 @@ export namespace Ecs3 {
 				})
 			}
 		}
+
+		#execute(tick: Tick, executable: Executable<Tick, Sc, Passes<Sc>>) {
+			const selections: Selections<Sc, Passes<Sc>> = {}
+
+			for (const [name, pass] of Object.entries(executable.passes)) {
+				const entityMap = this.#index.get(pass.query)
+				const entities = [...entityMap] as any
+				selections[name] = entities
+			}
+
+			executable.exe(tick, selections)
+		}
+
+		execute_all(tick: Tick, diagnostics?: Map<Executable<any, any, any>, number>) {
+			if (diagnostics)
+				for (const executable of this.executables)
+					diagnostics.set(executable, measure(() => {
+						this.#execute(tick, executable)
+					}))
+			else
+				for (const executable of this.executables)
+					this.#execute(tick, executable)
+		}
 	}
 
 	export type QuickPass<Sc extends Schema> = (
@@ -217,6 +249,21 @@ export namespace Ecs3 {
 	}
 
 	export class Hub<Base, Tick, Sc extends Schema> {
+		entities = () => new Entities<Sc>()
+
+		executor = (
+				base: Base,
+				entities: Entities<Sc>,
+				pre_executables: ((base: Base) => Executable<Tick, Sc, any>)[],
+			) => new Executor<Tick, Sc>(
+			entities.events,
+			pre_executables.map(fn => fn(base)),
+		)
+
+		pipeline = (...pre_executables: ((base: Base) => Executable<Tick, Sc, any>)[]) => (
+			pre_executables
+		)
+
 		pass: QuickPass<Sc> = (
 			({query, events = pass_event_noops}) =>
 				new Pass(query, events)
