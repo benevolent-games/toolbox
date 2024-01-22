@@ -1,6 +1,5 @@
 
-import {Pojo, Pub, ob, pub} from "@benev/slate"
-import {measure} from "../tools/measure.js"
+import {Pub, pub} from "@benev/slate"
 import {id_counter} from "../tools/id_counter.js"
 
 export namespace Ecs3 {
@@ -17,26 +16,55 @@ export namespace Ecs3 {
 	}
 	export type Exe<Tick, Sc extends Schema, P extends Passes<Sc>> = (tick: Tick, selections: Selections<Sc, P>) => void
 
-	export namespace Events {
-		export type Payloads<State> = {
-			created: [Id, State]
-			updated: [Id, State]
-			deleted: Id
+	export type EntityPubs<State> = {
+		created: Pub<Entry<State>>
+		updated: Pub<Entry<State>>
+		deleted: Pub<Id>
+	}
+
+	export class Entities<Sc extends Schema> {
+		#id = id_counter()
+		#map = new Map<Id, Partial<Sc>>()
+
+		events: EntityPubs<Sc> = {
+			created: pub(),
+			updated: pub(),
+			deleted: pub(),
 		}
 
-		export type Pubs<State> = {
-			[P in keyof Payloads<State>]: Pub<Payloads<State>[P]>
+		get<Q extends Query<Sc>>(id: Id) {
+			const state = this.#map.get(id)
+
+			if (!state)
+				throw new Error(`entity not found by id "${id}"`)
+
+			return state as Select<Sc, Q>
 		}
 
-		export type Fns<State> = {
-			[P in keyof Payloads<State>]: (p: Payloads<State>[P]) => void
+		has(id: Id) {
+			return this.#map.has(id)
 		}
 
-		export const noops: Fns<Schema> = Object.freeze({
-			created: () => {},
-			updated: () => {},
-			deleted: () => {},
-		})
+		create<State extends Partial<Sc>>(state: State) {
+			const id = this.#id()
+			this.#map.set(id, state)
+			this.events.created.publish([id, state as any])
+			return id
+		}
+
+		update<State extends Partial<Sc>>(id: Id, state: State) {
+			this.#map.set(id, state)
+			this.events.updated.publish([id, state as any])
+		}
+
+		delete(id: Id) {
+			this.#map.delete(id)
+			this.events.deleted.publish(id)
+		}
+
+		*all() {
+			yield* this.#map.entries()
+		}
 	}
 
 	export type PassEvents<State> = {
@@ -44,10 +72,15 @@ export namespace Ecs3 {
 		dispose: (id: Id) => void
 	}
 
+	export const pass_event_noops: PassEvents<Partial<Schema>> = Object.freeze({
+		initialize() {},
+		dispose() {},
+	})
+
 	export class Pass<Sc extends Schema, Q extends Query<Sc>> {
 		constructor(
 			public query: Q,
-			public events: Events.Fns<Select<Sc, Q>>,
+			public events: PassEvents<Select<Sc, Q>>,
 		) {}
 	}
 
@@ -78,6 +111,11 @@ export namespace Ecs3 {
 				this.#map.set(query, new Map())
 		}
 
+		has(query: Query<Sc>, id: Id) {
+			const states = this.#map.get(query)!
+			return states.has(id)
+		}
+
 		set(query: Query<Sc>, id: Id, state: Partial<Sc>) {
 			const states = this.#map.get(query)!
 			states.set(id, state)
@@ -93,7 +131,7 @@ export namespace Ecs3 {
 		#index: Index<Sc>
 
 		constructor(
-				events: Events.Pubs<Partial<Sc>>,
+				entityEvents: EntityPubs<Partial<Sc>>,
 				public executables: Executable<Tick, Sc, Passes<Sc>>[],
 			) {
 
@@ -102,29 +140,35 @@ export namespace Ecs3 {
 
 			this.#index = new Index(queries)
 
-			for (const pass of passes) {
-				events.created(payload => {
+			for (const {query, events: passEvents} of passes) {
+				entityEvents.created(payload => {
 					const [id, state] = payload
-					if (entity_matches_query(state, pass.query)) {
-						this.#index.set(pass.query, id, state)
-						pass.events.created(payload as any)
+					if (entity_matches_query(state, query)) {
+						this.#index.set(query, id, state)
+						passEvents.initialize(id, state as any)
 					}
 				})
 
-				events.updated(payload => {
+				entityEvents.updated(payload => {
 					const [id, state] = payload
-					if (entity_matches_query(state, pass.query)) {
-						this.#index.set(pass.query, id, state)
-						pass.events.updated(payload as any)
-					}
-					else {
-						this.#index.delete(pass.query, id)
+					const matches = entity_matches_query(state, query)
+					const changed = matches !== this.#index.has(query, id)
+
+					if (changed) {
+						if (matches) {
+							this.#index.set(query, id, state)
+							passEvents.initialize(id, state as any)
+						}
+						else {
+							this.#index.delete(query, id)
+							passEvents.dispose(id)
+						}
 					}
 				})
 
-				events.deleted(id => {
-					this.#index.delete(pass.query, id)
-					pass.events.deleted(id)
+				entityEvents.deleted(id => {
+					this.#index.delete(query, id)
+					passEvents.dispose(id)
 				})
 			}
 		}
@@ -133,14 +177,14 @@ export namespace Ecs3 {
 	export type QuickPass<Sc extends Schema> = (
 		<Q extends Query<Sc>>({}: {
 			query: Q
-			events?: Events.Fns<Select<Sc, Q>>
+			events?: PassEvents<Select<Sc, Q>>
 		}) => Pass<Sc, Q>
 	)
 
 	export type Ret<Tick, Sc extends Schema> = {
 		pass: QuickPass<Sc>,
 		passes: <P extends Passes<Sc>>(passes: P) => {
-			exe: (exe: Exe<Tick, Sc, P>) => Executable<Tick, Sc, P>
+			execute: (exe: Exe<Tick, Sc, P>) => Executable<Tick, Sc, P>
 		}
 	}
 
@@ -174,7 +218,7 @@ export namespace Ecs3 {
 
 	export class Hub<Base, Tick, Sc extends Schema> {
 		pass: QuickPass<Sc> = (
-			({query, events = Events.noops}) =>
+			({query, events = pass_event_noops}) =>
 				new Pass(query, events)
 		)
 
@@ -182,7 +226,7 @@ export namespace Ecs3 {
 			complex: (fn: Fns.Complex<Base, Tick, Sc>) => (base: Base) => fn(base)({
 				pass: this.pass,
 				passes: passes => ({
-					exe: exe => new Executable(name, passes, exe),
+					execute: exe => new Executable(name, passes, exe),
 				}),
 			}),
 
@@ -191,7 +235,7 @@ export namespace Ecs3 {
 					const fn2 = fn(base)
 
 					const passes = {
-						only: new Pass<Sc, Q>(query, Events.noops)
+						only: new Pass<Sc, Q>(query, pass_event_noops)
 					} satisfies Passes<Sc>
 
 					return new Executable<Tick, Sc, typeof passes>(
@@ -211,9 +255,10 @@ export namespace Ecs3 {
 
 					const passes = {
 						only: new Pass<Sc, Q>(query, {
-							created() {},
-							updated() {},
-							deleted(id) {
+							initialize(id, state) {
+								map.set(id, fn2(state, id))
+							},
+							dispose(id) {
 								const lifecycle = map.get(id)
 								if (lifecycle) {
 									lifecycle.dispose()
@@ -227,17 +272,8 @@ export namespace Ecs3 {
 						name,
 						passes,
 						(tick, selections) => {
-							for (const [id, state] of selections.only) {
-								const lifecycle = map.get(id)
-
-								// update existing entities
-								if (lifecycle)
-									lifecycle.execute(tick, state, id)
-
-								// initialize entities
-								else
-									map.set(id, fn2(state, id))
-							}
+							for (const [id, state] of selections.only)
+								map.get(id)!.execute(tick, state, id)
 						},
 					)
 				},
@@ -249,61 +285,59 @@ export namespace Ecs3 {
 /////////////////////////////
 /////////////////////////////
 
-// type MyBase = {}
-// type MyTick = {}
-// type MySchema = Ecs3.AsSchema<{
-// 	alpha: number
-// 	bravo: boolean
-// 	charlie: string
-// }>
+type MyBase = {}
+type MyTick = {}
+type MySchema = Ecs3.AsSchema<{
+	alpha: number
+	bravo: boolean
+	charlie: string
+}>
 
-// const hub = new Ecs3.Hub<MyBase, MyTick, MySchema>()
+const hub = new Ecs3.Hub<MyBase, MyTick, MySchema>()
 
-// const lol = (hub
-// 	.behavior("lol")
-// 	.select("alpha", "bravo")
-// 	.processor(base => tick => state => {
-// 		state.alpha
-// 		state.bravo
-// 	})
-// )
+const lol = (hub
+	.behavior("lol")
+	.select("alpha", "bravo")
+	.processor(base => tick => state => {
+		state.alpha
+		state.bravo
+	})
+)
 
-// const lolx = (hub
-// 	.behavior("lolx")
-// 	.select("alpha", "bravo")
-// 	.lifecycle(base => (init, id) => {
-// 		return {
-// 			execute(tick, state) {},
-// 			dispose() {},
-// 		}
-// 	})
-// )
+const lolx = (hub
+	.behavior("lolx")
+	.select("alpha", "bravo")
+	.lifecycle(base => (init, id) => {
+		return {
+			execute(tick, state) {},
+			dispose() {},
+		}
+	})
+)
 
-// const lol2 = (hub
-// 	.behavior("rofl")
-// 	.complex(base => ({passes, pass}) => {
-// 		let map = new Map()
-// 		return passes({
-// 			alphas: pass({
-// 				query: ["alpha"],
-// 				events: Ecs3.Events.noops,
-// 			}),
-// 			others: pass({
-// 				query: ["bravo", "charlie"],
-// 				events: {
-// 					created: ([id, state]) => {
-// 						state.bravo
-// 					},
-// 					updated: () => {},
-// 					deleted: () => {},
-// 				},
-// 			}),
-// 		}).exe((tick, selections) => {
-// 			selections.alphas
-// 			// selections.thisShouldFail
-// 		})
-// 	})
-// )
+const lol2 = (hub
+	.behavior("rofl")
+	.complex(base => ({passes, pass}) => {
+		let map = new Map()
+		return passes({
+			alphas: pass({
+				query: ["alpha"],
+			}),
+			others: pass({
+				query: ["bravo", "charlie"],
+				events: {
+					initialize(id, state) {
+						state.bravo
+					},
+					dispose() {},
+				},
+			}),
+		}).execute((_tick, selections) => {
+			selections.alphas
+			// selections.thisShouldFail
+		})
+	})
+)
 
 
 
