@@ -10,6 +10,7 @@ import {Vec3, vec3} from "../tools/math/vec3.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
+import {obtain_babylon_quaternion_from_mesh} from "../tools/obtain_babylon_quaternion_from_mesh.js"
 import {apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
 import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create_character_controller, make_apply_movement_fn} from "./aspects/character.js"
 
@@ -121,14 +122,17 @@ export class Physics {
 	/**
 	 * turn a mesh into a fixed boundary.
 	 */
-	trimesh(mesh: Mesh | InstancedMesh) {
+	trimesh(mesh: Mesh | InstancedMesh): Phys.TrimeshActor {
 		const {world} = this.#context
 		const {rigid, collider} = make_trimesh_rigid_and_collider(
 			this.#context, mesh
 		)
 		return {
+			mesh,
 			rigid,
 			collider,
+			position: mesh.position,
+			rotation: obtain_babylon_quaternion_from_mesh(mesh),
 			dispose: () => {
 				world.removeCollider(collider, false)
 				world.removeRigidBody(rigid)

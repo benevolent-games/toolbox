@@ -1,8 +1,8 @@
 
-import {Ecs} from "../../ecs/ecs.js"
+import {Ecs3} from "../../ecs/ecs3.js"
 import {IsoSchema} from "./schema.js"
 
-export const hub = new Ecs.Hub<IsoBase, IsoTick, IsoSchema>()
+export const hub = new Ecs3.Hub<IsoBase, IsoTick, IsoSchema>()
 
 export class IsoBase {
 	entities = hub.entities()

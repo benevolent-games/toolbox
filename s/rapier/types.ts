@@ -6,6 +6,7 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {DebugColors, debug_colors} from "../tools/debug_colors.js"
+import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 export namespace Phys {
@@ -62,6 +63,10 @@ export namespace Phys {
 			movement: Vec3
 			grounded: boolean
 		}
+	} & Actor
+
+	export type TrimeshActor = {
+		mesh: Mesh | InstancedMesh
 	} & Actor
 }
 
