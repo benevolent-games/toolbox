@@ -125,7 +125,7 @@ export class Physics {
 	trimesh(mesh: Mesh | InstancedMesh): Phys.TrimeshActor {
 		const {world} = this.#context
 		const {rigid, collider} = make_trimesh_rigid_and_collider(
-			this.#context, mesh
+			this.#context, mesh,
 		)
 		return {
 			mesh,
@@ -138,6 +138,19 @@ export class Physics {
 				world.removeRigidBody(rigid)
 			},
 		}
+	}
+
+	fixture({position}: {
+			position: Vec3
+		}) {
+		const {world} = this.#context
+		const rigid = world.createRigidBody(
+			Rapier.RigidBodyDesc
+				.fixed()
+				.setTranslation(...position)
+		)
+		const dispose = () => world.removeRigidBody(rigid)
+		return {rigid, dispose}
 	}
 
 	joint_spherical({anchors: [a1, a2], bodies: [b1, b2]}: {
