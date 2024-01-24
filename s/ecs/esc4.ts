@@ -130,45 +130,76 @@ export namespace Ecs4 {
 		}
 	}
 
-	export class Executor<Base, Tick, Sc extends Schema> {
+	export class Executable<Tick, Sc extends Schema> {
 		constructor(
-				public entities: Entities<Sc>,
-				public queries: Query<Sc, keyof Sc>[],
-			) {
+			public behavior: Behavior<Tick, Sc, keyof Sc>,
+			public parentSystem: System<any, Tick, Sc>,
+		) {}
+	}
+
+	export function extract_executables<Base, Tick, Sc extends Schema>(
+			base: Base,
+			system: System<Base, Tick, Sc>,
+		) {
+
+		const executables: Executable<Tick, Sc>[] = []
+
+		function recurse(units: Unit<Base, Tick, Sc>[], parent: System<Base, Tick, Sc>) {
+			for (const unit of units) {
+				if (unit instanceof Behavior)
+					executables.push(new Executable(unit, parent))
+				else if (unit instanceof System)
+					recurse(unit.resolver(base), unit)
+				else
+					throw new Error(`unknown unit in system "${parent.name}"`)
+			}
 		}
 
-		execute(tick: Tick) {}
+		recurse(system.resolver(base), system)
+		return executables
+	}
+
+	export class Executor<Base, Tick, Sc extends Schema> {
+		#executables: Executable<Tick, Sc>[] = []
+
+		constructor(
+				base: Base,
+				system: System<Base, Tick, Sc>,
+			) {
+			this.#executables = extract_executables(base, system)
+		}
+
+		execute(tick: Tick) {
+			for (const executable of this.#executables) {
+			}
+		}
 	}
 
 	export class System<Base, Tick, Sc extends Schema> {
-		units: Unit<Base, Tick, Sc>[]
-
 		constructor(
-				public name: string,
-				resolver: () => Unit<Base, Tick, Sc>[],
-			) {
-			this.units = resolver()
-		}
+			public name: string,
+			public resolver: (base: Base) => Unit<Base, Tick, Sc>[],
+		) {}
 	}
 
-	export type BehaviorFn<Base, Tick, Sc extends Schema> = (
-		(base: Base) => (tick: Tick) => void
+	export type BehaviorFn<Tick> = (
+		(tick: Tick) => void
 	)
 
-	export type ProcessorFn<Base, Tick, Sc extends Schema, K extends keyof Sc> = (
-		(base: Base) => (tick: Tick) => (state: Select<Sc, K>, id: Id) => void
+	export type ProcessorFn<Tick, Sc extends Schema, K extends keyof Sc> = (
+		(tick: Tick) => (state: Select<Sc, K>, id: Id) => void
 	)
 
-	export class Behavior<Base, Tick, Sc extends Schema, K extends keyof Sc> {
+	export class Behavior<Tick, Sc extends Schema, K extends keyof Sc> {
 		constructor(
 			public name: string,
 			public query: Query<Sc, K>,
-			public fn: BehaviorFn<Base, Tick, Sc>,
+			public fn: BehaviorFn<Tick>,
 		) {}
 	}
 
 	export type Unit<Base, Tick, Sc extends Schema> = (
-		System<Base, Tick, Sc> | Behavior<Base, Tick, Sc, keyof Sc>
+		System<Base, Tick, Sc> | Behavior<Tick, Sc, keyof Sc>
 	)
 
 	export type Life<Tick, Sc extends Schema, K extends keyof Sc> = {
@@ -176,56 +207,54 @@ export namespace Ecs4 {
 		end: () => void
 	}
 
-	export type LifeFn<Base, Tick, Sc extends Schema, K extends keyof Sc> = (
-		(base: Base) => (init: Select<Sc, K>, id: Id) => Life<Tick, Sc, K>
+	export type LifeFn<Tick, Sc extends Schema, K extends keyof Sc> = (
+		(init: Select<Sc, K>, id: Id) => Life<Tick, Sc, K>
 	)
 
 	export class Hub<Base, Tick, Sc extends Schema> {
-		constructor(public entities: Entities<Sc>) {}
+		entities = () => new Entities<Sc>()
 
-		system = (name: string, resolver: () => Unit<Base, Tick, Sc>[]) => (
+		system = (name: string, resolver: (base: Base) => Unit<Base, Tick, Sc>[]) => (
 			new System<Base, Tick, Sc>(name, resolver)
 		)
 
 		behavior = (name: string) => ({
 			query: <K extends keyof Sc>(...kinds: K[]) => ({
 
-				processor: (fn: ProcessorFn<Base, Tick, Sc, K>) => {
+				processor: (fn: ProcessorFn<Tick, Sc, K>) => {
 					const query = new Query<Sc, K>(kinds)
-					const behaviorFn: BehaviorFn<Base, Tick, Sc> = base => {
-						const fn2 = fn(base)
-						return tick => {
-							const fn3 = fn2(tick)
-							for (const [id, state] of query.matches)
-								fn3(state as Select<Sc, K>, id)
-						}
+					const behaviorFn: BehaviorFn<Tick> = tick => {
+						const fn2 = fn(tick)
+						for (const [id, state] of query.matches)
+							fn2(state as Select<Sc, K>, id)
 					}
 					return new Behavior(name, query, behaviorFn)
 				},
 
-				lifecycle: (fn: LifeFn<Base, Tick, Sc, K>) => {
+				lifecycle: (fn: LifeFn<Tick, Sc, K>) => {
 					const query = new Query<Sc, K>(kinds)
-					const behaviorFn: BehaviorFn<Base, Tick, Sc> = base => {
-						const fn2 = fn(base)
-						const map = new Map<Id, Life<Tick, Sc, K>>()
-						query.onMatch(([id, state]) => {
-							const life = fn2(state as Select<Sc, K>, id)
-							map.set(id, life)
-						})
-						query.onUnmatch(id => {
-							const life = map.get(id)
-							if (life) {
-								life.end()
-								map.delete(id)
-							}
-						})
-						return tick => {
-							for (const [id, state] of query.matches) {
-								const life = map.get(id)!
-								life.tick(tick, state as Select<Sc, K>)
-							}
+					const map = new Map<Id, Life<Tick, Sc, K>>()
+
+					query.onMatch(([id, state]) => {
+						const life = fn(state as Select<Sc, K>, id)
+						map.set(id, life)
+					})
+
+					query.onUnmatch(id => {
+						const life = map.get(id)
+						if (life) {
+							life.end()
+							map.delete(id)
+						}
+					})
+
+					const behaviorFn: BehaviorFn<Tick> = tick => {
+						for (const [id, state] of query.matches) {
+							const life = map.get(id)!
+							life.tick(tick, state as Select<Sc, K>)
 						}
 					}
+
 					return new Behavior(name, query, behaviorFn)
 				},
 			}),
@@ -235,19 +264,59 @@ export namespace Ecs4 {
 
 /////////////////////////////
 
-// type Base = {}
-// type Tick = {}
-// type MySchema = {
-// 	alpha: number
-// 	bravo: string
-// }
+type MyBase = {}
+type MyTick = {}
+type MySchema = {
+	alpha: number
+	bravo: string
+}
 
-// const hub = new Ecs4.Hub<Base, Tick, MySchema>()
+const hub = new Ecs4.Hub<MyBase, MyTick, MySchema>()
+const {system, behavior} = hub
 
-// const entities = hub.entities()
-// const query = entities.query("alpha")
+const systems = system("humanoid", _base => [
+	behavior("increment alpha")
+		.query("alpha")
+		.processor(_tick => state => {
+			state.alpha += 1
+		}),
 
-// const {system, behavior} = hub
+	behavior("cool dynamics")
+		.query("alpha", "bravo")
+		.lifecycle(_init => {
+			return {
+				tick(_tick, _state) {},
+				end() {},
+			}
+		}),
+
+	system("amazing subsystem", _base => {
+		const map = new Map()
+		return [
+			behavior("part one")
+				.query("alpha")
+				.lifecycle(_init => {
+					map
+					return {
+						tick(_tick, _state) {},
+						end() {},
+					}
+				}),
+
+			behavior("part two")
+				.query("alpha", "bravo")
+				.lifecycle(_init => {
+					map
+					return {
+						tick(_tick, _state) {},
+						end() {},
+					}
+				}),
+		]
+	})
+])
+
+const entities = hub.entities()
 
 /*
 
