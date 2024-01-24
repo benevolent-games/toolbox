@@ -1,7 +1,7 @@
 
 import {Pub, pub} from "@benev/slate"
+import {measure} from "../tools/measure.js"
 import {id_counter} from "../tools/id_counter.js"
-import { measure } from "../tools/measure.js"
 
 export namespace Ecs3 {
 	export type Id = number
@@ -46,14 +46,14 @@ export namespace Ecs3 {
 			return this.#map.has(id)
 		}
 
-		create<State extends Partial<Sc>>(state: State) {
+		create(state: Partial<Sc>) {
 			const id = this.#id()
 			this.#map.set(id, state)
 			this.events.created.publish([id, state as any])
 			return id
 		}
 
-		update<State extends Partial<Sc>>(id: Id, state: State) {
+		update(id: Id, state: Partial<Sc>) {
 			this.#map.set(id, state)
 			this.events.updated.publish([id, state as any])
 			return state
@@ -225,6 +225,11 @@ export namespace Ecs3 {
 		dispose: () => void
 	}
 
+	export const no_life = Object.freeze({
+		execute() {},
+		dispose() {},
+	})
+
 	export namespace Fns {
 		export type Processor<Base, Tick, Sc extends Schema, Q extends Query<Sc>> = (
 			(base: Base) => (tick: Tick) => (state: Select<Sc, Q>, id: Id) => void
@@ -332,235 +337,57 @@ export namespace Ecs3 {
 /////////////////////////////
 /////////////////////////////
 
-type MyBase = {}
-type MyTick = {}
-type MySchema = Ecs3.AsSchema<{
-	alpha: number
-	bravo: boolean
-	charlie: string
-}>
-
-const hub = new Ecs3.Hub<MyBase, MyTick, MySchema>()
-
-const lol = (hub
-	.behavior("lol")
-	.select("alpha", "bravo")
-	.processor(base => tick => state => {
-		state.alpha
-		state.bravo
-	})
-)
-
-const lolx = (hub
-	.behavior("lolx")
-	.select("alpha", "bravo")
-	.lifecycle(base => (init, id) => {
-		return {
-			execute(tick, state) {},
-			dispose() {},
-		}
-	})
-)
-
-const lol2 = (hub
-	.behavior("rofl")
-	.complex(base => ({passes, pass}) => {
-		let map = new Map()
-		return passes({
-			alphas: pass({
-				query: ["alpha"],
-			}),
-			others: pass({
-				query: ["bravo", "charlie"],
-				events: {
-					initialize(id, state) {
-						state.bravo
-					},
-					dispose() {},
-				},
-			}),
-		}).execute((_tick, selections) => {
-			selections.alphas
-			// selections.thisShouldFail
-		})
-	})
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// type MyBase = {}
+// type MyTick = {}
+// type MySchema = Ecs3.AsSchema<{
+// 	alpha: number
+// 	bravo: boolean
+// 	charlie: string
+// }>
+
+// const hub = new Ecs3.Hub<MyBase, MyTick, MySchema>()
+
+// const lol = (hub
+// 	.behavior("lol")
+// 	.select("alpha", "bravo")
+// 	.processor(base => tick => state => {
+// 		state.alpha
+// 		state.bravo
+// 	})
+// )
+
+// const lolx = (hub
+// 	.behavior("lolx")
+// 	.select("alpha", "bravo")
+// 	.lifecycle(base => (init, id) => {
+// 		return {
+// 			execute(tick, state) {},
+// 			dispose() {},
+// 		}
+// 	})
+// )
+
+// const lol2 = (hub
+// 	.behavior("rofl")
+// 	.complex(base => ({passes, pass}) => {
+// 		let map = new Map()
+// 		return passes({
+// 			alphas: pass({
+// 				query: ["alpha"],
+// 			}),
+// 			others: pass({
+// 				query: ["bravo", "charlie"],
+// 				events: {
+// 					initialize(id, state) {
+// 						state.bravo
+// 					},
+// 					dispose() {},
+// 				},
+// 			}),
+// 		}).execute((_tick, selections) => {
+// 			selections.alphas
+// 			// selections.thisShouldFail
+// 		})
+// 	})
+// )
 

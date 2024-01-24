@@ -19,6 +19,11 @@ import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create
  */
 export class Physics {
 	#context: Phys.Context
+	readonly world: Rapier.World
+
+	get colors() {
+		return this.#context.colors
+	}
 
 	constructor({
 			hz,
@@ -28,7 +33,7 @@ export class Physics {
 			contact_force_threshold = 0.2,
 		}: Phys.Options) {
 
-		const world = new Rapier.World(vec3.to.xyz(gravity))
+		const world = this.world = new Rapier.World(vec3.to.xyz(gravity))
 		world.timestep = 1 / hz
 
 		this.#context = {
@@ -81,7 +86,7 @@ export class Physics {
 		apply_position_and_rotation(spec, physical)
 		synchronize_to_babylon_position_and_rotation(physical)
 		const mesh = create_babylon_mesh_for_box(
-			this.#context, spec, physical, this.#context.colors.red,
+			this.#context, spec, physical,
 		)
 		return {
 			...physical,

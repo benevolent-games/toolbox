@@ -48,6 +48,8 @@ export namespace Phys {
 	export type BoxSpec = {
 		scale: Vec3
 		density: number
+		linearDamping: number
+		angularDamping: number
 		position?: Vec3
 		rotation?: Quat
 		material?: Material
