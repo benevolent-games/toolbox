@@ -1,4 +1,7 @@
 
+export * from "./babyloid/types.js"
+export * from "./babyloid/helpers.js"
+
 export * from "./common/porthole/porthole.js"
 export * from "./common/theme.js"
 

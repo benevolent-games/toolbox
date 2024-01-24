@@ -19,6 +19,7 @@ import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create
  */
 export class Physics {
 	#context: Phys.Context
+	readonly world: Rapier.World
 
 	constructor({
 			hz,
@@ -28,7 +29,7 @@ export class Physics {
 			contact_force_threshold = 0.2,
 		}: Phys.Options) {
 
-		const world = new Rapier.World(vec3.to.xyz(gravity))
+		const world = this.world = new Rapier.World(vec3.to.xyz(gravity))
 		world.timestep = 1 / hz
 
 		this.#context = {

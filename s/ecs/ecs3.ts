@@ -225,6 +225,11 @@ export namespace Ecs3 {
 		dispose: () => void
 	}
 
+	export const no_life = Object.freeze({
+		execute() {},
+		dispose() {},
+	})
+
 	export namespace Fns {
 		export type Processor<Base, Tick, Sc extends Schema, Q extends Query<Sc>> = (
 			(base: Base) => (tick: Tick) => (state: Select<Sc, Q>, id: Id) => void
