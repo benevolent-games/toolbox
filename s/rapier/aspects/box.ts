@@ -6,11 +6,18 @@ import {vec3} from "../../tools/math/vec3.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
-export function box_desc(context: Phys.Context, spec: Phys.BoxSpec): Phys.ActorDesc {
-	return {
-		rigid: Rapier.RigidBodyDesc
-			.dynamic(),
+export function box_desc(
+		context: Phys.Context,
+		spec: Phys.BoxSpec,
+	): Phys.ActorDesc {
 
+	const rigid = Rapier.RigidBodyDesc
+		.dynamic()
+		.setLinearDamping(spec.linearDamping ?? 0)
+		.setAngularDamping(spec.angularDamping ?? 0)
+
+	return {
+		rigid,
 		collider: Rapier.ColliderDesc
 			.cuboid(...vec3.divideBy(spec.scale, 2))
 			.setDensity(spec.density)
@@ -38,7 +45,6 @@ export function create_babylon_mesh_for_box(
 		{label, scene}: Phys.Context,
 		spec: Phys.BoxSpec,
 		actor: Phys.Actor,
-		material: Material,
 	) {
 
 	const [width, height, depth] = spec.scale
@@ -51,7 +57,11 @@ export function create_babylon_mesh_for_box(
 
 	mesh.position = actor.position
 	mesh.rotationQuaternion = actor.rotation
-	mesh.material = material
+
+	if (spec.material)
+		mesh.material = spec.material
+	else
+		mesh.visibility = 0
 
 	return mesh
 }

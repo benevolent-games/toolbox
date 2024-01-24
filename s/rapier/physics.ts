@@ -21,6 +21,10 @@ export class Physics {
 	#context: Phys.Context
 	readonly world: Rapier.World
 
+	get colors() {
+		return this.#context.colors
+	}
+
 	constructor({
 			hz,
 			scene,
@@ -82,7 +86,7 @@ export class Physics {
 		apply_position_and_rotation(spec, physical)
 		synchronize_to_babylon_position_and_rotation(physical)
 		const mesh = create_babylon_mesh_for_box(
-			this.#context, spec, physical, this.#context.colors.red,
+			this.#context, spec, physical,
 		)
 		return {
 			...physical,
