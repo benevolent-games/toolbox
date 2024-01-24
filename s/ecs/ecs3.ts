@@ -1,7 +1,7 @@
 
 import {Pub, pub} from "@benev/slate"
+import {measure} from "../tools/measure.js"
 import {id_counter} from "../tools/id_counter.js"
-import { measure } from "../tools/measure.js"
 
 export namespace Ecs3 {
 	export type Id = number
@@ -337,235 +337,57 @@ export namespace Ecs3 {
 /////////////////////////////
 /////////////////////////////
 
-type MyBase = {}
-type MyTick = {}
-type MySchema = Ecs3.AsSchema<{
-	alpha: number
-	bravo: boolean
-	charlie: string
-}>
-
-const hub = new Ecs3.Hub<MyBase, MyTick, MySchema>()
-
-const lol = (hub
-	.behavior("lol")
-	.select("alpha", "bravo")
-	.processor(base => tick => state => {
-		state.alpha
-		state.bravo
-	})
-)
-
-const lolx = (hub
-	.behavior("lolx")
-	.select("alpha", "bravo")
-	.lifecycle(base => (init, id) => {
-		return {
-			execute(tick, state) {},
-			dispose() {},
-		}
-	})
-)
-
-const lol2 = (hub
-	.behavior("rofl")
-	.complex(base => ({passes, pass}) => {
-		let map = new Map()
-		return passes({
-			alphas: pass({
-				query: ["alpha"],
-			}),
-			others: pass({
-				query: ["bravo", "charlie"],
-				events: {
-					initialize(id, state) {
-						state.bravo
-					},
-					dispose() {},
-				},
-			}),
-		}).execute((_tick, selections) => {
-			selections.alphas
-			// selections.thisShouldFail
-		})
-	})
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// type MyBase = {}
+// type MyTick = {}
+// type MySchema = Ecs3.AsSchema<{
+// 	alpha: number
+// 	bravo: boolean
+// 	charlie: string
+// }>
+
+// const hub = new Ecs3.Hub<MyBase, MyTick, MySchema>()
+
+// const lol = (hub
+// 	.behavior("lol")
+// 	.select("alpha", "bravo")
+// 	.processor(base => tick => state => {
+// 		state.alpha
+// 		state.bravo
+// 	})
+// )
+
+// const lolx = (hub
+// 	.behavior("lolx")
+// 	.select("alpha", "bravo")
+// 	.lifecycle(base => (init, id) => {
+// 		return {
+// 			execute(tick, state) {},
+// 			dispose() {},
+// 		}
+// 	})
+// )
+
+// const lol2 = (hub
+// 	.behavior("rofl")
+// 	.complex(base => ({passes, pass}) => {
+// 		let map = new Map()
+// 		return passes({
+// 			alphas: pass({
+// 				query: ["alpha"],
+// 			}),
+// 			others: pass({
+// 				query: ["bravo", "charlie"],
+// 				events: {
+// 					initialize(id, state) {
+// 						state.bravo
+// 					},
+// 					dispose() {},
+// 				},
+// 			}),
+// 		}).execute((_tick, selections) => {
+// 			selections.alphas
+// 			// selections.thisShouldFail
+// 		})
+// 	})
+// )
 
