@@ -46,14 +46,14 @@ export namespace Ecs3 {
 			return this.#map.has(id)
 		}
 
-		create<State extends Partial<Sc>>(state: State) {
+		create(state: Partial<Sc>) {
 			const id = this.#id()
 			this.#map.set(id, state)
 			this.events.created.publish([id, state as any])
 			return id
 		}
 
-		update<State extends Partial<Sc>>(id: Id, state: State) {
+		update(id: Id, state: Partial<Sc>) {
 			this.#map.set(id, state)
 			this.events.updated.publish([id, state as any])
 			return state
