@@ -252,7 +252,7 @@ export namespace Ecs4 {
 		}
 
 		behavior = (name: string) => ({
-			query: <K extends keyof Sc>(...kinds: K[]) => ({
+			select: <K extends keyof Sc>(...kinds: K[]) => ({
 
 				processor: (fn: ProcessorFn<Tick, Sc, K>) => {
 					const query = new Query<Sc, K>(kinds)

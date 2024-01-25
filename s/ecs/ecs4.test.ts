@@ -17,7 +17,7 @@ export default <Suite>{
 		const {system, behavior, setup} = testHub()
 		const systems = system("test system", () => [
 			behavior("increase alpha")
-				.query("alpha")
+				.select("alpha")
 				.processor(() => state => state.alpha += 1),
 		])
 		const {entities, executor} = setup({}, systems)
@@ -32,13 +32,13 @@ export default <Suite>{
 
 		const subsystem = system("test subsystem", () => [
 			behavior("bravo")
-				.query("bravo")
+				.select("bravo")
 				.processor(() => state => state.bravo += 1)
 		])
 
 		const systems = system("test system", () => [
 			behavior("increase alpha")
-				.query("alpha")
+				.select("alpha")
 				.processor(() => state => {
 					state.alpha += 1
 				}),
@@ -60,7 +60,7 @@ export default <Suite>{
 		const counts = {starts: 0, ticks: 0, ends: 0}
 		const systems = system("test system", () => [
 			behavior("increase alpha")
-				.query("alpha")
+				.select("alpha")
 				.lifecycle(() => {
 					counts.starts += 1
 					return {
@@ -97,7 +97,7 @@ export default <Suite>{
 		const counts = {starts: 0, ticks: 0, ends: 0}
 		const systems = system("test system", () => [
 			behavior("increase alpha")
-				.query("alpha")
+				.select("alpha")
 				.lifecycle(() => {
 					counts.starts += 1
 					return {
