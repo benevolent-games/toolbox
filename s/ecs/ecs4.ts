@@ -234,6 +234,11 @@ export namespace Ecs4 {
 		end: () => void
 	}
 
+	export const no_life: Life<any, any, any> = Object.freeze({
+		tick() {},
+		end() {},
+	})
+
 	export type LifeFn<Tick, Sc extends Schema, K extends keyof Sc> = (
 		(init: Select<Sc, K>, id: Id) => Life<Tick, Sc, K>
 	)
