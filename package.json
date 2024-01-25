@@ -18,7 +18,8 @@
 		"build": "turtle-ts-app && turtle-ts-app-bundle x/iso/main.js && turtle-web && npm run links",
 		"start": "turtle-standard-watch",
 		"links": "ln -s \"$(realpath temp)\" x/temp",
-		"test": "cynic node x/tests.test.js"
+		"test": "cynic node x/tests.test.js",
+		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
 		"@benev/slate": "^0.1.0-x.6",
