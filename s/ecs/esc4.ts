@@ -1,6 +1,8 @@
 
 import {pub} from "@benev/slate"
+import {measure} from "../tools/measure.js"
 import {id_counter} from "../tools/id_counter.js"
+import {RunningAverage} from "../tools/running_average.js"
 
 export namespace Ecs4 {
 	export type Id = number
@@ -130,55 +132,72 @@ export namespace Ecs4 {
 		}
 	}
 
-	export class Executable<Tick, Sc extends Schema> {
+	export class Executor<Base, Tick, Sc extends Schema> {
+		system: System<Base, Tick, Sc>
+		diagnostics = new Map<Unit<any, any, any>, RunningAverage>()
+
 		constructor(
-			public behavior: Behavior<Tick, Sc, keyof Sc>,
-			public parentSystem: System<any, Tick, Sc>,
-		) {}
-	}
+				entities: Entities<Sc>,
+				base: Base,
+				preSystem: PreSystem<Base, Tick, Sc>,
+			) {
 
-	export function extract_executables<Base, Tick, Sc extends Schema>(
-			base: Base,
-			system: System<Base, Tick, Sc>,
-		) {
+			const queries: Query<Sc, keyof Sc>[] = []
 
-		const executables: Executable<Tick, Sc>[] = []
+			const recurse = (preSystem: PreSystem<Base, Tick, Sc>) => {
+				const preUnits = preSystem.resolver(base)
+				const units: Unit<Base, Tick, Sc>[] = []
 
-		function recurse(units: Unit<Base, Tick, Sc>[], parent: System<Base, Tick, Sc>) {
-			for (const unit of units) {
-				if (unit instanceof Behavior)
-					executables.push(new Executable(unit, parent))
-				else if (unit instanceof System)
-					recurse(unit.resolver(base), unit)
-				else
-					throw new Error(`unknown unit in system "${parent.name}"`)
+				for (const preUnit of preUnits) {
+					if (preUnit instanceof PreSystem) {
+						const unit = recurse(preUnit)
+						units.push(unit)
+						this.diagnostics.set(unit, new RunningAverage())
+					}
+					else if (preUnit instanceof Behavior) {
+						units.push(preUnit)
+						queries.push(preUnit.query)
+						this.diagnostics.set(preUnit, new RunningAverage())
+					}
+					else {
+						throw new Error(`invalid kind of unit in system "${preSystem.name}"`)
+					}
+				}
+
+				return new System(preSystem.name, units)
 			}
+
+			synchronize_queries_with_entities(entities, queries)
+			this.system = recurse(preSystem)
 		}
 
-		recurse(system.resolver(base), system)
-		return executables
-	}
-
-	export class Executor<Base, Tick, Sc extends Schema> {
-		#executables: Executable<Tick, Sc>[] = []
-
-		constructor(
-				base: Base,
-				system: System<Base, Tick, Sc>,
-			) {
-			this.#executables = extract_executables(base, system)
+		#recurse(tick: Tick, system: System<Base, Tick, Sc>) {
+			for (const unit of system.units) {
+				const average = this.diagnostics.get(unit)!
+				if (unit instanceof Behavior)
+					average.add(measure(() => unit.fn(tick)))
+				else if (unit instanceof System)
+					average.add(measure(() => this.#recurse(tick, unit)))
+				else throw new Error(`invalid kind of unit in system "${system.name}"`)
+			}
 		}
 
 		execute(tick: Tick) {
-			for (const executable of this.#executables) {
-			}
+			this.#recurse(tick, this.system)
 		}
 	}
 
 	export class System<Base, Tick, Sc extends Schema> {
 		constructor(
 			public name: string,
-			public resolver: (base: Base) => Unit<Base, Tick, Sc>[],
+			public units: Unit<Base, Tick, Sc>[],
+		) {}
+	}
+
+	export class PreSystem<Base, Tick, Sc extends Schema> {
+		constructor(
+			public name: string,
+			public resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]
 		) {}
 	}
 
@@ -202,6 +221,10 @@ export namespace Ecs4 {
 		System<Base, Tick, Sc> | Behavior<Tick, Sc, keyof Sc>
 	)
 
+	export type PreUnit<Base, Tick, Sc extends Schema> = (
+		PreSystem<Base, Tick, Sc> | Behavior<Tick, Sc, keyof Sc>
+	)
+
 	export type Life<Tick, Sc extends Schema, K extends keyof Sc> = {
 		tick: (tick: Tick, state: Select<Sc, K>) => void
 		end: () => void
@@ -212,11 +235,18 @@ export namespace Ecs4 {
 	)
 
 	export class Hub<Base, Tick, Sc extends Schema> {
-		entities = () => new Entities<Sc>()
-
-		system = (name: string, resolver: (base: Base) => Unit<Base, Tick, Sc>[]) => (
-			new System<Base, Tick, Sc>(name, resolver)
+		system = (name: string, resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]) => (
+			new PreSystem<Base, Tick, Sc>(name, resolver)
 		)
+
+		setup = (
+				base: Base,
+				preSystem: PreSystem<Base, Tick, Sc>,
+			) => {
+			const entities = new Entities<Sc>()
+			const executor = new Executor<Base, Tick, Sc>(entities, base, preSystem)
+			return {entities, executor}
+		}
 
 		behavior = (name: string) => ({
 			query: <K extends keyof Sc>(...kinds: K[]) => ({
@@ -290,7 +320,7 @@ const systems = system("humanoid", _base => [
 			}
 		}),
 
-	system("amazing subsystem", _base => {
+	system("amazing subsystem", () => {
 		const map = new Map()
 		return [
 			behavior("part one")
@@ -316,98 +346,7 @@ const systems = system("humanoid", _base => [
 	})
 ])
 
-const entities = hub.entities()
-
-/*
-
-const hub = new Ecs4.Hub<Base, Tick, MySchema>()
-
-const systems = hub.prep(({system, behavior}) => [
-
-])
-
-const systems = system("humanoid", () => [
-
-	behavior("create dynamics")
-		.query("alpha")
-		.lifecycle(() => {
-			return {
-				tick() {},
-				end() {},
-			}
-		}),
-
-	system("cool subsystems", () => {
-		const map = new Map()
-		return [
-			behavior("something incredible")
-				.query("alpha")
-				.lifecycle(realm => init => {
-					return {
-						tick() {},
-						end() {},
-					}
-				})m
-		]
-	})
-])
-
-const systems = hub.systems(
-	system("physics").behaviors(
-
-		behavior("cool process")
-			.query("alpha")
-			.processor(base => tick => state => {
-				state.alpha
-				state.bravo
-			}),
-
-		behavior("create dynamics")
-			.query("alpha")
-			.lifecycle(() => {
-				return {
-					tick() {},
-					end() {},
-				}
-			}),
-
-		...(() => {
-			const map = new Map()
-			return system("complex interlaced subbehaviors").behaviors(
-
-			)
-		})(),
-
-		behavior("something incredible")
-			.complex(query => {
-				const map = new Map()
-				return []
-			})
-
-		behavior("something else")
-			.queries(({query}) => ({
-				a: query("alpha"),
-				b: query("alpha", "bravo"),
-			}))
-			.lifecycles(() => {
-				const map = new Map()
-				return {
-					a: () => {
-						return {
-							tick() {},
-							end() {},
-						}
-					},
-					b: () => {},
-				}
-			}
-			}),
-	)
-)
-
-*/
-
-
+const {entities, executor} = hub.setup({}, systems)
 
 
 
