@@ -1,9 +1,8 @@
 
-import {Suite, expect} from "cynic"
+import {Suite} from "cynic"
+import ecs4 from "./ecs/ecs4.test.js"
 
 export default <Suite>{
-	"empty test suite": async() => {
-		expect(true).ok()
-	},
+	ecs4,
 }
 

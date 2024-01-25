@@ -1,5 +1,5 @@
 
-import {pub} from "@benev/slate"
+import {pub} from "@benev/slate/x/pure.js"
 import {measure} from "../tools/measure.js"
 import {id_counter} from "../tools/id_counter.js"
 import {RunningAverage} from "../tools/running_average.js"
@@ -167,17 +167,20 @@ export namespace Ecs4 {
 				return new System(preSystem.name, units)
 			}
 
-			synchronize_queries_with_entities(entities, queries)
 			this.system = recurse(preSystem)
+			synchronize_queries_with_entities(entities, queries)
 		}
 
 		#recurse(tick: Tick, system: System<Base, Tick, Sc>) {
 			for (const unit of system.units) {
 				const average = this.diagnostics.get(unit)!
+
 				if (unit instanceof Behavior)
 					average.add(measure(() => unit.fn(tick)))
+
 				else if (unit instanceof System)
 					average.add(measure(() => this.#recurse(tick, unit)))
+
 				else throw new Error(`invalid kind of unit in system "${system.name}"`)
 			}
 		}
@@ -292,61 +295,61 @@ export namespace Ecs4 {
 	}
 }
 
-/////////////////////////////
+// /////////////////////////////
 
-type MyBase = {}
-type MyTick = {}
-type MySchema = {
-	alpha: number
-	bravo: string
-}
+// type MyBase = {}
+// type MyTick = {}
+// type MySchema = {
+// 	alpha: number
+// 	bravo: string
+// }
 
-const hub = new Ecs4.Hub<MyBase, MyTick, MySchema>()
-const {system, behavior} = hub
+// const hub = new Ecs4.Hub<MyBase, MyTick, MySchema>()
+// const {system, behavior} = hub
 
-const systems = system("humanoid", _base => [
-	behavior("increment alpha")
-		.query("alpha")
-		.processor(_tick => state => {
-			state.alpha += 1
-		}),
+// const systems = system("humanoid", _base => [
+// 	behavior("increment alpha")
+// 		.query("alpha")
+// 		.processor(_tick => state => {
+// 			state.alpha += 1
+// 		}),
 
-	behavior("cool dynamics")
-		.query("alpha", "bravo")
-		.lifecycle(_init => {
-			return {
-				tick(_tick, _state) {},
-				end() {},
-			}
-		}),
+// 	behavior("cool dynamics")
+// 		.query("alpha", "bravo")
+// 		.lifecycle(_init => {
+// 			return {
+// 				tick(_tick, _state) {},
+// 				end() {},
+// 			}
+// 		}),
 
-	system("amazing subsystem", () => {
-		const map = new Map()
-		return [
-			behavior("part one")
-				.query("alpha")
-				.lifecycle(_init => {
-					map
-					return {
-						tick(_tick, _state) {},
-						end() {},
-					}
-				}),
+// 	system("amazing subsystem", () => {
+// 		const map = new Map()
+// 		return [
+// 			behavior("part one")
+// 				.query("alpha")
+// 				.lifecycle(_init => {
+// 					map
+// 					return {
+// 						tick(_tick, _state) {},
+// 						end() {},
+// 					}
+// 				}),
 
-			behavior("part two")
-				.query("alpha", "bravo")
-				.lifecycle(_init => {
-					map
-					return {
-						tick(_tick, _state) {},
-						end() {},
-					}
-				}),
-		]
-	})
-])
+// 			behavior("part two")
+// 				.query("alpha", "bravo")
+// 				.lifecycle(_init => {
+// 					map
+// 					return {
+// 						tick(_tick, _state) {},
+// 						end() {},
+// 					}
+// 				}),
+// 		]
+// 	})
+// ])
 
-const {entities, executor} = hub.setup({}, systems)
+// const {entities, executor} = hub.setup({}, systems)
 
 
 
