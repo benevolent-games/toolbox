@@ -1,5 +1,6 @@
 
 import {Ecs4} from "./ecs4.js"
+import {is} from "@benev/slate/x/pure.js"
 import {Suite, expect, assert} from "cynic"
 
 function testHub() {
@@ -15,12 +16,15 @@ function testHub() {
 export default <Suite>{
 	"basic processor": async() => {
 		const {system, behavior, setup} = testHub()
+
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
 				.processor(() => state => state.alpha += 1),
 		])
+
 		const {entities, executor} = setup({}, systems)
+
 		const id = entities.create({alpha: 0})
 		expect(entities.get(id).alpha).equals(0)
 		executor.execute({})
@@ -58,6 +62,7 @@ export default <Suite>{
 	"basic lifecycle": async() => {
 		const {system, behavior, setup} = testHub()
 		const counts = {starts: 0, ticks: 0, ends: 0}
+
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
@@ -74,6 +79,7 @@ export default <Suite>{
 					}
 				})
 		])
+
 		const {entities, executor} = setup({}, systems)
 
 		assert(counts.starts === 0)
@@ -129,6 +135,22 @@ export default <Suite>{
 		assert(counts.starts === 2)
 		assert(counts.ticks === 1)
 		assert(counts.ends === 1)
+	},
+
+	"diagnostics": async() => {
+		const {system, behavior, setup} = testHub()
+		const systems = system("test system", () => [
+			behavior("increase alpha")
+				.select("alpha")
+				.processor(() => state => state.alpha += 1),
+		])
+		const {entities, executor} = setup({}, systems)
+		entities.create({alpha: 0})
+		executor.execute({})
+
+		assert(executor.diagnostics.size > 0)
+		assert(is.number(executor.diagnostics.get(executor.system)!.average))
+		assert(is.number(executor.diagnostics.get(executor.system.units[0])!.average))
 	},
 }
 

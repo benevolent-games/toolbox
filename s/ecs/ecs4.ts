@@ -152,7 +152,6 @@ export namespace Ecs4 {
 					if (preUnit instanceof PreSystem) {
 						const unit = recurse(preUnit)
 						units.push(unit)
-						this.diagnostics.set(unit, new RunningAverage())
 					}
 					else if (preUnit instanceof Behavior) {
 						units.push(preUnit)
@@ -164,7 +163,9 @@ export namespace Ecs4 {
 					}
 				}
 
-				return new System(preSystem.name, units)
+				const system = new System(preSystem.name, units)
+				this.diagnostics.set(system, new RunningAverage())
+				return system
 			}
 
 			this.system = recurse(preSystem)
@@ -350,88 +351,4 @@ export namespace Ecs4 {
 // ])
 
 // const {entities, executor} = hub.setup({}, systems)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
