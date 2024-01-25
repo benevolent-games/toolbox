@@ -313,18 +313,19 @@ export namespace Ecs4 {
 	)
 
 	export class Hub<Base, Tick, Sc extends Schema> {
+		entities = () => new Entities<Sc>()
+
 		system = (name: string, resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]) => (
 			new PreSystem<Base, Tick, Sc>(name, resolver)
 		)
 
-		setup = (
+		executor = (
 				base: Base,
+				entities: Entities<Sc>,
 				preSystem: PreSystem<Base, Tick, Sc>,
-			) => {
-			const entities = new Entities<Sc>()
-			const executor = new Executor<Base, Tick, Sc>(entities, base, preSystem)
-			return {entities, executor}
-		}
+			) => (
+			new Executor<Base, Tick, Sc>(entities, base, preSystem)
+		)
 
 		behavior = (name: string) => ({
 			always: (fn: PreBehaviorFn<Base, Tick>) => new PreBehavior<Base, Tick, Sc, any>(name, null, fn),

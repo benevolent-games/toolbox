@@ -3,28 +3,29 @@ import {Ecs4} from "./ecs4.js"
 import {is} from "@benev/slate/x/pure.js"
 import {Suite, expect, assert} from "cynic"
 
-function testHub() {
-	type MyBase = {}
-	type MyTick = {}
-	type MySchema = {
-		alpha: number
-		bravo: number
-	}
-	return new Ecs4.Hub<MyBase, MyTick, MySchema>()
+type MyBase = {}
+type MyTick = {}
+type MySchema = {alpha: number, bravo: number}
+type MyHub = Ecs4.Hub<MyBase, MyTick, MySchema>
+type MyPreSystem = Ecs4.PreSystem<MyBase, MyTick, MySchema>
+
+function testSetup(fn: (hub: MyHub) => MyPreSystem) {
+	const hub = new Ecs4.Hub<MyBase, MyTick, MySchema>()
+	const base: MyBase = {}
+	const entities = hub.entities()
+	const executor = hub.executor(base, entities, fn(hub))
+	return {entities, executor}
 }
 
 export default <Suite>{
 	"basic processor": async() => {
-		const {system, behavior, setup} = testHub()
-
-		const systems = system("test system", () => [
-			behavior("increase alpha")
-				.select("alpha")
-				.processor(() => () => state => state.alpha += 1),
-		])
-
-		const {entities, executor} = setup({}, systems)
-
+		const {entities, executor} = testSetup(({system, behavior}) => (
+			system("test system", () => [
+				behavior("increase alpha")
+					.select("alpha")
+					.processor(() => () => state => state.alpha += 1),
+			])
+		))
 		const id = entities.create({alpha: 0})
 		expect(entities.get(id).alpha).equals(0)
 		executor.execute({})
@@ -32,26 +33,22 @@ export default <Suite>{
 	},
 
 	"behavior composition": async() => {
-		const {system, behavior, setup} = testHub()
-
-		const subsystem = system("test subsystem", () => [
-			behavior("bravo")
-				.select("bravo")
-				.processor(() => () => state => state.bravo += 1)
-		])
-
-		const systems = system("test system", () => [
-			behavior("increase alpha")
-				.select("alpha")
-				.processor(() => () => state => {
-					state.alpha += 1
-				}),
-			subsystem,
-		])
-
-		const {entities, executor} = setup({}, systems)
+		const {entities, executor} = testSetup(({system, behavior}) => {
+			const subsystem = system("test subsystem", () => [
+				behavior("bravo")
+					.select("bravo")
+					.processor(() => () => state => state.bravo += 1)
+			])
+			return system("test system", () => [
+				behavior("increase alpha")
+					.select("alpha")
+					.processor(() => () => state => {
+						state.alpha += 1
+					}),
+				subsystem,
+			])
+		})
 		const id = entities.create({alpha: 0, bravo: 0})
-
 		expect(entities.get(id).alpha).equals(0)
 		expect(entities.get(id).alpha).equals(0)
 		executor.execute({})
@@ -60,28 +57,26 @@ export default <Suite>{
 	},
 
 	"basic lifecycle": async() => {
-		const {system, behavior, setup} = testHub()
+		const {entities, executor} = testSetup(({system, behavior}) => (
+			system("test system", () => [
+				behavior("increase alpha")
+					.select("alpha")
+					.lifecycle(() => () => {
+						counts.starts += 1
+						return {
+							tick(_tick, state) {
+								counts.ticks += 1
+								state.alpha += 1
+							},
+							end() {
+								counts.ends += 1
+							},
+						}
+					})
+			])
+		))
+
 		const counts = {starts: 0, ticks: 0, ends: 0}
-
-		const systems = system("test system", () => [
-			behavior("increase alpha")
-				.select("alpha")
-				.lifecycle(() => () => {
-					counts.starts += 1
-					return {
-						tick(_tick, state) {
-							counts.ticks += 1
-							state.alpha += 1
-						},
-						end() {
-							counts.ends += 1
-						},
-					}
-				})
-		])
-
-		const {entities, executor} = setup({}, systems)
-
 		assert(counts.starts === 0)
 		const id = entities.create({alpha: 0})
 		assert(counts.starts === 1)
@@ -99,26 +94,26 @@ export default <Suite>{
 	},
 
 	"lifecycle reacts to component updates": async() => {
-		const {system, behavior, setup} = testHub()
-		const counts = {starts: 0, ticks: 0, ends: 0}
-		const systems = system("test system", () => [
-			behavior("increase alpha")
-				.select("alpha")
-				.lifecycle(() => () => {
-					counts.starts += 1
-					return {
-						tick(_tick, state) {
-							counts.ticks += 1
-							state.alpha += 1
-						},
-						end() {
-							counts.ends += 1
-						},
-					}
-				})
-		])
-		const {entities, executor} = setup({}, systems)
+		const {entities, executor} = testSetup(({system, behavior}) => (
+			system("test system", () => [
+				behavior("increase alpha")
+					.select("alpha")
+					.lifecycle(() => () => {
+						counts.starts += 1
+						return {
+							tick(_tick, state) {
+								counts.ticks += 1
+								state.alpha += 1
+							},
+							end() {
+								counts.ends += 1
+							},
+						}
+					})
+			])
+		))
 
+		const counts = {starts: 0, ticks: 0, ends: 0}
 		const id = entities.create({alpha: 0})
 		executor.execute({})
 
@@ -138,17 +133,15 @@ export default <Suite>{
 	},
 
 	"diagnostics": async() => {
-		const {system, behavior, setup} = testHub()
-		const systems = system("test system", () => [
-			behavior("increase alpha")
-				.select("alpha")
-				.processor(() => () => state => state.alpha += 1),
-		])
-
-		const {entities, executor} = setup({}, systems)
+		const {entities, executor} = testSetup(({system, behavior}) => (
+			system("test system", () => [
+				behavior("increase alpha")
+					.select("alpha")
+					.processor(() => () => state => state.alpha += 1),
+			])
+		))
 		entities.create({alpha: 0})
 		executor.execute({})
-
 		assert(executor.diagnostics.size > 0)
 		assert(is.number(executor.diagnostics.get(executor.system)!.average))
 		assert(is.number(executor.diagnostics.get(executor.system.units[0])!.average))
