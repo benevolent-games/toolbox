@@ -155,7 +155,8 @@ export namespace Ecs4 {
 					}
 					else if (preUnit instanceof Behavior) {
 						units.push(preUnit)
-						queries.push(preUnit.query)
+						if (preUnit.query)
+							queries.push(preUnit.query)
 						this.diagnostics.set(preUnit, new RunningAverage())
 					}
 					else {
@@ -216,7 +217,7 @@ export namespace Ecs4 {
 	export class Behavior<Tick, Sc extends Schema, K extends keyof Sc> {
 		constructor(
 			public name: string,
-			public query: Query<Sc, K>,
+			public query: Query<Sc, K> | null,
 			public fn: BehaviorFn<Tick>,
 		) {}
 	}
@@ -244,6 +245,8 @@ export namespace Ecs4 {
 	)
 
 	export class Hub<Base, Tick, Sc extends Schema> {
+		based = <T>(fn: (base: Base) => T) => fn
+
 		system = (name: string, resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]) => (
 			new PreSystem<Base, Tick, Sc>(name, resolver)
 		)
@@ -258,8 +261,9 @@ export namespace Ecs4 {
 		}
 
 		behavior = (name: string) => ({
-			select: <K extends keyof Sc>(...kinds: K[]) => ({
+			always: (fn: BehaviorFn<Tick>) => new Behavior<Tick, Sc, any>(name, null, fn),
 
+			select: <K extends keyof Sc>(...kinds: K[]) => ({
 				processor: (fn: ProcessorFn<Tick, Sc, K>) => {
 					const query = new Query<Sc, K>(kinds)
 					const behaviorFn: BehaviorFn<Tick> = tick => {
