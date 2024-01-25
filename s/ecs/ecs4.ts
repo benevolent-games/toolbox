@@ -138,58 +138,75 @@ export namespace Ecs4 {
 
 		constructor(
 				entities: Entities<Sc>,
-				base: Base,
+				public base: Base,
 				preSystem: PreSystem<Base, Tick, Sc>,
 			) {
 
 			const queries: Query<Sc, keyof Sc>[] = []
 
-			const recurse = (preSystem: PreSystem<Base, Tick, Sc>) => {
-				const preUnits = preSystem.resolver(base)
-				const units: Unit<Base, Tick, Sc>[] = []
+			// const recurse = (preSystem: PreSystem<Base, Tick, Sc>) => {
+			// 	const preUnits = preSystem.resolver(base)
+			// 	const units: Unit<Base, Tick, Sc>[] = []
 
-				for (const preUnit of preUnits) {
-					if (preUnit instanceof PreSystem) {
-						const unit = recurse(preUnit)
-						units.push(unit)
-					}
-					else if (preUnit instanceof Behavior) {
-						units.push(preUnit)
-						if (preUnit.query)
-							queries.push(preUnit.query)
-						this.diagnostics.set(preUnit, new RunningAverage())
-					}
-					else {
-						throw new Error(`invalid kind of unit in system "${preSystem.name}"`)
-					}
-				}
+			// 	for (const preUnit of preUnits) {
+			// 		if (preUnit instanceof PreSystem) {
+			// 			const unit = recurse(preUnit)
+			// 			units.push(unit)
+			// 		}
+			// 		else if (preUnit instanceof Behavior) {
+			// 			units.push(preUnit)
+			// 			if (preUnit.query)
+			// 				queries.push(preUnit.query)
+			// 			this.diagnostics.set(preUnit, new RunningAverage())
+			// 		}
+			// 		else {
+			// 			throw new Error(`invalid kind of unit in system "${preSystem.name}"`)
+			// 		}
+			// 	}
 
-				const system = new System(preSystem.name, units)
-				this.diagnostics.set(system, new RunningAverage())
-				return system
-			}
+			// 	const system = new System(preSystem.name, units)
+			// 	this.diagnostics.set(system, new RunningAverage())
+			// 	return system
+			// }
 
-			this.system = recurse(preSystem)
+			this.system = preSystem.resolve(base)
+
+			this.system.walk({
+				unit: u => this.diagnostics.set(u, new RunningAverage()),
+				behavior: b => {
+					if (b.query)
+						queries.push(b.query)
+				},
+			})
+
 			synchronize_queries_with_entities(entities, queries)
 		}
 
-		#recurse(tick: Tick, system: System<Base, Tick, Sc>) {
-			for (const unit of system.units) {
-				const average = this.diagnostics.get(unit)!
+		// #recurse(tick: Tick, system: System<Base, Tick, Sc>) {
+		// 	for (const unit of system.units) {
+		// 		const average = this.diagnostics.get(unit)!
 
-				if (unit instanceof Behavior)
-					average.add(measure(() => unit.fn(tick)))
+		// 		if (unit instanceof Behavior)
+		// 			average.add(measure(() => unit.fn(tick)))
 
-				else if (unit instanceof System)
-					average.add(measure(() => this.#recurse(tick, unit)))
+		// 		else if (unit instanceof System)
+		// 			average.add(measure(() => this.#recurse(tick, unit)))
 
-				else throw new Error(`invalid kind of unit in system "${system.name}"`)
-			}
-		}
+		// 		else throw new Error(`invalid kind of unit in system "${system.name}"`)
+		// 	}
+		// }
 
 		execute(tick: Tick) {
-			this.#recurse(tick, this.system)
+			this.system.walk({
+				behavior: b => b.fn(tick),
+			})
 		}
+	}
+
+	export type WalkFns = {
+		unit?: (unit: Unit<any, any, any>) => void
+		system?: (system: System<any, any, any>) => void
+		behavior?: (behavior: Behavior<any, any, any>) => void
 	}
 
 	export class System<Base, Tick, Sc extends Schema> {
@@ -197,22 +214,73 @@ export namespace Ecs4 {
 			public name: string,
 			public units: Unit<Base, Tick, Sc>[],
 		) {}
+
+		walk(fns: WalkFns) {
+			System.walk(this, fns)
+		}
+
+		static walk(system: System<any, any, any>, fns: WalkFns) {
+			const {
+				unit: fnUnit = () => {},
+				system: fnSystem = () => {},
+				behavior: fnBehavior = () => {},
+			} = fns
+
+			fnUnit(system)
+			fnSystem(system)
+
+			for (const unit of system.units) {
+				if (unit instanceof Behavior) {
+					fnUnit(unit)
+					fnBehavior(unit)
+				}
+				else if (unit instanceof System) {
+					fnUnit(unit)
+					fnSystem(unit)
+					this.walk(unit, fns)
+				}
+				else {
+					throw new Error(`invalid unit in system "${system.name}"`)
+				}
+			}
+		}
 	}
 
 	export class PreSystem<Base, Tick, Sc extends Schema> {
 		constructor(
 			public name: string,
-			public resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]
+			public fn: (base: Base) => PreUnit<Base, Tick, Sc>[]
 		) {}
+
+		resolve(base: Base) {
+			const preUnits = this.fn(base).map(pre => pre.resolve(base)) as Unit<Base, Tick, Sc>[]
+			return new System<Base, Tick, Sc>(this.name, preUnits)
+		}
 	}
 
 	export type BehaviorFn<Tick> = (
 		(tick: Tick) => void
 	)
 
-	export type ProcessorFn<Tick, Sc extends Schema, K extends keyof Sc> = (
-		(tick: Tick) => (state: Select<Sc, K>, id: Id) => void
+	export type PreBehaviorFn<Base, Tick> = (
+		(base: Base) => (tick: Tick) => void
 	)
+
+	export type ProcessorFn<Base, Tick, Sc extends Schema, K extends keyof Sc> = (
+		(base: Base) => (tick: Tick) => (state: Select<Sc, K>, id: Id) => void
+	)
+
+	export class PreBehavior<Base, Tick, Sc extends Schema, K extends keyof Sc> {
+		constructor(
+			public name: string,
+			public query: Query<Sc, K> | null,
+			public fn: (base: Base) => BehaviorFn<Tick>,
+		) {}
+
+		resolve(base: Base) {
+			return new Behavior<Tick, Sc, K>(this.name, this.query, this.fn(base))
+		}
+	}
 
 	export class Behavior<Tick, Sc extends Schema, K extends keyof Sc> {
 		constructor(
@@ -227,7 +295,7 @@ export namespace Ecs4 {
 	)
 
 	export type PreUnit<Base, Tick, Sc extends Schema> = (
-		PreSystem<Base, Tick, Sc> | Behavior<Tick, Sc, keyof Sc>
+		PreSystem<Base, Tick, Sc> | PreBehavior<Base, Tick, Sc, keyof Sc>
 	)
 
 	export type Life<Tick, Sc extends Schema, K extends keyof Sc> = {
@@ -240,13 +308,11 @@ export namespace Ecs4 {
 		end() {},
 	})
 
-	export type LifeFn<Tick, Sc extends Schema, K extends keyof Sc> = (
-		(init: Select<Sc, K>, id: Id) => Life<Tick, Sc, K>
+	export type LifeFn<Base, Tick, Sc extends Schema, K extends keyof Sc> = (
+		(base: Base) => (init: Select<Sc, K>, id: Id) => Life<Tick, Sc, K>
 	)
 
 	export class Hub<Base, Tick, Sc extends Schema> {
-		based = <T>(fn: (base: Base) => T) => fn
-
 		system = (name: string, resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]) => (
 			new PreSystem<Base, Tick, Sc>(name, resolver)
 		)
@@ -261,44 +327,48 @@ export namespace Ecs4 {
 		}
 
 		behavior = (name: string) => ({
-			always: (fn: BehaviorFn<Tick>) => new Behavior<Tick, Sc, any>(name, null, fn),
+			always: (fn: PreBehaviorFn<Base, Tick>) => new PreBehavior<Base, Tick, Sc, any>(name, null, fn),
 
 			select: <K extends keyof Sc>(...kinds: K[]) => ({
-				processor: (fn: ProcessorFn<Tick, Sc, K>) => {
+				processor: (fn: ProcessorFn<Base, Tick, Sc, K>) => {
 					const query = new Query<Sc, K>(kinds)
-					const behaviorFn: BehaviorFn<Tick> = tick => {
-						const fn2 = fn(tick)
-						for (const [id, state] of query.matches)
-							fn2(state as Select<Sc, K>, id)
+					const behaviorFn: PreBehaviorFn<Base, Tick> = base => {
+						const fn2 = fn(base)
+						return tick => {
+							const fn3 = fn2(tick)
+							for (const [id, state] of query.matches)
+								fn3(state as Select<Sc, K>, id)
+						}
 					}
-					return new Behavior(name, query, behaviorFn)
+					return new PreBehavior(name, query, behaviorFn)
 				},
 
-				lifecycle: (fn: LifeFn<Tick, Sc, K>) => {
+				lifecycle: (fn: LifeFn<Base, Tick, Sc, K>) => {
 					const query = new Query<Sc, K>(kinds)
-					const map = new Map<Id, Life<Tick, Sc, K>>()
+					return new PreBehavior<Base, Tick, Sc, K>(name, query, base => {
+						const fn2 = fn(base)
+						const map = new Map<Id, Life<Tick, Sc, K>>()
 
-					query.onMatch(([id, state]) => {
-						const life = fn(state as Select<Sc, K>, id)
-						map.set(id, life)
-					})
+						query.onMatch(([id, state]) => {
+							const life = fn2(state as Select<Sc, K>, id)
+							map.set(id, life)
+						})
 
-					query.onUnmatch(id => {
-						const life = map.get(id)
-						if (life) {
-							life.end()
-							map.delete(id)
+						query.onUnmatch(id => {
+							const life = map.get(id)
+							if (life) {
+								life.end()
+								map.delete(id)
+							}
+						})
+
+						return tick => {
+							for (const [id, state] of query.matches) {
+								const life = map.get(id)!
+								life.tick(tick, state as Select<Sc, K>)
+							}
 						}
 					})
-
-					const behaviorFn: BehaviorFn<Tick> = tick => {
-						for (const [id, state] of query.matches) {
-							const life = map.get(id)!
-							life.tick(tick, state as Select<Sc, K>)
-						}
-					}
-
-					return new Behavior(name, query, behaviorFn)
 				},
 			}),
 		})

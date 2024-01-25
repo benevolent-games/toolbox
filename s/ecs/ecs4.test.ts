@@ -20,7 +20,7 @@ export default <Suite>{
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
-				.processor(() => state => state.alpha += 1),
+				.processor(() => () => state => state.alpha += 1),
 		])
 
 		const {entities, executor} = setup({}, systems)
@@ -37,13 +37,13 @@ export default <Suite>{
 		const subsystem = system("test subsystem", () => [
 			behavior("bravo")
 				.select("bravo")
-				.processor(() => state => state.bravo += 1)
+				.processor(() => () => state => state.bravo += 1)
 		])
 
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
-				.processor(() => state => {
+				.processor(() => () => state => {
 					state.alpha += 1
 				}),
 			subsystem,
@@ -66,7 +66,7 @@ export default <Suite>{
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
-				.lifecycle(() => {
+				.lifecycle(() => () => {
 					counts.starts += 1
 					return {
 						tick(_tick, state) {
@@ -104,7 +104,7 @@ export default <Suite>{
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
-				.lifecycle(() => {
+				.lifecycle(() => () => {
 					counts.starts += 1
 					return {
 						tick(_tick, state) {
@@ -142,8 +142,9 @@ export default <Suite>{
 		const systems = system("test system", () => [
 			behavior("increase alpha")
 				.select("alpha")
-				.processor(() => state => state.alpha += 1),
+				.processor(() => () => state => state.alpha += 1),
 		])
+
 		const {entities, executor} = setup({}, systems)
 		entities.create({alpha: 0})
 		executor.execute({})
