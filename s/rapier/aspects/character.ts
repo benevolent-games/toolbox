@@ -2,7 +2,6 @@
 import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
 import {Vec3, vec3} from "../../tools/math/vec3.js"
-import {gravitation} from "../parts/gravitation.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
@@ -88,20 +87,14 @@ export function create_babylon_mesh_for_character(
 }
 
 export function make_apply_movement_fn(
-		world: Rapier.World,
 		controller: Rapier.KinematicCharacterController,
 		actor: Phys.Actor,
 	) {
 
 	return (velocity: Vec3) => {
-		const velocity_with_gravity = vec3.add(
-			velocity,
-			gravitation(world),
-		)
-
 		controller.computeColliderMovement(
 			actor.collider,
-			vec3.to.xyz(velocity_with_gravity),
+			vec3.to.xyz(velocity),
 		)
 
 		const originalPosition = vec3.from.xyz(actor.rigid.translation())

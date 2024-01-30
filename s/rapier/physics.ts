@@ -112,7 +112,6 @@ export class Physics {
 			...physical,
 			mesh,
 			applyMovement: make_apply_movement_fn(
-				world,
 				controller,
 				physical,
 			),
