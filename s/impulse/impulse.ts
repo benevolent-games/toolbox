@@ -1,12 +1,12 @@
 
-import {Pub, flat, ob, pub} from "@benev/slate"
+import {Pojo, Pub, flat, ob, pub} from "@benev/slate"
 
 import {Input} from "./input.js"
 import {Device} from "./device.js"
 import {Modes} from "./modes.js"
 import {Binds, Mode} from "./binds.js"
+import {vec2} from "../tools/math/vec2.js"
 import {Keyboard} from "./devices/keyboard.js"
-import {Vec2, vec2} from "../tools/math/vec2.js"
 import {PointerButtons} from "./devices/pointer_buttons.js"
 import {PointerMovements} from "./devices/pointer_movements.js"
 import {input_matches_button, input_matches_vector} from "./parts/matching.js"
@@ -23,8 +23,8 @@ export class Impulse<B extends Binds> {
 
 	readonly report: {
 		[M in keyof B]: {
-			buttons: {[P in keyof B[M]["buttons"]]: boolean}
-			vectors: {[P in keyof B[M]["vectors"]]: Vec2}
+			buttons: {[P in keyof B[M]["buttons"]]: Input.Button}
+			vectors: {[P in keyof B[M]["vectors"]]: Input.Vector}
 		}
 	}
 
@@ -49,10 +49,20 @@ export class Impulse<B extends Binds> {
 
 		this.report = ob(binds).map(
 			({buttons, vectors}) => ({
-				buttons: flat.state(ob(buttons).map(() => false)) as any,
-				vectors: flat.state(ob(vectors).map(() => vec2.zero())) as any,
+				buttons: flat.state(ob(buttons).map(() => ({
+					kind: "button",
+					code: "",
+					down: false,
+					mods: {},
+					repeat: false,
+				} as Input.Button))),
+				vectors: flat.state(ob(vectors).map(() => ({
+					kind: "vector",
+					channel: "",
+					vector: vec2.zero(),
+				} as Input.Vector))),
 			}),
-		)
+		) as any
 
 		this.on = ob(binds).map(
 			({buttons, vectors}) => ({
@@ -64,23 +74,27 @@ export class Impulse<B extends Binds> {
 
 	readonly input = (input: Input.Whatever) => {
 		for (const mode of this.modes) {
+			const buttons = this.report[mode].buttons as Pojo<Input.Button>
+			const vectors = this.report[mode].vectors as Pojo<Input.Vector>
 			switch (input.kind) {
-				case "button":
+
+				case "button": {
 					for (const [name, btns] of Object.entries(this.binds[mode].buttons)) {
 						if (input_matches_button(input, btns)) {
-							;(this.report[mode].buttons as any)[name] = input.down
+							buttons[name] = input
 							this.on[mode].buttons[name].publish(input)
 						}
 					}
-					break
-				case "vector":
+				} break
+
+				case "vector": {
 					for (const [name, channels] of Object.entries(this.binds[mode].vectors)) {
 						if (input_matches_vector(input, channels)) {
-							;(this.report[mode].vectors as any)[name] = input.vector
+							vectors[name] = input
 							this.on[mode].vectors[name].publish(input)
 						}
 					}
-					break
+				} break
 			}
 		}
 	}
