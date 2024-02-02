@@ -38,11 +38,15 @@ export interface SsaoEffect {
 }
 
 export interface SsrEffect {
+	debug: boolean
+	maxSteps: number
+	maxDistance: number
+	ssrDownsample: number
 	strength: number
-	blur: number
-	fresnel: boolean
-	threshold: number
-	falloff: number
-	downsample: number
+	blurDispersionStrength: number
+	useFresnel: boolean
+	reflectivityThreshold: number
+	reflectionSpecularFalloffExponent: number
+	blurDownsample: number
 }
 

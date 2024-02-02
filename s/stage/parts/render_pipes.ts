@@ -42,12 +42,16 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 
 	ssr(effect: SsrEffect) {
 		const pipe = new SSRRenderingPipeline(label("ssr"), scene)
+		pipe.debug = effect.debug
+		pipe.maxDistance = effect.maxDistance
+		pipe.maxSteps = effect.maxSteps
 		pipe.strength = effect.strength
-		pipe.useFresnel = effect.fresnel
-		pipe.reflectivityThreshold = effect.threshold
-		pipe.reflectionSpecularFalloffExponent = effect.falloff
-		pipe.blurDownsample = effect.downsample
-		pipe.blurDispersionStrength = effect.blur
+		pipe.useFresnel = effect.useFresnel
+		pipe.ssrDownsample = effect.ssrDownsample
+		pipe.blurDownsample = effect.blurDownsample
+		pipe.reflectivityThreshold = effect.reflectivityThreshold
+		pipe.blurDispersionStrength = effect.blurDispersionStrength
+		pipe.reflectionSpecularFalloffExponent = effect.reflectionSpecularFalloffExponent
 		return pipe
 	},
 })
