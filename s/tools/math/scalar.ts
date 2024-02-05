@@ -73,9 +73,10 @@ export namespace scalar {
 	// transformations and mappings
 	//
 
-	export function map(n: number, [b1, b2]: Vec2) {
-		const fraction = n
-		return (fraction * (b2 - b1)) + b1
+	export function map(n: number, [min, max]: Vec2) {
+		const space = max - min
+		const value = space * n
+		return min + value
 	}
 
 	export function remap(n: number, [a1, a2]: Vec2, [b1, b2]: Vec2 = [0, 1]) {
