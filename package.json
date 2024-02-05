@@ -11,11 +11,12 @@
 		"s"
 	],
 	"bin": {
-		"toolbox-cleanup-babylon": "scripts/toolbox-cleanup-babylon"
+		"toolbox-cleanup-babylon": "scripts/toolbox-cleanup-babylon",
+		"toolbox-pack": "x/routines/pack.js"
 	},
 	"scripts": {
 		"prepare": "./scripts/toolbox-cleanup-babylon",
-		"build": "turtle-ts-app && turtle-ts-app-bundle x/iso/main.js && turtle-web && npm run links",
+		"build": "turtle-ts-app && turtle-ts-app-bundle x/iso/main.js && turtle-ts-app-bundle x/impulse/main.js && turtle-web && npm run links",
 		"start": "turtle-standard-watch",
 		"links": "ln -s \"$(realpath temp)\" x/temp",
 		"test": "cynic node x/tests.test.js",
@@ -25,6 +26,11 @@
 		"@benev/slate": "^0.1.0-x.7",
 		"@dimforge/rapier3d": "^0.12.0",
 		"@dimforge/rapier3d-compat": "^0.12.0",
+		"@gltf-transform/cli": "^3.10.0",
+		"@gltf-transform/core": "^3.10.0",
+		"@gltf-transform/extensions": "^3.10.0",
+		"@gltf-transform/functions": "^3.10.0",
+		"draco3dgltf": "^1.5.7",
 		"es-module-shims": "^1.8.2",
 		"lit": "^3.1.2",
 		"simplex-noise": "^4.0.1",
@@ -48,7 +54,8 @@
 		"rimraf": "^5.0.5",
 		"rollup": "^4.9.6",
 		"terser": "^5.27.0",
-		"typescript": "^5.3.3"
+		"typescript": "^5.3.3",
+		"wrap-ansi": "^9.0.0"
 	},
 	"keywords": [
 		"web-games",

@@ -313,6 +313,7 @@ export namespace Ecs4 {
 	)
 
 	export class Hub<Base, Tick, Sc extends Schema> {
+		kinds = <K extends keyof Sc>(...kinds: K[]) => kinds
 		entities = () => new Entities<Sc>()
 
 		system = (name: string, resolver: (base: Base) => PreUnit<Base, Tick, Sc>[]) => (
