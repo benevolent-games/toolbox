@@ -37,14 +37,14 @@
 		"sparrow-rtc": "^0.0.0-dev.6"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^6.41.0",
-		"@babylonjs/loaders": "^6.41.0"
+		"@babylonjs/core": "^6.41.2",
+		"@babylonjs/loaders": "^6.41.2"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.2",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-wasm": "^6.2.2",
-		"chokidar": "^3.5.3",
+		"chokidar": "^3.6.0",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
 		"http-server": "^14.1.1",
