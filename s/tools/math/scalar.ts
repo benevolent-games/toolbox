@@ -73,6 +73,10 @@ export namespace scalar {
 	// transformations and mappings
 	//
 
+	export function inverse(n: number) {
+		return 1 - n
+	}
+
 	export function map(n: number, [min, max]: Vec2) {
 		const space = max - min
 		const value = space * n
