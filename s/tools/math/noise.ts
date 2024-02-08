@@ -13,8 +13,10 @@ export class Noise {
 		this.#n2d = createNoise2D(random)
 	}
 
-	sample(x: number, y: number, scale = 1) {
-		return this.#n2d(x * scale, y * scale)
+	/** sample the noise field, returning a number from 0 to 1. */
+	sample(x: number, y = 0, scale = 1) {
+		const s = this.#n2d(x * scale, y * scale)
+		return (s + 1) / 2
 	}
 }
 
