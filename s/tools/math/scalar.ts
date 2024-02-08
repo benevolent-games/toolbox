@@ -88,6 +88,16 @@ export namespace scalar {
 		return 1 - n
 	}
 
+	/** remap a number from [0,1] range to [-1,1] (making 0.0 the centerpoint). */
+	export function center(x: number) {
+		return (x * 2) - 1
+	}
+
+	/** remap a number from [-1,1] range to [0,1] (making 0.5 the centerpoint). */
+	export function uncenter(x: number) {
+		return (x + 1) / 2
+	}
+
 	/** linear interpolate between two numbers in a vector. */
 	export function map(fraction: number, [a, b]: Vec2) {
 		const difference = b - a
