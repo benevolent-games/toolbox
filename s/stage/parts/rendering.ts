@@ -7,9 +7,9 @@ import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPip
 
 import {Effects} from "../types.js"
 import {effects} from "./standards.js"
+import {radians} from "../../math/scalar.js"
 import {labeler} from "../../tools/label.js"
 import {render_pipes} from "./render_pipes.js"
-import {radians} from "../../tools/math/scalar.js"
 
 export class Rendering {
 	static effects = effects

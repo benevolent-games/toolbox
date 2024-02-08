@@ -1,7 +1,7 @@
 
 import {Rapier} from "./rapier.js"
-import {Vec3} from "../tools/math/vec3.js"
-import {Quat} from "../tools/math/quat.js"
+import {Vec3} from "../math/vec3.js"
+import {Quat} from "../math/quat.js"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {Material} from "@babylonjs/core/Materials/material.js"

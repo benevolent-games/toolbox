@@ -1,5 +1,5 @@
 
-import {Vec2} from "./math/vec2.js"
+import {Vec2} from "../math/vec2.js"
 
 export function coordinates_in_rect(
 		coordinates: Vec2,

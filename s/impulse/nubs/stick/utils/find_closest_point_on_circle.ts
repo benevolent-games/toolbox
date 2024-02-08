@@ -1,5 +1,5 @@
 
-import {Vec2} from "../../../../tools/math/vec2.js"
+import {Vec2} from "../../../../math/vec2.js"
 
 export function find_closest_point_on_circle(
 		radius: number,

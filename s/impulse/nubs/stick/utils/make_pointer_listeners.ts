@@ -1,6 +1,6 @@
 
 import {FancyEventListener} from "@benev/slate"
-import {Vec2} from "../../../../tools/math/vec2.js"
+import {Vec2} from "../../../../math/vec2.js"
 
 function asEventListener<E extends Event>(listener: FancyEventListener<E>) {
 	return listener
@@ -55,7 +55,7 @@ export function make_pointer_listeners({
 
 
 // import {FancyEventListener} from "@benev/slate"
-// import {Vec2} from "../../../../tools/math/vec2.js"
+// import {Vec2} from "../../../../math/vec2.js"
 
 // function asEventListener<E extends Event>(listener: FancyEventListener<E>) {
 // 	return listener

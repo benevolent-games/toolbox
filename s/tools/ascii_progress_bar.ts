@@ -3,7 +3,7 @@ import {Pojo} from "@benev/slate"
 
 import {loop} from "./loopy.js"
 import {human} from "./human.js"
-import {clamp} from "./math/scalar.js"
+import {clamp} from "../math/scalar.js"
 
 export const glyphs = {
 	eline: ["=", "-"],

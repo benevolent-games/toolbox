@@ -3,12 +3,12 @@ import {pub} from "@benev/slate"
 
 import {Input} from "../input.js"
 import {Device} from "../device.js"
-import {Vec2, vec2} from "../../tools/math/vec2.js"
+import {Vec2, add, zero} from "../../math/vec2.js"
 
 export class PointerMovements extends Device {
 	dispose: () => void
-	movement: Vec2 = vec2.zero()
-	coordinates: Vec2 = vec2.zero()
+	movement: Vec2 = zero()
+	coordinates: Vec2 = zero()
 
 	onInput = pub<Input.Vector>()
 
@@ -35,7 +35,7 @@ export class PointerMovements extends Device {
 				event.movementY,
 			]
 
-			this.movement = vec2.add(this.movement, movement)
+			this.movement = add(this.movement, movement)
 
 			this.onInput.publish({
 				kind: "vector",
@@ -53,7 +53,7 @@ export class PointerMovements extends Device {
 }
 
 export class MovementAccumulator {
-	#movement = vec2.zero()
+	#movement = zero()
 	#dispose: () => void
 
 	constructor(dispose: () => void) {
@@ -61,12 +61,12 @@ export class MovementAccumulator {
 	}
 
 	add(move: Vec2) {
-		this.#movement = vec2.add(this.#movement, move)
+		this.#movement = add(this.#movement, move)
 	}
 
 	steal() {
 		const movement = this.#movement
-		this.#movement = vec2.zero()
+		this.#movement = zero()
 		return movement
 	}
 
