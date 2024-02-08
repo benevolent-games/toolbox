@@ -1,5 +1,5 @@
 
-import {scalar} from "./scalar.js"
+import {clamp as scalarClamp} from "./scalar.js"
 
 export type Vec2 = vec2.Vec2
 
@@ -93,7 +93,7 @@ export namespace vec2 {
 	}
 
 	export function clamp(vector: Vec2, min: number, max: number) {
-		return applyBy(vector, a => scalar.clamp(a, min, max))
+		return applyBy(vector, a => scalarClamp(a, min, max))
 	}
 
 	export function negate(vector: Vec2): Vec2 {
