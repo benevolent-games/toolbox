@@ -30,18 +30,21 @@ export namespace scalar {
 	// constraints and boundaries
 	//
 
+	/** clip a number so it "bottoms-out" (eg, return min if n is less than min). */
 	export function bottom(n: number, min: number = 0) {
 		return n < min
 			? min
 			: n
 	}
 
+	/** clip a number so it "tops-out" (eg, return max if n is more than max). */
 	export function top(n: number, max: number = 1) {
 		return n > max
 			? max
 			: n
 	}
 
+	/** clamp a number within a range. */
 	export function clamp(n: number, min: number = 0, max: number = 1) {
 		return n < min
 			? min
@@ -50,17 +53,24 @@ export namespace scalar {
 				: n
 	}
 
-	export function between(n: number, min: number, max: number) {
-		const space = max - min
-		const value = space * n
-		return min + value
+	/** linear interpolate between two numbers. */
+	export function lerp(fraction: number, a: number, b: number) {
+		const difference = b - a
+		const value = difference * fraction
+		return a + value
 	}
 
-	export function within(n: number, min: number = 0, max: number = 1) {
-		return n >= min && n <= max
+	/** return true is n is between a and b, otherwise return false. */
+	export function within(n: number, a: number = 0, b: number = 1) {
+		const min = Math.min(a, b)
+		const max = Math.max(a, b)
+		return (n >= min) && (n <= max)
 	}
 
-	export function wrap(n: number, min: number = 0, max: number = 1) {
+	/** if the number exceeds the range, it wraps around to the other side. */
+	export function wrap(n: number, a: number = 0, b: number = 1) {
+		const min = Math.min(a, b)
+		const max = Math.max(a, b)
 		const span = max - min
 		const adjusted = n - min
 		const wrapped = (adjusted < 0)
@@ -73,34 +83,27 @@ export namespace scalar {
 	// transformations and mappings
 	//
 
+	/** flip a number between 0 and 1 to the other side (eg, 0.9 returns 0.1). */
 	export function inverse(n: number) {
 		return 1 - n
 	}
 
-	export function map(n: number, [min, max]: Vec2) {
-		const space = max - min
-		const value = space * n
-		return min + value
+	/** linear interpolate between two numbers in a vector. */
+	export function map(fraction: number, [a, b]: Vec2) {
+		const difference = b - a
+		const value = difference * fraction
+		return a + value
 	}
 
+	/** remap a number from one range to another. */
 	export function remap(n: number, [a1, a2]: Vec2, [b1, b2]: Vec2 = [0, 1]) {
 		const fraction = (n - a1) / (a2 - a1)
 		return (fraction * (b2 - b1)) + b1
 	}
 
 	export namespace spline {
-		export function quickLinear(x: number, points: number[]) {
-			if (points.length < 2)
-				throw new Error("need at least two points, come on")
 
-			const points2 = points.map(
-				(p, index): Vec2 =>
-					[clamp(index / (points.length - 1)), p]
-			)
-
-			return linear(clamp(x), points2)
-		}
-
+		/** resolve a number within a linear spline. */
 		export function linear(x: number, points: Vec2[]): number {
 			if (points.length < 2)
 				throw new Error("need at least two points, come on")
@@ -123,6 +126,7 @@ export namespace scalar {
 			throw new Error("x is out of bounds, what are you even doing")
 		}
 
+		/** resolve a number within a catmull-rom spline, that's all smooth-like. */
 		export function catmullRom(x: number, points: Vec2[]) {
 			if (points.length < 4)
 				throw new Error("need at least four points for this magic")
@@ -143,7 +147,25 @@ export namespace scalar {
 			throw new Error("x is out of bounds, try again")
 		}
 
+		export const ez = {
+
+			/** simple linear spline where the control points are equally-spaced based on their array indices (x is expected to be between 0 and 1). */
+			linear(x: number, points: number[]) {
+				if (points.length < 2)
+					throw new Error("need at least two points, come on")
+
+				const points2 = points.map(
+					(p, index): Vec2 =>
+						[clamp(index / (points.length - 1)), p]
+				)
+
+				return linear(clamp(x), points2)
+			}
+		}
+
 		namespace helpers {
+
+			/** internal big-brain maths for the catmull-rom implementation */
 			export function catmullRom(
 					t: number,
 					[,p0]: Vec2,

@@ -1,5 +1,5 @@
 
-import {Rand, Random} from "../rand.js"
+import {Rand, Random} from "./rand.js"
 import {createNoise2D} from "simplex-noise/dist/esm/simplex-noise.js"
 
 export class Noise {
