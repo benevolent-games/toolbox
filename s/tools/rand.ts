@@ -3,8 +3,8 @@ import {loop} from "./loopy.js"
 
 export type Random = () => number
 
-export class Randy {
-	static seed(seed: number): Random {
+export class Rand {
+	static random(seed: number): Random {
 		seed = 1_234 + Math.floor(seed * 1_234)
 		function random() {
 			seed = Math.imul(48271, seed) | 0 % 2147483647
@@ -12,6 +12,10 @@ export class Randy {
 		}
 		random() // discard first value
 		return random
+	}
+
+	static seed(seed: number): Rand {
+		return new this(this.random(seed))
 	}
 
 	constructor(
