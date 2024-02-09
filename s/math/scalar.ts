@@ -109,3 +109,8 @@ export function remap(n: number, [a1, a2]: Vec2, [b1, b2]: Vec2 = [0, 1]) {
 	return (fraction * (b2 - b1)) + b1
 }
 
+/** make values near 0.5 more likely. */
+export function magnify(x: number) {
+	return 4 * Math.pow(x - 0.5, 3) + 0.5
+}
+
