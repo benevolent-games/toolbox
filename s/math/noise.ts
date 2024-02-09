@@ -1,6 +1,6 @@
 
 import {Rand, Random} from "./rand.js"
-import {createNoise2D} from "simplex-noise/dist/esm/simplex-noise.js"
+import {createNoise2D} from "simplex-noise"
 
 export class Noise {
 	static seed(seed: number) {
