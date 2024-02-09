@@ -1,5 +1,5 @@
 
-import {Vec2} from "./math/vec2.js"
+import {Vec2} from "../math/vec2.js"
 
 export function* loop(n: number) {
 	for (let i = 0; i < n; i++)

@@ -2,10 +2,10 @@
 import {Pojo, Pub, flat, ob, pub} from "@benev/slate"
 
 import {Input} from "./input.js"
-import {Device} from "./device.js"
 import {Modes} from "./modes.js"
+import {Device} from "./device.js"
+import {zero} from "../math/vec2.js"
 import {Binds, Mode} from "./binds.js"
-import {vec2} from "../tools/math/vec2.js"
 import {Keyboard} from "./devices/keyboard.js"
 import {PointerButtons} from "./devices/pointer_buttons.js"
 import {PointerMovements} from "./devices/pointer_movements.js"
@@ -59,7 +59,7 @@ export class Impulse<B extends Binds> {
 				vectors: flat.state(ob(vectors).map(() => ({
 					kind: "vector",
 					channel: "",
-					vector: vec2.zero(),
+					vector: zero(),
 				} as Input.Vector))),
 			}),
 		) as any

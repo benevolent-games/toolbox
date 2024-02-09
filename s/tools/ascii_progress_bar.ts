@@ -3,7 +3,7 @@ import {Pojo} from "@benev/slate"
 
 import {loop} from "./loopy.js"
 import {human} from "./human.js"
-import {scalar} from "./math/scalar.js"
+import {clamp} from "../math/scalar.js"
 
 export const glyphs = {
 	eline: ["=", "-"],
@@ -32,8 +32,8 @@ export function ascii_progress_bar(
 	) {
 
 	progress = clamp_between_1_and_99_percent
-		? scalar.clamp(progress, 1/100, 99/100)
-		: scalar.clamp(progress)
+		? clamp(progress, 1/100, 99/100)
+		: clamp(progress)
 
 	let line = ""
 

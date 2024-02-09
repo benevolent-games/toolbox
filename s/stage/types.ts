@@ -1,5 +1,5 @@
 
-import {Vec4} from "../tools/math/vec4.js"
+import {Vec4} from "../math/vec4.js"
 
 export interface StageOptions {
 	canvas: HTMLCanvasElement

@@ -1,7 +1,6 @@
 
 import {Phys} from "../types.js"
-import {quat} from "../../tools/math/quat.js"
-import {vec3} from "../../tools/math/vec3.js"
+import {quat, vec3} from "../../math/exports.js"
 
 export function synchronize_to_babylon_position_and_rotation(
 		{rigid, position, rotation}: Phys.Actor,

@@ -3,7 +3,7 @@ import {pub, signal} from "@benev/slate"
 
 import {Input} from "../../input.js"
 import {Device} from "../../device.js"
-import {Vec2} from "../../../tools/math/vec2.js"
+import {Vec2} from "../../../math/vec2.js"
 
 export class Stick extends Device {
 	onInput = pub<Input.Vector>()

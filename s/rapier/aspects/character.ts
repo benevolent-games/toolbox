@@ -1,7 +1,8 @@
 
 import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
-import {Vec3, vec3} from "../../tools/math/vec3.js"
+import {Vec3} from "../../math/vec3.js"
+import {vec3} from "../../math/exports.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 

@@ -6,8 +6,8 @@ import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 
 import {StageOptions} from "./types.js"
 import {Remote} from "./parts/remote.js"
-import {scalar} from "../tools/math/scalar.js"
 import {Rendering} from "./parts/rendering.js"
+import {radians, wrap} from "../math/scalar.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
 import {backgrounds, effects} from "./parts/standards.js"
 import {make_load_glb_fn} from "./parts/make_load_glb_fn.js"
@@ -54,10 +54,10 @@ export class Stage {
 			}
 
 			if (rendering.camera === rendering.fallbackCamera) {
-				rendering.fallbackCamera.alpha = scalar.wrap(
-					rendering.fallbackCamera.alpha + scalar.radians.from.degrees(0.1),
+				rendering.fallbackCamera.alpha = wrap(
+					rendering.fallbackCamera.alpha + radians.from.degrees(0.1),
 					0,
-					scalar.radians.from.circle(1),
+					radians.from.circle(1),
 				)
 			}
 		})

@@ -7,9 +7,9 @@ import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPip
 
 import {Effects} from "../types.js"
 import {effects} from "./standards.js"
+import {radians} from "../../math/scalar.js"
 import {labeler} from "../../tools/label.js"
 import {render_pipes} from "./render_pipes.js"
-import {scalar} from "../../tools/math/scalar.js"
 
 export class Rendering {
 	static effects = effects
@@ -27,7 +27,7 @@ export class Rendering {
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
-			const beta = scalar.radians.from.degrees(60)
+			const beta = radians.from.degrees(60)
 			const radius = 2
 			const target = new Vector3(0, 1.5, 0)
 			return new ArcRotateCamera(
