@@ -7,6 +7,16 @@ import {babylonian} from "../math/babylonian.js"
 import {id_counter} from "../tools/id_counter.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
+function inherits(targetClass: Function, baseClass: Function): boolean {
+	let proto = Object.getPrototypeOf(targetClass.prototype)
+	while (proto != null) {
+		if (proto === baseClass.prototype)
+			return true
+		proto = Object.getPrototypeOf(proto);
+	}
+	return false
+}
+
 ////////
 //////// TYPES
 ////////
@@ -25,7 +35,7 @@ export type Serializable = (
 export type ComponentInstance = Component<any>
 export type ComponentClass = Constructor<ComponentInstance>
 export type Selector = Record<string, ComponentClass>
-export type Entry = [Id, Entity]
+export type Entry<Base> = [Id, Entity<Base>]
 
 export type Resolve<Sel extends Selector> = {
 	[K in keyof Sel as K extends string ? Uncapitalize<K>: never]:
@@ -77,11 +87,16 @@ export abstract class HybridComponent<
 	abstract deleted(): void
 }
 
-export class Entity<Sel extends Selector = Selector> {
-	static create<Sel extends Selector>(selector: Sel, params: ComponentParams<Sel>) {
-		const entity = new this<Sel>()
+export class Entity<Base, Sel extends Selector = Selector> {
+	static create<Base, Sel extends Selector>(base: Base, selector: Sel, params: ComponentParams<Sel>) {
+		const entity = new this<Base, Sel>(base)
 		entity.createComponents(selector, params)
 		return entity
+	}
+
+	#base: Base
+	constructor(base: Base) {
+		this.#base = base
 	}
 
 	#components = new Map<ComponentClass, ComponentInstance>()
@@ -100,7 +115,10 @@ export class Entity<Sel extends Selector = Selector> {
 	createComponents(selector: Sel, params: ComponentParams<Sel>) {
 		for (const [key, Component] of Object.entries(selector)) {
 			const ikey = uncapitalize(key) as keyof ComponentParams<Selector>
-			const component = new Component(params[ikey])
+			const state = params[ikey]
+			const component = inherits(Component, HybridComponent)
+				? new Component(this.#base, state)
+				: new Component(state)
 			this.#components.set(Component, component)
 			this.#cache.set(ikey, [Component, component, component instanceof HybridComponent])
 			this.#classes = [...this.#components.keys()]
@@ -177,7 +195,7 @@ export class Query<Sel extends Selector> {
 			: false
 	}
 
-	consider([id, entity]: Entry) {
+	consider([id, entity]: Entry<any>) {
 		if (entity.match(this.#types))
 			this.matches.set(id, entity.data)
 		else
@@ -189,10 +207,12 @@ export class Query<Sel extends Selector> {
 	}
 }
 
-export class World {
+export class World<Base> {
 	id = id_counter()
-	entities = new Map<Id, Entity>()
+	entities = new Map<Id, Entity<Base>>()
 	queries = new Set<Query<any>>()
+
+	constructor(public readonly base: Base) {}
 
 	#find_query<Sel extends Selector>(selector: Sel) {
 		for (const query of this.queries) {
@@ -216,16 +236,16 @@ export class World {
 		return query
 	}
 
-	#reindex_queries(id: Id, entity: Entity) {
-		const entry: Entry = [id, entity]
+	#reindex_queries(id: Id, entity: Entity<Base>) {
+		const entry: Entry<Base> = [id, entity]
 		for (const query of this.queries)
 			query.consider(entry)
 	}
 
-	add<Sel extends Selector>(entity: Entity<Sel>) {
+	add<Sel extends Selector>(entity: Entity<Base, Sel>) {
 		const id = this.id()
 		this.entities.set(id, entity)
-		const entry: Entry = [id, entity]
+		const entry: Entry<Base> = [id, entity]
 		for (const query of this.queries)
 			query.consider(entry)
 		return [id, entity.data] as [Id, Resolve<Sel>]
@@ -233,7 +253,7 @@ export class World {
 
 	/** get a specific entity, and a subset of its components */
 	get<Sel extends Selector>(id: Id, selector: Sel) {
-		const entity = this.entities.get(id)! as Entity<Sel>
+		const entity = this.entities.get(id)! as Entity<Base, Sel>
 
 		if (!entity)
 			throw new Error(`entity not found "${id}"`)
@@ -246,7 +266,7 @@ export class World {
 
 	/** create a new entity */
 	create<Sel extends Selector>(selector: Sel, params: ComponentParams<Sel>) {
-		const entity = Entity.create(selector, params)
+		const entity = Entity.create(this.base, selector, params)
 		return this.add<Sel>(entity)
 	}
 
@@ -346,7 +366,7 @@ export class Executive<Base, Tick> {
 
 	constructor(
 			base: Base,
-			world: World,
+			world: World<Base>,
 			system: System<Base, Tick>,
 		) {
 
@@ -368,7 +388,7 @@ export class Executive<Base, Tick> {
 }
 
 export class Hub<Base, Tick> {
-	world = () => new World()
+	world = (base: Base) => new World<Base>(base)
 
 	system = (name: string, children: Unit<Base, Tick>[]) => (
 		new System<Base, Tick>(name, children)
@@ -382,7 +402,7 @@ export class Hub<Base, Tick> {
 		}),
 	})
 
-	executive = (base: Base, world: World, system: System<Base, Tick>) => (
+	executive = (base: Base, world: World<Base>, system: System<Base, Tick>) => (
 		new Executive<Base, Tick>(base, world, system)
 	)
 }
@@ -391,55 +411,55 @@ export class Hub<Base, Tick> {
 ////////////////////////////////
 ////////////////////////////////
 
-class MyBase {
-	containers: any
-	constructor(public scene: Scene) {}
-}
-class MyTick {}
-const hub = new Hub<MyBase, MyTick>()
+// class MyBase {
+// 	containers: any
+// 	constructor(public scene: Scene) {}
+// }
+// class MyTick {}
+// const hub = new Hub<MyBase, MyTick>()
 
-class Position extends Component<Vec3> {}
-class Rotation extends Component<Quat> {}
-class Box extends HybridComponent<MyBase, {}> {
-	mesh = MeshBuilder.CreateBox("box", {size: 1}, this.base.scene)
-	init() {}
-	deleted() {
-		this.mesh.dispose()
-	}
-}
-class Glb extends HybridComponent<MyBase, {container_name: string}> {
-	instanced = this.base.containers[this.state.container_name].instantiate()
-	init() {}
-	deleted() {
-		this.instanced.dispose()
-	}
-}
+// class Position extends Component<Vec3> {}
+// class Rotation extends Component<Quat> {}
+// class Box extends HybridComponent<MyBase, {}> {
+// 	mesh = MeshBuilder.CreateBox("box", {size: 1}, this.base.scene)
+// 	init() {}
+// 	deleted() {
+// 		this.mesh.dispose()
+// 	}
+// }
+// class Glb extends HybridComponent<MyBase, {container_name: string}> {
+// 	instanced = this.base.containers[this.state.container_name].instantiate()
+// 	init() {}
+// 	deleted() {
+// 		this.instanced.dispose()
+// 	}
+// }
 
-/////////
+// /////////
 
-const {system, behavior} = hub
-export const systems = system("coolsystem", [
+// const {system, behavior} = hub
+// export const systems = system("coolsystem", [
 
-	behavior("positions do be moving forward")
-		.select({Position})
-		.act(() => components => components.position[2] += 1 / 60),
+// 	behavior("positions do be moving forward")
+// 		.select({Position})
+// 		.act(() => components => components.position[2] += 1 / 60),
 
-	behavior("box do be updating")
-		.select({Box, Position, Rotation})
-		.act(() => components => {
-			const {box, position, rotation} = components
-			box.mesh.position.set(...position)
-			if (box.mesh.rotationQuaternion)
-				box.mesh.rotationQuaternion.set(...rotation)
-			else
-				box.mesh.rotationQuaternion = babylonian.from.quat(rotation)
-		}),
-])
+// 	behavior("box do be updating")
+// 		.select({Box, Position, Rotation})
+// 		.act(() => components => {
+// 			const {box, position, rotation} = components
+// 			box.mesh.position.set(...position)
+// 			if (box.mesh.rotationQuaternion)
+// 				box.mesh.rotationQuaternion.set(...rotation)
+// 			else
+// 				box.mesh.rotationQuaternion = babylonian.from.quat(rotation)
+// 		}),
+// ])
 
-/////////
+// /////////
 
-const world = new World()
-const base = new MyBase(undefined as any)
-const executive = hub.executive(base, world, systems)
-executive.execute(new MyTick())
+// const world = new World()
+// const base = new MyBase(undefined as any)
+// const executive = hub.executive(base, world, systems)
+// executive.execute(new MyTick())
 

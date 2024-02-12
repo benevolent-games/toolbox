@@ -15,7 +15,7 @@ class Rotation extends Component<Quat> {}
 
 export default <Suite>{
 	"manually change values": async() => {
-		const world = new World()
+		const world = new World({})
 		const [id, data1] = world.create({Counter}, {counter: 0})
 
 		expect(data1.counter).equals(0)
@@ -31,7 +31,7 @@ export default <Suite>{
 	},
 
 	"counting behavior": async() => {
-		const world = new World()
+		const world = new World({})
 		const executive = hub.executive({}, world, system("testing root", [
 			behavior("increase counter")
 				.select({Counter})
@@ -48,7 +48,7 @@ export default <Suite>{
 	},
 
 	"behavior composition": async() => {
-		const world = new World()
+		const world = hub.world({})
 		const executive = hub.executive({}, world, system("testing root", [
 			behavior("increase counter")
 				.select({Counter})
@@ -83,11 +83,12 @@ export default <Suite>{
 			deleted() { deleted_was_called++ }
 		}
 
-		const world = new World()
 		const hub = new Hub<Base, Tick>()
+		const base = new Base()
+		const world = hub.world(base)
 		const {system, behavior} = hub
 
-		const executive = hub.executive(new Base(), world, system("testing", [
+		const executive = hub.executive(base, world, system("testing", [
 			behavior("increment a")
 				.select({Tester})
 				.act(() => components => {
@@ -95,38 +96,18 @@ export default <Suite>{
 				}),
 		]))
 
-		const [,data] = world.create({Tester}, {tester: {a: 1}})
+		const [id, data] = world.create({Tester}, {tester: {a: 1}})
 		expect(data.tester.state.a).equals(1)
 		expect(data.tester.b).equals(2)
 		expect(deleted_was_called).equals(0)
 
-		// executive.execute(new Tick())
-		// expect(data.tester.state.a).equals(2)
-		// expect(data.tester.b).equals(4)
-		// expect(deleted_was_called).equals(0)
+		executive.execute(new Tick())
+		expect(data.tester.state.a).equals(2)
+		expect(data.tester.b).equals(4)
+		expect(deleted_was_called).equals(0)
 
-		// const world = new World()
-		// const executive = hub.executive({}, world, system("testing root", [
-		// 	behavior("increase counter")
-		// 		.select({Counter})
-		// 		.act(() => components => {
-		// 			components.counter++
-		// 		}),
-		// 	system("subsystem", [
-		// 		behavior("double decrease counter")
-		// 			.select({Counter})
-		// 			.act(() => components => {
-		// 				components.counter -= 2
-		// 			}),
-		// 	]),
-		// ]))
-
-		// const [,data] = world.create({Counter}, {counter: 0})
-		// expect(data.counter).equals(0)
-
-		// executive.execute({})
-		// expect(data.counter).equals(-1)
+		world.delete(id)
+		expect(deleted_was_called).equals(1)
 	},
-
 }
 
