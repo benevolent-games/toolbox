@@ -22,13 +22,13 @@ export type Serializable = (
 	| {[key: string]: Serializable}
 )
 
-export type AComponent = Component<any>
-export type CComponent = Constructor<AComponent>
-export type Selector = Record<string, CComponent>
+export type ComponentInstance = Component<any>
+export type ComponentClass = Constructor<ComponentInstance>
+export type Selector = Record<string, ComponentClass>
 export type Entry = [Id, Entity]
 
 export type Resolve<Sel extends Selector> = {
-	[K in keyof Sel as K extends string ? Lowercase<K>: never]:
+	[K in keyof Sel as K extends string ? Uncapitalize<K>: never]:
 		InstanceType<Sel[K]> extends HybridComponent<any, any>
 			? InstanceType<Sel[K]> // return the whole hybrid component instance, to do ugly advanced work
 			: InstanceType<Sel[K]>["state"] // return only the state object, making for clean pure logic
@@ -38,6 +38,15 @@ export type Resolve<Sel extends Selector> = {
 //////// FUNDAMENTALS
 ////////
 
+function uncapitalize(s: string) {
+	if (s.length) {
+		const [c] = s
+		const rest = s.slice(1)
+		return c.toLowerCase() + rest
+	}
+	return s
+}
+
 export abstract class Component<State extends Serializable> {
 	constructor(public state: State) {}
 }
@@ -46,20 +55,116 @@ export abstract class HybridComponent<
 		Base,
 		State extends Serializable,
 	> extends Component<State> {
-	constructor(public base: Base, state: State) { super(state) }
+	constructor(public base: Base, state: State) {
+		super(state)
+		this.init()
+	}
+	abstract init(): void
 	abstract deleted(): void
 }
 
-export class Entity {
-	components = new Map<CComponent, AComponent>()
+export class Entity<Sel extends Selector = Selector> {
+	#components = new Map<ComponentClass, ComponentInstance>()
+	#cache = new Map<string, [ComponentClass, ComponentInstance, boolean]>
+	#classes: ComponentClass[] = []
+	#instances: ComponentInstance[] = []
+	#refresh_classes_and_instances() {
+		this.#classes = [...this.#components.keys()]
+		this.#instances = [...this.#components.values()]
+	}
+
+	get classes() {
+		return this.#classes
+	}
+
+	get instances() {
+		return this.#instances
+	}
+
+	match(classes: ComponentClass[]) {
+		const entityTypes = this.classes
+		return classes.every(C => entityTypes.includes(C))
+	}
+
+	createComponents(selector: Sel, params: ComponentParams<Sel>) {
+		for (const [key, Component] of Object.entries(selector)) {
+			const ikey = uncapitalize(key) as keyof ComponentParams<Selector>
+			const component = new Component(params[ikey])
+			this.#components.set(Component, component)
+			this.#cache.set(ikey, [Component, component, component instanceof HybridComponent])
+			this.#refresh_classes_and_instances()
+		}
+	}
+
+	deleteComponent(Component: ComponentClass) {
+		const component = this.#components.get(Component)
+		if (component) {
+			this.#components.delete(Component)
+
+			const ikeys: string[] = []
+			for (const [ikey, [C]] of this.#cache) {
+				if (C === Component)
+					ikeys.push(ikey)
+			}
+
+			for (const ikey of ikeys)
+				this.#cache.delete(ikey)
+
+			this.#refresh_classes_and_instances()
+
+			if (component instanceof HybridComponent)
+				component.deleted()
+		}
+	}
+
+	#grab(ikey: string) {
+		const result = this.#cache.get(ikey)
+		if (!result)
+			throw new Error(`failed to get component data for "${ikey}"`)
+		return result
+	}
+
+	readonly data = new Proxy({}, {
+		get: (_, ikey: string) => {
+			const [,component, isHybrid] = this.#grab(ikey)
+			if (isHybrid)
+				return component
+			else
+				return component.state
+		},
+		set: (_, ikey: string, value: any) => {
+			const [,component, isHybrid] = this.#grab(ikey)
+			if (isHybrid)
+				throw new Error(`cannot directly overwrite hybrid component "${ikey}"`)
+			else
+				component.state = value
+			return true
+		},
+	}) as Resolve<Sel>
+
+	// resolve(selector: Sel) {
+	// 	let resolved: any = {}
+	// 	for (const [key, Component] of Object.entries(selector)) {
+	// 		const component = this.components.get(Component)
+	// 		if (!component)
+	// 			return null
+
+	// 		resolved[uncapitalize(key)] = (
+	// 			component instanceof HybridComponent
+	// 				? component
+	// 				: component.state
+	// 		)
+	// 	}
+	// 	return resolved as Resolve<Sel>
+	// }
 }
 
 export class Query<Sel extends Selector> {
 	matches = new Map<Id, Resolve<Sel>>()
-	#selectorEntries: [string, CComponent][]
+	#types: ComponentClass[] = []
 
-	constructor(public selector: Sel) {
-		this.#selectorEntries = Object.entries(selector)
+	constructor(public readonly selector: Sel) {
+		this.#types = Object.values(selector)
 	}
 
 	same(bravo: Selector) {
@@ -71,28 +176,9 @@ export class Query<Sel extends Selector> {
 			: false
 	}
 
-	#match(entity: Entity) {
-		const selectorComponents = Object.values(this.selector)
-		const entityComponents = [...entity.components.keys()]
-		return selectorComponents.every(C => entityComponents.includes(C))
-	}
-
-	#resolve(entity: Entity) {
-		let resolved: any = {}
-		for (const [key, Component] of this.#selectorEntries) {
-			const component = entity.components.get(Component)!
-			resolved[key.toLowerCase()] = (
-				component instanceof HybridComponent
-					? component
-					: component.state
-			)
-		}
-		return resolved as Resolve<Sel>
-	}
-
 	consider([id, entity]: Entry) {
-		if (this.#match(entity))
-			this.matches.set(id, this.#resolve(entity))
+		if (entity.match(this.#types))
+			this.matches.set(id, entity.data)
 		else
 			this.matches.delete(id)
 	}
@@ -100,6 +186,16 @@ export class Query<Sel extends Selector> {
 	remove(id: Id) {
 		this.matches.delete(id)
 	}
+}
+
+export type ComponentSpec<C extends ComponentClass = ComponentClass> = [
+	ComponentClass,
+	...ConstructorParameters<C>,
+]
+
+export type ComponentParams<Sel extends Selector> = {
+	[K in keyof Sel as K extends string ? Uncapitalize<K> : never]:
+		ConstructorParameters<Sel[K]>[0]
 }
 
 export class World {
@@ -114,6 +210,7 @@ export class World {
 		}
 	}
 
+	/** create a persistent query for this world, and prevent any duplicates */
 	query<Sel extends Selector>(selector: Sel) {
 		let query = this.#find_query(selector)
 
@@ -129,30 +226,63 @@ export class World {
 		return query
 	}
 
-	add(entity: Entity) {
+	#reindex_queries(id: Id, entity: Entity) {
+		const entry: Entry = [id, entity]
+		for (const query of this.queries)
+			query.consider(entry)
+	}
+
+	#add(entity: Entity) {
 		const id = this.id()
 		this.entities.set(id, entity)
-
 		const entry: Entry = [id, entity]
 		for (const query of this.queries)
 			query.consider(entry)
+		return id
 	}
 
-	reconsider(id: Id) {
+	/** get a specific entity, and a subset of its components */
+	get<Sel extends Selector>(id: Id, selector: Sel) {
+		const entity = this.entities.get(id)! as Entity<Sel>
+		if (!entity)
+			throw new Error(`entity not found "${id}"`)
+		if (!entity.match(Object.values(selector)))
+			throw new Error(`entity did not match selector "${id}", {${Object.keys(selector).join(", ")}}`)
+		return entity.data
+	}
+
+	/** create a new entity */
+	create<Sel extends Selector>(selector: Sel, params: ComponentParams<Sel>) {
+		const entity = new Entity<Sel>()
+		entity.createComponents(selector, params)
+		const id = this.#add(entity)
+		return [id, entity.data] as [Id, Resolve<Sel>]
+	}
+
+	/** create new components and attach them to an entity */
+	attach<Sel extends Selector>(id: Id, selector: Sel, params: ComponentParams<Sel>) {
 		const entity = this.entities.get(id)!
-		const entry: Entry = [id, entity]
-		for (const query of this.queries)
-			query.consider(entry)
+		entity.createComponents(selector, params)
+		this.#reindex_queries(id, entity)
 	}
 
-	remove(id: Id) {
+	/** detach components from an entity by type */
+	detach(id: Id, Components: ComponentClass[]) {
+		const entity = this.entities.get(id)!
+		for (const Component of Components)
+			entity.deleteComponent(Component)
+		this.#reindex_queries(id, entity)
+	}
+
+	/** kill an entity and all its components */
+	delete(id: Id) {
 		const entity = this.entities.get(id)!
 		this.entities.delete(id)
 
 		for (const query of this.queries)
 			query.remove(id)
 
-		for (const component of entity.components.values()) {
+		for (const component of entity.instances) {
 			if (component instanceof HybridComponent)
 				component.deleted()
 		}
@@ -286,14 +416,14 @@ class Position extends Component<Vec3> {}
 class Rotation extends Component<Quat> {}
 class Box extends HybridComponent<MyBase, {}> {
 	mesh = MeshBuilder.CreateBox("box", {size: 1}, this.base.scene)
-	updated() {}
+	init() {}
 	deleted() {
 		this.mesh.dispose()
 	}
 }
 class Glb extends HybridComponent<MyBase, {container_name: string}> {
 	instanced = this.base.containers[this.state.container_name].instantiate()
-	updated() {}
+	init() {}
 	deleted() {
 		this.instanced.dispose()
 	}
