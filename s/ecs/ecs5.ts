@@ -1,11 +1,12 @@
 
-import {Vec3} from "../math/vec3.js"
-import {Quat} from "../math/quat.js"
 import {Constructor} from "@benev/slate"
-import {Scene} from "@babylonjs/core/scene.js"
-import {babylonian} from "../math/babylonian.js"
 import {id_counter} from "../tools/id_counter.js"
-import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+
+// import {Vec3} from "../math/vec3.js"
+// import {Quat} from "../math/quat.js"
+// import {Scene} from "@babylonjs/core/scene.js"
+// import {babylonian} from "../math/babylonian.js"
+// import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 function inherits(targetClass: Function, baseClass: Function): boolean {
 	let proto = Object.getPrototypeOf(targetClass.prototype)
@@ -35,7 +36,7 @@ export type Serializable = (
 export type ComponentInstance = Component<any>
 export type ComponentClass = Constructor<ComponentInstance>
 export type Selector = Record<string, ComponentClass>
-export type Entry<Base> = [Id, Entity<Base>]
+export type Entry<Realm> = [Id, Entity<Realm>]
 
 export type Resolve<Sel extends Selector> = {
 	[K in keyof Sel as K extends string ? Uncapitalize<K>: never]:
@@ -76,10 +77,10 @@ export abstract class Component<State extends Serializable> {
 }
 
 export abstract class HybridComponent<
-		Base,
+		Realm,
 		State extends Serializable,
 	> extends Component<State> {
-	constructor(public base: Base, state: State) {
+	constructor(public realm: Realm, state: State) {
 		super(state)
 		this.init()
 	}
@@ -87,16 +88,16 @@ export abstract class HybridComponent<
 	abstract deleted(): void
 }
 
-export class Entity<Base, Sel extends Selector = Selector> {
-	static create<Base, Sel extends Selector>(base: Base, selector: Sel, params: ComponentParams<Sel>) {
-		const entity = new this<Base, Sel>(base)
+export class Entity<Realm, Sel extends Selector = Selector> {
+	static create<Realm, Sel extends Selector>(realm: Realm, selector: Sel, params: ComponentParams<Sel>) {
+		const entity = new this<Realm, Sel>(realm)
 		entity.createComponents(selector, params)
 		return entity
 	}
 
-	#base: Base
-	constructor(base: Base) {
-		this.#base = base
+	#realm: Realm
+	constructor(realm: Realm) {
+		this.#realm = realm
 	}
 
 	#components = new Map<ComponentClass, ComponentInstance>()
@@ -117,7 +118,7 @@ export class Entity<Base, Sel extends Selector = Selector> {
 			const ikey = uncapitalize(key) as keyof ComponentParams<Selector>
 			const state = params[ikey]
 			const component = inherits(Component, HybridComponent)
-				? new Component(this.#base, state)
+				? new Component(this.#realm, state)
 				: new Component(state)
 			this.#components.set(Component, component)
 			this.#cache.set(ikey, [Component, component, component instanceof HybridComponent])
@@ -207,12 +208,15 @@ export class Query<Sel extends Selector> {
 	}
 }
 
-export class World<Base> {
+export class World<Realm> {
 	id = id_counter()
-	entities = new Map<Id, Entity<Base>>()
+	entities = new Map<Id, Entity<Realm>>()
 	queries = new Set<Query<any>>()
+	#realm: Realm
 
-	constructor(public readonly base: Base) {}
+	constructor(realm: Realm) {
+		this.#realm = realm
+	}
 
 	#find_query<Sel extends Selector>(selector: Sel) {
 		for (const query of this.queries) {
@@ -236,16 +240,16 @@ export class World<Base> {
 		return query
 	}
 
-	#reindex_queries(id: Id, entity: Entity<Base>) {
-		const entry: Entry<Base> = [id, entity]
+	#reindex_queries(id: Id, entity: Entity<Realm>) {
+		const entry: Entry<Realm> = [id, entity]
 		for (const query of this.queries)
 			query.consider(entry)
 	}
 
-	add<Sel extends Selector>(entity: Entity<Base, Sel>) {
+	add<Sel extends Selector>(entity: Entity<Realm, Sel>) {
 		const id = this.id()
 		this.entities.set(id, entity)
-		const entry: Entry<Base> = [id, entity]
+		const entry: Entry<Realm> = [id, entity]
 		for (const query of this.queries)
 			query.consider(entry)
 		return [id, entity.data] as [Id, Resolve<Sel>]
@@ -253,7 +257,7 @@ export class World<Base> {
 
 	/** get a specific entity, and a subset of its components */
 	get<Sel extends Selector>(id: Id, selector: Sel) {
-		const entity = this.entities.get(id)! as Entity<Base, Sel>
+		const entity = this.entities.get(id)! as Entity<Realm, Sel>
 
 		if (!entity)
 			throw new Error(`entity not found "${id}"`)
@@ -266,7 +270,7 @@ export class World<Base> {
 
 	/** create a new entity */
 	create<Sel extends Selector>(selector: Sel, params: ComponentParams<Sel>) {
-		const entity = Entity.create(this.base, selector, params)
+		const entity = Entity.create(this.#realm, selector, params)
 		return this.add<Sel>(entity)
 	}
 
@@ -299,21 +303,21 @@ export class World<Base> {
 //////// EXECUTIVE
 ////////
 
-export type Unit<Base, Tick> = (
-	| System<Base, Tick>
-	| Behavior<Base, Tick, any>
+export type Unit<Realm, Tick> = (
+	| System<Realm, Tick>
+	| Behavior<Realm, Tick, any>
 )
 
-export type BehaviorFn<Base, Tick, Sel extends Selector> = (
-	({}: {base: Base, tick: Tick}) =>
+export type BehaviorFn<Realm, Tick, Sel extends Selector> = (
+	({}: {world: World<Realm>, realm: Realm, tick: Tick}) =>
 		(components: Resolve<Sel>, id: Id) => void
 )
 
-export class Behavior<Base, Tick, Sel extends Selector> {
+export class Behavior<Realm, Tick, Sel extends Selector> {
 	constructor(
 		public name: string,
 		public selector: Sel,
-		public fn: BehaviorFn<Base, Tick, Sel>,
+		public fn: BehaviorFn<Realm, Tick, Sel>,
 	) {}
 }
 
@@ -323,10 +327,10 @@ type WalkFns = {
 	behavior?: (behavior: Behavior<any, any, any>) => void
 }
 
-export class System<Base, Tick> {
+export class System<Realm, Tick> {
 	constructor(
 		public name: string,
-		public children: Unit<Base, Tick>[],
+		public children: Unit<Realm, Tick>[],
 	) {}
 
 	walk(fns: WalkFns) {
@@ -360,17 +364,19 @@ export class System<Base, Tick> {
 	}
 }
 
-export class Executive<Base, Tick> {
-	#base: Base
-	#mandates: [Behavior<Base, Tick, any>, query: Query<any>][] = []
+export class Executive<Realm, Tick> {
+	#realm: Realm
+	#world: World<Realm>
+	#mandates: [Behavior<Realm, Tick, any>, query: Query<any>][] = []
 
 	constructor(
-			base: Base,
-			world: World<Base>,
-			system: System<Base, Tick>,
+			realm: Realm,
+			world: World<Realm>,
+			system: System<Realm, Tick>,
 		) {
 
-		this.#base = base
+		this.#world = world
+		this.#realm = realm
 
 		system.walk({
 			behavior: b => this.#mandates.push([b, world.query(b.selector)]),
@@ -378,33 +384,38 @@ export class Executive<Base, Tick> {
 	}
 
 	execute(tick: Tick) {
-		const base = this.#base
+		const world = this.#world
+		const realm = this.#realm
 		for (const [behavior, query] of this.#mandates) {
-			const fn2 = behavior.fn({base, tick})
+			const fn2 = behavior.fn({world, realm, tick})
 			for (const [id, components] of query.matches)
 				fn2(components, id)
 		}
 	}
 }
 
-export class Hub<Base, Tick> {
-	world = (base: Base) => new World<Base>(base)
+export class Hub<Realm, Tick> {
+	world = (realm: Realm) => new World<Realm>(realm)
 
-	system = (name: string, children: Unit<Base, Tick>[]) => (
-		new System<Base, Tick>(name, children)
+	system = (name: string, children: Unit<Realm, Tick>[]) => (
+		new System<Realm, Tick>(name, children)
 	)
 
 	behavior = (name: string) => ({
 		select: <Sel extends Selector>(selector: Sel) => ({
-			act: (fn: BehaviorFn<Base, Tick, Sel>) => (
-				new Behavior<Base, Tick, Sel>(name, selector, fn)
+			act: (fn: BehaviorFn<Realm, Tick, Sel>) => (
+				new Behavior<Realm, Tick, Sel>(name, selector, fn)
 			),
 		}),
 	})
 
-	executive = (base: Base, world: World<Base>, system: System<Base, Tick>) => (
-		new Executive<Base, Tick>(base, world, system)
+	executive = (realm: Realm, world: World<Realm>, system: System<Realm, Tick>) => (
+		new Executive<Realm, Tick>(realm, world, system)
 	)
+
+	archetype = <P extends any[], X>(
+		fn: (world: World<Realm>) => (...p: P) => X
+	) => fn
 }
 
 ////////////////////////////////

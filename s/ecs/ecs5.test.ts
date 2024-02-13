@@ -1,17 +1,17 @@
 
 import {Suite, expect} from "cynic"
-import {Quat} from "../math/quat.js"
-import {Vec3} from "../math/vec3.js"
-import {Component, Entity, Hub, HybridComponent, World} from "./ecs5.js"
+// import {Quat} from "../math/quat.js"
+// import {Vec3} from "../math/vec3.js"
+import {Component, Hub, HybridComponent, World} from "./ecs5.js"
 
-type MyBase = {}
+type MyRealm = {}
 type MyTick = {}
-const hub = new Hub<MyBase, MyTick>()
+const hub = new Hub<MyRealm, MyTick>()
 const {system, behavior} = hub
 
 class Counter extends Component<number> {}
-class Position extends Component<Vec3> {}
-class Rotation extends Component<Quat> {}
+// class Position extends Component<Vec3> {}
+// class Rotation extends Component<Quat> {}
 
 export default <Suite>{
 	"manually change values": async() => {
@@ -72,23 +72,23 @@ export default <Suite>{
 	},
 
 	"basic lifecycle": async() => {
-		class Base { doubler = 2 }
+		class Realm { doubler = 2 }
 		class Tick { tripler = 3 }
 
 		let deleted_was_called = 0
 
-		class Tester extends HybridComponent<Base, {a: number}> {
-			get b() { return this.base.doubler * this.state.a }
+		class Tester extends HybridComponent<Realm, {a: number}> {
+			get b() { return this.realm.doubler * this.state.a }
 			init() {}
 			deleted() { deleted_was_called++ }
 		}
 
-		const hub = new Hub<Base, Tick>()
-		const base = new Base()
-		const world = hub.world(base)
+		const hub = new Hub<Realm, Tick>()
+		const realm = new Realm()
+		const world = hub.world(realm)
 		const {system, behavior} = hub
 
-		const executive = hub.executive(base, world, system("testing", [
+		const executive = hub.executive(realm, world, system("testing", [
 			behavior("increment a")
 				.select({Tester})
 				.act(() => components => {
