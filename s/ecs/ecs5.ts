@@ -1,5 +1,6 @@
 
 import {Constructor} from "@benev/slate"
+import {pubb} from "../tools/pubb.js"
 import {id_counter} from "../tools/id_counter.js"
 
 // import {Vec3} from "../math/vec3.js"
@@ -183,6 +184,9 @@ export class Query<Sel extends Selector> {
 	matches = new Map<Id, Resolve<Sel>>()
 	#types: ComponentClass[] = []
 
+	added = pubb<[Resolve<Sel>, Id]>()
+	removed = pubb<[Resolve<Sel>, Id]>()
+
 	constructor(public readonly selector: Sel) {
 		this.#types = Object.values(selector)
 	}
@@ -197,16 +201,28 @@ export class Query<Sel extends Selector> {
 	}
 
 	consider([id, entity]: Entry<any>) {
-		if (entity.match(this.#types))
-			this.matches.set(id, entity.data)
+		if (entity.match(this.#types)) {
+			if (!this.matches.has(id))
+				this.add(id, entity)
+		}
 		else
-			this.matches.delete(id)
+			this.remove(id, entity)
 	}
 
-	remove(id: Id) {
+	add(id: Id, entity: Entity<any>) {
+		this.matches.set(id, entity.data)
+		this.added.publish(entity.data, id)
+	}
+
+	remove(id: Id, entity: Entity<any>) {
 		this.matches.delete(id)
+		this.removed.publish(entity.data, id)
 	}
 }
+
+export type EventFn<Sel extends Selector = Selector> = (
+	(components: Resolve<Sel>, id: Id) => void
+)
 
 export class World<Realm> {
 	id = id_counter()
@@ -292,9 +308,9 @@ export class World<Realm> {
 	/** kill an entity and all its components */
 	delete(id: Id) {
 		const entity = this.entities.get(id)!
-		this.entities.delete(id)
 		for (const query of this.queries)
-			query.remove(id)
+			query.remove(id, entity)
+		this.entities.delete(id)
 		entity.call_deleted_on_all_hybrid_components()
 	}
 }
@@ -306,11 +322,19 @@ export class World<Realm> {
 export type Unit<Realm, Tick> = (
 	| System<Realm, Tick>
 	| Behavior<Realm, Tick, any>
+	| Responder<Realm, any>
 )
 
 export type BehaviorFn<Realm, Tick, Sel extends Selector> = (
 	({}: {world: World<Realm>, realm: Realm, tick: Tick}) =>
 		(components: Resolve<Sel>, id: Id) => void
+)
+
+export type ResponderFn<Realm, Sel extends Selector> = (
+	({}: {world: World<Realm>, realm: Realm}) => {
+		added: (components: Resolve<Sel>, id: Id) => void
+		removed: (components: Resolve<Sel>, id: Id) => void
+	}
 )
 
 export class Behavior<Realm, Tick, Sel extends Selector> {
@@ -321,10 +345,19 @@ export class Behavior<Realm, Tick, Sel extends Selector> {
 	) {}
 }
 
+export class Responder<Realm, Sel extends Selector> {
+	constructor(
+		public name: string,
+		public selector: Sel,
+		public fn: ResponderFn<Realm, Sel>
+	) {}
+}
+
 type WalkFns = {
 	unit?: (unit: Unit<any, any>) => void
 	system?: (system: System<any, any>) => void
 	behavior?: (behavior: Behavior<any, any, any>) => void
+	responder?: (responder: Responder<any, any>) => void
 }
 
 export class System<Realm, Tick> {
@@ -374,12 +407,16 @@ export class Executive<Realm, Tick> {
 			world: World<Realm>,
 			system: System<Realm, Tick>,
 		) {
-
 		this.#world = world
 		this.#realm = realm
-
 		system.walk({
 			behavior: b => this.#mandates.push([b, world.query(b.selector)]),
+			responder: r => {
+				const query = world.query(r.selector)
+				const events = r.fn({world, realm})
+				query.added(events.added)
+				query.removed(events.removed)
+			},
 		})
 	}
 
