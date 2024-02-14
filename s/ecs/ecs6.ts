@@ -5,8 +5,6 @@ import {inherits} from "../tools/inherits.js"
 import {id_counter} from "../tools/id_counter.js"
 import {uncapitalize} from "../tools/uncapitalize.js"
 
-const internal = Symbol()
-
 export type Id = number
 
 export type Serializable = (
@@ -46,6 +44,8 @@ export function selectors_are_the_same(alpha: Selector, bravo: Selector) {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+const internal = Symbol()
 
 export abstract class Component<State extends Serializable> {
 	constructor(public state: State) {}
@@ -134,6 +134,10 @@ export class Query<Sel extends Selector = Selector> {
 	#matches = new Map<Id, CHandle<Sel>>()
 	readonly added = pubb<[CHandle<Sel>, Id]>()
 	readonly removed = pubb<[CHandle<Sel>, Id]>()
+
+	get matches() {
+		return this.#matches.entries()
+	}
 
 	constructor(public readonly selector: Sel) {
 		this.#classes = Object.values(selector)
@@ -249,59 +253,142 @@ export class World<Realm> {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+export type Unit<Realm, Tick> = (
+	| System<Realm, Tick>
+	| Behavior<Realm, Tick, any>
+	| Responder<Realm, any>
+)
 
+export type BehaviorFn<Realm, Tick, Sel extends Selector> = (
+	({}: {world: World<Realm>, realm: Realm, tick: Tick}) =>
+		(components: CHandle<Sel>, id: Id) => void
+)
 
+export type ResponderFn<Realm, Sel extends Selector> = (
+	({}: {world: World<Realm>, realm: Realm}) => {
+		added: (components: CHandle<Sel>, id: Id) => void
+		removed: (components: CHandle<Sel>, id: Id) => void
+	}
+)
 
+export class Behavior<Realm, Tick, Sel extends Selector> {
+	constructor(
+		public name: string,
+		public selector: Sel,
+		public fn: BehaviorFn<Realm, Tick, Sel>,
+	) {}
+}
 
+export class Responder<Realm, Sel extends Selector> {
+	constructor(
+		public name: string,
+		public selector: Sel,
+		public fn: ResponderFn<Realm, Sel>
+	) {}
+}
 
+type WalkFns = {
+	unit?: (unit: Unit<any, any>) => void
+	system?: (system: System<any, any>) => void
+	behavior?: (behavior: Behavior<any, any, any>) => void
+	responder?: (responder: Responder<any, any>) => void
+}
 
+export class System<Realm, Tick> {
+	constructor(
+		public name: string,
+		public children: Unit<Realm, Tick>[],
+	) {}
 
+	walk(fns: WalkFns) {
+		System.walk(this, fns)
+	}
 
+	static walk(system: System<any, any>, fns: WalkFns) {
+		const {
+			unit: fnUnit = () => {},
+			system: fnSystem = () => {},
+			behavior: fnBehavior = () => {},
+		} = fns
 
+		fnUnit(system)
+		fnSystem(system)
 
+		for (const unit of system.children) {
+			if (unit instanceof Behavior) {
+				fnUnit(unit)
+				fnBehavior(unit)
+			}
+			else if (unit instanceof System) {
+				fnUnit(unit)
+				fnSystem(unit)
+				this.walk(unit, fns)
+			}
+			else {
+				throw new Error(`invalid unit in system "${system.name}"`)
+			}
+		}
+	}
+}
 
+export class Executive<Realm, Tick> {
+	#realm: Realm
+	#world: World<Realm>
+	#mandates: [Behavior<Realm, Tick, any>, query: Query<any>][] = []
 
+	constructor(
+			realm: Realm,
+			world: World<Realm>,
+			system: System<Realm, Tick>,
+		) {
+		this.#world = world
+		this.#realm = realm
+		system.walk({
+			behavior: b => this.#mandates.push([b, world.query(b.selector)]),
+			responder: r => {
+				const query = world.query(r.selector)
+				const events = r.fn({world, realm})
+				query.added(events.added)
+				query.removed(events.removed)
+			},
+		})
+	}
 
+	execute(tick: Tick) {
+		const world = this.#world
+		const realm = this.#realm
+		for (const [behavior, query] of this.#mandates) {
+			const fn2 = behavior.fn({world, realm, tick})
+			for (const [id, components] of query.matches)
+				fn2(components, id)
+		}
+	}
+}
 
+export class Hub<Realm, Tick> {
+	world = (realm: Realm) => new World<Realm>(realm)
 
+	system = (name: string, children: Unit<Realm, Tick>[]) => (
+		new System<Realm, Tick>(name, children)
+	)
 
+	behavior = (name: string) => ({
+		select: <Sel extends Selector>(selector: Sel) => ({
+			act: (fn: BehaviorFn<Realm, Tick, Sel>) => (
+				new Behavior<Realm, Tick, Sel>(name, selector, fn)
+			),
+		}),
+	})
 
+	executive = (realm: Realm, world: World<Realm>, system: System<Realm, Tick>) => (
+		new Executive<Realm, Tick>(realm, world, system)
+	)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	archetype = <P extends any[], X>(
+		fn: (world: World<Realm>) => (...p: P) => X
+	) => fn
+}
 
