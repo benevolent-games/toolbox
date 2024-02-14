@@ -220,10 +220,6 @@ export class Query<Sel extends Selector> {
 	}
 }
 
-export type EventFn<Sel extends Selector = Selector> = (
-	(components: Resolve<Sel>, id: Id) => void
-)
-
 export class World<Realm> {
 	id = id_counter()
 	entities = new Map<Id, Entity<Realm>>()

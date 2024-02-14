@@ -1,4 +1,11 @@
 
+/**
+ * simple pub-sub mechanism.
+ *
+ *     const onWhatever = pubb((a: number, b: boolean) => console.log(a, b))
+ *     onWhatever.publish(123, true)
+ *
+ */
 export function pubb<P extends any[]>() {
 	const set = new Set<(...p: P) => void>()
 
