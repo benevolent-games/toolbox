@@ -17,8 +17,11 @@ export class Entity<Sel extends Selector = Selector> {
 	constructor(public readonly id: Id) {}
 
 	match(classes: CClass[]) {
-		const attached = this[getClasses]()
-		return classes.every(C => attached.includes(C))
+		return classes.every(C => this.#components.has(C))
+	}
+
+	subselect<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
+		return this.match(Object.values(selector))
 	}
 
 	readonly data = new Proxy({}, {

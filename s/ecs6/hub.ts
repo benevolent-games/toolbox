@@ -4,7 +4,8 @@ import {System} from "./exe/system.js"
 import {Selector} from "./core/types.js"
 import {Behavior} from "./exe/behavior.js"
 import {Executive} from "./exe/executive.js"
-import {BehaviorFn, Unit} from "./exe/types.js"
+import {Responder} from "./exe/responder.js"
+import {BehaviorFn, ResponderFn, Unit} from "./exe/types.js"
 
 export * from "./core/world.js"
 export * from "./core/component.js"
@@ -22,6 +23,12 @@ export class Hub<Realm, Tick> {
 			act: (fn: BehaviorFn<Realm, Tick, Sel>) => (
 				new Behavior<Realm, Tick, Sel>(name, selector, fn)
 			),
+		}),
+	})
+
+	responder = (name: string) => ({
+		select: <Sel extends Selector>(selector: Sel) => ({
+			respond: (fn: ResponderFn<Realm, Sel>) => new Responder(name, selector, fn),
 		}),
 	})
 
