@@ -7,6 +7,7 @@ import {Executive} from "./exe/executive.js"
 import {Responder} from "./exe/responder.js"
 import {BehaviorFn, ResponderFn, Unit} from "./exe/types.js"
 
+export * from "./core/types.js"
 export * from "./core/world.js"
 export * from "./core/component.js"
 export * from "./core/hybrid_component.js"
