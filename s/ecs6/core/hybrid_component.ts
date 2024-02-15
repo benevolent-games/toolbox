@@ -9,7 +9,6 @@ export abstract class HybridComponent<
 
 	constructor(public realm: Realm, state: State) {
 		super(state, () => this.updated())
-		this.created()
 	}
 
 	abstract created(): void

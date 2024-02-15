@@ -18,6 +18,7 @@ export class System<Realm, Tick> {
 			unit: fnUnit = () => {},
 			system: fnSystem = () => {},
 			behavior: fnBehavior = () => {},
+			responder: fnResponder = () => {},
 		} = fns
 
 		fnUnit(system)
@@ -27,6 +28,10 @@ export class System<Realm, Tick> {
 			if (unit instanceof Behavior) {
 				fnUnit(unit)
 				fnBehavior(unit)
+			}
+			else if (unit instanceof Responder) {
+				fnUnit(unit)
+				fnResponder(unit)
 			}
 			else if (unit instanceof System) {
 				fnUnit(unit)

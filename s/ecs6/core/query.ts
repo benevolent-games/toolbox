@@ -24,12 +24,16 @@ export class Query<Sel extends Selector = Selector> {
 	}
 
 	[consider](entity: Entity) {
-		if (entity.match(this.#classes)) {
-			if (!this.#matches.has(entity.id))
+		const was_matching = this.#matches.has(entity.id)
+		const is_matching = entity.match(this.#classes)
+		const changed = is_matching !== was_matching
+		if (changed) {
+			if (is_matching)
 				this[add](entity)
+			else
+				this[remove](entity)
 		}
-		else
-			this[remove](entity)
+		return is_matching
 	}
 
 	[add](entity: Entity) {

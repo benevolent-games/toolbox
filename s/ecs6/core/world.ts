@@ -32,8 +32,8 @@ export class World<Realm> {
 	createEntity<Sel extends Selector>(selector: Sel, params: CParams<Sel>) {
 		const id = this.#new_id()
 		const entity = new Entity(id)
-		for (const query of this.#queries)
-			query[Query.internal.consider](entity)
+		// for (const query of this.#queries)
+		// 	query[Query.internal.consider](entity)
 		return this.attachComponents(entity, selector, params)
 	}
 
@@ -46,7 +46,11 @@ export class World<Realm> {
 			const ikey = uncapitalize(key) as keyof CParams<Selector>
 			const state = params[ikey]
 			const component = inherits(Component, HybridComponent)
-				? new Component(this.#realm, state)
+				? (() => {
+					const c = new Component(this.#realm, state) as HybridComponent<any, any>
+					c.created()
+					return c
+				})()
 				: new Component(state)
 			entity[Entity.internal.attach](ikey, Component, component)
 		}

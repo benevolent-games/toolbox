@@ -44,8 +44,10 @@ export class Entity<Sel extends Selector = Selector> {
 
 	#grab(ikey: string) {
 		const result = this.#cache.get(ikey)
-		if (!result)
+		if (!result) {
+			console.error("cache", this.id, this.#cache)
 			throw new Error(`failed to get component data for "${ikey}"`)
+		}
 		return result
 	}
 
