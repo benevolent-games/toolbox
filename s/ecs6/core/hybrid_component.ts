@@ -8,11 +8,12 @@ export abstract class HybridComponent<
 	> extends Component<State> {
 
 	constructor(public realm: Realm, state: State) {
-		super(state)
-		this.init()
+		super(state, () => this.updated())
+		this.created()
 	}
 
-	abstract init(): void
+	abstract created(): void
+	abstract updated(): void
 	abstract deleted(): void
 }
 
