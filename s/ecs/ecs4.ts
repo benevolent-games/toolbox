@@ -1,6 +1,5 @@
 
 import {pub} from "@benev/slate/x/pure.js"
-import {measure} from "../tools/measure.js"
 import {id_counter} from "../tools/id_counter.js"
 import {RunningAverage} from "../tools/running_average.js"
 
