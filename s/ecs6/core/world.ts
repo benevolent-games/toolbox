@@ -32,8 +32,7 @@ export class World<Realm> {
 	createEntity<Sel extends Selector>(selector: Sel, params: CParams<Sel>) {
 		const id = this.#new_id()
 		const entity = new Entity(id)
-		// for (const query of this.#queries)
-		// 	query[Query.internal.consider](entity)
+		this.#entities.set(id, entity)
 		return this.attachComponents(entity, selector, params)
 	}
 
@@ -70,7 +69,8 @@ export class World<Realm> {
 	deleteEntity(id: Id) {
 		const entity = this.#entities.get(id)!
 		for (const query of this.#queries)
-			query[Query.internal.remove](entity)
+			if (entity.match(query.selector))
+				query[Query.internal.remove](entity)
 		this.#entities.delete(id)
 		entity[Entity.internal.call_deleted_on_all_hybrid_components]()
 	}
@@ -81,7 +81,7 @@ export class World<Realm> {
 		if (!entity)
 			throw new Error(`entity not found "${id}"`)
 
-		if (!entity.match(Object.values(selector)))
+		if (!entity.match(selector))
 			throw new Error(`entity did not match selector "${id}", {${Object.keys(selector).join(", ")}}`)
 
 		return entity.data

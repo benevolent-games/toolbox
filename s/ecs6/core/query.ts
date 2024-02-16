@@ -1,7 +1,7 @@
 
 import {Entity} from "./entity.js"
 import {pubb} from "../../tools/pubb.js"
-import {CClass, CHandle, Id, Selector} from "./types.js"
+import {CHandle, Id, Selector} from "./types.js"
 
 const consider = Symbol()
 const add = Symbol()
@@ -10,7 +10,6 @@ const remove = Symbol()
 export class Query<Sel extends Selector = Selector> {
 	static internal = {consider, add, remove} as const
 
-	#classes: CClass[] = []
 	#matches = new Map<Id, CHandle<Sel>>()
 	readonly added = pubb<[CHandle<Sel>, Id]>()
 	readonly removed = pubb<[CHandle<Sel>, Id]>()
@@ -19,13 +18,11 @@ export class Query<Sel extends Selector = Selector> {
 		return this.#matches.entries()
 	}
 
-	constructor(public readonly selector: Sel) {
-		this.#classes = Object.values(selector)
-	}
+	constructor(public readonly selector: Sel) {}
 
 	[consider](entity: Entity) {
 		const was_matching = this.#matches.has(entity.id)
-		const is_matching = entity.match(this.#classes)
+		const is_matching = entity.match(this.selector)
 		const changed = is_matching !== was_matching
 		if (changed) {
 			if (is_matching)
