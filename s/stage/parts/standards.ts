@@ -1,6 +1,6 @@
 
-import {Effects} from "../types.js"
 import {Vec4} from "../../math/vec4.js"
+import {asEffects} from "../effects.js"
 import {DepthOfFieldEffectBlurLevel} from "@babylonjs/core/PostProcesses/depthOfFieldEffect.js"
 
 export const backgrounds = {
@@ -12,7 +12,7 @@ export const backgrounds = {
 }
 
 export const effects = {
-	everything: (): Effects => ({
+	everything: () => asEffects({
 		default: {
 			antialiasing: {
 				samples: 4,
@@ -99,7 +99,7 @@ export const effects = {
 			clipToFrustum: true,
 			enableAutomaticThicknessComputation: false,
 			enableSmoothReflections: false,
-			reflectivityThreshold: 0.04,
+			reflectivityThreshold: 0.01,
 			samples: 1,
 			ssrDownsample: 0,
 			useFresnel: false,

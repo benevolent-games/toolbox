@@ -1,12 +1,12 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
+import {GlowLayer} from "@babylonjs/core/Layers/glowLayer.js"
 import {SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/ssrRenderingPipeline.js"
 import {SSAO2RenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/ssao2RenderingPipeline.js"
 import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline.js"
 
 import {Labeler} from "../../tools/label.js"
-import {DefaultEffect, SsaoEffect, SsrEffect} from "../types.js"
-import { GlowLayer } from "@babylonjs/core/Layers/glowLayer.js"
+import {DefaultEffect, SsaoEffect, SsrEffect} from "../effects.js"
 
 export const render_pipes = (scene: Scene, label: Labeler) => ({
 
@@ -35,15 +35,15 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 			}
 		}
 
+		pipe.imageProcessingEnabled = !!imageProcessing
 		if (imageProcessing) {
-			pipe.imageProcessingEnabled = true
 			pipe.imageProcessing.contrast = imageProcessing.contrast
 			pipe.imageProcessing.exposure = imageProcessing.exposure
 			pipe.imageProcessing.adaptScaleToCurrentViewport = imageProcessing.adaptScaleToCurrentViewport
 		}
 
+		pipe.bloomEnabled = !!bloom
 		if (bloom) {
-			pipe.bloomEnabled = true
 			pipe.bloomWeight = bloom.weight
 			pipe.bloomScale = bloom.scale
 			pipe.bloomKernel = bloom.kernel
@@ -57,8 +57,8 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 			pipe.glowLayerEnabled = true
 		}
 
+		pipe.depthOfFieldEnabled = !!depthOfField
 		if (depthOfField) {
-			pipe.depthOfFieldEnabled = true
 			pipe.depthOfFieldBlurLevel = depthOfField.blurLevel
 			pipe.depthOfField.fStop = depthOfField.fStop
 			pipe.depthOfField.focalLength = depthOfField.focalLength
@@ -66,23 +66,23 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 			pipe.depthOfField.lensSize = depthOfField.lensSize
 		}
 
+		pipe.grainEnabled = !!grain
 		if (grain) {
-			pipe.grainEnabled = true
 			pipe.grain.adaptScaleToCurrentViewport = grain.adaptScaleToCurrentViewport
 			pipe.grain.animated = grain.animated
 			pipe.grain.intensity = grain.intensity
 		}
 
+		pipe.sharpenEnabled = !!sharpen
 		if (sharpen) {
-			pipe.sharpenEnabled = true
 			pipe.sharpen.adaptScaleToCurrentViewport = sharpen.adaptScaleToCurrentViewport
 			pipe.sharpen.edgeAmount = sharpen.edgeAmount
 			pipe.sharpen.colorAmount = sharpen.colorAmount
 		}
 
+		pipe.chromaticAberrationEnabled = !!chromaticAberration
 		if (chromaticAberration) {
 			const c = chromaticAberration
-			pipe.chromaticAberrationEnabled = true
 			pipe.chromaticAberration.adaptScaleToCurrentViewport = c.adaptScaleToCurrentViewport
 			pipe.chromaticAberration.aberrationAmount = c.aberrationAmount
 			pipe.chromaticAberration.alphaMode = c.alphaMode
