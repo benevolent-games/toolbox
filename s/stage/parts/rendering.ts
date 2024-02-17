@@ -5,7 +5,7 @@ import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
 
-import {Effects} from "../types.js"
+import {Effects} from "../effects.js"
 import {effects} from "./standards.js"
 import {radians} from "../../math/scalar.js"
 import {labeler} from "../../tools/label.js"

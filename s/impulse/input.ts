@@ -20,6 +20,7 @@ export namespace Input {
 		down: boolean
 		mods: Modifiers
 		repeat: boolean
+		preventDefault: () => void
 	}
 
 	export interface Vector extends Base {

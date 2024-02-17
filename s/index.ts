@@ -31,6 +31,7 @@ export * from "./nui/nui.js"
 
 export * from "./stage/stage.js"
 export * from "./stage/types.js"
+export * from "./stage/effects.js"
 export * from "./stage/parts/pointer_locker.js"
 export * from "./stage/parts/remote.js"
 export * from "./stage/parts/rendering.js"

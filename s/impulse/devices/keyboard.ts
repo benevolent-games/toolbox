@@ -8,8 +8,8 @@ export class Keyboard extends Device {
 		super()
 
 		const handler = ({down}: {down: boolean}) => (event: KeyboardEvent) => {
-			event.preventDefault()
 			this.onInput.publish({
+				preventDefault: () => event.preventDefault(),
 				down,
 				kind: "button",
 				code: event.code,
