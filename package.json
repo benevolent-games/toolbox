@@ -52,7 +52,7 @@
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
 		"rimraf": "^5.0.5",
-		"rollup": "^4.11.0",
+		"rollup": "^4.12.0",
 		"terser": "^5.27.1",
 		"typescript": "^5.3.3",
 		"wrap-ansi": "^9.0.0"
