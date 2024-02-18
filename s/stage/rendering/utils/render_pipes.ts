@@ -5,10 +5,9 @@ import {SSRRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline
 import {SSAO2RenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/ssao2RenderingPipeline.js"
 import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline.js"
 
-import {Labeler} from "../../tools/label.js"
-import {DefaultEffect, SsaoEffect, SsrEffect} from "../effects.js"
+import {label} from "../../../tools/label.js"
 
-export const render_pipes = (scene: Scene, label: Labeler) => ({
+export const render_pipes = (scene: Scene) => ({
 
 	default({
 			antialiasing,
@@ -21,7 +20,7 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 			chromaticAberration,
 		}: DefaultEffect) {
 
-		const pipe = new DefaultRenderingPipeline(label("default"), true, scene)
+		const pipe = new DefaultRenderingPipeline(label("pipe_default"), true, scene)
 
 		if (antialiasing) {
 			if (pipe.fxaa) {
@@ -40,6 +39,7 @@ export const render_pipes = (scene: Scene, label: Labeler) => ({
 			pipe.imageProcessing.contrast = imageProcessing.contrast
 			pipe.imageProcessing.exposure = imageProcessing.exposure
 			pipe.imageProcessing.adaptScaleToCurrentViewport = imageProcessing.adaptScaleToCurrentViewport
+			pipe.imageProcessing.toneMappingEnabled
 		}
 
 		pipe.bloomEnabled = !!bloom

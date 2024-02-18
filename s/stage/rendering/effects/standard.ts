@@ -1,7 +1,6 @@
 
-import {Vec4} from "../../math/vec4.js"
-import {asEffects} from "../effects.js"
-import {DepthOfFieldEffectBlurLevel} from "@babylonjs/core/PostProcesses/depthOfFieldEffect.js"
+import {Effects} from "./types.js"
+import {Vec4} from "../../../math/vec4.js"
 
 export const backgrounds = {
 	transparent: () => [0, 0, 0, 0] as Vec4,
@@ -11,56 +10,8 @@ export const backgrounds = {
 	sky: () => [.7, .8, 1, 1] as Vec4,
 }
 
-export const effects = {
-	everything: () => asEffects({
-		default: {
-			antialiasing: {
-				samples: 4,
-				fxaa: true,
-				adaptScaleToCurrentViewport: false,
-			},
-			imageProcessing: {
-				contrast: 1,
-				exposure: 1,
-				adaptScaleToCurrentViewport: false,
-			},
-			bloom: {
-				weight: .2,
-				scale: .5,
-				kernel: 32,
-				threshold: .6,
-			},
-			chromaticAberration: {
-				aberrationAmount: 30,
-				radialIntensity: 3,
-				adaptScaleToCurrentViewport: false,
-				forceFullscreenViewport: true,
-				enablePixelPerfectMode: false,
-				alwaysForcePOT: false,
-				alphaMode: 0,
-			},
-			glow: {
-				blurKernelSize: 16,
-				intensity: 1,
-			},
-			grain: {
-				adaptScaleToCurrentViewport: false,
-				intensity: 10,
-				animated: true,
-			},
-			sharpen: {
-				adaptScaleToCurrentViewport: false,
-				colorAmount: 1,
-				edgeAmount: 0.3,
-			},
-			depthOfField: {
-				blurLevel: DepthOfFieldEffectBlurLevel.Low,
-				fStop: 1.4,
-				focalLength: 50,
-				focusDistance: 2000,
-				lensSize: 50,
-			},
-		},
+export const standard_effects = {
+	everything: (): Effects => ({
 		ssao: {
 			ssaoRatio: .75,
 			blurRatio: .75,
@@ -77,6 +28,7 @@ export const effects = {
 			expensiveBlur: false,
 			samples: 8,
 		},
+
 		ssr: {
 			debug: false,
 			maxDistance: 1000,
@@ -104,6 +56,81 @@ export const effects = {
 			ssrDownsample: 0,
 			useFresnel: false,
 		},
-	}),
+
+		lens: {
+			chromatic_aberration: 0,
+			edge_blur: 0,
+			distortion: 0,
+			grain_amount: 0,
+			dof_focus_distance: 10,
+			dof_aperture: 1,
+			dof_darken: 0,
+			dof_pentagon: true,
+			dof_gain: 1,
+			dof_threshold: 1,
+			blur_noise: true,
+		},
+
+		//
+		// default
+		//
+
+		antialiasing: {
+			samples: 4,
+			fxaa: true,
+		},
+
+		imageProcessing: {
+			contrast: 1,
+			exposure: 1,
+		},
+
+		tonemapping: {
+			operator: "Photographic",
+		},
+
+		vignette: {
+			color: [0, 0, 0, 1],
+			weight: 1,
+			stretch: 1,
+			multiply: true,
+		},
+
+		bloom: {
+			weight: .2,
+			scale: .5,
+			kernel: 32,
+			threshold: .6,
+		},
+
+		chromaticAberration: {
+			aberrationAmount: 30,
+			radialIntensity: 3,
+		},
+
+		glow: {
+			blurKernelSize: 16,
+			intensity: 1,
+		},
+
+		sharpen: {
+			colorAmount: 1,
+			edgeAmount: 0.3,
+			// adaptScaleToCurrentViewport: false,
+		},
+
+		// grain: {
+		// 	intensity: 10,
+		// 	animated: true,
+		// },
+
+		// depthOfField: {
+		// 	blurLevel: DepthOfFieldEffectBlurLevel.Low,
+		// 	fStop: 1.4,
+		// 	focalLength: 50,
+		// 	focusDistance: 2000,
+		// 	lensSize: 50,
+		// },
+	})
 }
 

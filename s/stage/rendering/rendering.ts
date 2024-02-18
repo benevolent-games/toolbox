@@ -1,29 +1,38 @@
 
+import "@babylonjs/core/Culling/ray.js"
+import "@babylonjs/loaders/glTF/index.js"
+import "@babylonjs/core/Engines/index.js"
+import "@babylonjs/core/Animations/index.js"
+import "@babylonjs/core/Rendering/edgesRenderer.js"
+import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
+import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
+import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader.js"
+import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
+
 import {Scene} from "@babylonjs/core/scene.js"
 import {Camera} from "@babylonjs/core/Cameras/camera.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
 
-import {Effects} from "../effects.js"
-import {effects} from "./standards.js"
 import {radians} from "../../math/scalar.js"
-import {labeler} from "../../tools/label.js"
-import {render_pipes} from "./render_pipes.js"
 
 export class Rendering {
 	static effects = effects
 
 	#camera!: Camera
 	#scene: Scene
-	#label = labeler("pipeline")
 	#effects: Effects | null = null
+
+	#pipes: Set<{pipeline: PostProcessRenderPipeline, dispose:}>
 	#pipelines = new Set<PostProcessRenderPipeline>()
 
 	readonly fallbackCamera: ArcRotateCamera
 
 	constructor(scene: Scene) {
 		this.#scene = scene
+
+		scene.enableDepthRenderer()
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
@@ -67,10 +76,10 @@ export class Rendering {
 	}
 
 	setEffects(effects: Effects | null) {
-		const pipes = render_pipes(this.#scene, this.#label)
-
 		for (const pipe of [...this.#pipelines])
 			this.#deletePipe(pipe)
+
+		const pipes = render_pipes(this.#scene)
 
 		if (effects?.default)
 			this.#addPipe(pipes.default(effects.default))
@@ -97,6 +106,10 @@ export class Rendering {
 	#addPipe(pipe: PostProcessRenderPipeline) {
 		// pipelines add themselves to the manager automatically on construction
 		this.#pipelines.add(pipe)
+	}
+
+	#delete_all_pipes() {
+		for (const pipe of [...this.#pipelines])
 	}
 
 	#deletePipe(pipe: PostProcessRenderPipeline) {
