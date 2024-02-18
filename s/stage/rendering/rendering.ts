@@ -13,26 +13,26 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {Camera} from "@babylonjs/core/Cameras/camera.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
-import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
 
 import {radians} from "../../math/scalar.js"
+import {setup_effects} from "./effects/setup.js"
+import {EffectRig, Effects} from "./effects/types.js"
+import {standard_effects} from "./effects/standard.js"
 
 export class Rendering {
-	static effects = effects
-
-	#camera!: Camera
-	#scene: Scene
-	#effects: Effects | null = null
-
-	#pipes: Set<{pipeline: PostProcessRenderPipeline, dispose:}>
-	#pipelines = new Set<PostProcessRenderPipeline>()
+	static effects = standard_effects
 
 	readonly fallbackCamera: ArcRotateCamera
+	#scene: Scene
+	#camera!: Camera
+	#rig: EffectRig = {
+		effects: null,
+		pipelines: [],
+		dispose: () => {},
+	}
 
 	constructor(scene: Scene) {
 		this.#scene = scene
-
-		scene.enableDepthRenderer()
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
@@ -49,6 +49,12 @@ export class Rendering {
 		this.setCamera(this.fallbackCamera)
 	}
 
+	get #pipelines() {
+		return this.#rig
+			? this.#rig.pipelines
+			: []
+	}
+
 	get camera() {
 		return this.#camera
 	}
@@ -56,13 +62,14 @@ export class Rendering {
 	setCamera(camera: Camera | null) {
 		camera ??= this.fallbackCamera
 		const previous = this.#camera
+		const pipelines = this.#pipelines
 
 		if (previous)
-			for (const pipe of this.#pipelines)
+			for (const pipe of pipelines)
 				this.#scene.postProcessRenderPipelineManager
 					.detachCamerasFromRenderPipeline(pipe.name, previous)
 
-		for (const pipe of this.#pipelines)
+		for (const pipe of pipelines)
 			this.#scene.postProcessRenderPipelineManager
 				.attachCamerasToRenderPipeline(pipe.name, camera)
 
@@ -72,52 +79,23 @@ export class Rendering {
 	}
 
 	get effects() {
-		return this.#effects
+		return this.#rig.effects
 	}
 
-	setEffects(effects: Effects | null) {
-		for (const pipe of [...this.#pipelines])
-			this.#deletePipe(pipe)
+	setEffects(effects: Partial<Effects> | null) {
+		const camera = this.#camera
 
-		const pipes = render_pipes(this.#scene)
+		// detach camera from all pipes
+		for (const pipe of this.#rig.pipelines)
+			this.#scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline(pipe.name, camera)
 
-		if (effects?.default)
-			this.#addPipe(pipes.default(effects.default))
+		// dispose previous rig, pipelines and everything
+		this.#rig.dispose()
 
-		if (effects?.ssao)
-			this.#addPipe(pipes.ssao(effects.ssao))
-
-		if (effects?.ssr)
-			this.#addPipe(pipes.ssr(effects.ssr))
-
-		this.#reattachCameras()
-	}
-
-	#reattachCameras() {
-		for (const pipe of this.#pipelines) {
-			this.#scene.postProcessRenderPipelineManager
-				.detachCamerasFromRenderPipeline(pipe.name, this.camera)
-
-			this.#scene.postProcessRenderPipelineManager
-				.attachCamerasToRenderPipeline(pipe.name, this.camera)
-		}
-	}
-
-	#addPipe(pipe: PostProcessRenderPipeline) {
-		// pipelines add themselves to the manager automatically on construction
-		this.#pipelines.add(pipe)
-	}
-
-	#delete_all_pipes() {
-		for (const pipe of [...this.#pipelines])
-	}
-
-	#deletePipe(pipe: PostProcessRenderPipeline) {
-		// some pipelines remove themselves from the manager, some do not.
-		// to be safe, we call removePipeline in every case.
-		this.#scene.postProcessRenderPipelineManager.removePipeline(pipe.name)
-		pipe.dispose()
-		this.#pipelines.delete(pipe)
+		// create new rig
+		this.#rig = effects
+			? setup_effects(this.#scene, effects)
+			: {effects: null, pipelines: [], dispose: () => {}}
 	}
 }
 

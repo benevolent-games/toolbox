@@ -4,6 +4,7 @@ import {Vec4} from "../../../math/vec4.js"
 import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
 
 export type EffectRig = {
+	effects: Partial<Effects> | null
 	pipelines: PostProcessRenderPipeline[]
 	dispose: () => void
 }

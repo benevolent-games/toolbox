@@ -167,6 +167,7 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	}
 
 	return {
+		effects,
 		pipelines,
 		dispose() {
 			for (const dispose of disposables)
