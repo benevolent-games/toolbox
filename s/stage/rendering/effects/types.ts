@@ -115,19 +115,5 @@ export interface Effects {
 		edgeAmount: number
 		colorAmount: number
 	}
-
-	// grain: {
-	// 	animated: boolean
-	// 	intensity: number
-	// 	// adaptScaleToCurrentViewport: boolean
-	// }
-
-	// depthOfField: {
-	// 	blurLevel: DepthOfFieldEffectBlurLevel
-	// 	fStop: number
-	// 	focalLength: number
-	// 	focusDistance: number
-	// 	lensSize: number
-	// }
 }
 

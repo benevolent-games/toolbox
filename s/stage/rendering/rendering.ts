@@ -85,17 +85,24 @@ export class Rendering {
 	setEffects(effects: Partial<Effects> | null) {
 		const camera = this.#camera
 
-		// detach camera from all pipes
+		// detach camera from old pipes
 		for (const pipe of this.#rig.pipelines)
-			this.#scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline(pipe.name, camera)
+			this.#scene.postProcessRenderPipelineManager
+				.detachCamerasFromRenderPipeline(pipe.name, camera)
 
-		// dispose previous rig, pipelines and everything
+		// dispose old stuff
 		this.#rig.dispose()
 
-		// create new rig
+		// create new stuff
 		this.#rig = effects
 			? setup_effects(this.#scene, effects)
 			: {effects: null, pipelines: [], dispose: () => {}}
+
+		// attach camera to new pipes
+		for (const pipe of this.#rig.pipelines)
+			if (!pipe.cameras.includes(camera))
+				this.#scene.postProcessRenderPipelineManager
+					.attachCamerasToRenderPipeline(pipe.name, camera)
 	}
 }
 

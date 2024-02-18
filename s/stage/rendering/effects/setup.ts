@@ -12,6 +12,9 @@ import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipe
 
 import {EffectRig, Effects} from "./types.js"
 import {label} from "../../../tools/label.js"
+import {standard_effects} from "./standard.js"
+
+const standard = standard_effects.everything()
 
 export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRig {
 	const pipelines: PostProcessRenderPipeline[] = []
@@ -26,6 +29,99 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		scene.disablePrePassRenderer()
 		// scene.disableGeometryBufferRenderer()
 	})
+
+	//
+	// DEFAULT PIPELINE
+	//
+
+	const defaultPipeline = new DefaultRenderingPipeline(label("default"), true, scene)
+	pipelines.push(defaultPipeline)
+	const p = defaultPipeline
+
+	if (effects.antialiasing) {
+		const e = effects.antialiasing
+		p.fxaaEnabled = e.fxaa
+		if (p.fxaa) {
+			p.fxaa.samples = e.samples
+			p.samples = 0
+		}
+		else {
+			p.samples = e.samples
+		}
+	}
+
+	disposables.push(() => {
+		p.imageProcessingEnabled = false
+	})
+
+	if (effects.imageProcessing) {
+		const e = effects.imageProcessing
+		p.imageProcessingEnabled = true
+		p.imageProcessing.contrast = e.contrast ?? standard.imageProcessing.contrast
+		p.imageProcessing.exposure = e.exposure ?? standard.imageProcessing.exposure
+	}
+
+	if (effects.tonemapping) {
+		const e = effects.tonemapping
+		p.imageProcessingEnabled = true
+		p.imageProcessing.toneMappingEnabled = true
+		p.imageProcessing.toneMappingType = (
+			e.operator === "Photographic" ? TonemappingOperator.Photographic :
+			e.operator === "Hable" ? TonemappingOperator.Hable :
+			e.operator === "HejiDawson" ? TonemappingOperator.HejiDawson :
+			e.operator === "Reinhard" ? TonemappingOperator.Reinhard :
+			TonemappingOperator.Photographic
+		)
+	}
+
+	if (effects.vignette) {
+		const e = effects.vignette
+		p.imageProcessingEnabled = true
+		p.imageProcessing.vignetteEnabled = true
+		p.imageProcessing.vignetteColor = new Color4(...e.color)
+		p.imageProcessing.vignetteStretch = e.stretch
+		p.imageProcessing.vignetteWeight = e.weight
+		p.imageProcessing.vignetteBlendMode = (
+			e.multiply
+				? ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY
+				: ImageProcessingConfiguration.VIGNETTEMODE_OPAQUE
+		)
+	}
+
+	if (effects.bloom) {
+		const e = effects.bloom
+		p.bloomEnabled = true
+		p.bloomWeight = e.weight
+		p.bloomScale = e.scale
+		p.bloomKernel = e.kernel
+		p.bloomThreshold = e.threshold
+	}
+
+	if (effects.chromaticAberration) {
+		const e = effects.chromaticAberration
+		p.chromaticAberrationEnabled = true
+		p.chromaticAberration.radialIntensity = e.radialIntensity
+		p.chromaticAberration.aberrationAmount = e.aberrationAmount
+	}
+
+	if (effects.glow) {
+		const e = effects.glow
+		const glow = new GlowLayer(label("glow"), scene)
+		disposables.push(() => glow.dispose())
+		glow.blurKernelSize = e.blurKernelSize
+		glow.intensity = e.intensity
+	}
+
+	if (effects.sharpen) {
+		const e = effects.sharpen
+		p.sharpenEnabled = true
+		p.sharpen.edgeAmount = e.edgeAmount
+		p.sharpen.colorAmount = e.colorAmount
+	}
+
+	//
+	// NON-DEFAULT PIPELINES
+	//
 
 	if (effects.ssao) {
 		const e = effects.ssao
@@ -72,98 +168,21 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		p.enableAutomaticThicknessComputation = e.enableAutomaticThicknessComputation
 		p.enableSmoothReflections = e.enableSmoothReflections
 		p.reflectivityThreshold = e.reflectivityThreshold
-		p.samples = e.samples
+		p.samples = e.samples < 1 ? 1 : e.samples
 		p.ssrDownsample = e.ssrDownsample
 		p.useFresnel = e.useFresnel
 	}
 
 	if (effects.lens) {
-		const e = effects.lens
 		const ratio = 1.0
-		const p = new LensRenderingPipeline(label("lens"), e, scene, ratio)
-		pipelines.push(p)
-	}
-
-	//
-	// DEFAULT PIPELINE
-	//
-
-	const defaultPipeline = new DefaultRenderingPipeline(label("default"), true, scene)
-	pipelines.push(defaultPipeline)
-	const p = defaultPipeline
-
-	if (effects.antialiasing) {
-		const e = effects.antialiasing
-		if (p.fxaa) {
-			p.fxaaEnabled = e.fxaa
-			p.fxaa.samples = e.samples
-			p.samples = 0
-		}
-		else {
-			p.samples = e.samples
-		}
-	}
-
-	if (effects.imageProcessing) {
-		const e = effects.imageProcessing
-		p.imageProcessingEnabled = true
-		p.imageProcessing.contrast = e.contrast
-		p.imageProcessing.exposure = e.exposure
-		p.imageProcessing.toneMappingEnabled
-	}
-
-	if (effects.tonemapping) {
-		const e = effects.tonemapping
-		p.imageProcessingEnabled = true
-		p.imageProcessing.toneMappingEnabled = !!e
-		p.imageProcessing.toneMappingType = (
-			e.operator === "Photographic" ? TonemappingOperator.Photographic :
-			e.operator === "Hable" ? TonemappingOperator.Hable :
-			e.operator === "HejiDawson" ? TonemappingOperator.HejiDawson :
-			e.operator === "Reinhard" ? TonemappingOperator.Reinhard :
-			TonemappingOperator.Photographic
+		pipelines.push(
+			new LensRenderingPipeline(
+				label("lens"),
+				effects.lens,
+				scene,
+				ratio,
+			)
 		)
-	}
-
-	if (effects.vignette) {
-		const e = effects.vignette
-		p.imageProcessingEnabled = true
-		p.imageProcessing.vignetteColor = new Color4(...e.color)
-		p.imageProcessing.vignetteStretch = e.stretch
-		p.imageProcessing.vignetteWeight = e.weight
-		p.imageProcessing.vignetteBlendMode = (
-			e.multiply
-				? ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY
-				: ImageProcessingConfiguration.VIGNETTEMODE_OPAQUE
-		)
-	}
-
-	if (effects.bloom) {
-		const e = effects.bloom
-		p.bloomWeight = e.weight
-		p.bloomScale = e.scale
-		p.bloomKernel = e.kernel
-		p.bloomThreshold = e.threshold
-	}
-
-	if (effects.chromaticAberration) {
-		const e = effects.chromaticAberration
-		p.chromaticAberration.radialIntensity = e.radialIntensity
-		p.chromaticAberration.aberrationAmount = e.aberrationAmount
-	}
-
-	if (effects.glow) {
-		const e = effects.glow
-		const glow = new GlowLayer(label("glow"), scene)
-		disposables.push(() => glow.dispose())
-		glow.blurKernelSize = e.blurKernelSize
-		glow.intensity = e.intensity
-	}
-
-	if (effects.sharpen) {
-		const e = effects.sharpen
-		p.sharpen.edgeAmount = e.edgeAmount
-		p.sharpen.colorAmount = e.colorAmount
 	}
 
 	return {
@@ -172,8 +191,10 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		dispose() {
 			for (const dispose of disposables)
 				dispose()
-			for (const pipeline of pipelines)
+			for (const pipeline of pipelines) {
+				scene.postProcessRenderPipelineManager.removePipeline(pipeline.name)
 				pipeline.dispose()
+			}
 		},
 	}
 }

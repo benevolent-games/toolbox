@@ -107,21 +107,7 @@ export const standard_effects = {
 		sharpen: {
 			colorAmount: 1,
 			edgeAmount: 0.3,
-			// adaptScaleToCurrentViewport: false,
 		},
-
-		// grain: {
-		// 	intensity: 10,
-		// 	animated: true,
-		// },
-
-		// depthOfField: {
-		// 	blurLevel: DepthOfFieldEffectBlurLevel.Low,
-		// 	fStop: 1.4,
-		// 	focalLength: 50,
-		// 	focusDistance: 2000,
-		// 	lensSize: 50,
-		// },
 	})
 }
 
