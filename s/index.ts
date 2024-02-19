@@ -27,7 +27,10 @@ export * from "./impulse/impulse.js"
 export * from "./impulse/input.js"
 export * from "./impulse/modes.js"
 
-export * from "./nui/nui.js"
+export * from "./nui/checkbox.js"
+export * from "./nui/color.js"
+export * from "./nui/range.js"
+export * from "./nui/select.js"
 
 export * from "./stage/stage.js"
 export * from "./stage/types.js"

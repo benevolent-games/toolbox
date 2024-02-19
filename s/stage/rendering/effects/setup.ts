@@ -61,10 +61,10 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		p.imageProcessing.exposure = e.exposure ?? standard.imageProcessing.exposure
 	}
 
+	p.imageProcessing.toneMappingEnabled = !!effects.tonemapping
 	if (effects.tonemapping) {
 		const e = effects.tonemapping
 		p.imageProcessingEnabled = true
-		p.imageProcessing.toneMappingEnabled = true
 		p.imageProcessing.toneMappingType = (
 			e.operator === "Photographic" ? TonemappingOperator.Photographic :
 			e.operator === "Hable" ? TonemappingOperator.Hable :
@@ -74,10 +74,10 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		)
 	}
 
+	p.imageProcessing.vignetteEnabled = !!effects.vignette
 	if (effects.vignette) {
 		const e = effects.vignette
 		p.imageProcessingEnabled = true
-		p.imageProcessing.vignetteEnabled = true
 		p.imageProcessing.vignetteColor = new Color4(...e.color)
 		p.imageProcessing.vignetteStretch = e.stretch
 		p.imageProcessing.vignetteWeight = e.weight

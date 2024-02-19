@@ -1,8 +1,6 @@
 
-import {theme} from "../common/theme.js"
-import {Nexus, css, html} from "@benev/slate"
-
-const nexus = new Nexus(new class {theme = theme})
+import {nexus} from "./nexus.js"
+import {css, html} from "@benev/slate"
 
 export const NuiRange = nexus.shadow_view(use => ({
 		label, min, max, step, value, set,
@@ -32,8 +30,8 @@ export const NuiRange = nexus.shadow_view(use => ({
 	`)
 
 	const codeValue = (
-		(value < 0.2) ? value.toFixed(4) :
 		(value % 1 === 0) ? value :
+		(value < 0.2) ? value.toFixed(3) :
 		value.toFixed(2)
 	)
 
@@ -52,38 +50,6 @@ export const NuiRange = nexus.shadow_view(use => ({
 				@input="${(event: InputEvent) => {
 					const target = event.currentTarget as HTMLInputElement
 					set(target.valueAsNumber)
-				}}"/>
-		</label>
-	`
-})
-
-export const NuiCheckbox = nexus.shadow_view(use => ({
-		label, checked, set,
-	}: {
-		label: string
-		checked: boolean
-		set: (c: boolean) => void
-	}) => {
-
-	use.name("nui-checkbox")
-
-	use.styles(css`
-		label {
-			display: flex;
-			gap: 0.5em;
-			> input { order: -1; }
-		}
-	`)
-
-	return html`
-		<label>
-			<span>${label}</span>
-			<input
-				type="checkbox"
-				.checked="${checked}"
-				@input="${(event: InputEvent) => {
-					const target = event.currentTarget as HTMLInputElement
-					set(target.checked)
 				}}"/>
 		</label>
 	`
