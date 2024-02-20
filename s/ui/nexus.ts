@@ -1,6 +1,5 @@
 
-import {Stage} from "../stage/stage"
-import {Context, css, Nexus} from "@benev/slate"
+import {css, Context, Nexus} from "@benev/slate"
 
 export const theme = css`
 	* {
@@ -9,7 +8,7 @@ export const theme = css`
 		box-sizing: border-box;
 
 		scrollbar-width: thin;
-		scrollbar-color: #333 transparent;
+		scrollbar-color: #888 transparent;
 	}
 
 	::-webkit-scrollbar { width: 8px; }
@@ -36,14 +35,6 @@ export const theme = css`
 	}
 `
 
-export class BenevContext extends Context {
-	theme = theme
-}
-
-export abstract class BenevGameContext extends BenevContext {
-	abstract stage: Stage
-}
-
+export class BenevContext extends Context { theme = theme }
 export const nexus = new Nexus<BenevContext>(new BenevContext())
-export const gameNexus = new Nexus<BenevGameContext>()
 
