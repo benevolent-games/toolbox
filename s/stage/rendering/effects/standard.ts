@@ -14,7 +14,7 @@ export const standard_effects = {
 		},
 
 		vignette: {
-			color: [0, 0, 0, 1],
+			color: [0, 0, 0],
 			weight: 1,
 			stretch: 1,
 			multiply: true,
@@ -55,6 +55,23 @@ export const standard_effects = {
 	everything: (): Effects => ({
 		...standard_effects.default_pipeline(),
 
+		scene: {
+			clearColor: [.1, .1, .1],
+			ambientColor: [0, 0, 0],
+			shadowsEnabled: true,
+			environmentIntensity: 1,
+			forceWireframe: false,
+			forceShowBoundingBoxes: false,
+		},
+
+		fog: {
+			mode: "exp2",
+			color: [.1, .1, .1],
+			start: 1,
+			end: 100,
+			density: 0.1,
+		},
+
 		ssao: {
 			ssaoRatio: .75,
 			blurRatio: .75,
@@ -64,7 +81,7 @@ export const standard_effects = {
 			bilateralTolerance: 0,
 			maxZ: 100,
 			minZAspect: 0.5,
-			radius: 2.0,
+			radius: 2,
 			totalStrength: 1.0,
 			bypassBlur: true,
 			epsilon: 0.02,
@@ -101,6 +118,7 @@ export const standard_effects = {
 		},
 
 		lens: {
+			ratio: 1,
 			chromatic_aberration: 0,
 			edge_blur: 0,
 			distortion: 0,

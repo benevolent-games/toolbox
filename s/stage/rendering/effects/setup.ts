@@ -1,6 +1,6 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
-import {Color4} from "@babylonjs/core/Maths/math.color.js"
+import {Color3, Color4} from "@babylonjs/core/Maths/math.color.js"
 import {GlowLayer} from "@babylonjs/core/Layers/glowLayer.js"
 import {TonemappingOperator} from "@babylonjs/core/PostProcesses/tonemapPostProcess.js"
 import {ImageProcessingConfiguration} from "@babylonjs/core/Materials/imageProcessingConfiguration.js"
@@ -34,6 +34,45 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		// scene.disableGeometryBufferRenderer()
 	})
 
+	// SCENE EFFECTS
+	{
+		const e = effects.scene
+		scene.clearColor = e
+			? new Color4(...e.clearColor, 1.0)
+			: new Color4(.1, .1, .1, 1.0)
+		scene.ambientColor = e
+			? new Color3(...e.ambientColor)
+			: new Color3(0, 0, 0)
+		scene.environmentIntensity = e
+			? e.environmentIntensity
+			: 1
+		scene.shadowsEnabled = e
+			? e.shadowsEnabled
+			: false
+		scene.forceWireframe = e
+			? e.forceWireframe
+			: false
+		scene.forceShowBoundingBoxes = e
+			? e.forceShowBoundingBoxes
+			: false
+	}
+
+	scene.fogEnabled = !!effects.fog
+	if (effects.fog) {
+		const e = effects.fog
+		scene.fogMode = (
+			e.mode === "none" ? Scene.FOGMODE_NONE :
+			e.mode === "exp" ? Scene.FOGMODE_EXP :
+			e.mode === "exp2" ? Scene.FOGMODE_EXP2 :
+			e.mode === "linear" ? Scene.FOGMODE_LINEAR :
+			Scene.FOGMODE_NONE
+		)
+		scene.fogColor = new Color3(...e.color)
+		scene.fogStart = e.start
+		scene.fogEnd = e.end
+		scene.fogDensity = e.density
+	}
+
 	//
 	// DEFAULT PIPELINE
 	//
@@ -45,13 +84,9 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	if (effects.antialiasing) {
 		const e = effects.antialiasing
 		p.fxaaEnabled = e.fxaa
-		if (p.fxaa) {
-			p.fxaa.samples = e.samples
-			p.samples = 0
-		}
-		else {
-			p.samples = e.samples
-		}
+		p.samples = p.fxaa
+			? 0
+			: e.samples
 	}
 
 	if (effects.bloom) {
@@ -114,7 +149,7 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	if (effects.vignette) {
 		const e = effects.vignette
 		i.vignetteEnabled = true
-		i.vignetteColor = new Color4(...e.color)
+		i.vignetteColor = new Color4(...e.color, 1)
 		i.vignetteStretch = e.stretch
 		i.vignetteWeight = e.weight
 		i.vignetteBlendMode = (
@@ -179,13 +214,12 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	}
 
 	if (effects.lens) {
-		const ratio = 1.0
 		registerPipeline(
 			new LensRenderingPipeline(
 				label("lens"),
 				effects.lens,
 				scene,
-				ratio,
+				effects.lens.ratio,
 			)
 		)
 	}

@@ -5,6 +5,7 @@ import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
 import {MenuItem} from "../../menus.js"
 import {nexus} from "../../../nexus.js"
+import {to} from "../../../../math/vec3.js"
 import {NuiColor} from "../../../nui/color.js"
 import {NuiRange} from "../../../nui/range.js"
 import {NuiSelect} from "../../../nui/select.js"
@@ -98,7 +99,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 				else if (meta instanceof Meta.Color)
 					return NuiColor([{
 						label: key,
-						initial_hex_color: "#000000",
+						initial_hex_color: to.hexcolor(g[key]),
 						set: ({color}) => g[key] = color,
 					}])
 
@@ -166,11 +167,38 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			></textarea>
 		</article>
 
+		${render_section("scene", effects.scene, html`
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene">ref</a>
+			`)({
+			clearColor: Meta.color,
+			ambientColor: Meta.color,
+			environmentIntensity: Meta.granularity.medium,
+			shadowsEnabled: Meta.boolean,
+			forceShowBoundingBoxes: Meta.boolean,
+			forceWireframe: Meta.boolean,
+		})}
+
+		${render_section("fog", effects.fog, html`
+				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/environment/environment_introduction#fog">doc</a>
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene#fogColor">ref</a>
+			`)({
+			mode: new Meta.SelectString<typeof effects.fog.mode>([
+				"none",
+				"exp",
+				"exp2",
+				"linear",
+			]),
+			color: Meta.color,
+			start: Meta.granularity.coarser,
+			end: Meta.granularity.coarser,
+			density: Meta.granularity.superfine,
+		})}
+
 		<article data-active>
 			<header>
 				<span>default rendering</span>
 				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/defaultRenderingPipeline">doc</a>
-				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.DefaultRenderingPipeline">refs</a>
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.DefaultRenderingPipeline">ref</a>
 			</header>
 			<section>
 				<article data-active>
@@ -186,7 +214,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 						})}
 
 						${render_section("tonemapping", effects.tonemapping)({
-							operator: new Meta.SelectString([
+							operator: new Meta.SelectString<typeof effects.tonemapping.operator>([
 								"Hable",
 								"HejiDawson",
 								"Reinhard",
@@ -282,7 +310,11 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			backfaceDepthTextureDownsample: Meta.granularity.medium,
 		})}
 
-		${render_section("lens", effects.lens)({
+		${render_section("lens", effects.lens, html`
+			<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/dofLenseEffects">doc</a>
+			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.LensRenderingPipeline">ref</a>
+		`)({
+			ratio: Meta.granularity.fine,
 			blur_noise: Meta.boolean,
 			dof_pentagon: Meta.boolean,
 			chromatic_aberration: Meta.granularity.fine,

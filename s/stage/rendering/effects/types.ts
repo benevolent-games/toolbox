@@ -1,5 +1,5 @@
 
-import {Vec4} from "../../../math/vec4.js"
+import {Vec3} from "../../../math/vec3.js"
 
 import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
 
@@ -20,7 +20,7 @@ export type ImageProcessingEffects = {
 	}
 
 	vignette: {
-		color: Vec4
+		color: Vec3
 		stretch: number
 		weight: number
 		multiply: boolean
@@ -57,6 +57,23 @@ export type DefaultPipelineEffects = {
 } & ImageProcessingEffects
 
 export type Effects = {
+	scene: {
+		clearColor: Vec3
+		ambientColor: Vec3
+		environmentIntensity: number
+		shadowsEnabled: boolean
+		forceWireframe: boolean
+		forceShowBoundingBoxes: boolean
+	}
+
+	fog: {
+		mode: "none" | "exp" | "exp2" | "linear"
+		color: Vec3
+		start: number
+		end: number
+		density: number
+	}
+
 	ssao: {
 		ssaoRatio: number
 		blurRatio: number
@@ -103,6 +120,7 @@ export type Effects = {
 	}
 
 	lens: {
+		ratio: number
 		chromatic_aberration: number
 		edge_blur: number
 		distortion: number
