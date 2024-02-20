@@ -24,6 +24,10 @@ export const NuiSelect = nexus.shadow_view(use => ({
 			justify-content: space-between;
 			gap: 0.5em;
 		}
+		select {
+			width: 16em;
+			max-width: 100%;
+		}
 	`)
 
 	const onInput = (event: InputEvent) => {

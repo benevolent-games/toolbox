@@ -5,6 +5,7 @@ import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
 import {MenuItem} from "../../menus.js"
 import {nexus} from "../../../nexus.js"
+import {to} from "../../../../math/vec3.js"
 import {NuiColor} from "../../../nui/color.js"
 import {NuiRange} from "../../../nui/range.js"
 import {NuiSelect} from "../../../nui/select.js"
@@ -12,7 +13,6 @@ import {Stage} from "../../../../stage/stage.js"
 import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
-import { to } from "../../../../math/vec3.js"
 
 export const settings: MenuItem = {
 	name: "settings",

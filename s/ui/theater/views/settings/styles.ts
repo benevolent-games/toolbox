@@ -15,7 +15,7 @@ article {
 		padding: 0.4em 1em;
 		display: flex;
 		gap: 0.5em;
-		background: #494848;
+		background: #bbb4;
 		color: white;
 		font-size: 1.1em;
 		font-weight: bold;
@@ -30,7 +30,7 @@ article {
 		font-family: monospace;
 		width: 100%;
 		height: 5em;
-		padding: 0.3em;
+		padding: 1em;
 		overflow: hidden;
 		background: #0002;
 		color: #0f08;
@@ -40,6 +40,10 @@ article {
 		padding: 1em;
 		+ * {
 			margin-top: 0.6em;
+		}
+		> * + * {
+			display: block;
+			margin-top: 0.5em;
 		}
 	}
 
@@ -53,7 +57,7 @@ article {
 		&[data-active] {
 			background: #004da147;
 			> header {
-				background: #266e99;
+				background: #0af5;
 			}
 			> section {
 				opacity: 1;

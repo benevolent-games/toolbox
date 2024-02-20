@@ -11,18 +11,15 @@ export const NuiColor = nexus.shadow_view(use => ({
 		set: ({}: {color: Vec3, hex: string}) => void
 	}) => {
 
-	use.name("nui-select")
+	use.name("nui-color")
 	use.styles(css`
 		label {
-			display: flex;
-			flex-direction: column;
+			display: block;
+			width: max-content;
 			user-select: none;
-		}
-		div {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			gap: 0.5em;
+			> * {
+				display: block;
+			}
 		}
 	`)
 
@@ -35,9 +32,7 @@ export const NuiColor = nexus.shadow_view(use => ({
 
 	return html`
 		<label>
-			<div>
-				<span>${label}</span>
-			</div>
+			<span>${label}</span>
 			<input type="color" @input="${onInput}" value="${initial_hex_color}"/>
 		</label>
 	`
