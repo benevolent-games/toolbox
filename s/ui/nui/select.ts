@@ -1,18 +1,17 @@
 
-import {nexus} from "./nexus.js"
+import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
-import {Vec3, from} from "../math/vec3.js"
 
-export const NuiColor = nexus.shadow_view(use => ({
-		label, initial_hex_color, set,
+export const NuiSelect = nexus.shadow_view(use => ({
+		label, options, selected, set,
 	}: {
 		label: string
-		initial_hex_color: string
-		set: ({}: {color: Vec3, hex: string}) => void
+		options: string[]
+		selected: string
+		set: (option: string) => void
 	}) => {
 
 	use.name("nui-select")
-
 	use.styles(css`
 		label {
 			display: flex;
@@ -29,9 +28,7 @@ export const NuiColor = nexus.shadow_view(use => ({
 
 	const onInput = (event: InputEvent) => {
 		const target = event.currentTarget as HTMLInputElement
-		const hex = target.value
-		const color = from.hexcolor(hex)
-		set({color, hex})
+		set(target.value)
 	}
 
 	return html`
@@ -39,7 +36,15 @@ export const NuiColor = nexus.shadow_view(use => ({
 			<div>
 				<span>${label}</span>
 			</div>
-			<input type="color" @input="${onInput}" value="${initial_hex_color}"/>
+			<select @input="${onInput}">
+				${options.map(option => html`
+					<option
+						value="${option}"
+						?selected="${option === selected}">
+						${option}
+					</option>
+				`)}
+			</select>
 		</label>
 	`
 })

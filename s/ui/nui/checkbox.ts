@@ -1,5 +1,5 @@
 
-import {nexus} from "./nexus.js"
+import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
 
 export const NuiCheckbox = nexus.shadow_view(use => ({
@@ -11,7 +11,6 @@ export const NuiCheckbox = nexus.shadow_view(use => ({
 	}) => {
 
 	use.name("nui-checkbox")
-
 	use.styles(css`
 		label {
 			display: flex;

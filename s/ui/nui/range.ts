@@ -1,5 +1,5 @@
 
-import {nexus} from "./nexus.js"
+import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
 
 export const NuiRange = nexus.shadow_view(use => ({
@@ -14,7 +14,6 @@ export const NuiRange = nexus.shadow_view(use => ({
 	}) => {
 
 	use.name("nui-range")
-
 	use.styles(css`
 		label {
 			display: flex;
