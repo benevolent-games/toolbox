@@ -6,11 +6,12 @@ import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 
 import {Vec4} from "../math/vec4.js"
 import {StageOptions} from "./types.js"
-import {Remote} from "./parts/remote.js"
+import {Gameloop} from "./parts/gameloop.js"
+import {Porthole} from "./parts/porthole.js"
+import {load_glb} from "./utils/load_glb.js"
 import {radians, wrap} from "../math/scalar.js"
 import {Rendering} from "./rendering/rendering.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
-import {make_load_glb_fn} from "./parts/make_load_glb_fn.js"
 
 export class Stage {
 	static backgrounds = {
@@ -21,10 +22,11 @@ export class Stage {
 		sky: () => [.7, .8, 1, 1] as Vec4,
 	}
 
+	porthole: Porthole
 	engine: Engine
 	scene: Scene
 
-	remote: Remote
+	gameloop: Gameloop
 	rendering: Rendering
 	pointerLocker: PointerLocker
 	load_glb: (url: string) => Promise<AssetContainer>
@@ -37,19 +39,20 @@ export class Stage {
 		return this.#tick_rate
 	}
 
-	constructor({canvas, background, tickrate}: StageOptions) {
-		const engine = this.engine = new Engine(canvas)
+	constructor({background, tickrate_hz}: StageOptions) {
+		const porthole = this.porthole = new Porthole()
+		const engine = this.engine = new Engine(porthole.canvas)
 		const scene = this.scene = new Scene(engine)
 		scene.clearColor = new Color4(...background)
 
-		const remote = this.remote = new Remote(engine, scene, tickrate)
+		const gameloop = this.gameloop = new Gameloop(engine, scene, tickrate_hz)
 		const rendering = this.rendering = new Rendering(scene)
-		this.load_glb = make_load_glb_fn(scene)
-		this.pointerLocker = new PointerLocker(canvas)
+		this.pointerLocker = new PointerLocker(porthole.canvas)
+		this.load_glb = async(url: string) => load_glb(scene, url)
 
 		this.#last_tick_time = performance.now()
 
-		remote.onTick(() => {
+		gameloop.onTick(() => {
 			this.#tick_counter++
 			const currentTime = performance.now()
 

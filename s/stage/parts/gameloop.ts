@@ -3,7 +3,7 @@ import {interval, pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 
-export class Remote {
+export class Gameloop {
 	onTick = pub<void>()
 	onRender = pub<void>()
 
@@ -13,7 +13,7 @@ export class Remote {
 	constructor(
 		private engine: Engine,
 		private scene: Scene,
-		public readonly tickrate: number,
+		public readonly tickrate_hz: number,
 	) {}
 
 	get running() {
@@ -25,12 +25,13 @@ export class Remote {
 			this.stop()
 		else
 			this.start()
+		return this.#running
 	}
 
 	start() {
 		if (!this.#running) {
 			this.#running = true
-			this.#interval = interval(this.tickrate, () => this.onTick.publish())
+			this.#interval = interval(this.tickrate_hz, () => this.onTick.publish())
 			this.engine.runRenderLoop(() => {
 				this.onRender.publish()
 				this.scene.render()
