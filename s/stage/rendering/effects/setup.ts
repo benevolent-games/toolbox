@@ -34,6 +34,29 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		// scene.disableGeometryBufferRenderer()
 	})
 
+	// SCENE EFFECTS
+	{
+		const e = effects.scene
+		scene.clearColor = e
+			? new Color4(...e.clearColor, 1.0)
+			: new Color4(.1, .1, .1, 1.0)
+		scene.ambientColor = e
+			? new Color3(...e.ambientColor)
+			: new Color3(0, 0, 0)
+		scene.environmentIntensity = e
+			? e.environmentIntensity
+			: 1
+		scene.shadowsEnabled = e
+			? e.shadowsEnabled
+			: false
+		scene.forceWireframe = e
+			? e.forceWireframe
+			: false
+		scene.forceShowBoundingBoxes = e
+			? e.forceShowBoundingBoxes
+			: false
+	}
+
 	scene.fogEnabled = !!effects.fog
 	if (effects.fog) {
 		const e = effects.fog
@@ -126,7 +149,7 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	if (effects.vignette) {
 		const e = effects.vignette
 		i.vignetteEnabled = true
-		i.vignetteColor = new Color4(...e.color)
+		i.vignetteColor = new Color4(...e.color, 1)
 		i.vignetteStretch = e.stretch
 		i.vignetteWeight = e.weight
 		i.vignetteBlendMode = (

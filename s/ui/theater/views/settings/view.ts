@@ -166,17 +166,28 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			></textarea>
 		</article>
 
+		${render_section("scene", effects.scene, html`
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene">ref</a>
+			`)({
+			clearColor: Meta.color,
+			ambientColor: Meta.color,
+			environmentIntensity: Meta.granularity.medium,
+			shadowsEnabled: Meta.boolean,
+			forceShowBoundingBoxes: Meta.boolean,
+			forceWireframe: Meta.boolean,
+		})}
+
 		${render_section("fog", effects.fog, html`
-			<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/environment/environment_introduction#fog">doc</a>
-			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene#fogColor">ref</a>
-		`)({
+				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/environment/environment_introduction#fog">doc</a>
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene#fogColor">ref</a>
+			`)({
 			mode: new Meta.SelectString<typeof effects.fog.mode>([
 				"none",
 				"exp",
 				"exp2",
 				"linear",
 			]),
-			color: new Meta.Color(),
+			color: Meta.color,
 			start: Meta.granularity.coarser,
 			end: Meta.granularity.coarser,
 			density: Meta.granularity.superfine,

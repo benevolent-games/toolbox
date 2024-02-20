@@ -14,7 +14,7 @@ export const standard_effects = {
 		},
 
 		vignette: {
-			color: [0, 0, 0, 1],
+			color: [0, 0, 0],
 			weight: 1,
 			stretch: 1,
 			multiply: true,
@@ -54,6 +54,15 @@ export const standard_effects = {
 
 	everything: (): Effects => ({
 		...standard_effects.default_pipeline(),
+
+		scene: {
+			clearColor: [.1, .1, .1],
+			ambientColor: [0, 0, 0],
+			shadowsEnabled: true,
+			environmentIntensity: 1,
+			forceWireframe: false,
+			forceShowBoundingBoxes: false,
+		},
 
 		fog: {
 			mode: "exp2",
