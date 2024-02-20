@@ -12,6 +12,7 @@ import {Stage} from "../../../../stage/stage.js"
 import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
+import { to } from "../../../../math/vec3.js"
 
 export const settings: MenuItem = {
 	name: "settings",
@@ -98,7 +99,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 				else if (meta instanceof Meta.Color)
 					return NuiColor([{
 						label: key,
-						initial_hex_color: "#000000",
+						initial_hex_color: to.hexcolor(g[key]),
 						set: ({color}) => g[key] = color,
 					}])
 

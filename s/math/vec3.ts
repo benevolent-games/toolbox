@@ -4,6 +4,11 @@ export type Xyz = {x: number, y: number, z: number}
 
 export const to = {
 	xyz: ([x, y, z]: Vec3): Xyz => ({x, y, z}),
+	hexcolor: ([r, g, b]: Vec3) => {
+		const to255 = (val: number) => Math.round(val * 255)
+		const toHex = (val: number) => to255(val).toString(16).padStart(2, '0')
+		return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+	},
 }
 
 export const from = {
