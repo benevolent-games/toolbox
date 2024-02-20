@@ -64,7 +64,7 @@ export const standard_effects = {
 			bilateralTolerance: 0,
 			maxZ: 100,
 			minZAspect: 0.5,
-			radius: 2.0,
+			radius: 2,
 			totalStrength: 1.0,
 			bypassBlur: true,
 			epsilon: 0.02,
@@ -101,6 +101,7 @@ export const standard_effects = {
 		},
 
 		lens: {
+			ratio: 1,
 			chromatic_aberration: 0,
 			edge_blur: 0,
 			distortion: 0,

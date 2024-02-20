@@ -45,13 +45,9 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	if (effects.antialiasing) {
 		const e = effects.antialiasing
 		p.fxaaEnabled = e.fxaa
-		if (p.fxaa) {
-			p.fxaa.samples = e.samples
-			p.samples = 0
-		}
-		else {
-			p.samples = e.samples
-		}
+		p.samples = p.fxaa
+			? 0
+			: e.samples
 	}
 
 	if (effects.bloom) {
@@ -179,13 +175,12 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	}
 
 	if (effects.lens) {
-		const ratio = 1.0
 		registerPipeline(
 			new LensRenderingPipeline(
 				label("lens"),
 				effects.lens,
 				scene,
-				ratio,
+				effects.lens.ratio,
 			)
 		)
 	}

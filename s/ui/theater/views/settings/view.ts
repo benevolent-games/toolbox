@@ -170,7 +170,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			<header>
 				<span>default rendering</span>
 				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/defaultRenderingPipeline">doc</a>
-				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.DefaultRenderingPipeline">refs</a>
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.DefaultRenderingPipeline">ref</a>
 			</header>
 			<section>
 				<article data-active>
@@ -282,7 +282,11 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			backfaceDepthTextureDownsample: Meta.granularity.medium,
 		})}
 
-		${render_section("lens", effects.lens)({
+		${render_section("lens", effects.lens, html`
+			<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/dofLenseEffects">doc</a>
+			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.LensRenderingPipeline">ref</a>
+		`)({
+			ratio: Meta.granularity.fine,
 			blur_noise: Meta.boolean,
 			dof_pentagon: Meta.boolean,
 			chromatic_aberration: Meta.granularity.fine,

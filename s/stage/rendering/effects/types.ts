@@ -103,6 +103,7 @@ export type Effects = {
 	}
 
 	lens: {
+		ratio: number
 		chromatic_aberration: number
 		edge_blur: number
 		distortion: number
