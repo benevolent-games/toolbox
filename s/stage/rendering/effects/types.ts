@@ -9,7 +9,54 @@ export type EffectRig = {
 	dispose: () => void
 }
 
-export interface Effects {
+export type ImageProcessingEffects = {
+	image: {
+		exposure: number
+		contrast: number
+	}
+
+	tonemapping: {
+		operator: "Hable" | "HejiDawson" | "Reinhard" | "Photographic"
+	}
+
+	vignette: {
+		color: Vec4
+		stretch: number
+		weight: number
+		multiply: boolean
+	}
+}
+
+export type DefaultPipelineEffects = {
+	antialiasing: {
+		samples: number
+		fxaa: boolean
+	}
+
+	bloom: {
+		weight: number
+		scale: number
+		kernel: number
+		threshold: number
+	}
+
+	chromaticAberration: {
+		aberrationAmount: number
+		radialIntensity: number
+	}
+
+	glow: {
+		blurKernelSize: number
+		intensity: number
+	}
+
+	sharpen: {
+		edgeAmount: number
+		colorAmount: number
+	}
+} & ImageProcessingEffects
+
+export type Effects = {
 	ssao: {
 		ssaoRatio: number
 		blurRatio: number
@@ -68,52 +115,5 @@ export interface Effects {
 		dof_threshold: number
 		blur_noise: boolean
 	}
-
-	//
-	// DEFAULTS
-	//
-
-	antialiasing: {
-		samples: number
-		fxaa: boolean
-	}
-
-	imageProcessing: {
-		exposure: number
-		contrast: number
-	}
-
-	tonemapping: {
-		operator: "Hable" | "HejiDawson" | "Reinhard" | "Photographic"
-	}
-
-	vignette: {
-		color: Vec4
-		stretch: number
-		weight: number
-		multiply: boolean
-	}
-
-	bloom: {
-		weight: number
-		scale: number
-		kernel: number
-		threshold: number
-	}
-
-	chromaticAberration: {
-		aberrationAmount: number
-		radialIntensity: number
-	}
-
-	glow: {
-		blurKernelSize: number
-		intensity: number
-	}
-
-	sharpen: {
-		edgeAmount: number
-		colorAmount: number
-	}
-}
+} & DefaultPipelineEffects
 

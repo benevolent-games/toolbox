@@ -12,13 +12,17 @@ import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipe
 
 import {EffectRig, Effects} from "./types.js"
 import {label} from "../../../tools/label.js"
-import {standard_effects} from "./standard.js"
-
-const standard = standard_effects.everything()
 
 export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRig {
 	const pipelines: PostProcessRenderPipeline[] = []
 	const disposables: (() => void)[] = []
+	const registerPipeline = (pipeline: PostProcessRenderPipeline) => {
+		pipelines.push(pipeline)
+		disposables.push(() => {
+			scene.postProcessRenderPipelineManager.removePipeline(pipeline.name)
+			pipeline.dispose()
+		})
+	}
 
 	scene.enableDepthRenderer()
 	scene.enablePrePassRenderer()
@@ -35,7 +39,7 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	//
 
 	const defaultPipeline = new DefaultRenderingPipeline(label("default"), true, scene)
-	pipelines.push(defaultPipeline)
+	registerPipeline(defaultPipeline)
 	const p = defaultPipeline
 
 	if (effects.antialiasing) {
@@ -48,44 +52,6 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		else {
 			p.samples = e.samples
 		}
-	}
-
-	disposables.push(() => {
-		p.imageProcessingEnabled = false
-	})
-
-	if (effects.imageProcessing) {
-		const e = effects.imageProcessing
-		p.imageProcessingEnabled = true
-		p.imageProcessing.contrast = e.contrast ?? standard.imageProcessing.contrast
-		p.imageProcessing.exposure = e.exposure ?? standard.imageProcessing.exposure
-	}
-
-	p.imageProcessing.toneMappingEnabled = !!effects.tonemapping
-	if (effects.tonemapping) {
-		const e = effects.tonemapping
-		p.imageProcessingEnabled = true
-		p.imageProcessing.toneMappingType = (
-			e.operator === "Photographic" ? TonemappingOperator.Photographic :
-			e.operator === "Hable" ? TonemappingOperator.Hable :
-			e.operator === "HejiDawson" ? TonemappingOperator.HejiDawson :
-			e.operator === "Reinhard" ? TonemappingOperator.Reinhard :
-			TonemappingOperator.Photographic
-		)
-	}
-
-	p.imageProcessing.vignetteEnabled = !!effects.vignette
-	if (effects.vignette) {
-		const e = effects.vignette
-		p.imageProcessingEnabled = true
-		p.imageProcessing.vignetteColor = new Color4(...e.color)
-		p.imageProcessing.vignetteStretch = e.stretch
-		p.imageProcessing.vignetteWeight = e.weight
-		p.imageProcessing.vignetteBlendMode = (
-			e.multiply
-				? ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY
-				: ImageProcessingConfiguration.VIGNETTEMODE_OPAQUE
-		)
 	}
 
 	if (effects.bloom) {
@@ -120,14 +86,53 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	}
 
 	//
-	// NON-DEFAULT PIPELINES
+	// IMAGE PROCESSING (DEFAULT PIPELINE)
+	//
+
+	p.imageProcessingEnabled = true
+	p.imageProcessing.imageProcessingConfiguration = new ImageProcessingConfiguration()
+	const i = p.imageProcessing
+
+	if (effects.image) {
+		const e = effects.image
+		i.contrast = e.contrast
+		i.exposure = e.exposure
+	}
+
+	if (effects.tonemapping) {
+		const e = effects.tonemapping
+		i.toneMappingEnabled = true
+		i.toneMappingType = (
+			e.operator === "Photographic" ? TonemappingOperator.Photographic :
+			e.operator === "Hable" ? TonemappingOperator.Hable :
+			e.operator === "HejiDawson" ? TonemappingOperator.HejiDawson :
+			e.operator === "Reinhard" ? TonemappingOperator.Reinhard :
+			TonemappingOperator.Photographic
+		)
+	}
+
+	if (effects.vignette) {
+		const e = effects.vignette
+		i.vignetteEnabled = true
+		i.vignetteColor = new Color4(...e.color)
+		i.vignetteStretch = e.stretch
+		i.vignetteWeight = e.weight
+		i.vignetteBlendMode = (
+			e.multiply
+				? ImageProcessingConfiguration.VIGNETTEMODE_MULTIPLY
+				: ImageProcessingConfiguration.VIGNETTEMODE_OPAQUE
+		)
+	}
+
+	//
+	// SPECIAL EFFECTS (NON-DEFAULT PIPELINES)
 	//
 
 	if (effects.ssao) {
 		const e = effects.ssao
 		const options = {ssaoRatio: e.ssaoRatio, blurRatio: e.blurRatio}
 		const p = new SSAO2RenderingPipeline(label("ssao"), scene, options)
-		pipelines.push(p)
+		registerPipeline(p)
 		p.base = e.base
 		p.bilateralSamples = e.bilateralSamples
 		p.bilateralSoften = e.bilateralSoften
@@ -145,7 +150,7 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 	if (effects.ssr) {
 		const e = effects.ssr
 		const p = new SSRRenderingPipeline(label("ssr"), scene)
-		pipelines.push(p)
+		registerPipeline(p)
 		p.debug = e.debug
 		p.maxDistance = e.maxDistance
 		p.maxSteps = e.maxSteps
@@ -175,7 +180,7 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 
 	if (effects.lens) {
 		const ratio = 1.0
-		pipelines.push(
+		registerPipeline(
 			new LensRenderingPipeline(
 				label("lens"),
 				effects.lens,
@@ -189,12 +194,8 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		effects,
 		pipelines,
 		dispose() {
-			for (const dispose of disposables)
+			for (const dispose of disposables.toReversed())
 				dispose()
-			for (const pipeline of pipelines) {
-				scene.postProcessRenderPipelineManager.removePipeline(pipeline.name)
-				pipeline.dispose()
-			}
 		},
 	}
 }

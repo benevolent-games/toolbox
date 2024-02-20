@@ -1,8 +1,60 @@
 
-import {Effects} from "./types.js"
+import {DefaultPipelineEffects, Effects, ImageProcessingEffects} from "./types.js"
 
 export const standard_effects = {
+
+	image_processing: (): ImageProcessingEffects => ({
+		image: {
+			contrast: 1,
+			exposure: 1,
+		},
+
+		tonemapping: {
+			operator: "Photographic",
+		},
+
+		vignette: {
+			color: [0, 0, 0, 1],
+			weight: 1,
+			stretch: 1,
+			multiply: true,
+		},
+	}),
+
+	default_pipeline: (): DefaultPipelineEffects => ({
+		...standard_effects.image_processing(),
+
+		antialiasing: {
+			samples: 4,
+			fxaa: true,
+		},
+
+		bloom: {
+			weight: .2,
+			scale: .5,
+			kernel: 32,
+			threshold: .6,
+		},
+
+		chromaticAberration: {
+			aberrationAmount: 30,
+			radialIntensity: 3,
+		},
+
+		glow: {
+			blurKernelSize: 16,
+			intensity: 1,
+		},
+
+		sharpen: {
+			colorAmount: 1,
+			edgeAmount: 0.3,
+		},
+	}),
+
 	everything: (): Effects => ({
+		...standard_effects.default_pipeline(),
+
 		ssao: {
 			ssaoRatio: .75,
 			blurRatio: .75,
@@ -60,53 +112,6 @@ export const standard_effects = {
 			dof_gain: 1,
 			dof_threshold: 1,
 			blur_noise: true,
-		},
-
-		//
-		// default
-		//
-
-		antialiasing: {
-			samples: 4,
-			fxaa: true,
-		},
-
-		imageProcessing: {
-			contrast: 1,
-			exposure: 1,
-		},
-
-		tonemapping: {
-			operator: "Photographic",
-		},
-
-		vignette: {
-			color: [0, 0, 0, 1],
-			weight: 1,
-			stretch: 1,
-			multiply: true,
-		},
-
-		bloom: {
-			weight: .2,
-			scale: .5,
-			kernel: 32,
-			threshold: .6,
-		},
-
-		chromaticAberration: {
-			aberrationAmount: 30,
-			radialIntensity: 3,
-		},
-
-		glow: {
-			blurKernelSize: 16,
-			intensity: 1,
-		},
-
-		sharpen: {
-			colorAmount: 1,
-			edgeAmount: 0.3,
 		},
 	})
 }
