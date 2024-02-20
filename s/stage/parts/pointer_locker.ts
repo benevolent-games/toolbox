@@ -20,8 +20,10 @@ export class PointerLocker {
 
 	onLockChange(fn: (locked: boolean) => {}) {
 		const listener = () => fn(this.locked)
-		window.addEventListener("pointerlockchange", listener)
-		return () => window.removeEventListener("pointerlockchange", listener)
+		document.addEventListener("pointerlockchange", listener)
+		return () => {
+			document.removeEventListener("pointerlockchange", listener)
+		}
 	}
 }
 
