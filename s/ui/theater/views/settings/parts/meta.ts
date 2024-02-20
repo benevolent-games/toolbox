@@ -42,13 +42,13 @@ export namespace Meta {
 	export const boolean = new Boolean()
 	export const color = new Color()
 	export const granularity = {
-		superfine: new Number({min: 0, max: .2, step: .001}),
-		fine: new Number({min: 0, max: 1, step: .01}),
-		medium: new Number({min: 0, max: 10, step: .1}),
-		coarse: new Number({min: 0, max: 100, step: 1}),
-		coarser: new Number({min: 0, max: 1000, step: 10}),
+		superfine: new Number({min: 0, max: .2, step: .0001}),
+		fine: new Number({min: 0, max: 1, step: .001}),
+		medium: new Number({min: 0, max: 10, step: .01}),
+		coarse: new Number({min: 0, max: 100, step: .1}),
+		coarser: new Number({min: 0, max: 1000, step: 1}),
 		giant: new Number({min: 0, max: 5_000, step: 10}),
-		samples: new Number({min: 0, max: 64, step: 2}),
+		samples: new Number({min: 0, max: 64, step: 1}),
 		bigSamples: new Number({min: 0, max: 512, step: 8}),
 		integer: new Number({min: 0, max: 100, step: 1}),
 	}
