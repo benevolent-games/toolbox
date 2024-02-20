@@ -28,9 +28,17 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 	const resolution = use.signal(stage.porthole.resolution * 100)
 
 	const {effects, active} = use.once(() => {
-		const std = Rendering.effects.everything()
-		const effects = ob(std).map(effect => flat.state(effect)) as Effects
-		const active = flat.state(ob(std).map(() => false))
+		const standard = Rendering.effects.everything()
+		const current = stage.rendering.effects
+		const effects = ob(standard)
+			.map((effect, key) => {
+				if (current && key in current && current[key])
+					Object.assign(effect, current[key])
+				return flat.state(effect)
+			}) as Effects
+		const active = flat.state(
+			ob(standard).map((_effect, key) => !!(current && key in current && current[key]))
+		)
 		return {effects, active}
 	})
 
@@ -38,7 +46,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 		const copy = clone(effects) as Partial<Effects>
 		for (const [key, value] of Object.entries(active))
 			if (value === false)
-				copy[key as keyof typeof copy] = undefined
+				delete copy[key as keyof typeof copy]
 		return copy
 	}
 
