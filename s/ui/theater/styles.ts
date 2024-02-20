@@ -54,6 +54,7 @@ canvas {
 			overflow-y: auto;
 			height: 0px;
 			background: #333333cc;
+			backdrop-filter: blur(1em);
 		}
 	}
 
@@ -67,7 +68,7 @@ canvas {
 
 	> .plate {
 		opacity: 1;
-		transition: 1s linear opacity;
+		transition: 300ms linear opacity;
 	}
 
 	&[data-locked] > .plate {

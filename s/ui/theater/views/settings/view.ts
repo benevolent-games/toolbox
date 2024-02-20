@@ -1,6 +1,7 @@
 
 import {TemplateResult, clone, debounce, flat, html, ob, reactor} from "@benev/slate"
 
+import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
 import {MenuItem} from "../../menus.js"
 import {nexus} from "../../../nexus.js"
@@ -22,6 +23,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 	}) => {
 
 	use.name("settings-panel")
+	use.styles(styles)
 
 	const resolution = use.signal(stage.porthole.resolution * 100)
 
@@ -103,17 +105,19 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			docs?: TemplateResult,
 		) {
 		return (metaGroup: Meta.Group<G>) => html`
-			<header ?data-active="${active[activeKey]}">
-				${NuiCheckbox([{
-					label: activeKey,
-					checked: active[activeKey],
-					set: x => active[activeKey] = x,
-				}])}
-				${docs}
-			</header>
-			<section class=group ?data-hidden="${!active[activeKey]}">
-				${render_input(group)(metaGroup)}
-			</section>
+			<article data-dynamic ?data-active="${active[activeKey]}">
+				<header>
+					${NuiCheckbox([{
+						label: activeKey,
+						checked: active[activeKey],
+						set: x => active[activeKey] = x,
+					}])}
+					${docs}
+				</header>
+				<section>
+					${render_input(group)(metaGroup)}
+				</section>
+			</article>
 		`
 	}
 
@@ -130,12 +134,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 	}
 
 	return html`
-		<article>
-			<header>data</header>
-			<textarea @change="${handle_json_change}" .value="${json}"></textarea>
-		</article>
-
-		<article>
+		<article data-active>
 			<header>general</header>
 			<section>
 				${NuiRange([{
@@ -147,41 +146,26 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			</section>
 		</article>
 
-		<article>
+		<article data-active>
+			<header>data</header>
+			<textarea
+				.value="${json}"
+				@change="${handle_json_change}"
+				spellcheck="off"
+				autocorrect="off"
+				autocomplete="off"
+				autocapitalize="off"
+			></textarea>
+		</article>
+
+		<article data-active>
 			<header>
 				<span>default rendering</span>
 				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/defaultRenderingPipeline">doc</a>
 				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.DefaultRenderingPipeline">refs</a>
 			</header>
 			<section>
-				${render_section("antialiasing", effects.antialiasing)({
-					fxaa: Meta.boolean,
-					samples: Meta.granularity.samples,
-				})}
-
-				${render_section("bloom", effects.bloom)({
-					weight: new Meta.Number({min: 0, max: 10, step: .01}),
-					threshold: Meta.granularity.fine,
-					scale: Meta.granularity.medium,
-					kernel: Meta.granularity.bigSamples,
-				})}
-
-				${render_section("chromaticAberration", effects.chromaticAberration)({
-					aberrationAmount: Meta.granularity.coarse,
-					radialIntensity: Meta.granularity.medium,
-				})}
-
-				${render_section("glow", effects.glow)({
-					intensity: Meta.granularity.medium,
-					blurKernelSize: Meta.granularity.samples,
-				})}
-
-				${render_section("sharpen", effects.sharpen)({
-					colorAmount: Meta.granularity.medium,
-					edgeAmount: Meta.granularity.medium,
-				})}
-
-				<article>
+				<article data-active>
 					<header>
 						<span>image processing</span>
 						<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/usePostProcesses#imageprocessing">doc</a>
@@ -210,6 +194,33 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 						})}
 					</section>
 				</article>
+
+				${render_section("antialiasing", effects.antialiasing)({
+					fxaa: Meta.boolean,
+					samples: Meta.granularity.samples,
+				})}
+
+				${render_section("bloom", effects.bloom)({
+					weight: new Meta.Number({min: 0, max: 10, step: .01}),
+					threshold: Meta.granularity.fine,
+					scale: Meta.granularity.medium,
+					kernel: Meta.granularity.bigSamples,
+				})}
+
+				${render_section("chromaticAberration", effects.chromaticAberration)({
+					aberrationAmount: Meta.granularity.coarse,
+					radialIntensity: Meta.granularity.medium,
+				})}
+
+				${render_section("glow", effects.glow)({
+					intensity: Meta.granularity.medium,
+					blurKernelSize: Meta.granularity.samples,
+				})}
+
+				${render_section("sharpen", effects.sharpen)({
+					colorAmount: Meta.granularity.medium,
+					edgeAmount: Meta.granularity.medium,
+				})}
 			</section>
 		</article>
 
