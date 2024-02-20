@@ -166,6 +166,22 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			></textarea>
 		</article>
 
+		${render_section("fog", effects.fog, html`
+			<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/environment/environment_introduction#fog">doc</a>
+			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene#fogColor">ref</a>
+		`)({
+			mode: new Meta.SelectString<typeof effects.fog.mode>([
+				"none",
+				"exp",
+				"exp2",
+				"linear",
+			]),
+			color: new Meta.Color(),
+			start: Meta.granularity.coarser,
+			end: Meta.granularity.coarser,
+			density: Meta.granularity.superfine,
+		})}
+
 		<article data-active>
 			<header>
 				<span>default rendering</span>
@@ -186,7 +202,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 						})}
 
 						${render_section("tonemapping", effects.tonemapping)({
-							operator: new Meta.SelectString([
+							operator: new Meta.SelectString<typeof effects.tonemapping.operator>([
 								"Hable",
 								"HejiDawson",
 								"Reinhard",

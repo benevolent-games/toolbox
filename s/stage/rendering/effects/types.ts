@@ -1,4 +1,5 @@
 
+import { Vec3 } from "../../../math/vec3.js"
 import {Vec4} from "../../../math/vec4.js"
 
 import {PostProcessRenderPipeline} from "@babylonjs/core/PostProcesses/RenderPipeline/postProcessRenderPipeline.js"
@@ -57,6 +58,14 @@ export type DefaultPipelineEffects = {
 } & ImageProcessingEffects
 
 export type Effects = {
+	fog: {
+		mode: "none" | "exp" | "exp2" | "linear"
+		color: Vec3
+		start: number
+		end: number
+		density: number
+	}
+
 	ssao: {
 		ssaoRatio: number
 		blurRatio: number

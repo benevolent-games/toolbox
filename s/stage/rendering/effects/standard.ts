@@ -55,6 +55,14 @@ export const standard_effects = {
 	everything: (): Effects => ({
 		...standard_effects.default_pipeline(),
 
+		fog: {
+			mode: "exp2",
+			color: [.1, .1, .1],
+			start: 1,
+			end: 100,
+			density: 0.1,
+		},
+
 		ssao: {
 			ssaoRatio: .75,
 			blurRatio: .75,

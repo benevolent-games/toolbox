@@ -1,6 +1,6 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
-import {Color4} from "@babylonjs/core/Maths/math.color.js"
+import {Color3, Color4} from "@babylonjs/core/Maths/math.color.js"
 import {GlowLayer} from "@babylonjs/core/Layers/glowLayer.js"
 import {TonemappingOperator} from "@babylonjs/core/PostProcesses/tonemapPostProcess.js"
 import {ImageProcessingConfiguration} from "@babylonjs/core/Materials/imageProcessingConfiguration.js"
@@ -33,6 +33,22 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		scene.disablePrePassRenderer()
 		// scene.disableGeometryBufferRenderer()
 	})
+
+	scene.fogEnabled = !!effects.fog
+	if (effects.fog) {
+		const e = effects.fog
+		scene.fogMode = (
+			e.mode === "none" ? Scene.FOGMODE_NONE :
+			e.mode === "exp" ? Scene.FOGMODE_EXP :
+			e.mode === "exp2" ? Scene.FOGMODE_EXP2 :
+			e.mode === "linear" ? Scene.FOGMODE_LINEAR :
+			Scene.FOGMODE_NONE
+		)
+		scene.fogColor = new Color3(...e.color)
+		scene.fogStart = e.start
+		scene.fogEnd = e.end
+		scene.fogDensity = e.density
+	}
 
 	//
 	// DEFAULT PIPELINE
