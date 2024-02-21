@@ -2,6 +2,7 @@
 import {Scene} from "@babylonjs/core/scene.js"
 import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 import {fix_animation_groups} from "../utils/fix_animation_groups.js"
+import {fix_emissive_colors_by_converting_them_to_gamma_space} from "./fix_emissive_colors_by_converting_them_to_gamma_space.js"
 
 export async function load_glb(scene: Scene, url: string) {
 	const container = await SceneLoader.LoadAssetContainerAsync(
@@ -14,8 +15,8 @@ export async function load_glb(scene: Scene, url: string) {
 
 	container.removeAllFromScene()
 
-	if (container.animationGroups.length)
-		fix_animation_groups(container.animationGroups)
+	fix_animation_groups(container.animationGroups)
+	fix_emissive_colors_by_converting_them_to_gamma_space(container.materials)
 
 	return container
 }

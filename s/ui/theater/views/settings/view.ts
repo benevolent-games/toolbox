@@ -176,6 +176,7 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 			shadowsEnabled: Meta.boolean,
 			forceShowBoundingBoxes: Meta.boolean,
 			forceWireframe: Meta.boolean,
+			disableGammaTransform: Meta.boolean,
 		})}
 
 		${render_section("fog", effects.fog, html`
