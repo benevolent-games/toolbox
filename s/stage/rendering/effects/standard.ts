@@ -62,6 +62,7 @@ export const standard_effects = {
 			environmentIntensity: 1,
 			forceWireframe: false,
 			forceShowBoundingBoxes: false,
+			disableGammaTransform: false,
 		},
 
 		fog: {

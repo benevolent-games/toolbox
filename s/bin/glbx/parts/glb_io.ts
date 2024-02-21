@@ -1,6 +1,7 @@
 
+import {parse} from "path"
 import draco3d from "draco3dgltf"
-import {readFile, writeFile} from "fs/promises"
+import {readFile, writeFile, mkdir} from "fs/promises"
 import {ALL_EXTENSIONS} from "@gltf-transform/extensions"
 import {NodeIO, Document, Logger} from "@gltf-transform/core"
 
@@ -26,6 +27,8 @@ export async function glb_io() {
 		},
 
 		async write(path: string, document: Document) {
+			const {dir} = parse(path)
+			await mkdir(dir, {recursive: true})
 			const binary = await io.writeBinary(document)
 			await writeFile(path, binary)
 			return {path, binary}

@@ -55,6 +55,10 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		scene.forceShowBoundingBoxes = e
 			? e.forceShowBoundingBoxes
 			: false
+		if (scene.prePassRenderer)
+			scene.prePassRenderer.disableGammaTransform = e
+				? e.disableGammaTransform
+				: false
 	}
 
 	scene.fogEnabled = !!effects.fog

@@ -64,6 +64,7 @@ export type Effects = {
 		shadowsEnabled: boolean
 		forceWireframe: boolean
 		forceShowBoundingBoxes: boolean
+		disableGammaTransform: boolean
 	}
 
 	fog: {
