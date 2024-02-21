@@ -23,7 +23,7 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.1.0-x.7",
+		"@benev/slate": "^0.1.0-x.12",
 		"@dimforge/rapier3d": "^0.12.0",
 		"@dimforge/rapier3d-compat": "^0.12.0",
 		"@gltf-transform/cli": "^3.10.0",
