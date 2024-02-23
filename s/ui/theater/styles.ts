@@ -41,9 +41,8 @@ canvas {
 				padding: 0.2em 0.6em;
 
 				opacity: 0.3;
-				&[data-active] {
-					opacity: 1;
-				}
+				&:hover { opacity: 0.5; }
+				&[data-active] { opacity: 1; }
 			}
 		}
 

@@ -6,3 +6,7 @@ export type MenuItem = {
 	panel: ({}: {stage: Stage}) => any
 }
 
+export function menu<P>(name: string, panel: ({}: {stage: Stage}) => P): MenuItem {
+	return {name, panel}
+}
+

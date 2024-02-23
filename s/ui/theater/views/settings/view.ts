@@ -2,8 +2,8 @@
 import {TemplateResult, clone, debounce, flat, html, ob, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
+import {menu} from "../../menus.js"
 import {Meta} from "./parts/meta.js"
-import {MenuItem} from "../../menus.js"
 import {nexus} from "../../../nexus.js"
 import {to} from "../../../../math/vec3.js"
 import {NuiColor} from "../../../nui/color.js"
@@ -14,13 +14,14 @@ import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
 
-export const settings: MenuItem = {
-	name: "settings",
-	panel: (o: {stage: Stage}) => SettingsPanel([o]),
-}
+export const settingsMenu = (
+	(prelude: any = null) =>
+		menu("settings", o => SettingsMenu([{...o, prelude}]))
+)
 
-export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
+export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
 		stage: Stage
+		prelude: any
 	}) => {
 
 	use.name("settings-panel")
@@ -143,6 +144,8 @@ export const SettingsPanel = nexus.shadow_view(use => ({stage}: {
 	}
 
 	return html`
+		${prelude}
+
 		<article data-active>
 			<header>general</header>
 			<section>

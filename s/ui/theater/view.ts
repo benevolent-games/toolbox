@@ -4,18 +4,17 @@ import {nexus} from "../nexus.js"
 import {styles} from "./styles.js"
 import {MenuItem} from "./menus.js"
 import {Stage} from "../../stage/stage.js"
-import {settings} from "./views/settings/view.js"
 import {Framerate} from "./views/framerate/view.js"
+import {settingsMenu} from "./views/settings/view.js"
 
 export const Theater = nexus.shadow_view(use => ({
 		stage,
-		menu: addedMenu
+		menus = [settingsMenu()],
 	}: {
 		stage: Stage
-		menu: MenuItem[]
+		menus?: MenuItem[]
 	}) => {
 
-	const menu = [settings, ...addedMenu]
 	use.styles(styles)
 	const activated = use.signal<number | null>(null)
 	const locked = use.signal(false)
@@ -26,7 +25,7 @@ export const Theater = nexus.shadow_view(use => ({
 	const isActive = (index: number) => (index === activated.value)
 	const closePanel = () => { activated.value = null }
 	const setActive = (index: number) => { activated.value = index }
-	const getActivePanel = () => menu.at(activated.value ?? 0)?.panel({stage})
+	const getActivePanel = () => menus.at(activated.value ?? 0)?.panel({stage})
 
 	const clickPanelButton = (index: number) => () => {
 		if (isActive(index))
@@ -41,7 +40,7 @@ export const Theater = nexus.shadow_view(use => ({
 		<div class=overlay ?data-locked="${locked}">
 			<div class=plate>
 				<nav>
-					${menu.map(({name}, index) => html`
+					${menus.map(({name}, index) => html`
 						<button
 							?data-active="${isActive(index)}"
 							@click="${clickPanelButton(index)}">
