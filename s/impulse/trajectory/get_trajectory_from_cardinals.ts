@@ -13,10 +13,10 @@ export function get_trajectory_from_cardinals(cardinals: Cardinals) {
 		stride -= 1
 
 	if (cardinals.west)
-		strafe -= 1
+		strafe += 1
 
 	if (cardinals.east)
-		strafe += 1
+		strafe -= 1
 
 	return cap_vector_to_magnitude_1([strafe, stride])
 }

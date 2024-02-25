@@ -3,6 +3,7 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {Color4} from "@babylonjs/core/Maths/math.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
+import {CompatibilityOptions} from "@babylonjs/core/Compat/compatibilityOptions.js"
 
 import {Vec4} from "../math/vec4.js"
 import {StageOptions} from "./types.js"
@@ -45,13 +46,16 @@ export class Stage {
 		const scene = this.scene = new Scene(engine)
 		scene.clearColor = new Color4(...background)
 
+		// we roll with opengl and gltf standards
+		scene.useRightHandedSystem = true
+		CompatibilityOptions.UseOpenGLOrientationForUV = true
+
 		const gameloop = this.gameloop = new Gameloop(engine, scene, tickrate_hz)
 		const rendering = this.rendering = new Rendering(scene)
 		this.pointerLocker = new PointerLocker(porthole.canvas)
 		this.load_glb = async(url: string) => load_glb(scene, url)
 
 		this.#last_tick_time = performance.now()
-
 		gameloop.onTick(() => {
 			this.#tick_counter++
 			const currentTime = performance.now()
