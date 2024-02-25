@@ -17,6 +17,7 @@ export type Serializable = (
 export type CInstance = Component<any>
 export type CClass = Constructor<CInstance>
 export type Selector = Record<string, CClass>
+export type CState<C extends Component<any>> = C["state"]
 
 export type CHandle<Sel extends Selector> = {
 	[K in keyof Sel as K extends string ? Uncapitalize<K>: never]:
