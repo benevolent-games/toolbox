@@ -315,9 +315,9 @@ export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
 		})}
 
 		${render_section("lens", effects.lens, html`
-			<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/dofLenseEffects">doc</a>
-			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.LensRenderingPipeline">ref</a>
-		`)({
+				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/dofLenseEffects">doc</a>
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.LensRenderingPipeline">ref</a>
+			`)({
 			ratio: Meta.granularity.fine,
 			blur_noise: Meta.boolean,
 			dof_pentagon: Meta.boolean,
