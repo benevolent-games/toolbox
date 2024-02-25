@@ -1,6 +1,7 @@
 
 import {Quat} from "./quat.js"
 import {Vec3} from "./vec3.js"
+import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 export const babylonian = {
@@ -11,6 +12,17 @@ export const babylonian = {
 	from: {
 		vec3: (v: Vec3) => new Vector3(...v),
 		quat: (q: Quat) => new Quaternion(...q),
+	},
+	ascertain: {
+		quat: (transform: TransformNode) => {
+			return babylonian.to.quat(transform.rotationQuaternion ?? (
+				Quaternion.RotationYawPitchRoll(
+					transform.rotation.y,
+					transform.rotation.x,
+					transform.rotation.z,
+				)
+			))
+		},
 	},
 }
 
