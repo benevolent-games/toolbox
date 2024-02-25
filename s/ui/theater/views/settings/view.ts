@@ -326,7 +326,7 @@ export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
 			distortion: Meta.granularity.fine,
 			grain_amount: Meta.granularity.fine,
 			dof_focus_distance: Meta.granularity.coarse,
-			dof_aperture: Meta.granularity.medium,
+			dof_aperture: Meta.granularity.small,
 			dof_darken: Meta.granularity.medium,
 			dof_gain: Meta.granularity.medium,
 			dof_threshold: Meta.granularity.medium,
