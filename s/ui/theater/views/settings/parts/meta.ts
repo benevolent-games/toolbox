@@ -44,6 +44,7 @@ export namespace Meta {
 	export const granularity = {
 		superfine: new Number({min: 0, max: .2, step: .0001}),
 		fine: new Number({min: 0, max: 1, step: .001}),
+		small: new Number({min: 0, max: 2, step: .001}),
 		medium: new Number({min: 0, max: 10, step: .01}),
 		coarse: new Number({min: 0, max: 100, step: .1}),
 		coarser: new Number({min: 0, max: 1000, step: 1}),

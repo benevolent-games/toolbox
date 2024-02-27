@@ -2,7 +2,6 @@
 import {TemplateResult, clone, debounce, flat, html, ob, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
-import {menu} from "../../menus.js"
 import {Meta} from "./parts/meta.js"
 import {nexus} from "../../../nexus.js"
 import {to} from "../../../../math/vec3.js"
@@ -14,16 +13,7 @@ import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
 
-export const settingsMenu = (
-	(prelude: any = null) =>
-		menu("settings", o => SettingsMenu([{...o, prelude}]))
-)
-
-export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
-		stage: Stage
-		prelude: any
-	}) => {
-
+export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, prelude?: any) => {
 	use.name("settings-panel")
 	use.styles(styles)
 
@@ -315,9 +305,9 @@ export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
 		})}
 
 		${render_section("lens", effects.lens, html`
-			<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/dofLenseEffects">doc</a>
-			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.LensRenderingPipeline">ref</a>
-		`)({
+				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/postProcesses/dofLenseEffects">doc</a>
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.LensRenderingPipeline">ref</a>
+			`)({
 			ratio: Meta.granularity.fine,
 			blur_noise: Meta.boolean,
 			dof_pentagon: Meta.boolean,
@@ -326,7 +316,7 @@ export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
 			distortion: Meta.granularity.fine,
 			grain_amount: Meta.granularity.fine,
 			dof_focus_distance: Meta.granularity.coarse,
-			dof_aperture: Meta.granularity.medium,
+			dof_aperture: Meta.granularity.small,
 			dof_darken: Meta.granularity.medium,
 			dof_gain: Meta.granularity.medium,
 			dof_threshold: Meta.granularity.medium,
