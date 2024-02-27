@@ -10,7 +10,7 @@ export class PointerLocker {
 
 	lock() {
 		if (!this.locked)
-			this.element.requestPointerLock()
+			(this.element.requestPointerLock as any)({unadjustedMovement: true})
 	}
 
 	unlock() {
