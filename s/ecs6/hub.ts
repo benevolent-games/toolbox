@@ -11,6 +11,7 @@ export * from "./core/types.js"
 export * from "./core/world.js"
 export * from "./core/component.js"
 export * from "./core/hybrid_component.js"
+export * from "./exe/executive.js"
 
 export class Hub<Realm, Tick> {
 	world = (realm: Realm) => new World<Realm>(realm)
