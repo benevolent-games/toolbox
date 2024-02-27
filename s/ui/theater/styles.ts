@@ -32,17 +32,27 @@ canvas {
 
 		> nav {
 			display: flex;
+
 			> button {
 				font: inherit;
 				pointer-events: all;
-				background: #333333cc;
+				background: #3334;
 				color: #fffc;
 				border: none;
 				padding: 0.2em 0.6em;
+				text-shadow: 1px 1px 2px #0008;
+				transition: all linear 200ms;
+				&:focus { outline: 0; }
+			}
 
-				opacity: 0.3;
-				&:hover { opacity: 0.5; }
-				&[data-active] { opacity: 1; }
+			.lead {
+				opacity: 1;
+				background: #f90c;
+			}
+
+			.menu-item {
+				&:hover { background: #3338; color: #fff8; }
+				&[data-active] { background: #333c; color: #fffc; }
 			}
 		}
 
@@ -54,6 +64,9 @@ canvas {
 			height: 0px;
 			background: #333333cc;
 			backdrop-filter: blur(1em);
+
+			opacity: 1;
+			transition: 200ms linear opacity;
 		}
 	}
 
@@ -65,13 +78,14 @@ canvas {
 		padding: 0.5rem;
 	}
 
-	> .plate {
-		opacity: 1;
-		transition: 300ms linear opacity;
-	}
-
-	&[data-locked] > .plate {
-		opacity: 0;
+	&:not([data-open]) {
+		:is(.panel, .menu-item) {
+			opacity: 0;
+		}
+		.lead {
+			opacity: 0.3 !important;
+			background: #0000 !important;
+		}
 	}
 }
 

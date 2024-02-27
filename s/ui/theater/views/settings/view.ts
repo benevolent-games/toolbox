@@ -2,7 +2,6 @@
 import {TemplateResult, clone, debounce, flat, html, ob, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
-import {menu} from "../../menus.js"
 import {Meta} from "./parts/meta.js"
 import {nexus} from "../../../nexus.js"
 import {to} from "../../../../math/vec3.js"
@@ -14,16 +13,7 @@ import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
 
-export const settingsMenu = (
-	(prelude: any = null) =>
-		menu("settings", o => SettingsMenu([{...o, prelude}]))
-)
-
-export const SettingsMenu = nexus.shadow_view(use => ({stage, prelude}: {
-		stage: Stage
-		prelude: any
-	}) => {
-
+export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, prelude?: any) => {
 	use.name("settings-panel")
 	use.styles(styles)
 
