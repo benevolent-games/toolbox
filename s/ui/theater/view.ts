@@ -35,6 +35,13 @@ export const Theater = nexus.shadow_view(use => ({
 						${leadButton}
 					</button>
 
+					<button
+						class=arrow
+						title="press q"
+						@click="${() => menus.previous()}">
+						❮
+					</button>
+
 					${menus.names.map(({name, active, activate}) => html`
 						<button
 							class=menu-item
@@ -43,6 +50,13 @@ export const Theater = nexus.shadow_view(use => ({
 							${name}
 						</button>
 					`)}
+
+					<button
+						class=arrow
+						title="press e"
+						@click="${() => menus.next()}">
+						❯
+					</button>
 				</nav>
 
 				<div class=panel>${menus.panel({stage})}</div>

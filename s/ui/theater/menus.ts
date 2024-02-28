@@ -20,6 +20,17 @@ export class Menus {
 		this.open.value = !this.open.value
 	}
 
+	next() {
+		const proposedIndex = this.index.value + 1
+		const lastPossibleIndex = this.items.length - 1
+		this.index.value = Math.min(proposedIndex, lastPossibleIndex)
+	}
+
+	previous() {
+		const proposedIndex = this.index.value - 1
+		this.index.value = Math.max(proposedIndex, 0)
+	}
+
 	get names() {
 		return this.items.map(({name}, index) => ({
 			name,

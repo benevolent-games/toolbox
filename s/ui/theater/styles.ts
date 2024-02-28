@@ -5,6 +5,11 @@ export const styles = css`
 
 :host {
 	display: block;
+	--bg1: #333c;
+	--bg2: #222c;
+	--text: #fff;
+	--primary: #f90;
+	text-shadow: 1px 1px 2px #0008;
 }
 
 canvas {
@@ -33,26 +38,36 @@ canvas {
 		> nav {
 			display: flex;
 
+			> * {
+				pointer-events: all;
+				color: var(--text);
+				background: var(--bg2);
+				padding: 0.2em 0.6em;
+				transition: all linear 200ms;
+			}
+
 			> button {
 				font: inherit;
-				pointer-events: all;
-				background: #3334;
-				color: #fffc;
 				border: none;
-				padding: 0.2em 0.6em;
-				text-shadow: 1px 1px 2px #0008;
-				transition: all linear 200ms;
 				&:focus { outline: 0; }
 			}
 
 			.lead {
 				opacity: 1;
-				background: #f90c;
+				background: var(--primary);
+			}
+
+			.arrow {
+				opacity: 0.3;
+				color: var(--text);
+				background: color-mix(in srgb, transparent, var(--bg2) 10%);
+				&:hover { opacity: 0.6; }
 			}
 
 			.menu-item {
-				&:hover { background: #3338; color: #fff8; }
-				&[data-active] { background: #333c; color: #fffc; }
+				opacity: 0.1;
+				&:hover { opacity: 0.3; }
+				&[data-active] { opacity: 1; background: var(--bg1); }
 			}
 		}
 
@@ -62,7 +77,7 @@ canvas {
 			padding: 0.5em;
 			overflow-y: auto;
 			height: 0px;
-			background: #333333cc;
+			background: var(--bg1);
 			backdrop-filter: blur(1em);
 
 			opacity: 1;
@@ -79,8 +94,8 @@ canvas {
 	}
 
 	&:not([data-open]) {
-		:is(.panel, .menu-item) {
-			opacity: 0;
+		:is(.panel, .arrow, .menu-item) {
+			opacity: 0 !important;
 		}
 		.lead {
 			opacity: 0.3 !important;
