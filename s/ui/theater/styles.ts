@@ -6,9 +6,10 @@ export const styles = css`
 :host {
 	display: block;
 	--bg1: #333c;
-	--bg2: #222c;
+	--bg2: #000c;
 	--text: #fff;
 	--primary: #f90;
+	--speed: 200ms;
 	text-shadow: 1px 1px 2px #0008;
 }
 
@@ -43,31 +44,36 @@ canvas {
 				color: var(--text);
 				background: var(--bg2);
 				padding: 0.2em 0.6em;
-				transition: all linear 200ms;
+				transition: all var(--speed);
 			}
 
 			> button {
 				font: inherit;
 				border: none;
+				border-top: 2px solid transparent;
 				&:focus { outline: 0; }
 			}
 
 			.lead {
 				opacity: 1;
 				background: var(--primary);
+				text-shadow: 1px 1px 2px #000;
 			}
 
-			.arrow {
-				opacity: 0.3;
-				color: var(--text);
-				background: color-mix(in srgb, transparent, var(--bg2) 10%);
-				&:hover { opacity: 0.6; }
-			}
-
-			.menu-item {
-				opacity: 0.1;
-				&:hover { opacity: 0.3; }
-				&[data-active] { opacity: 1; background: var(--bg1); }
+			:is(.menu-item, .arrow) {
+				opacity: 0.5;
+				color: color-mix(in srgb, transparent, var(--text) 50%);
+				&:hover {
+					opacity: 0.75;
+					color: var(--text);
+					background: var(--bg1);
+				}
+				&[data-active] {
+					opacity: 1;
+					color: var(--text);
+					background: var(--bg1);
+					border-color: var(--primary);
+				}
 			}
 		}
 
@@ -81,7 +87,7 @@ canvas {
 			backdrop-filter: blur(1em);
 
 			opacity: 1;
-			transition: 200ms linear opacity;
+			transition: opacity var(--speed);
 		}
 	}
 
