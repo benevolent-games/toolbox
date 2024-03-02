@@ -77,6 +77,15 @@ export function wrap(n: number, a: number = 0, b: number = 1) {
 	return min + wrapped
 }
 
+/** enforce that a proposed number is near the base number. */
+export function nearby(base: number, proposal: number, maxDiff: number) {
+	const trueDiff = proposal - base
+	const positiveDiff = Math.abs(trueDiff)
+	const cappedDiff = (positiveDiff > maxDiff) ? maxDiff : positiveDiff
+	const newDiff = (trueDiff < 0) ? -cappedDiff : cappedDiff
+	return base + newDiff
+}
+
 //
 // transformations and mappings
 //
