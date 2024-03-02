@@ -3,6 +3,7 @@ import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
 import {Vec3} from "../../math/vec3.js"
 import {vec3} from "../../math/exports.js"
+import {label} from "../../tools/label.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
@@ -68,7 +69,7 @@ export function character_desc(
 }
 
 export function create_babylon_mesh_for_character(
-		{scene, label, colors}: Phys.Context,
+		{scene, colors}: Phys.Context,
 		spec: CharacterSpec,
 		actor: Phys.Actor,
 		material: Material = colors.cyan,

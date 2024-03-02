@@ -1,6 +1,7 @@
 
 import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
+import {label} from "../../tools/label.js"
 import {quat, vec3} from "../../math/exports.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
@@ -40,7 +41,7 @@ export function apply_position_and_rotation(
 }
 
 export function create_babylon_mesh_for_box(
-		{label, scene}: Phys.Context,
+		{scene}: Phys.Context,
 		spec: Phys.BoxSpec,
 		actor: Phys.Actor,
 	) {

@@ -7,7 +7,7 @@ import {Phys} from "./types.js"
 import {Rapier} from "./rapier.js"
 import {Vec3} from "../math/vec3.js"
 import {vec3} from "../math/exports.js"
-import {labeler} from "../tools/label.js"
+import {Scene} from "@babylonjs/core/scene.js"
 import {debug_colors} from "../tools/debug_colors.js"
 import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
@@ -19,6 +19,8 @@ import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create
  * rapier physics integration for babylon.
  */
 export class Physics {
+	static colors = (scene: Scene) => debug_colors(scene)
+
 	#context: Phys.Context
 	readonly world: Rapier.World
 
@@ -31,7 +33,7 @@ export class Physics {
 			scene,
 			colors,
 			gravity,
-			contact_force_threshold = 0.2,
+			contact_force_threshold,
 		}: Phys.Options) {
 
 		const world = this.world = new Rapier.World(vec3.to.xyz(gravity))
@@ -40,9 +42,8 @@ export class Physics {
 		this.#context = {
 			scene,
 			world,
+			colors,
 			physicals: new Set(),
-			label: labeler("physics"),
-			colors: colors ?? debug_colors(scene),
 			contact_force_threshold,
 		}
 	}

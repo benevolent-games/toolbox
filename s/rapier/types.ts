@@ -14,14 +14,13 @@ export namespace Phys {
 		hz: number
 		scene: Scene
 		gravity: Vec3
-		colors?: DebugColors
-		contact_force_threshold?: number
+		colors: DebugColors
+		contact_force_threshold: number
 	}
 
 	export type Context = {
 		scene: Scene
 		world: Rapier.World
-		label: (name: string) => string
 		physicals: Set<Actor>
 		colors: ReturnType<typeof debug_colors>
 		contact_force_threshold: number
