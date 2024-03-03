@@ -1,11 +1,13 @@
 
+import {Material} from "@babylonjs/core/Materials/material.js"
+import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+
 import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
 import {Vec3} from "../../math/vec3.js"
 import {vec3} from "../../math/exports.js"
 import {label} from "../../tools/label.js"
-import {Material} from "@babylonjs/core/Materials/material.js"
-import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import {default_groups} from "../parts/groups.js"
 
 export interface CharacterSpec {
 	mass: number
@@ -23,6 +25,7 @@ export interface CharacterSpec {
 	snapToGround: null | {
 		distance: number
 	}
+	groups?: number
 }
 
 export function create_character_controller(
@@ -61,6 +64,7 @@ export function character_desc(
 			.capsule(spec.halfHeight, spec.radius)
 			.setMass(spec.mass)
 			.setContactForceEventThreshold(context.contact_force_threshold)
+			.setCollisionGroups(spec.groups ?? default_groups)
 			.setActiveEvents(
 				Rapier.ActiveEvents.COLLISION_EVENTS |
 				Rapier.ActiveEvents.CONTACT_FORCE_EVENTS

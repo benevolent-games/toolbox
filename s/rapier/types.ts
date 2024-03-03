@@ -1,13 +1,14 @@
 
-import {Rapier} from "./rapier.js"
-import {Vec3} from "../math/vec3.js"
-import {Quat} from "../math/quat.js"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
-import {DebugColors, debug_colors} from "../tools/debug_colors.js"
-import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
+
+import {Rapier} from "./rapier.js"
+import {Vec3} from "../math/vec3.js"
+import {Quat} from "../math/quat.js"
+import {Meshoid} from "../babyloid/types.js"
+import {DebugColors, debug_colors} from "../tools/debug_colors.js"
 
 export namespace Phys {
 	export type Options = {
@@ -49,6 +50,7 @@ export namespace Phys {
 		density: number
 		linearDamping: number
 		angularDamping: number
+		groups?: number
 		position?: Vec3
 		rotation?: Quat
 		material?: Material
@@ -67,7 +69,7 @@ export namespace Phys {
 	} & Actor
 
 	export type TrimeshActor = {
-		mesh: Mesh | InstancedMesh
+		meshoid: Meshoid
 	} & Actor
 }
 

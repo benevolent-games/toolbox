@@ -1,15 +1,14 @@
 
-import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
-import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
+import {Scene} from "@babylonjs/core/scene.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
 import {Phys} from "./types.js"
 import {Rapier} from "./rapier.js"
 import {Vec3} from "../math/vec3.js"
 import {vec3} from "../math/exports.js"
-import {Scene} from "@babylonjs/core/scene.js"
+import {PhysicsGroups} from "./parts/groups.js"
 import {debug_colors} from "../tools/debug_colors.js"
-import {make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
+import {TrimeshSpec, make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
 import {obtain_babylon_quaternion_from_mesh} from "../tools/obtain_babylon_quaternion_from_mesh.js"
 import {apply_position_and_rotation, box_desc, create_babylon_mesh_for_box} from "./aspects/box.js"
@@ -19,6 +18,7 @@ import {CharacterSpec, character_desc, create_babylon_mesh_for_character, create
  * rapier physics integration for babylon.
  */
 export class Physics {
+	static groups = PhysicsGroups.make
 	static colors = (scene: Scene) => debug_colors(scene)
 
 	#context: Phys.Context
@@ -128,17 +128,18 @@ export class Physics {
 	/**
 	 * turn a mesh into a fixed boundary.
 	 */
-	trimesh(mesh: Mesh | InstancedMesh): Phys.TrimeshActor {
+	trimesh(spec: TrimeshSpec): Phys.TrimeshActor {
 		const {world} = this.#context
 		const {rigid, collider} = make_trimesh_rigid_and_collider(
-			this.#context, mesh,
+			this.#context,
+			spec,
 		)
 		return {
-			mesh,
 			rigid,
 			collider,
-			position: mesh.position,
-			rotation: obtain_babylon_quaternion_from_mesh(mesh),
+			meshoid: spec.meshoid,
+			position: spec.meshoid.position,
+			rotation: obtain_babylon_quaternion_from_mesh(spec.meshoid),
 			dispose: () => {
 				world.removeCollider(collider, false)
 				world.removeRigidBody(rigid)

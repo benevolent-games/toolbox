@@ -1,9 +1,11 @@
 
+import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+
 import {Phys} from "../types.js"
 import {Rapier} from "../rapier.js"
 import {label} from "../../tools/label.js"
 import {quat, vec3} from "../../math/exports.js"
-import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import {default_groups} from "../parts/groups.js"
 
 export function box_desc(
 		context: Phys.Context,
@@ -21,6 +23,7 @@ export function box_desc(
 			.cuboid(...vec3.divideBy(spec.scale, 2))
 			.setDensity(spec.density)
 			.setContactForceEventThreshold(context.contact_force_threshold)
+			.setCollisionGroups(spec.groups ?? default_groups)
 			.setActiveEvents(
 				Rapier.ActiveEvents.COLLISION_EVENTS |
 				Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
