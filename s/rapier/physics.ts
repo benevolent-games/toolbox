@@ -6,8 +6,8 @@ import {Phys} from "./types.js"
 import {Rapier} from "./rapier.js"
 import {Vec3} from "../math/vec3.js"
 import {vec3} from "../math/exports.js"
-import {PhysicsGroups} from "./parts/groups.js"
 import {debug_colors} from "../tools/debug_colors.js"
+import {PhysicsGroups, default_groups} from "./parts/groups.js"
 import {TrimeshSpec, make_trimesh_rigid_and_collider} from "./aspects/trimesh.js"
 import {synchronize_to_babylon_position_and_rotation} from "./parts/synchronize.js"
 import {obtain_babylon_quaternion_from_mesh} from "../tools/obtain_babylon_quaternion_from_mesh.js"
@@ -78,6 +78,22 @@ export class Physics {
 		}
 		physicals.add(physical)
 		return physical
+	}
+
+	boxCollider(spec: Phys.BoxCollider) {
+		const collider = this.world.createCollider(
+			Rapier.ColliderDesc
+				.cuboid(...vec3.divideBy(spec.scale, 2))
+				.setCollisionGroups(spec.groups ?? default_groups)
+				.setActiveEvents(
+					Rapier.ActiveEvents.COLLISION_EVENTS |
+					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
+				)
+		)
+		// const lol = create_babylon_mesh_for_box(
+		// 	this.#context,
+		// 	spec,
+		// )
 	}
 
 	/**

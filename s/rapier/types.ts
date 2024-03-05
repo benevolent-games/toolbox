@@ -45,16 +45,19 @@ export namespace Phys {
 		dispose: () => void
 	}
 
-	export type BoxSpec = {
+	export type BoxCollider = {
 		scale: Vec3
-		density: number
-		linearDamping: number
-		angularDamping: number
 		groups?: number
 		position?: Vec3
 		rotation?: Quat
 		material?: Material
 	}
+
+	export type BoxSpec = {
+		density: number
+		linearDamping: number
+		angularDamping: number
+	} & BoxCollider
 
 	export type BoxActor = {
 		mesh: Mesh

@@ -45,7 +45,7 @@ export function apply_position_and_rotation(
 
 export function create_babylon_mesh_for_box(
 		{scene}: Phys.Context,
-		spec: Phys.BoxSpec,
+		spec: Phys.BoxCollider,
 		actor: Phys.Actor,
 	) {
 
