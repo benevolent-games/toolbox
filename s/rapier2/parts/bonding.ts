@@ -7,10 +7,9 @@ import {PhysicsBond} from "./bond.js"
 export class PhysicsBonding {
 	#bonds = new Set<PhysicsBond>
 
-	bond(actor: Rapier.RigidBody | Rapier.Collider, mimic: TransformNode, dispose: () => void) {
+	bond(actor: Rapier.RigidBody | Rapier.Collider, mimic: TransformNode) {
 		const bond = new PhysicsBond(actor, mimic, () => {
 			this.#bonds.delete(bond)
-			dispose()
 		})
 		this.#bonds.add(bond)
 		return bond

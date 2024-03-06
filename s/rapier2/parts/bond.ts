@@ -14,7 +14,7 @@ export class PhysicsBond {
 			/** babylon mesh or otherwise */
 			public readonly mimic: TransformNode,
 
-			/** destroy the rapier actor and babylon mimic */
+			/** remove this bond (does nothing to the actor or mimic, just the bond itself) */
 			public readonly dispose: () => void,
 		) {
 

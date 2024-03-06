@@ -1,34 +1,34 @@
 
-import {Scene} from "@babylonjs/core/scene.js"
-import {Material} from "@babylonjs/core/Materials/material.js"
+import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 import {Rapier} from "../rapier.js"
-import {Grouping} from "./grouping.js"
+import {Physics} from "../physics.js"
 import {label} from "../../tools/label.js"
-import {Quat, vec3, Vec3} from "../../math/exports.js"
+import {Grouping} from "../parts/grouping.js"
+import {Vec3, vec3} from "../../math/exports.js"
+import {Pair, PairParams} from "../parts/pair.js"
 
-export type BoxColliderParams = {
+export interface BoxParams extends PairParams {
 	scale: Vec3
-	groups?: number
-	position?: Vec3
-	rotation?: Quat
 	density?: number
-	material?: Material
-	contact_force_threshold?: number
 }
 
-export class PhysicsColliders {
-	constructor(
-		public readonly world: Rapier.World,
-		public readonly scene: Scene,
-	) {}
+export class Box extends Pair {
+	mimic: Mesh
+	collider: Rapier.Collider
 
-	box(o: BoxColliderParams) {
-		const {world, scene} = this
+	constructor(
+			physics: Physics,
+			o: BoxParams,
+		) {
+
+		super(physics)
+
+		const {world, scene} = this.physics
 		const [width, height, depth] = o.scale
 
-		const mimic = MeshBuilder.CreateBox(
+		const mimic = this.mimic = MeshBuilder.CreateBox(
 			label("box"),
 			{width, height, depth},
 			scene,
@@ -39,7 +39,7 @@ export class PhysicsColliders {
 		else
 			mimic.visibility = 0
 
-		const collider = world.createCollider(
+		this.collider = world.createCollider(
 			Rapier.ColliderDesc
 				.cuboid(...vec3.divideBy(o.scale, 2))
 				.setDensity(o.density ?? 1)
@@ -50,8 +50,6 @@ export class PhysicsColliders {
 					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
 				)
 		)
-
-		return {collider, mimic}
 	}
 }
 
