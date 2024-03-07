@@ -8,12 +8,12 @@ import {Grouping} from "../../parts/grouping.js"
 import {Vec3, vec3} from "../../../math/exports.js"
 import {Vessel, VesselParams} from "../utils/vessel.js"
 
-export interface BoxVesselParams extends VesselParams {
+export interface CubeVesselParams extends VesselParams {
 	scale: Vec3
 	density?: number
 }
 
-export function make_box_vessel(physics: Physics, o: BoxVesselParams) {
+export function make_cube_vessel(physics: Physics, o: CubeVesselParams) {
 	const {world, scene} = physics
 	const [width, height, depth] = o.scale
 
