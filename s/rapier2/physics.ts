@@ -4,19 +4,17 @@ import {Scene} from "@babylonjs/core/scene.js"
 import {Rapier} from "./rapier.js"
 import {Vec3} from "../math/vec3.js"
 import {vec3} from "../math/exports.js"
-import * as pairs from "./pairs/pairs.js"
 import {Grouping} from "./parts/grouping.js"
-import * as presets from "./presets/presets.js"
+import * as prefabs from "./presets/prefabs.js"
 import {PhysicsBonding} from "./parts/bonding.js"
-import {instantiators} from "./parts/instantiators.js"
+import {prefab_helpers} from "./presets/utils/prefab.js"
 
 export class Physics {
 	static readonly Grouping = Grouping
 	readonly scene: Scene
 	readonly world: Rapier.World
 	readonly bonding: PhysicsBonding
-	readonly pairs = instantiators(this, pairs)
-	readonly presets = instantiators(this, presets)
+	readonly prefabs = prefab_helpers(this, prefabs)
 
 	constructor(o: {scene: Scene, gravity: Vec3, hertz: number}) {
 		this.scene = o.scene
