@@ -2,8 +2,8 @@
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
+import {Actor} from "./actor.js"
 import {Rapier} from "../../rapier.js"
-import {Physics} from "../../physics.js"
 import {Quat, Vec3} from "../../../math/exports.js"
 
 export interface VesselParams {
@@ -14,16 +14,19 @@ export interface VesselParams {
 	contact_force_threshold: number
 }
 
-export class Vessel<T extends TransformNode> {
+export class Vessel<A extends Actor = any, M extends TransformNode = any> {
 	constructor(
-		public readonly physics: Physics,
-		public readonly collider: Rapier.Collider,
-		public readonly mimic: T,
+		public readonly world: Rapier.World,
+		public readonly actor: A,
+		public readonly mimic: M,
 	) {}
 
 	dispose() {
 		this.mimic.dispose()
-		this.physics.world.removeCollider(this.collider, false)
+		if (this.actor instanceof Rapier.Collider)
+			this.world.removeCollider(this.actor, false)
+		else
+			this.world.removeRigidBody(this.actor)
 	}
 }
 

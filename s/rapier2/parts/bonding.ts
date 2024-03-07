@@ -1,18 +1,22 @@
 
+import {Bond} from "./utils/bond.js"
+import {Actor} from "./utils/actor.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
-import {Rapier} from "../rapier.js"
-import {PhysicsBond} from "./bond.js"
-
 export class PhysicsBonding {
-	#bonds = new Set<PhysicsBond>
+	#bonds = new Set<Bond>
 
-	bond(actor: Rapier.RigidBody | Rapier.Collider, mimic: TransformNode) {
-		const bond = new PhysicsBond(actor, mimic, () => {
-			this.#bonds.delete(bond)
-		})
+	create<A extends Actor, M extends TransformNode>(actor: A, mimic: M) {
+		return this.add(new Bond(actor, mimic))
+	}
+
+	add<B extends Bond>(bond: B) {
 		this.#bonds.add(bond)
 		return bond
+	}
+
+	remove(bond: Bond) {
+		this.#bonds.delete(bond)
 	}
 
 	synchronize() {

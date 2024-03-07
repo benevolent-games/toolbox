@@ -13,7 +13,7 @@ export interface BoxParams {
 export const box = prefab(physics => (o: BoxParams & CubeVesselParams) => {
 	const {bag, dispose} = new Trashcan()
 
-	const vessel = bag(make_cube_vessel(physics, o))
+	const cube = bag(make_cube_vessel(physics, o))
 		.dump(v => v.dispose())
 
 	const rigid = bag(physics.world.createRigidBody(
@@ -24,13 +24,12 @@ export const box = prefab(physics => (o: BoxParams & CubeVesselParams) => {
 			.setAngularDamping(o.angularDamping)
 	)).dump(r => physics.world.removeRigidBody(r))
 
-	const bond = bag(physics.bonding.bond(rigid, vessel.mimic))
-		.dump(b => b.dispose())
+	const bond = bag(physics.bonding.create(rigid, cube.mimic))
+		.dump(b => physics.bonding.remove(b))
 
 	return {
-		vessel,
-		rigid,
 		bond,
+		rigid,
 		dispose,
 	}
 })

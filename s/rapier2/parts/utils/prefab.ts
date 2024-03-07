@@ -16,7 +16,7 @@ export function prefab<xParams extends object, xPrefab extends Prefab>(
 	return fn
 }
 
-export function prefab_helpers<P extends Pojo<PrefabFn<any, any>>>(physics: Physics, prefabs: P) {
+export function prefabulate<P extends Pojo<PrefabFn<any, any>>>(physics: Physics, prefabs: P) {
 	return ob(prefabs).map(fn => fn(physics)) as {[K in keyof P]: ReturnType<P[K]>}
 }
 

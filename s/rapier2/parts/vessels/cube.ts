@@ -40,6 +40,6 @@ export function make_cube_vessel(physics: Physics, o: CubeVesselParams) {
 			)
 	)
 
-	return new Vessel(physics, collider, mimic)
+	return new Vessel(world, collider, mimic)
 }
 

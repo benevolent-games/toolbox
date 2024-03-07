@@ -29,8 +29,8 @@ export interface CapsuleVesselParams extends VesselParams {
 	}
 }
 
-export function make_capsule_vessel(physics: Physics, o: CapsuleVesselParams) {
-	const collider = physics.world.createCollider(
+export function make_capsule_vessel({world, scene}: Physics, o: CapsuleVesselParams) {
+	const collider = world.createCollider(
 		Rapier.ColliderDesc
 			.capsule(o.halfHeight, o.radius)
 			.setMass(o.mass)
@@ -45,12 +45,12 @@ export function make_capsule_vessel(physics: Physics, o: CapsuleVesselParams) {
 	const mimic = MeshBuilder.CreateCapsule(
 		label("capsule"),
 		{radius: o.radius, height: 2 * (o.halfHeight + o.radius)},
-		physics.scene,
+		scene,
 	)
 	mimic.material = o.material
 	mimic.position = babylonian.from.vec3(o.position)
 	mimic.rotationQuaternion = babylonian.from.quat(o.rotation)
 
-	return new Vessel(physics, collider, mimic)
+	return new Vessel(world, collider, mimic)
 }
 

@@ -1,4 +1,5 @@
 
+import {Bond} from "../utils/bond.js"
 import {Rapier} from "../../rapier.js"
 import {prefab} from "../utils/prefab.js"
 import {Trashcan} from "../../../tools/trashcan.js"
@@ -35,8 +36,8 @@ export const character = prefab(physics => (o: CharacterParams & CapsuleVesselPa
 		return c
 	})()).dump(c => physics.world.removeCharacterController(c))
 
-	const bond = bag(physics.bonding.bond(rigid, capsule.mimic))
-		.dump(b => b.dispose())
+	const bond = bag(physics.bonding.add(new Bond(rigid, capsule.mimic)))
+		.dump(b => physics.bonding.remove(b))
 
 	return {
 		bond,

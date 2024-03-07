@@ -5,16 +5,16 @@ import {Rapier} from "./rapier.js"
 import {Vec3} from "../math/vec3.js"
 import {vec3} from "../math/exports.js"
 import {Grouping} from "./parts/grouping.js"
-import * as prefabs from "./presets/prefabs.js"
+import * as prefabs from "./parts/prefabs.js"
 import {PhysicsBonding} from "./parts/bonding.js"
-import {prefab_helpers} from "./presets/utils/prefab.js"
+import {prefabulate} from "./parts/utils/prefab.js"
 
 export class Physics {
 	static readonly Grouping = Grouping
 	readonly scene: Scene
 	readonly world: Rapier.World
 	readonly bonding: PhysicsBonding
-	readonly prefabs = prefab_helpers(this, prefabs)
+	readonly prefabs = prefabulate(this, prefabs)
 
 	constructor(o: {scene: Scene, gravity: Vec3, hertz: number}) {
 		this.scene = o.scene
