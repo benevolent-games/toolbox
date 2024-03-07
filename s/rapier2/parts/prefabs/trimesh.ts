@@ -9,7 +9,7 @@ import {Meshoid} from "../../../babyloid/types.js"
 import {Trashcan} from "../../../tools/trashcan.js"
 import {transform_vertex_data} from "../utils/transform_vertex_data.js"
 
-export const box = prefab(physics => (o: {
+export const trimesh = prefab(physics => (o: {
 		meshoid: Meshoid
 		groups?: number
 	}) => {
