@@ -8,7 +8,7 @@ import {Vec3} from "../../../math/vec3.js"
 import {vec3} from "../../../math/exports.js"
 import {label} from "../../../tools/label.js"
 import {Trashcan} from "../../../tools/trashcan.js"
-import { applyMaterial } from "../utils/apply_material.js"
+import {applyMaterial} from "../utils/apply-material.js"
 
 export const fixture = prefab(physics => (o: {
 		position: Vec3

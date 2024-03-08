@@ -7,7 +7,7 @@ import {Physics} from "../../physics.js"
 import {label} from "../../../tools/label.js"
 import {Trashcan} from "../../../tools/trashcan.js"
 import {Vec3, vec3} from "../../../math/exports.js"
-import {applyMaterial} from "../utils/apply_material.js"
+import {applyMaterial} from "../utils/apply-material.js"
 
 export type CuboidParams = {
 	scale: Vec3

@@ -1,6 +1,6 @@
 
 import {Bond} from "./utils/bond.js"
-import {Actor} from "./utils/actor.js"
+import {Actor} from "./utils/types.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 export class PhysicsBonding {

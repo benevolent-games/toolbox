@@ -9,6 +9,7 @@ import {Grouping} from "./parts/grouping.js"
 import * as prefabs from "./parts/prefabs.js"
 import {PhysicsBonding} from "./parts/bonding.js"
 import {prefabulate} from "./parts/utils/prefab.js"
+import {DebugColors, debug_colors} from "../tools/debug_colors.js"
 
 export class Physics {
 	static readonly grouping = Grouping
@@ -17,12 +18,14 @@ export class Physics {
 	readonly world: Rapier.World
 	readonly bonding: PhysicsBonding
 	readonly prefabs = prefabulate(this, prefabs)
+	readonly colors: DebugColors
 
-	constructor(o: {scene: Scene, gravity: Vec3, hertz: number}) {
+	constructor(o: {scene: Scene, gravity: Vec3, hertz: number, colors?: DebugColors}) {
 		this.scene = o.scene
 		this.world = new Rapier.World(vec3.to.xyz(o.gravity))
 		this.world.timestep = 1 / o.hertz
 		this.bonding = new PhysicsBonding()
+		this.colors = o.colors ?? debug_colors(o.scene)
 	}
 
 	step() {

@@ -4,15 +4,14 @@ import {Rapier} from "../../rapier.js"
 import {prefab} from "../utils/prefab.js"
 import {Vec3} from "../../../math/vec3.js"
 import {label} from "../../../tools/label.js"
-import {ColliderOptions} from "../utils/types.js"
+import {ColliderOptions, Transform} from "../utils/types.js"
 import {Trashcan} from "../../../tools/trashcan.js"
-import {Quat, vec3} from "../../../math/exports.js"
+import {vec3} from "../../../math/exports.js"
 import {babylonian} from "../../../math/babylonian.js"
-import {applyMaterial} from "../utils/apply_material.js"
+import {applyMaterial} from "../utils/apply-material.js"
+import { applyTransform } from "../utils/apply-transform.js"
 
 export const characterCapsule = prefab(physics => (o: {
-		position: Vec3
-		rotation: Quat
 		offset: number
 		mass: number
 		radius: number
@@ -29,7 +28,7 @@ export const characterCapsule = prefab(physics => (o: {
 		snapToGround: null | {
 			distance: number
 		}
-	} & ColliderOptions) => {
+	} & Transform & ColliderOptions) => {
 
 	const {bag, dispose} = new Trashcan()
 
@@ -54,9 +53,6 @@ export const characterCapsule = prefab(physics => (o: {
 			physics.scene,
 		)
 	).dump(m => m.dispose())
-	mesh.position = babylonian.from.vec3(o.position)
-	mesh.rotationQuaternion = babylonian.from.quat(o.rotation)
-	applyMaterial(mesh, o.material)
 
 	const rigid = bag(
 		physics.world.createRigidBody(
@@ -80,6 +76,9 @@ export const characterCapsule = prefab(physics => (o: {
 			c.enableSnapToGround(o.snapToGround.distance)
 		return c
 	})()).dump(c => physics.world.removeCharacterController(c))
+
+	applyMaterial(mesh, o.material)
+	applyTransform(rigid, o)
 
 	const bond = bag(physics.bonding.create(rigid, mesh))
 		.dump(b => physics.bonding.remove(b))

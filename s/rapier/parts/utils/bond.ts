@@ -1,7 +1,7 @@
 
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
-import {Actor} from "./actor.js"
+import {Actor} from "./types.js"
 import {Quat, Vec3, quat, vec3} from "../../../math/exports.js"
 import {assert_babylon_quaternion} from "../../../tools/assert_babylon_quaternion.js"
 
