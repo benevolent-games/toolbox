@@ -6,12 +6,11 @@ import {prefab} from "../utils/prefab.js"
 import {label} from "../../../tools/label.js"
 import {Trashcan} from "../../../tools/trashcan.js"
 
-export interface FixtureParams {
-	radius: number
-	subdivisions: number
-}
+export const fixture = prefab(physics => (o: {
+		radius: number
+		subdivisions: number
+	}) => {
 
-export const fixture = prefab(physics => (o: FixtureParams) => {
 	const {bag, dispose} = new Trashcan()
 
 	const mimic = bag(

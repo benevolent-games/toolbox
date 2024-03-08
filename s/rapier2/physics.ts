@@ -10,7 +10,7 @@ import {PhysicsBonding} from "./parts/bonding.js"
 import {prefabulate} from "./parts/utils/prefab.js"
 
 export class Physics {
-	static readonly Grouping = Grouping
+	static readonly grouping = Grouping
 	readonly scene: Scene
 	readonly world: Rapier.World
 	readonly bonding: PhysicsBonding

@@ -3,23 +3,21 @@ import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 import {Rapier} from "../../rapier.js"
-import {prefab} from "../utils/prefab.js"
+import {Physics} from "../../physics.js"
 import {label} from "../../../tools/label.js"
 import {Trashcan} from "../../../tools/trashcan.js"
 import {Vec3, vec3} from "../../../math/exports.js"
 import {applyMaterial} from "../utils/apply_material.js"
 
-export const box = prefab(physics => (o: {
-		scale: Vec3
-		ccd: boolean
-		groups: number
-		density: number
-		linearDamping: number
-		angularDamping: number
-		material: Material | null
-		contact_force_threshold: number
-	}) => {
+export type CuboidParams = {
+	scale: Vec3
+	groups: number
+	density: number
+	material: Material | null
+	contact_force_threshold: number
+}
 
+export function make_cuboid_collider_and_mimic(physics: Physics, o: CuboidParams) {
 	const {bag, dispose} = new Trashcan()
 	const [width, height, depth] = o.scale
 
@@ -47,23 +45,6 @@ export const box = prefab(physics => (o: {
 		)
 	).dump(c => physics.world.removeCollider(c, false))
 
-	const rigid = bag(physics.world.createRigidBody(
-		Rapier.RigidBodyDesc
-			.dynamic()
-			.setCcdEnabled(o.ccd)
-			.setLinearDamping(o.linearDamping)
-			.setAngularDamping(o.angularDamping)
-	)).dump(r => physics.world.removeRigidBody(r))
-
-	const bond = bag(physics.bonding.create(rigid, mesh))
-		.dump(b => physics.bonding.remove(b))
-
-	return {
-		bond,
-		mesh,
-		rigid,
-		dispose,
-		collider,
-	}
-})
+	return {mesh, collider, dispose}
+}
 
