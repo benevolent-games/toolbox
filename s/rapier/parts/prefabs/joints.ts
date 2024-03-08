@@ -8,6 +8,9 @@ export const joint_spherical = prefab(physics => (o: {
 		anchors: [Vec3, Vec3]
 		bodies: [Rapier.RigidBody, Rapier.RigidBody]
 	}) => {
+
+	console.log("joint_spherical", o)
+
 	const [a1, a2] = o.anchors
 	const [b1, b2] = o.bodies
 	const {bag, dispose} = new Trashcan()

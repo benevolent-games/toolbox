@@ -22,6 +22,8 @@ export const box = prefab(physics => (o: {
 		contact_force_threshold: number
 	} & Transform) => {
 
+	console.log("box", o)
+
 	const {bag, dispose} = new Trashcan()
 	const [width, height, depth] = o.scale
 

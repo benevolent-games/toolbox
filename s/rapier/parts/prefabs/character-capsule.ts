@@ -1,15 +1,27 @@
 
+import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+
+import {Bond} from "../utils/bond.js"
 import {Rapier} from "../../rapier.js"
 import {prefab} from "../utils/prefab.js"
 import {Vec3} from "../../../math/vec3.js"
 import {label} from "../../../tools/label.js"
-import {ColliderOptions, Transform} from "../utils/types.js"
-import {Trashcan} from "../../../tools/trashcan.js"
 import {vec3} from "../../../math/exports.js"
-import {babylonian} from "../../../math/babylonian.js"
+import {Trashcan} from "../../../tools/trashcan.js"
 import {applyMaterial} from "../utils/apply-material.js"
-import { applyTransform } from "../utils/apply-transform.js"
+import {applyTransform} from "../utils/apply-transform.js"
+import {ColliderOptions, Transform} from "../utils/types.js"
+
+export type CharacterCapsule = {
+	bond: Bond<Rapier.RigidBody, Mesh>
+	mesh: Mesh
+	rigid: Rapier.RigidBody
+	collider: Rapier.Collider
+	controller: Rapier.KinematicCharacterController
+	applyMovement: (velocity: Vec3) => {movement: Vec3, grounded: boolean}
+	dispose: () => void
+}
 
 export const characterCapsule = prefab(physics => (o: {
 		offset: number
@@ -28,7 +40,9 @@ export const characterCapsule = prefab(physics => (o: {
 		snapToGround: null | {
 			distance: number
 		}
-	} & Transform & ColliderOptions) => {
+	} & Transform & ColliderOptions): CharacterCapsule => {
+
+	console.log("characterCapsule", o)
 
 	const {bag, dispose} = new Trashcan()
 

@@ -12,6 +12,8 @@ export const box_collider = prefab(physics => (o: {
 		angularDamping: number
 	} & Transform & CuboidParams) => {
 
+	console.log("boxCollider", o)
+
 	const {bag, dispose} = new Trashcan()
 
 	const {mesh, collider} = bag(

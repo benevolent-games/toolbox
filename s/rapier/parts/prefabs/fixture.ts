@@ -17,6 +17,8 @@ export const fixture = prefab(physics => (o: {
 		subdivisions?: number
 	}) => {
 
+	console.log("fixture", o)
+
 	const {bag, dispose} = new Trashcan()
 
 	const mimic = bag(

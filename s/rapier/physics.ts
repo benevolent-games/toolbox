@@ -16,9 +16,9 @@ export class Physics {
 	static readonly ray = ray
 	readonly scene: Scene
 	readonly world: Rapier.World
+	readonly colors: DebugColors
 	readonly bonding: PhysicsBonding
 	readonly prefabs = prefabulate(this, prefabs)
-	readonly colors: DebugColors
 
 	constructor(o: {scene: Scene, gravity: Vec3, hertz: number, colors?: DebugColors}) {
 		this.scene = o.scene

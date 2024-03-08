@@ -46,6 +46,7 @@ export * from "./stage/utils/load_glb.js"
 export * from "./stage/stage.js"
 export * from "./stage/types.js"
 
+export * from "./rapier/parts/prefabs/character-capsule.js"
 export * from "./rapier/rapier.js"
 export * from "./rapier/physics.js"
 
