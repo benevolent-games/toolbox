@@ -47,11 +47,7 @@ export * from "./stage/stage.js"
 export * from "./stage/types.js"
 
 export * from "./rapier/rapier.js"
-export * from "./rapier/types.js"
 export * from "./rapier/physics.js"
-export * from "./rapier/aspects/box.js"
-export * from "./rapier/aspects/character.js"
-export * from "./rapier/aspects/trimesh.js"
 
 export * from "./math/babylonian.js"
 export * from "./math/noise.js"
