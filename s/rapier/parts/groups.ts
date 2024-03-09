@@ -1,31 +1,23 @@
 
-export type GroupsRaw<G extends string> = {[K in G]: number}
-export type Groupings = {filter: number[], membership: number[]}
+import {loop} from "../../tools/loopy.js"
 
-export const default_groups = 0xffff0001
+export class Groups {
+	static readonly default = 0xffff0001
 
-export class PhysicsGroups<G extends string> {
-	static make = <G extends string>(...keys: G[]) => new this(...keys)
-	readonly all = [0xffff]
-	readonly none = [0x0000]
-	#keys: G[]
-
-	constructor(...keys: G[]) {
-		this.#keys = keys
+	static all() {
+		return [...loop(16)].map(index => 1 << index)
 	}
 
-	get raw() {
-		return Object.fromEntries(
-			this.#keys.map((key, index) => [key, 1 << index])
-		) as GroupsRaw<G>
+	static combine(...groups: number[]) {
+		return groups.reduce((c: number, p: number) => p | c, 0x0000)
 	}
 
-	group(fn: (groups: GroupsRaw<G>, {}: {all: number[], none: number[]}) => Groupings) {
-		const g = fn(this.raw, {all: this.all, none: this.none})
-		const sum = (c: number, p: number) => (p | c)
-		const zero = 0x0000
-		const filter = g.filter.reduce(sum, zero)
-		const membership = g.membership.reduce(sum, zero)
+	static group(o: {
+			filter: number[],
+			membership: number[],
+		}) {
+		const filter = this.combine(...o.filter)
+		const membership = this.combine(...o.membership)
 		return (filter << 16) | membership
 	}
 }

@@ -14,6 +14,15 @@ export const babylonian = {
 		quat: (q: Quat) => new Quaternion(...q),
 	},
 	ascertain: {
+		absoluteQuat: (transform: TransformNode) => {
+			return babylonian.to.quat(transform.absoluteRotationQuaternion ?? (
+				Quaternion.RotationYawPitchRoll(
+					transform.rotation.y,
+					transform.rotation.x,
+					transform.rotation.z,
+				)
+			))
+		},
 		quat: (transform: TransformNode) => {
 			return babylonian.to.quat(transform.rotationQuaternion ?? (
 				Quaternion.RotationYawPitchRoll(
