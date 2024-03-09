@@ -1,6 +1,6 @@
 
 import {Pojo, ob} from "@benev/slate"
-import {Physics} from "../../physics.js"
+import {Physics} from "../physics.js"
 
 export interface Prefab {
 	dispose(): void

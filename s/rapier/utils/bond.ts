@@ -2,8 +2,8 @@
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 
 import {Actor} from "./types.js"
-import {Quat, Vec3, quat, vec3} from "../../../math/exports.js"
-import {assert_babylon_quaternion} from "../../../tools/assert_babylon_quaternion.js"
+import {Quat, Vec3, quat, vec3} from "../../math/exports.js"
+import {assert_babylon_quaternion} from "../../tools/assert_babylon_quaternion.js"
 
 /** a synchronized partnership between a rapier object and a babylon object. */
 export class Bond<A extends Actor = any, M extends TransformNode = any> {
@@ -30,11 +30,12 @@ export class Bond<A extends Actor = any, M extends TransformNode = any> {
 	}
 
 	move_babylon_mimic_to_rapier_coordinates() {
-		this.mimic.position
-			.set(...vec3.from.xyz(this.actor.translation()))
-
-		assert_babylon_quaternion(this.mimic)
-			.set(...quat.from.xyzw(this.actor.rotation()))
+		this.mimic.position.set(...vec3.from.xyz(
+			this.actor.translation()
+		))
+		assert_babylon_quaternion(this.mimic).set(...quat.from.xyzw(
+			this.actor.rotation()
+		))
 	}
 }
 

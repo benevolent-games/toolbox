@@ -2,23 +2,25 @@
 import {Scene} from "@babylonjs/core/scene.js"
 
 import {Rapier} from "./rapier.js"
+import {ray} from "./utils/ray.js"
 import {Vec3} from "../math/vec3.js"
 import {vec3} from "../math/exports.js"
-import {ray} from "./parts/utils/ray.js"
-import {Grouping} from "./parts/grouping.js"
-import * as prefabs from "./parts/prefabs.js"
+import * as prefabs from "./prefabs.js"
+import {Groups} from "./parts/groups.js"
+import {prefabulate} from "./utils/prefab.js"
 import {PhysicsBonding} from "./parts/bonding.js"
-import {prefabulate} from "./parts/utils/prefab.js"
 import {DebugColors, debug_colors} from "../tools/debug_colors.js"
 
 export class Physics {
-	static readonly grouping = Grouping
 	static readonly ray = ray
+
+	readonly groups = Groups
+	readonly prefabs = prefabulate(this, prefabs)
+
 	readonly scene: Scene
 	readonly world: Rapier.World
 	readonly colors: DebugColors
 	readonly bonding: PhysicsBonding
-	readonly prefabs = prefabulate(this, prefabs)
 
 	constructor(o: {scene: Scene, gravity: Vec3, hertz: number, colors?: DebugColors}) {
 		this.scene = o.scene

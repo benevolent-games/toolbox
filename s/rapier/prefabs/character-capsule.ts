@@ -3,12 +3,12 @@ import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 import {Bond} from "../utils/bond.js"
-import {Rapier} from "../../rapier.js"
+import {Rapier} from "../rapier.js"
 import {prefab} from "../utils/prefab.js"
-import {Vec3} from "../../../math/vec3.js"
-import {label} from "../../../tools/label.js"
-import {vec3} from "../../../math/exports.js"
-import {Trashcan} from "../../../tools/trashcan.js"
+import {Vec3} from "../../math/vec3.js"
+import {label} from "../../tools/label.js"
+import {vec3} from "../../math/exports.js"
+import {Trashcan} from "../../tools/trashcan.js"
 import {applyMaterial} from "../utils/apply-material.js"
 import {applyTransform} from "../utils/apply-transform.js"
 import {ColliderOptions, Transform} from "../utils/types.js"
@@ -40,11 +40,15 @@ export const characterCapsule = prefab(physics => (o: {
 		snapToGround: null | {
 			distance: number
 		}
-	} & Transform & ColliderOptions): CharacterCapsule => {
-
-	console.log("characterCapsule", o)
+	} & Partial<Transform> & ColliderOptions): CharacterCapsule => {
 
 	const {bag, dispose} = new Trashcan()
+
+	const rigid = bag(
+		physics.world.createRigidBody(
+			Rapier.RigidBodyDesc.kinematicPositionBased()
+		)
+	).dump(r => physics.world.removeRigidBody(r))
 
 	const collider = bag(
 		physics.world.createCollider(
@@ -56,7 +60,8 @@ export const characterCapsule = prefab(physics => (o: {
 				.setActiveEvents(
 					Rapier.ActiveEvents.COLLISION_EVENTS |
 					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
-				)
+				),
+			rigid,
 		)
 	).dump(c => physics.world.removeCollider(c, false))
 
@@ -67,12 +72,6 @@ export const characterCapsule = prefab(physics => (o: {
 			physics.scene,
 		)
 	).dump(m => m.dispose())
-
-	const rigid = bag(
-		physics.world.createRigidBody(
-			Rapier.RigidBodyDesc.kinematicPositionBased()
-		)
-	).dump(r => physics.world.removeRigidBody(r))
 
 	const controller = bag((() => {
 		const c = physics.world.createCharacterController(o.offset)

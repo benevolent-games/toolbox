@@ -1,7 +1,7 @@
 
 import {loop} from "../../tools/loopy.js"
 
-export class Grouping {
+export class Groups {
 	static readonly default = 0xffff0001
 
 	static all() {

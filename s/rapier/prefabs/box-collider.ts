@@ -1,18 +1,16 @@
 
 import {prefab} from "../utils/prefab.js"
 import {Transform} from "../utils/types.js"
-import {Trashcan} from "../../../tools/trashcan.js"
+import {Trashcan} from "../../tools/trashcan.js"
 import {applyMaterial} from "../utils/apply-material.js"
 import {applyTransform} from "../utils/apply-transform.js"
-import {CuboidParams, make_cuboid_collider_and_mimic} from "../utils/cuboid_collider.js"
+import {CuboidParams, make_cuboid_collider_and_mimic} from "../utils/cuboid-collider.js"
 
 export const box_collider = prefab(physics => (o: {
 		ccd: boolean
 		linearDamping: number
 		angularDamping: number
-	} & Transform & CuboidParams) => {
-
-	console.log("boxCollider", o)
+	} & Partial<Transform> & CuboidParams) => {
 
 	const {bag, dispose} = new Trashcan()
 

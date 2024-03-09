@@ -2,11 +2,11 @@
 import {Material} from "@babylonjs/core/Materials/material.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
-import {Rapier} from "../../rapier.js"
-import {Physics} from "../../physics.js"
-import {label} from "../../../tools/label.js"
-import {Trashcan} from "../../../tools/trashcan.js"
-import {Vec3, vec3} from "../../../math/exports.js"
+import {Rapier} from "../rapier.js"
+import {Physics} from "../physics.js"
+import {label} from "../../tools/label.js"
+import {Trashcan} from "../../tools/trashcan.js"
+import {Vec3, vec3} from "../../math/exports.js"
 import {applyMaterial} from "../utils/apply-material.js"
 
 export type CuboidParams = {

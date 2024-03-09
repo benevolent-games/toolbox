@@ -1,7 +1,7 @@
 
-import {Rapier} from "../../rapier.js"
-import {Quat} from "../../../math/quat.js"
-import {Vec3} from "../../../math/vec3.js"
+import {Rapier} from "../rapier.js"
+import {Quat} from "../../math/quat.js"
+import {Vec3} from "../../math/vec3.js"
 import {Material} from "@babylonjs/core/Materials/material.js"
 
 export type Actor = Rapier.RigidBody | Rapier.Collider
