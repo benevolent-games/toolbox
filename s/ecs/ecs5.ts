@@ -1,6 +1,6 @@
 
 import {Constructor} from "@benev/slate"
-import {pubb} from "../tools/pubb.js"
+import {pubsub} from "../tools/pubsub.js"
 import {id_counter} from "../tools/id_counter.js"
 
 // import {Vec3} from "../math/vec3.js"
@@ -184,8 +184,8 @@ export class Query<Sel extends Selector> {
 	matches = new Map<Id, Resolve<Sel>>()
 	#types: ComponentClass[] = []
 
-	added = pubb<[Resolve<Sel>, Id]>()
-	removed = pubb<[Resolve<Sel>, Id]>()
+	added = pubsub<[Resolve<Sel>, Id]>()
+	removed = pubsub<[Resolve<Sel>, Id]>()
 
 	constructor(public readonly selector: Sel) {
 		this.#types = Object.values(selector)

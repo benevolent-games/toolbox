@@ -1,6 +1,6 @@
 
 import {Entity} from "./entity.js"
-import {pubb} from "../../tools/pubb.js"
+import {pubsub} from "../../tools/pubsub.js"
 import {CHandle, Id, Selector} from "./types.js"
 
 const consider = Symbol()
@@ -11,8 +11,8 @@ export class Query<Sel extends Selector = Selector> {
 	static internal = {consider, add, remove} as const
 
 	#matches = new Map<Id, CHandle<Sel>>()
-	readonly added = pubb<[CHandle<Sel>, Id]>()
-	readonly removed = pubb<[CHandle<Sel>, Id]>()
+	readonly added = pubsub<[CHandle<Sel>, Id]>()
+	readonly removed = pubsub<[CHandle<Sel>, Id]>()
 
 	get matches() {
 		return this.#matches.entries()

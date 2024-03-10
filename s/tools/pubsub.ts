@@ -6,11 +6,12 @@
  *     onWhatever.publish(123, true)
  *
  */
-export function pubb<P extends any[]>() {
+export function pubsub<P extends any[]>() {
 	const set = new Set<(...p: P) => void>()
 
 	function subscribe(fn: (...p: P) => void) {
 		set.add(fn)
+		return () => set.delete(fn)
 	}
 
 	subscribe.publish = (...p: P) => {
