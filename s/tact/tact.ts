@@ -12,6 +12,8 @@ import {PointerMovements} from "./devices/pointer_movements.js"
 import {BindingsHelpers, bindings_helpers} from "./parts/bindings_helpers.js"
 import {unstick_stuck_keys, unstick_stuck_keys_for_mode} from "./parts/unstick.js"
 
+export * from "./types/input.js"
+
 export class Tact<B extends Bindings.Catalog> {
 	static devices = {Keyboard, PointerButtons, PointerMovements}
 	static bindings<B extends Bindings.Catalog>(fn: (h: BindingsHelpers) => B) {
@@ -23,7 +25,7 @@ export class Tact<B extends Bindings.Catalog> {
 	readonly modes = new Modes<Bindings.Mode<B>>()
 	readonly considerInput: (input: Input.Whatever) => void
 
-	constructor(public bindings: B, target: EventTarget = window) {
+	constructor(target: EventTarget, public bindings: B) {
 		this.inputs = establish_inputs(bindings)
 		this.considerInput = consider_input(bindings, this.modes, this.inputs)
 		this.devices = new Devices(this.considerInput)

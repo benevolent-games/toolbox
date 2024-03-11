@@ -5,7 +5,11 @@ import {Inputs} from "../types/inputs.js"
 import {Bindings} from "../types/bindings.js"
 import {input_matches_button, input_matches_vector} from "./matching.js"
 
-export function consider_input<B extends Bindings.Catalog>(bindings: B, modes: Modes<Bindings.Mode<B>>, inputs: Inputs<B>) {
+export function consider_input<B extends Bindings.Catalog>(
+		bindings: B,
+		modes: Modes<Bindings.Mode<B>>,
+		inputs: Inputs<B>,
+	) {
 	return (input: Input.Whatever) => {
 		for (const mode of modes) {
 			const buttons = inputs[mode].buttons
