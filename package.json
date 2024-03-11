@@ -16,7 +16,7 @@
 	},
 	"scripts": {
 		"prepare": "./s/bin/babylon-cleanup",
-		"build": "turtle-ts-app && turtle-ts-app-bundle x/iso/main.js && turtle-ts-app-bundle x/impulse/main.js && turtle-web && npm run links",
+		"build": "turtle-ts-app && turtle-ts-app-bundle x/iso/main.js && turtle-web && npm run links",
 		"start": "turtle-standard-watch",
 		"links": "ln -s \"$(realpath temp)\" x/temp",
 		"test": "cynic node x/tests.test.js",
