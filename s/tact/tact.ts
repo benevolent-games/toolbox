@@ -10,6 +10,7 @@ import {PointerButtons} from "./devices/pointer_buttons.js"
 import {establish_inputs} from "./parts/establish_inputs.js"
 import {PointerMovements} from "./devices/pointer_movements.js"
 import {BindingsHelpers, bindings_helpers} from "./parts/bindings_helpers.js"
+import {unstick_stuck_keys, unstick_stuck_keys_for_mode} from "./parts/unstick.js"
 
 export class Tact<B extends Bindings.Catalog> {
 	static devices = {Keyboard, PointerButtons, PointerMovements}
@@ -17,15 +18,17 @@ export class Tact<B extends Bindings.Catalog> {
 		return fn(bindings_helpers)
 	}
 
-	readonly inputs: Inputs<B>
 	readonly devices: Devices
+	readonly inputs: Inputs<B>
 	readonly modes = new Modes<Bindings.Mode<B>>()
 	readonly considerInput: (input: Input.Whatever) => void
 
-	constructor(public bindings: B) {
+	constructor(public bindings: B, target: EventTarget = window) {
 		this.inputs = establish_inputs(bindings)
 		this.considerInput = consider_input(bindings, this.modes, this.inputs)
 		this.devices = new Devices(this.considerInput)
+		this.modes.onDisabled(mode => unstick_stuck_keys_for_mode(this.inputs, mode))
+		target.addEventListener("blur", () => unstick_stuck_keys(this.inputs))
 	}
 }
 
