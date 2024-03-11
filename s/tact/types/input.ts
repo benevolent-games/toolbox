@@ -13,7 +13,7 @@ export namespace Input {
 
 	export interface Base {
 		kind: Kind
-		event: Event
+		event: Event | null
 	}
 
 	export interface Button extends Base {

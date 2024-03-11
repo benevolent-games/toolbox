@@ -12,12 +12,7 @@ import {PointerMovements} from "./devices/pointer_movements.js"
 import {BindingsHelpers, bindings_helpers} from "./parts/bindings_helpers.js"
 
 export class Tact<B extends Bindings.Catalog> {
-	static devices = {
-		Keyboard,
-		PointerButtons,
-		PointerMovements,
-	}
-
+	static devices = {Keyboard, PointerButtons, PointerMovements}
 	static bindings<B extends Bindings.Catalog>(fn: (h: BindingsHelpers) => B) {
 		return fn(bindings_helpers)
 	}
