@@ -1,6 +1,6 @@
 
-import {within_radius} from "./within_radius.js"
 import {Vec2} from "../../../../math/vec2.js"
+import {within_radius} from "./within_radius.js"
 import {Basis} from "../../stick-graphic/types/basis.js"
 import {find_closest_point_on_circle} from "./find_closest_point_on_circle.js"
 

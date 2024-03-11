@@ -1,12 +1,12 @@
 
 import {deep} from "@benev/slate"
 
-import {Btn} from "../binds.js"
-import {Input} from "../input.js"
+import {Input} from "../types/input.js"
+import {Bindings} from "../types/bindings.js"
 
 export function input_matches_button(
 		input: Input.Button,
-		buttons: Btn[],
+		buttons: Bindings.Btn[],
 	): boolean {
 
 	return buttons.some(([code, opts]) => {

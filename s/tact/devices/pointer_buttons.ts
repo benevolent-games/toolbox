@@ -1,5 +1,5 @@
 
-import {Device} from "../device.js"
+import {Device} from "../parts/device.js"
 
 export class PointerButtons extends Device {
 	static determine_mouse_button(event: MouseEvent) {
@@ -18,7 +18,7 @@ export class PointerButtons extends Device {
 
 		const handler = ({down}: {down: boolean}) => (event: PointerEvent) => {
 			this.onInput.publish({
-				preventDefault: () => event.preventDefault(),
+				event,
 				down,
 				kind: "button",
 				code: PointerButtons.determine_mouse_button(event),

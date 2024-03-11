@@ -1,12 +1,13 @@
 
-import {pub, signal} from "@benev/slate"
+import {signal} from "@benev/slate"
 
-import {Input} from "../../input.js"
-import {Device} from "../../device.js"
+import {Input} from "../../types/input.js"
 import {Vec2} from "../../../math/vec2.js"
+import {Device} from "../../parts/device.js"
+import {pubsub} from "../../../tools/pubsub.js"
 
 export class Stick extends Device {
-	onInput = pub<Input.Vector>()
+	onInput = pubsub<[Input.Vector]>()
 	dispose = () => {}
 
 	#channel: string
@@ -27,6 +28,7 @@ export class Stick extends Device {
 			kind: "vector",
 			vector,
 			channel: this.#channel,
+			event: null,
 		})
 	}
 }

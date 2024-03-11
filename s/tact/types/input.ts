@@ -1,8 +1,9 @@
 
-import {Vec2} from "../math/vec2.js"
+import {Vec2} from "../../math/vec2.js"
 
 export namespace Input {
 	export type Kind = "button" | "vector"
+
 	export type Modifiers = {
 		ctrl: boolean
 		meta: boolean
@@ -12,6 +13,7 @@ export namespace Input {
 
 	export interface Base {
 		kind: Kind
+		event: Event | null
 	}
 
 	export interface Button extends Base {
@@ -20,7 +22,6 @@ export namespace Input {
 		down: boolean
 		mods: Modifiers
 		repeat: boolean
-		preventDefault: () => void
 	}
 
 	export interface Vector extends Base {

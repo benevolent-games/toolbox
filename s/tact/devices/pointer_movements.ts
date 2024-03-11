@@ -1,8 +1,7 @@
 
-import {pub} from "@benev/slate"
-
-import {Input} from "../input.js"
-import {Device} from "../device.js"
+import {Input} from "../types/input.js"
+import {Device} from "../parts/device.js"
+import {pubsub} from "../../tools/pubsub.js"
 import {Vec2, add, zero} from "../../math/vec2.js"
 
 export class PointerMovements extends Device {
@@ -10,13 +9,11 @@ export class PointerMovements extends Device {
 	movement: Vec2 = zero()
 	coordinates: Vec2 = zero()
 
-	onInput = pub<Input.Vector>()
+	onInput = pubsub<[Input.Vector]>()
 
 	make_accumulator() {
 		const accumulator = new MovementAccumulator(
-			this.onInput(input => {
-				accumulator.add(input.vector)
-			})
+			this.onInput(input => void accumulator.add(input.vector))
 		)
 		return accumulator
 	}
@@ -38,6 +35,7 @@ export class PointerMovements extends Device {
 			this.movement = add(this.movement, movement)
 
 			this.onInput.publish({
+				event,
 				kind: "vector",
 				vector: movement,
 				channel,

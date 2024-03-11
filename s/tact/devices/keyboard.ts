@@ -1,5 +1,5 @@
 
-import {Device} from "../device.js"
+import {Device} from "../parts/device.js"
 
 export class Keyboard extends Device {
 	dispose: () => void
@@ -7,9 +7,9 @@ export class Keyboard extends Device {
 	constructor(target: EventTarget) {
 		super()
 
-		const handler = ({down}: {down: boolean}) => (event: KeyboardEvent) => {
+		const handler = (down: boolean) => (event: KeyboardEvent) => {
 			this.onInput.publish({
-				preventDefault: () => event.preventDefault(),
+				event,
 				down,
 				kind: "button",
 				code: event.code,
@@ -23,8 +23,8 @@ export class Keyboard extends Device {
 			})
 		}
 
-		const keydown = handler({down: true})
-		const keyup = handler({down: false})
+		const keydown = handler(true)
+		const keyup = handler(false)
 
 		target.addEventListener("keydown", keydown as any)
 		target.addEventListener("keyup", keyup as any)
