@@ -47,13 +47,9 @@ export const box = prefab(physics => (o: {
 		physics.world.createCollider(
 			Rapier.ColliderDesc
 				.cuboid(...vec3.divideBy(o.scale, 2))
-				.setDensity(o.density ?? 1)
-				.setContactForceEventThreshold(o.contact_force_threshold ?? 0)
-				.setCollisionGroups(o.groups)
-				.setActiveEvents(
-					Rapier.ActiveEvents.COLLISION_EVENTS |
-					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
-				),
+				.setDensity(o.density)
+				.setContactForceEventThreshold(o.contact_force_threshold)
+				.setCollisionGroups(o.groups),
 			rigid,
 		)
 	).dump(c => physics.world.removeCollider(c, false))

@@ -1,8 +1,5 @@
 
-import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
-
 import {Rapier} from "../rapier.js"
-import {Bond} from "../utils/bond.js"
 import {prefab} from "../utils/prefab.js"
 import {Transform} from "../utils/types.js"
 import {Trashcan} from "../../tools/trashcan.js"
@@ -10,35 +7,35 @@ import {applyMaterial} from "../utils/apply-material.js"
 import {applyTransform} from "../utils/apply-transform.js"
 import {CuboidParams, make_cuboid_collider_and_mimic} from "../utils/cuboid-collider.js"
 
-export type BoxCollider = {
-	mesh: Mesh
-	dispose: () => void
-	collider: Rapier.Collider
-	bond: Bond<Rapier.Collider, Mesh>
-}
+export const box_kinematic = prefab(physics => (o: {
+		ccd: boolean
+	} & Partial<Transform> & CuboidParams) => {
 
-export const box_collider = prefab(physics => (
-		o: Partial<Transform> & CuboidParams,
-	): BoxCollider => {
+	const trash = new Trashcan()
 
-	const {bag, dispose} = new Trashcan()
+	const rigid = trash.bag(physics.world.createRigidBody(
+		Rapier.RigidBodyDesc
+			.kinematicPositionBased()
+			.setCcdEnabled(o.ccd)
+	)).dump(r => physics.world.removeRigidBody(r))
 
-	const {mesh, collider} = bag(
-		make_cuboid_collider_and_mimic(physics, {...o, parent: undefined})
+	const {mesh, collider} = trash.bag(
+		make_cuboid_collider_and_mimic(physics, {...o, parent: rigid})
 	).dump(x => x.dispose())
 
 	applyMaterial(mesh, o.material)
 	applyTransform(collider, o)
 
-	const bond = bag(
-		physics.bonding.create(collider, mesh)
+	const bond = trash.bag(
+		physics.bonding.create(rigid, mesh)
 	).dump(b => physics.bonding.remove(b))
 
 	return {
 		bond,
 		mesh,
-		dispose,
+		rigid,
 		collider,
+		dispose: trash.dispose,
 	}
 })
 

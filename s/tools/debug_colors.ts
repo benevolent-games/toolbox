@@ -1,9 +1,12 @@
 
-import {generate_id, ob} from "@benev/slate"
+import {ob} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
+
+import {label} from "./label.js"
+import {vec3} from "../math/exports.js"
 
 export type DebugColors = ReturnType<typeof debug_colors>
 type Vec4 = [number, number, number, number]
@@ -34,15 +37,12 @@ function pbr_material(
 		[r, g, b, a]: [number, number, number, number],
 	) {
 
-	const material = new PBRMaterial(
-		`pbr::${generate_id()}`,
-		scene,
-	)
-
-	material.albedoColor = new Color3(r, g, b)
+	const material = new PBRMaterial(label("debug"), scene)
 	material.metallic = 0
 	material.roughness = 1
 	material.alpha = a
+	material.albedoColor = new Color3(r, g, b)
+	material.emissiveColor = new Color3(...vec3.divideBy([r, g, b], 2))
 
 	return material
 }
@@ -52,10 +52,7 @@ function wireframe_material(
 		[r, g, b, a]: [number, number, number, number],
 	) {
 
-	const material = new StandardMaterial(
-		`std::${generate_id()}`,
-		scene,
-	)
+	const material = new StandardMaterial(label("debug"), scene)
 
 	material.wireframe = true
 	material.emissiveColor = new Color3(r, g, b)

@@ -1,18 +1,20 @@
 
 import {loop} from "../../tools/loopy.js"
 
-export class Groups {
-	static readonly default = 0xffff0001
+export class Grouper {
+	readonly default = 0xffff0001
+	readonly all = 0xffff
+	readonly none = 0x0000
 
-	static all() {
+	list() {
 		return [...loop(16)].map(index => 1 << index)
 	}
 
-	static combine(...groups: number[]) {
+	combine(...groups: number[]) {
 		return groups.reduce((c: number, p: number) => p | c, 0x0000)
 	}
 
-	static group(o: {
+	specify(o: {
 			filter: number[],
 			membership: number[],
 		}) {

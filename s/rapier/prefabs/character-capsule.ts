@@ -2,12 +2,12 @@
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
-import {Bond} from "../utils/bond.js"
 import {Rapier} from "../rapier.js"
-import {prefab} from "../utils/prefab.js"
+import {Bond} from "../utils/bond.js"
 import {Vec3} from "../../math/vec3.js"
-import {label} from "../../tools/label.js"
+import {prefab} from "../utils/prefab.js"
 import {vec3} from "../../math/exports.js"
+import {label} from "../../tools/label.js"
 import {Trashcan} from "../../tools/trashcan.js"
 import {applyMaterial} from "../utils/apply-material.js"
 import {applyTransform} from "../utils/apply-transform.js"
@@ -56,11 +56,7 @@ export const characterCapsule = prefab(physics => (o: {
 				.capsule(o.halfHeight, o.radius)
 				.setMass(o.mass)
 				.setContactForceEventThreshold(o.contact_force_threshold)
-				.setCollisionGroups(o.groups)
-				.setActiveEvents(
-					Rapier.ActiveEvents.COLLISION_EVENTS |
-					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
-				),
+				.setCollisionGroups(o.groups),
 			rigid,
 		)
 	).dump(c => physics.world.removeCollider(c, false))
@@ -97,9 +93,13 @@ export const characterCapsule = prefab(physics => (o: {
 		.dump(b => physics.bonding.remove(b))
 
 	function applyMovement(velocity: Vec3) {
+		const filterFlags = undefined
+		const filterGroups = o.groups
 		controller.computeColliderMovement(
 			collider,
 			vec3.to.xyz(velocity),
+			filterFlags,
+			filterGroups,
 		)
 		const originalPosition = vec3.from.xyz(rigid.translation())
 		const grounded = controller.computedGrounded()

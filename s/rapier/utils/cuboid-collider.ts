@@ -12,12 +12,17 @@ import {applyMaterial} from "../utils/apply-material.js"
 export type CuboidParams = {
 	scale: Vec3
 	groups: number
+	sensor: boolean
 	density: number
 	material: Material | null
 	contact_force_threshold: number
 }
 
-export function make_cuboid_collider_and_mimic(physics: Physics, o: CuboidParams) {
+export function make_cuboid_collider_and_mimic(
+		physics: Physics,
+		o: {parent: undefined | Rapier.RigidBody} & CuboidParams,
+	) {
+
 	const {bag, dispose} = new Trashcan()
 	const [width, height, depth] = o.scale
 
@@ -35,13 +40,10 @@ export function make_cuboid_collider_and_mimic(physics: Physics, o: CuboidParams
 		physics.world.createCollider(
 			Rapier.ColliderDesc
 				.cuboid(...vec3.divideBy(o.scale, 2))
-				.setDensity(o.density ?? 1)
-				.setContactForceEventThreshold(o.contact_force_threshold ?? 0)
+				.setDensity(o.density)
+				.setContactForceEventThreshold(o.contact_force_threshold)
 				.setCollisionGroups(o.groups)
-				.setActiveEvents(
-					Rapier.ActiveEvents.COLLISION_EVENTS |
-					Rapier.ActiveEvents.CONTACT_FORCE_EVENTS
-				)
+				.setSensor(o.sensor)
 		)
 	).dump(c => physics.world.removeCollider(c, false))
 
