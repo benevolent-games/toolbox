@@ -38,8 +38,8 @@
 		"sparrow-rtc": "^0.0.0-dev.6"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^6.46.0",
-		"@babylonjs/loaders": "^6.46.0"
+		"@babylonjs/core": "^6.46.1",
+		"@babylonjs/loaders": "^6.46.1"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.2",
