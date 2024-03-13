@@ -9,6 +9,9 @@ export class Trashcan {
 		}
 	})
 
-	dispose = () => this.#can.forEach(destroy => destroy())
+	dispose = () => {
+		this.#can.forEach(destroy => destroy())
+		this.#can = []
+	}
 }
 
