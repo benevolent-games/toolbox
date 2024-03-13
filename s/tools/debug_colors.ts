@@ -43,6 +43,7 @@ function pbr_material(
 	material.alpha = a
 	material.albedoColor = new Color3(r, g, b)
 	material.emissiveColor = new Color3(...vec3.divideBy([r, g, b], 2))
+	material.backFaceCulling = false
 
 	return material
 }
@@ -58,6 +59,7 @@ function wireframe_material(
 	material.emissiveColor = new Color3(r, g, b)
 	material.disableLighting = true
 	material.alpha = a
+	material.backFaceCulling = false
 
 	return material
 }
