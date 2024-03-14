@@ -92,6 +92,8 @@ export function multiplyBy(vector: Vec3, delta: number): Vec3 {
 	return applyBy(vector, a => a * delta)
 }
 
+export const scale = multiplyBy
+
 export function divideBy(vector: Vec3, delta: number): Vec3 {
 	return applyBy(
 		vector,
