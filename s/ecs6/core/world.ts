@@ -16,22 +16,13 @@ export class World<Realm> {
 		this.#realm = realm
 	}
 
-	// query<Sel extends Selector>(selector: Sel) {
-	// 	let query = this.#find_query(selector)
-	// 	if (!query) {
-	// 		query = new Query(selector)
-	// 		this.#queries.add(query)
-	// 		for (const entity of this.#entities.values())
-	// 			query[Query.internal.consider](entity)
-	// 	}
-	// 	return query
-	// }
+	query = this.#data.query
 
 	createEntity() {
 		const data = this.#data
 		const id = data.newId()
 		const entity = new Entity(id, data)
-		data.entities.set(id, entity)
+		data.insertEntity(id, entity)
 		return entity
 	}
 

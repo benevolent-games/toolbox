@@ -1,8 +1,8 @@
 
-export function inherits(targetClass: Function, baseClass: Function) {
-	let proto = Object.getPrototypeOf(targetClass.prototype)
+export function inherits(childClass: Function, parentClass: Function) {
+	let proto = Object.getPrototypeOf(childClass.prototype)
 	while (proto != null) {
-		if (proto === baseClass.prototype)
+		if (proto === parentClass.prototype)
 			return true
 		proto = Object.getPrototypeOf(proto);
 	}

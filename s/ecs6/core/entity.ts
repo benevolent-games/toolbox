@@ -8,10 +8,13 @@ import {HybridComponent} from "./hybrid_component.js"
 import {uncapitalize} from "../../tools/uncapitalize.js"
 
 export class Entity<Sel extends Selector = Selector> {
+	#data: Data
 	#componentsByName = new Map<string, Component>
 	#componentsByConstructor = new Map<Constructor<Component>, Component>()
 
-	constructor(public readonly id: Id, public data: Data) {}
+	constructor(public readonly id: Id, data: Data) {
+		this.#data = data
+	}
 
 	/** check if this entity has the given components */
 	has<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
@@ -21,8 +24,7 @@ export class Entity<Sel extends Selector = Selector> {
 
 	/** add/update a group of components */
 	assign<Sel2 extends Selector>(selector: Sel, states: CParams<Sel2>) {
-		const data = this.data
-
+		const data = this.#data
 		for (const [key, constructor] of Object.entries(selector)) {
 			const name = uncapitalize(key) as any
 			const state = states[name]
@@ -39,6 +41,7 @@ export class Entity<Sel extends Selector = Selector> {
 					component.created()
 			}
 		}
+		data.reindex(this)
 		return this as unknown as Entity<Sel2 & Sel>
 	}
 
@@ -48,6 +51,7 @@ export class Entity<Sel extends Selector = Selector> {
 			this.#destroyComponent(constructor)
 			this.#componentsByName.delete(uncapitalize(key))
 		}
+		this.#data.reindex(this)
 		return this as unknown as Entity<Omit<Sel, keyof Sel2>>
 	}
 
@@ -78,7 +82,7 @@ export class Entity<Sel extends Selector = Selector> {
 	dispose() {
 		for (const constructor of this.#componentsByConstructor.keys())
 			this.#destroyComponent(constructor)
-		this.data.entities.delete(this.id)
+		this.#data.removeEntity(this.id)
 	}
 
 	#destroyComponent(constructor: Constructor<Component>) {
