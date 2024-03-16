@@ -9,7 +9,7 @@ capabilities:
 
 */
 
-import {Constructor} from "@benev/slate"
+import {Constructor, maptool} from "@benev/slate"
 import {id_counter} from "../tools/id_counter.js"
 import {uncapitalize} from "../tools/uncapitalize.js"
 
@@ -25,8 +25,13 @@ export type Serializable = (
 )
 
 export type Selector = Record<string, Constructor<Component>>
+
 export type ComponentState<C extends Component> = C extends Component<infer State>
 	? State
+	: never
+
+export type EntitySelector<E extends Entity> = E extends Entity<infer Selector>
+	? Selector
 	: never
 
 export type ComponentHandles<Sel extends Selector> = {
@@ -50,52 +55,140 @@ export type ComponentStates<Sel extends Selector> = {
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
-export class Data {
-	entities = new Map<Id, Map<Constructor<Component>, Serializable>>()
+// export type ComponentEntry = {
+// 	id: Id
+// 	name: string
+// 	state: Serializable
+// 	constructor: Constructor<Component>
+// }
 
-	getComponents(entityId: Id) {
-		const components = this.entities.get(entityId)
-		if (!components)
-			throw new Error(`entity not found ${entityId}`)
-		return components
+// export class ComponentIndex {
+// 	entries = new Set<ComponentEntry>()
+// 	byId = new Map<Id, ComponentEntry>()
+// 	byName = new Map<string, ComponentEntry>()
+// 	byConstructor = new Map<Constructor<Component>, ComponentEntry>()
+
+// 	instances = new Map<Id, Component>()
+
+// 	add(entry: ComponentEntry, instance: Component) {
+// 		this.entries.add(entry)
+// 		this.byId.set(entry.id, entry)
+// 		this.byName.set(entry.name, entry)
+// 		this.byConstructor.set(entry.constructor, entry)
+// 		this.instances.set(entry.id, instance)
+// 	}
+
+// 	delete(entry: ComponentEntry) {
+// 		this.entries.delete(entry)
+// 		this.byId.delete(entry.id)
+// 		this.byName.delete(entry.name)
+// 		this.byConstructor.delete(entry.constructor)
+// 		this.instances.delete(entry.id)
+// 	}
+// }
+
+export class Data {
+	newId = id_counter()
+
+	entities = new Map<Id, ComponentIndex>()
+
+	guaranteeComponentIndex(entityId: Id) {
+		return maptool(this.entities)
+			.guarantee(entityId, () => new ComponentIndex())
 	}
 }
 
 export class World {
 	#data = new Data()
 
-	createEntity<Sel extends Selector>(selector: Sel, states: ComponentStates<Sel>) {
+	createEntity<Sel extends Selector>(selector: Sel, states: ComponentStates<Sel>): Entity<Sel> {
+		const entity: Entity = new Entity(this.#data, this.#data.newId())
+		return entity.assign(selector, states)
 	}
 }
 
+function assignComponents<Sel extends Selector, Sel2 extends Selector>(entity: Entity<Sel>, selector: Sel2, states: ComponentStates<Sel2>): asserts entity is Entity<Sel2 & Sel> {
+	entity.assign(selector, states)
+}
+
+function unassignComponents<Sel extends Selector, Sel2 extends Selector>(entity: Entity<Sel>, selector: Sel2): asserts entity is Entity<{[K in keyof Sel2]: never} & Sel> {
+	entity.unassign(selector)
+}
+
+/** an entity is a view of a set of components */
 export class Entity<Sel extends Selector = Selector> {
+	static assign: typeof assignComponents = assignComponents
+	static unassign: typeof unassignComponents = unassignComponents
+
 	#data: Data
-	#components: Map<Constructor<Component>, Serializable>
+	#index: ComponentIndex
 
 	constructor(data: Data, public readonly id: Id) {
 		this.#data = data
-		this.#components = data.getComponents(id)
+		this.#index = data.guaranteeComponentIndex(id)
 	}
 
 	/** check if this entity has the given components */
-	has<Sel2 extends Selector>(selector: Sel2): this is Sel2 & Sel {
-		const components = this.#components
-		return Object.values(selector).every(c => components.has(c))
+	has<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
+		const index = this.#index
+		return Object.values(selector).every(c => index.byConstructor.has(c))
 	}
 
 	/** set a group of components */
-	assign<Sel2 extends Selector>(selector: Sel2, states: ComponentStates<Sel2>): asserts this is Sel2 & Sel {
-		const components = this.#components
-		for (const [key, componentClass] of Object.entries(selector))
-			components.set(componentClass, states[uncapitalize(key) as any])
+	assign<Sel2 extends Selector>(selector: Sel2, states: ComponentStates<Sel2>) {
+		const data = this.#data
+		const index = this.#index
+		for (const [key, constructor] of Object.entries(selector)) {
+			const name = uncapitalize(key) as any
+			const state = states[name]
+
+			// const entry = index.byConstructor.get(constructor)
+			// if (entry)
+			// 	entry.state = state
+			// else {
+			// 	const id = data.newId()
+			// 	index.add({
+			// 		id,
+			// 		name,
+			// 		state,
+			// 		constructor,
+			// 	})
+			// }
+		}
+		return this as unknown as Entity<Sel2 & Sel>
 	}
 
 	/** remove a group of components */
-	unassign<Sel2 extends Selector>(selector: Sel2): asserts this is Omit<Sel, keyof Sel2> {
-		const components = this.#components
-		for (const componentClass of Object.values(selector))
-			components.delete(componentClass)
+	unassign<Sel2 extends Selector>(selector: Sel2) {
+		const index = this.#index
+		for (const constructor of Object.values(selector)) {
+			const entry = index.byConstructor.get(constructor)
+			if (entry)
+				index.delete(entry)
+		}
+		return this as unknown as Entity<Omit<Sel, keyof Sel2>>
 	}
+
+	readonly components = {} as ComponentHandles<Sel>
+
+	// readonly components = new Proxy({}, {
+	// 	get: (_, ikey: string) => {
+	// 		const [,component, isHybrid] = this.#grab(ikey)
+	// 		if (isHybrid)
+	// 			return component
+	// 		else
+	// 			return component.state
+	// 	},
+	// 	set: (_, ikey: string, value: any) => {
+	// 		const [,component, isHybrid] = this.#grab(ikey)
+	// 		if (isHybrid)
+	// 			throw new Error(`cannot directly overwrite hybrid component "${ikey}"`)
+	// 		else
+	// 			component.state = value
+	// 		return true
+	// 	},
+
+	// }) as ComponentHandles<Sel>
 
 	/** delete this entity */
 	dispose() {
@@ -105,19 +198,19 @@ export class Entity<Sel extends Selector = Selector> {
 
 export abstract class Component<State extends Serializable = Serializable> {
 	#componentClass: Constructor<Component>
-	#components: Map<Constructor<Component>, Serializable>
+	#entry: ComponentEntry
 
 	constructor(data: Data, componentClass: Constructor<Component>, entityId: Id) {
 		this.#componentClass = componentClass
-		this.#components = data.getComponents(entityId)
+		this.#entry = data.guaranteeComponentIndex(entityId)
 	}
 
 	get state() {
-		return this.#components.get(this.#componentClass) as State
+		return this.#entry.get(this.#componentClass) as State
 	}
 
 	set state(state: State) {
-		this.#components.set(this.#componentClass, state)
+		this.#entry.set(this.#componentClass, state)
 	}
 }
 
@@ -136,7 +229,28 @@ export abstract class HybridComponent<
 }
 
 
+//////////////////////
 
+class Lol extends Component<number> {}
+class Lmao extends Component<string> {}
+class Rofl extends Component<{}> {}
+
+const selector = {Lol}
+const states = {lol: 123}
+
+const world = new World()
+
+const entity = world.createEntity(selector, states)
+entity.selector.Lol
+
+assignComponents(entity, {Lmao}, {lmao: "lmao"})
+entity.selector.Lol
+entity.selector.Lmao
+
+Entity.unassign(entity, {Lol})
+entity.selector.Lol
+entity.states.lol
+entity.states.lmao
 
 
 
