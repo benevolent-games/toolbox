@@ -9,7 +9,7 @@ capabilities:
 
 */
 
-import {Constructor, maptool} from "@benev/slate"
+import {Constructor, Pojo, maptool} from "@benev/slate"
 import {id_counter} from "../tools/id_counter.js"
 import {uncapitalize} from "../tools/uncapitalize.js"
 
@@ -43,7 +43,7 @@ export type ComponentHandles<Sel extends Selector> = {
 				: never
 }
 
-export type ComponentStates<Sel extends Selector> = {
+export type ComponentStates<Sel extends Selector = Selector> = {
 	[K in keyof Sel as K extends string ? Uncapitalize<K> : never]:
 		InstanceType<Sel[K]> extends HybridComponent<any, infer State>
 			? State
@@ -87,170 +87,285 @@ export type ComponentStates<Sel extends Selector> = {
 // 	}
 // }
 
+/*
+
+- World
+- Data
+- Entity
+- Component
+- HybridComponent
+
+*/
+
 export class Data {
 	newId = id_counter()
+	entities = new Map<Id, Entity>()
 
-	entities = new Map<Id, ComponentIndex>()
-
-	guaranteeComponentIndex(entityId: Id) {
-		return maptool(this.entities)
-			.guarantee(entityId, () => new ComponentIndex())
+	getEntity(id: Id) {
+		const entity = this.entities.get(id)
+		if (!entity)
+			throw new Error(`entity not found ${id}`)
+		return entity
 	}
 }
 
-export class World {
-	#data = new Data()
-
-	createEntity<Sel extends Selector>(selector: Sel, states: ComponentStates<Sel>): Entity<Sel> {
-		const entity: Entity = new Entity(this.#data, this.#data.newId())
-		return entity.assign(selector, states)
-	}
-}
-
-function assignComponents<Sel extends Selector, Sel2 extends Selector>(entity: Entity<Sel>, selector: Sel2, states: ComponentStates<Sel2>): asserts entity is Entity<Sel2 & Sel> {
-	entity.assign(selector, states)
-}
-
-function unassignComponents<Sel extends Selector, Sel2 extends Selector>(entity: Entity<Sel>, selector: Sel2): asserts entity is Entity<{[K in keyof Sel2]: never} & Sel> {
-	entity.unassign(selector)
-}
-
-/** an entity is a view of a set of components */
 export class Entity<Sel extends Selector = Selector> {
-	static assign: typeof assignComponents = assignComponents
-	static unassign: typeof unassignComponents = unassignComponents
+	#componentsByName = new Map<string, Component>
+	#componentsByConstructor = new Map<Constructor<Component>, Component>()
 
-	#data: Data
-	#index: ComponentIndex
-
-	constructor(data: Data, public readonly id: Id) {
-		this.#data = data
-		this.#index = data.guaranteeComponentIndex(id)
-	}
+	constructor(public readonly id: Id, public data: Data) {}
 
 	/** check if this entity has the given components */
 	has<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
-		const index = this.#index
-		return Object.values(selector).every(c => index.byConstructor.has(c))
+		const components = this.#componentsByConstructor
+		return Object.values(selector).every(c => components.has(c))
 	}
 
-	/** set a group of components */
-	assign<Sel2 extends Selector>(selector: Sel2, states: ComponentStates<Sel2>) {
-		const data = this.#data
-		const index = this.#index
+	/** add/update a group of components */
+	assign<Sel2 extends Selector>(selector: Sel, states: ComponentStates<Sel2>) {
+		const data = this.data
+
 		for (const [key, constructor] of Object.entries(selector)) {
 			const name = uncapitalize(key) as any
 			const state = states[name]
-
-			// const entry = index.byConstructor.get(constructor)
-			// if (entry)
-			// 	entry.state = state
-			// else {
-			// 	const id = data.newId()
-			// 	index.add({
-			// 		id,
-			// 		name,
-			// 		state,
-			// 		constructor,
-			// 	})
-			// }
+			const component = this.#componentsByConstructor.get(constructor)
+			if (component) {
+				component.state = state
+			}
+			else {
+				const id = data.newId()
+				const component = new constructor(id)
+				this.#componentsByName.set(name, component)
+				this.#componentsByConstructor.set(constructor, component)
+				if (component instanceof HybridComponent)
+					component.created()
+			}
 		}
 		return this as unknown as Entity<Sel2 & Sel>
 	}
 
 	/** remove a group of components */
 	unassign<Sel2 extends Selector>(selector: Sel2) {
-		const index = this.#index
-		for (const constructor of Object.values(selector)) {
-			const entry = index.byConstructor.get(constructor)
-			if (entry)
-				index.delete(entry)
+		for (const [key, constructor] of Object.entries(selector)) {
+			this.#destroyComponent(constructor)
+			this.#componentsByName.delete(uncapitalize(key))
 		}
 		return this as unknown as Entity<Omit<Sel, keyof Sel2>>
 	}
 
-	readonly components = {} as ComponentHandles<Sel>
+	#grab(name: string) {
+		const component = this.#componentsByName.get(name)
+		if (!component)
+			throw new Error(`component not found ${name}`)
+		return component
+	}
 
-	// readonly components = new Proxy({}, {
-	// 	get: (_, ikey: string) => {
-	// 		const [,component, isHybrid] = this.#grab(ikey)
-	// 		if (isHybrid)
-	// 			return component
-	// 		else
-	// 			return component.state
-	// 	},
-	// 	set: (_, ikey: string, value: any) => {
-	// 		const [,component, isHybrid] = this.#grab(ikey)
-	// 		if (isHybrid)
-	// 			throw new Error(`cannot directly overwrite hybrid component "${ikey}"`)
-	// 		else
-	// 			component.state = value
-	// 		return true
-	// 	},
+	readonly components = new Proxy({}, {
+		get: (_, name: string) => {
+			const component = this.#grab(name)
+			return (component instanceof HybridComponent)
+				? component
+				: component.state
+		},
+		set: (_, name: string, value: any) => {
+			const component = this.#grab(name)
+			if (component instanceof HybridComponent)
+				throw new Error(`cannot directly overwrite hybrid component "${name}"`)
+			else
+				component.state = value
+			return true
+		},
+	})
 
-	// }) as ComponentHandles<Sel>
-
-	/** delete this entity */
 	dispose() {
-		this.#data.entities.delete(this.id)
+		for (const constructor of this.#componentsByConstructor.keys())
+			this.#destroyComponent(constructor)
+		this.data.entities.delete(this.id)
+	}
+
+	#destroyComponent(constructor: Constructor<Component>) {
+		const components = this.#componentsByConstructor
+		const component = components.get(constructor)
+		if (component) {
+			if (component instanceof HybridComponent)
+				component.deleted()
+			components.delete(constructor)
+		}
 	}
 }
 
 export abstract class Component<State extends Serializable = Serializable> {
-	#componentClass: Constructor<Component>
-	#entry: ComponentEntry
-
-	constructor(data: Data, componentClass: Constructor<Component>, entityId: Id) {
-		this.#componentClass = componentClass
-		this.#entry = data.guaranteeComponentIndex(entityId)
-	}
-
-	get state() {
-		return this.#entry.get(this.#componentClass) as State
-	}
-
-	set state(state: State) {
-		this.#entry.set(this.#componentClass, state)
-	}
+	constructor(public readonly id: Id, public state: State) {}
 }
 
-export abstract class HybridComponent<
-		Realm,
-		State extends Serializable,
-	> extends Component<State> {
-
-	constructor(public realm: Realm, ...params: ConstructorParameters<typeof Component>) {
-		super(...params)
-	}
-
+export abstract class HybridComponent<Realm, State extends Serializable = Serializable> extends Component<State> {
 	abstract created(): void
 	abstract updated(): void
 	abstract deleted(): void
 }
 
 
-//////////////////////
 
-class Lol extends Component<number> {}
-class Lmao extends Component<string> {}
-class Rofl extends Component<{}> {}
 
-const selector = {Lol}
-const states = {lol: 123}
+// export class World {
+// 	#data = new Data()
 
-const world = new World()
+// 	createEntity<Sel extends Selector>(selector: Sel, states: ComponentStates<Sel>): Entity<Sel> {
+// 		const entity: Entity = new Entity(this.#data, this.#data.newId())
+// 		return entity.assign(selector, states)
+// 	}
+// }
 
-const entity = world.createEntity(selector, states)
-entity.selector.Lol
+// function assignComponents<Sel extends Selector, Sel2 extends Selector>(entity: Entity<Sel>, selector: Sel2, states: ComponentStates<Sel2>): asserts entity is Entity<Sel2 & Sel> {
+// 	entity.assign(selector, states)
+// }
 
-assignComponents(entity, {Lmao}, {lmao: "lmao"})
-entity.selector.Lol
-entity.selector.Lmao
+// function unassignComponents<Sel extends Selector, Sel2 extends Selector>(entity: Entity<Sel>, selector: Sel2): asserts entity is Entity<{[K in keyof Sel2]: never} & Sel> {
+// 	entity.unassign(selector)
+// }
 
-Entity.unassign(entity, {Lol})
-entity.selector.Lol
-entity.states.lol
-entity.states.lmao
+// /** an entity is a view of a set of components */
+// export class Entity<Sel extends Selector = Selector> {
+// 	static assign: typeof assignComponents = assignComponents
+// 	static unassign: typeof unassignComponents = unassignComponents
+
+// 	#data: Data
+// 	#index: ComponentIndex
+
+// 	constructor(data: Data, public readonly id: Id) {
+// 		this.#data = data
+// 		this.#index = data.guaranteeComponentIndex(id)
+// 	}
+
+// 	/** check if this entity has the given components */
+// 	has<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
+// 		const index = this.#index
+// 		return Object.values(selector).every(c => index.byConstructor.has(c))
+// 	}
+
+// 	/** set a group of components */
+// 	assign<Sel2 extends Selector>(selector: Sel2, states: ComponentStates<Sel2>) {
+// 		const data = this.#data
+// 		const index = this.#index
+// 		for (const [key, constructor] of Object.entries(selector)) {
+// 			const name = uncapitalize(key) as any
+// 			const state = states[name]
+
+// 			// const entry = index.byConstructor.get(constructor)
+// 			// if (entry)
+// 			// 	entry.state = state
+// 			// else {
+// 			// 	const id = data.newId()
+// 			// 	index.add({
+// 			// 		id,
+// 			// 		name,
+// 			// 		state,
+// 			// 		constructor,
+// 			// 	})
+// 			// }
+// 		}
+// 		return this as unknown as Entity<Sel2 & Sel>
+// 	}
+
+// 	/** remove a group of components */
+// 	unassign<Sel2 extends Selector>(selector: Sel2) {
+// 		const index = this.#index
+// 		for (const constructor of Object.values(selector)) {
+// 			const entry = index.byConstructor.get(constructor)
+// 			if (entry)
+// 				index.delete(entry)
+// 		}
+// 		return this as unknown as Entity<Omit<Sel, keyof Sel2>>
+// 	}
+
+// 	readonly components = {} as ComponentHandles<Sel>
+
+// 	// readonly components = new Proxy({}, {
+// 	// 	get: (_, ikey: string) => {
+// 	// 		const [,component, isHybrid] = this.#grab(ikey)
+// 	// 		if (isHybrid)
+// 	// 			return component
+// 	// 		else
+// 	// 			return component.state
+// 	// 	},
+// 	// 	set: (_, ikey: string, value: any) => {
+// 	// 		const [,component, isHybrid] = this.#grab(ikey)
+// 	// 		if (isHybrid)
+// 	// 			throw new Error(`cannot directly overwrite hybrid component "${ikey}"`)
+// 	// 		else
+// 	// 			component.state = value
+// 	// 		return true
+// 	// 	},
+
+// 	// }) as ComponentHandles<Sel>
+
+// 	/** delete this entity */
+// 	dispose() {
+// 		this.#data.entities.delete(this.id)
+// 	}
+// }
+
+// export abstract class Component<State extends Serializable = Serializable> {
+// 	#componentClass: Constructor<Component>
+// 	#entry: ComponentEntry
+
+// 	constructor(data: Data, componentClass: Constructor<Component>, entityId: Id) {
+// 		this.#componentClass = componentClass
+// 		this.#entry = data.guaranteeComponentIndex(entityId)
+// 	}
+
+// 	get state() {
+// 		return this.#entry.get(this.#componentClass) as State
+// 	}
+
+// 	set state(state: State) {
+// 		this.#entry.set(this.#componentClass, state)
+// 	}
+// }
+
+// export abstract class HybridComponent<
+// 		Realm,
+// 		State extends Serializable,
+// 	> extends Component<State> {
+
+// 	constructor(public realm: Realm, ...params: ConstructorParameters<typeof Component>) {
+// 		super(...params)
+// 	}
+
+// 	abstract created(): void
+// 	abstract updated(): void
+// 	abstract deleted(): void
+// }
+
+
+// //////////////////////
+
+// class Lol extends Component<number> {}
+// class Lmao extends Component<string> {}
+// class Rofl extends Component<{}> {}
+
+// const selector = {Lol}
+// const states = {lol: 123}
+
+// const world = new World()
+
+// const entity = world.createEntity(selector, states)
+// entity.selector.Lol
+
+// assignComponents(entity, {Lmao}, {lmao: "lmao"})
+// entity.selector.Lol
+// entity.selector.Lmao
+
+// Entity.unassign(entity, {Lol})
+// entity.selector.Lol
+// entity.states.lol
+// entity.states.lmao
+
+
+
+
+
+
 
 
 
