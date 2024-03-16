@@ -4,7 +4,7 @@ import {Component} from "./component.js"
 
 export abstract class HybridComponent<
 		Realm,
-		State extends Serializable,
+		State extends Serializable = Serializable,
 	> extends Component<State> {
 
 	constructor(public realm: Realm, state: State) {
