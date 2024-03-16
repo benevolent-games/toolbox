@@ -16,16 +16,12 @@ export class Entity<Sel extends Selector = Selector> {
 
 	constructor(public readonly id: Id) {}
 
-	match(selector: Selector) {
+	has<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
 		const classes = Object.values(selector)
 		return classes.every(C => this.#components.has(C))
 	}
 
-	subselect<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
-		return this.match(selector)
-	}
-
-	readonly data = new Proxy({}, {
+	readonly components = new Proxy({}, {
 		get: (_, ikey: string) => {
 			const [,component, isHybrid] = this.#grab(ikey)
 			if (isHybrid)

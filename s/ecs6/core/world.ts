@@ -69,7 +69,7 @@ export class World<Realm> {
 	deleteEntity(id: Id) {
 		const entity = this.#entities.get(id)!
 		for (const query of this.#queries)
-			if (entity.match(query.selector))
+			if (entity.has(query.selector))
 				query[Query.internal.remove](entity)
 		this.#entities.delete(id)
 		entity[Entity.internal.call_deleted_on_all_hybrid_components]()
@@ -81,10 +81,10 @@ export class World<Realm> {
 		if (!entity)
 			throw new Error(`entity not found "${id}"`)
 
-		if (!entity.match(selector))
+		if (!entity.has(selector))
 			throw new Error(`entity did not match selector "${id}", {${Object.keys(selector).join(", ")}}`)
 
-		return entity.data
+		return entity.components
 	}
 
 	#find_query<Sel extends Selector>(selector: Sel) {

@@ -21,8 +21,8 @@ export class Executive<Realm, Tick> {
 			responder: r => {
 				const query = world.query(r.selector)
 				const events = r.fn({world, realm})
-				query.added(events.added)
-				query.removed(events.removed)
+				query.added(entity => events.added(entity.components, entity))
+				query.removed(entity => events.removed(entity.components, entity))
 			},
 		})
 	}
@@ -32,8 +32,8 @@ export class Executive<Realm, Tick> {
 		const realm = this.#realm
 		for (const [behavior, query] of this.#mandates) {
 			const fn2 = behavior.fn({world, realm, tick})
-			for (const [id, components] of query.matches)
-				fn2(components, id)
+			for (const [,entity] of query.matches)
+				fn2(entity.components, entity)
 		}
 	}
 }
