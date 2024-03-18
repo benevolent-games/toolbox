@@ -21,7 +21,7 @@ export class World<Realm> {
 	createEntity() {
 		const data = this.#data
 		const id = data.newId()
-		const entity = new Entity(id, data)
+		const entity = new Entity<Realm, {}>(this.#realm, id, data)
 		data.insertEntity(id, entity)
 		return entity
 	}

@@ -3,16 +3,19 @@ import {Constructor} from "@benev/slate"
 
 import {Data} from "./data.js"
 import {Component} from "./component.js"
-import {CParams, Id, Selector} from "./types.js"
+import {inherits} from "../../tools/inherits.js"
 import {HybridComponent} from "./hybrid_component.js"
 import {uncapitalize} from "../../tools/uncapitalize.js"
+import {CHandle, CParams, Id, Selector} from "./types.js"
 
-export class Entity<Sel extends Selector = Selector> {
+export class Entity<Realm = any, Sel extends Selector = Selector> {
+	#realm: Realm
 	#data: Data
 	#componentsByName = new Map<string, Component>
 	#componentsByConstructor = new Map<Constructor<Component>, Component>()
 
-	constructor(public readonly id: Id, data: Data) {
+	constructor(realm: Realm, public readonly id: Id, data: Data) {
+		this.#realm = realm
 		this.#data = data
 	}
 
@@ -23,22 +26,30 @@ export class Entity<Sel extends Selector = Selector> {
 	}
 
 	/** add/update a group of components */
-	assign<Sel2 extends Selector>(selector: Sel, states: CParams<Sel2>) {
+	assign<Sel2 extends Selector>(selector: Sel2, states: CParams<Sel2>) {
 		const data = this.#data
 		for (const [key, constructor] of Object.entries(selector)) {
 			const name = uncapitalize(key) as any
 			const state = states[name]
-			const component = this.#componentsByConstructor.get(constructor)
+			let component = this.#componentsByConstructor.get(constructor)
 			if (component) {
 				component.state = state
 			}
 			else {
-				const id = data.newId()
-				const component = new constructor(id)
+				if (inherits(constructor, HybridComponent)) {
+					const hybrid = new constructor(
+						this.#realm,
+						state,
+						() => hybrid.updated(),
+					) as HybridComponent<any, any>
+					hybrid.created()
+					component = hybrid
+				}
+				else {
+					component = new constructor(state)
+				}
 				this.#componentsByName.set(name, component)
 				this.#componentsByConstructor.set(constructor, component)
-				if (component instanceof HybridComponent)
-					component.created()
 			}
 		}
 		data.reindex(this)
@@ -82,7 +93,7 @@ export class Entity<Sel extends Selector = Selector> {
 				component.state = value
 			return true
 		},
-	})
+	}) as CHandle<Sel>
 
 	/** delete and remove this entity, and all its components */
 	dispose() {
