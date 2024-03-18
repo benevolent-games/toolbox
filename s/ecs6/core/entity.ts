@@ -62,6 +62,11 @@ export class Entity<Sel extends Selector = Selector> {
 		return component
 	}
 
+	/**
+	 * access the components attached to this entity.
+	 *  - for ordinary components, this returns the component's state
+	 *  - for hybrid components, this returns the whole hybrid component, so you could call its methods etc.
+	 */
 	readonly components = new Proxy({}, {
 		get: (_, name: string) => {
 			const component = this.#grab(name)
@@ -79,6 +84,7 @@ export class Entity<Sel extends Selector = Selector> {
 		},
 	})
 
+	/** delete and remove this entity, and all its components */
 	dispose() {
 		for (const constructor of this.#componentsByConstructor.keys())
 			this.#destroyComponent(constructor)
@@ -95,76 +101,4 @@ export class Entity<Sel extends Selector = Selector> {
 		}
 	}
 }
-
-// const getClasses = Symbol()
-// const attach = Symbol()
-// const detach = Symbol()
-// const call_deleted_on_all_hybrid_components = Symbol()
-
-// export class Entity<Sel extends Selector = Selector> {
-// 	static internal = {getClasses, attach, detach, call_deleted_on_all_hybrid_components} as const
-
-// 	#components = new Map<CClass, CInstance>()
-// 	#cache = new Map<string, [CClass, CInstance, boolean]>()
-// 	#classes: CClass[] = []
-
-// 	constructor(public readonly id: Id) {}
-
-// 	has<Sel2 extends Selector>(selector: Sel2): this is Entity<Sel2 & Sel> {
-// 		const classes = Object.values(selector)
-// 		return classes.every(C => this.#components.has(C))
-// 	}
-
-// 	readonly components = new Proxy({}, {
-// 		get: (_, ikey: string) => {
-// 			const [,component, isHybrid] = this.#grab(ikey)
-// 			if (isHybrid)
-// 				return component
-// 			else
-// 				return component.state
-// 		},
-// 		set: (_, ikey: string, value: any) => {
-// 			const [,component, isHybrid] = this.#grab(ikey)
-// 			if (isHybrid)
-// 				throw new Error(`cannot directly overwrite hybrid component "${ikey}"`)
-// 			else
-// 				component.state = value
-// 			return true
-// 		},
-// 	}) as CHandle<Sel>
-
-// 	#grab(ikey: string) {
-// 		const result = this.#cache.get(ikey)
-// 		if (!result) {
-// 			console.error("cache", this.id, this.#cache)
-// 			throw new Error(`failed to get component data for "${ikey}"`)
-// 		}
-// 		return result
-// 	}
-
-// 	[getClasses]() {
-// 		return this.#classes
-// 	}
-
-// 	[attach](ikey: string, Component: CClass, component: CInstance) {
-// 		this.#components.set(Component, component)
-// 		this.#cache.set(ikey, [Component, component, component instanceof HybridComponent])
-// 		this.#classes.push(Component)
-// 	}
-
-// 	[detach](ikey: string, Component: CClass) {
-// 		const component = this.#components.get(Component)
-// 		this.#components.delete(Component)
-// 		this.#cache.delete(ikey)
-// 		this.#classes = this.#classes.filter(C => C !== Component)
-// 		if (component && component instanceof HybridComponent)
-// 			component.deleted()
-// 	}
-
-// 	[call_deleted_on_all_hybrid_components]() {
-// 		for (const [, component, isHybrid] of this.#cache.values())
-// 			if (isHybrid)
-// 				(component as any as HybridComponent<any, any>).deleted()
-// 	}
-// }
 
