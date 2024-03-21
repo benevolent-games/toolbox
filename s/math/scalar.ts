@@ -44,10 +44,12 @@ export function top(n: number, max: number = 1) {
 
 /** clamp a number within a range. */
 export function clamp(n: number, min: number = 0, max: number = 1) {
-	return n < min
-		? min
-		: n > max
-			? max
+	const amin = Math.min(min, max)
+	const amax = Math.max(min, max)
+	return n < amin
+		? amin
+		: n > amax
+			? amax
 			: n
 }
 
