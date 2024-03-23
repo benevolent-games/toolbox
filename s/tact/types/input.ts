@@ -3,10 +3,10 @@ import {Vec2} from "../../math/vec2.js"
 
 export namespace Input {
 	export type Kind = "button" | "vector"
-	export type MouseKeys = (
-		| "MouseLeft"
-		| "MouseRight"
-		| "MouseMiddle"
+	export type MouseCode = (
+		| "MousePrimary"
+		| "MouseTertiary"
+		| "MouseSecondary"
 		| "Mouse4"
 		| "Mouse5"
 		| "MouseWheelUp"

@@ -1,16 +1,17 @@
 
+import {Input} from "../tact.js"
 import {mods} from "./utils/mods.js"
 import {Device} from "../parts/device.js"
 import {zevents} from "../../tools/zevents.js"
 
 export class MouseButtons extends Device {
 
-	static determine_mouse_button_code(event: MouseEvent) {
+	static determine_mouse_button_code(event: MouseEvent): Input.MouseCode {
 		switch (event.button) {
-			case 0: return "MouseLeft"
-			case 1: return "MouseMiddle"
-			case 2: return "MouseRight"
-			default: return `Mouse${event.button + 1}`
+			case 0: return "MousePrimary"
+			case 1: return "MouseTertiary"
+			case 2: return "MouseSecondary"
+			default: return `Mouse${event.button + 1}` as Input.MouseCode
 		}
 	}
 

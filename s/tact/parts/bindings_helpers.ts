@@ -8,13 +8,13 @@ type Mod = ("ctrl" | "meta" | "alt" | "shift")
 export const bindings_helpers = ({
 	mode: <M extends Bindings.BindGroup>(m: M) => m,
 	buttons: <B extends Bindings.Btn[]>(...btns: B) => btns,
-	b: (name: string, ...mods: Mod[]): Bindings.Btn => [name, {
+	b: (name: string): Bindings.Btn => [name, {modless: true}],
+	mod: (name: string, ...mods: Mod[]): Bindings.Btn => [name, {
 		ctrl: mods.includes("ctrl"),
 		meta: mods.includes("meta"),
 		alt: mods.includes("alt"),
 		shift: mods.includes("shift"),
 	}],
-	modless: (name: string): Bindings.Btn => [name, {modless: true}],
 	ctrl: "ctrl" as const,
 	meta: "meta" as const,
 	alt: "alt" as const,
