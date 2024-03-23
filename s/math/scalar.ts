@@ -13,13 +13,19 @@ export const radians = {
 		degrees(radians: number) {
 			return radians * (180 / pi)
 		},
+		arcseconds(r: number) {
+			return radians.to.degrees(r) * 3600
+		},
 	},
 	from: {
 		circle(fraction = 1) {
 			return fraction * (2 * Math.PI)
 		},
-		degrees(degrees: number) {
-			return degrees * (pi / 180)
+		degrees(d: number) {
+			return d * (pi / 180)
+		},
+		arcseconds(a: number) {
+			return radians.from.degrees(a / 3600)
 		},
 	},
 }
