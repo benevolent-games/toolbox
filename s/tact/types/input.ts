@@ -3,6 +3,15 @@ import {Vec2} from "../../math/vec2.js"
 
 export namespace Input {
 	export type Kind = "button" | "vector"
+	export type MouseKeys = (
+		| "MouseLeft"
+		| "MouseRight"
+		| "MouseMiddle"
+		| "Mouse4"
+		| "Mouse5"
+		| "MouseWheelUp"
+		| "MouseWheelDown"
+	)
 
 	export type Modifiers = {
 		ctrl: boolean

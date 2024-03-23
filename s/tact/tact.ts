@@ -5,8 +5,8 @@ import {Inputs} from "./types/inputs.js"
 import {Devices} from "./parts/devices.js"
 import {Bindings} from "./types/bindings.js"
 import {Keyboard} from "./devices/keyboard.js"
+import {MouseButtons} from "./devices/mouse_buttons.js"
 import {consider_input} from "./parts/consider_input.js"
-import {PointerButtons} from "./devices/pointer_buttons.js"
 import {establish_inputs} from "./parts/establish_inputs.js"
 import {PointerMovements} from "./devices/pointer_movements.js"
 import {BindingsHelpers, bindings_helpers} from "./parts/bindings_helpers.js"
@@ -15,7 +15,7 @@ import {unstick_stuck_keys, unstick_stuck_keys_for_mode} from "./parts/unstick.j
 export * from "./types/input.js"
 
 export class Tact<B extends Bindings.Catalog> {
-	static devices = {Keyboard, PointerButtons, PointerMovements}
+	static devices = {Keyboard, MouseButtons, PointerMovements}
 	static bindings<B extends Bindings.Catalog>(fn: (h: BindingsHelpers) => B) {
 		return fn(bindings_helpers)
 	}

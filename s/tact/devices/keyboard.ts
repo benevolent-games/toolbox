@@ -1,5 +1,7 @@
 
+import {mods} from "./utils/mods.js"
 import {Device} from "../parts/device.js"
+import {zevents} from "../../tools/zevents.js"
 
 export class Keyboard extends Device {
 	dispose: () => void
@@ -14,25 +16,14 @@ export class Keyboard extends Device {
 				kind: "button",
 				code: event.code,
 				repeat: event.repeat,
-				mods: {
-					ctrl: event.ctrlKey,
-					meta: event.metaKey,
-					alt: event.altKey,
-					shift: event.shiftKey,
-				},
+				mods: mods(event),
 			})
 		}
 
-		const keydown = handler(true)
-		const keyup = handler(false)
-
-		target.addEventListener("keydown", keydown as any)
-		target.addEventListener("keyup", keyup as any)
-
-		this.dispose = () => {
-			target.removeEventListener("keydown", keydown as any)
-			target.removeEventListener("keyup", keyup as any)
-		}
+		this.dispose = zevents(target, {
+			keydown: handler(true),
+			keyup: handler(false),
+		})
 	}
 }
 
