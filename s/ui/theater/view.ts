@@ -26,6 +26,8 @@ export const Theater = nexus.shadow_view(use => ({
 	return html`
 		${stage.porthole.canvas}
 
+		<slot></slot>
+
 		<div class=overlay ?data-open="${menus.open.value}">
 			<div class=plate>
 				<nav>
