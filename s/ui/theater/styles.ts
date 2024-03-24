@@ -44,7 +44,7 @@ canvas {
 				color: var(--text);
 				background: var(--bg2);
 				padding: 0.2em 0.6em;
-				transition: all var(--speed);
+				transition: all var(--speed) linear;
 			}
 
 			> button {
@@ -87,7 +87,7 @@ canvas {
 			backdrop-filter: blur(1em);
 
 			opacity: 1;
-			transition: opacity var(--speed);
+			transition: opacity var(--speed) linear;
 		}
 	}
 

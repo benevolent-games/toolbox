@@ -5,7 +5,7 @@ export const styles = css`
 
 article {
 	background: #0004;
-	transition: 300ms linear background;
+	transition: background 300ms linear;
 
 	+ article {
 		margin-top: 1em;
@@ -20,7 +20,7 @@ article {
 		font-size: 1.1em;
 		font-weight: bold;
 		text-shadow: 1px 2px 2px #0006;
-		transition: 300ms linear background;
+		transition: background 300ms linear;
 	}
 
 	> textarea {
