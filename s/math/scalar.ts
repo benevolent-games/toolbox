@@ -6,20 +6,24 @@ import {Vec2} from "./vec2.js"
 //
 
 export const pi = Math.PI
-export const xpi = (n: number = 1) => n * pi
+export const circle = 2 * Math.PI
 
 export const radians = {
+	circle,
 	to: {
-		degrees(radians: number) {
-			return radians * (180 / pi)
+		degrees(r: number) {
+			return r * (180 / pi)
 		},
 		arcseconds(r: number) {
 			return radians.to.degrees(r) * 3600
 		},
+		turns(r: number) {
+			return r / circle
+		}
 	},
 	from: {
-		circle(fraction = 1) {
-			return fraction * (2 * Math.PI)
+		turns(t: number) {
+			return t * circle
 		},
 		degrees(d: number) {
 			return d * (pi / 180)

@@ -70,7 +70,7 @@ export class Stage {
 				rendering.fallbackCamera.alpha = wrap(
 					rendering.fallbackCamera.alpha + radians.from.degrees(0.1),
 					0,
-					radians.from.circle(1),
+					radians.circle,
 				)
 			}
 		})
