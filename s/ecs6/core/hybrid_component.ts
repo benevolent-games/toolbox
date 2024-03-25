@@ -7,8 +7,8 @@ export abstract class HybridComponent<
 		State extends Serializable,
 	> extends Component<State> {
 
-	constructor(public realm: Realm, state: State) {
-		super(state, () => this.updated())
+	constructor(public realm: Realm, public readonly entityId: number, state: State) {
+		super(entityId, state, () => this.updated())
 	}
 
 	abstract created(): void

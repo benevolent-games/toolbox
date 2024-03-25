@@ -5,7 +5,7 @@ export abstract class Component<State extends Serializable> {
 	#state: State
 	#onChange: () => void
 
-	constructor(state: State, onChange = () => {}) {
+	constructor(public readonly entityId: number, state: State, onChange = () => {}) {
 		this.#state = state
 		this.#onChange = onChange
 	}

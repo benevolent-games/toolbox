@@ -26,10 +26,19 @@ export type CHandle<Sel extends Selector> = {
 			: InstanceType<Sel[K]>["state"] // return only the state object, making for clean pure logic
 }
 
+// export type CParams<Sel extends Selector> = {
+// 	[K in keyof Sel as K extends string ? Uncapitalize<K> : never]:
+// 		InstanceType<Sel[K]> extends HybridComponent<any, infer State>
+// 			? State
+// 			: ConstructorParameters<Sel[K]>[1]
+// }
+
 export type CParams<Sel extends Selector> = {
 	[K in keyof Sel as K extends string ? Uncapitalize<K> : never]:
 		InstanceType<Sel[K]> extends HybridComponent<any, infer State>
 			? State
-			: ConstructorParameters<Sel[K]>[0]
+			: InstanceType<Sel[K]> extends Component<infer State>
+				? State
+				: never
 }
 

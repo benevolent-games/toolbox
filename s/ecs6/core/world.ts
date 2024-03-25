@@ -46,11 +46,11 @@ export class World<Realm> {
 			const state = params[ikey]
 			const component = inherits(Component, HybridComponent)
 				? (() => {
-					const c = new Component(this.#realm, state) as HybridComponent<any, any>
+					const c = new Component(this.#realm, entity.id, state) as HybridComponent<any, any>
 					c.created()
 					return c
 				})()
-				: new Component(state)
+				: new Component(entity.id, state)
 			entity[Entity.internal.attach](ikey, Component, component)
 		}
 		this.#reindex(entity)
