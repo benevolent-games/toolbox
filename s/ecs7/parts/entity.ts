@@ -3,10 +3,11 @@ import {Constructor} from "@benev/slate"
 
 import {Data} from "./data.js"
 import {Component} from "./component.js"
-import {inherits} from "../../../tools/inherits.js"
+import {inherits} from "../../tools/inherits.js"
 import {HybridComponent} from "./hybrid-component.js"
-import {Access, State, Id, Selector} from "../types.js"
-import {uncapitalize} from "../../../tools/uncapitalize.js"
+import {Access, State, Id, Selector} from "./types.js"
+import {uncapitalize} from "../../tools/uncapitalize.js"
+import { Archetype } from "./archetype.js"
 
 export class Entity<Sel extends Selector = Selector> {
 	#realm: any
@@ -26,11 +27,11 @@ export class Entity<Sel extends Selector = Selector> {
 	}
 
 	/** add/update a group of components */
-	assign<Sel2 extends Selector>(selector: Sel2, states: State<Sel2>) {
+	assign<Sel2 extends Selector>(archetype: Archetype<Sel2>) {
 		const data = this.#data
-		for (const [key, constructor] of Object.entries(selector)) {
+		for (const [key, constructor] of Object.entries(archetype.selector)) {
 			const name = uncapitalize(key) as any
-			const state = states[name]
+			const state = archetype.state[name]
 			let component = this.#componentsByConstructor.get(constructor)
 			if (component) {
 				component.state = state
@@ -40,7 +41,6 @@ export class Entity<Sel extends Selector = Selector> {
 					const hybrid = new constructor(
 						this.#realm,
 						state,
-						() => hybrid.updated(),
 					) as HybridComponent<any, any>
 					hybrid.created()
 					component = hybrid

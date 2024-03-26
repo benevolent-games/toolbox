@@ -1,9 +1,9 @@
 
 import {Query} from "./query.js"
 import {Entity} from "./entity.js"
-import {Id, Selector} from "../types.js"
-import {selectors_are_the_same} from "../utils.js"
-import {id_counter} from "../../../tools/id_counter.js"
+import {Id, Selector} from "./types.js"
+import {selectors_are_the_same} from "./utils.js"
+import {id_counter} from "../../tools/id_counter.js"
 
 export class Data {
 	newId = id_counter()
@@ -31,14 +31,14 @@ export class Data {
 			query = new Query(selector)
 			this.#queries.add(query)
 			for (const entity of this.#entities.values())
-				query[Query.internal.consider](entity)
+				query.consider(entity)
 		}
 		return query
 	}
 
 	reindex(entity: Entity) {
 		for (const query of this.#queries)
-			query[Query.internal.consider](entity)
+			query.consider(entity)
 	}
 
 	#find_query<Sel extends Selector>(selector: Sel) {
