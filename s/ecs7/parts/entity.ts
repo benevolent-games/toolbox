@@ -2,12 +2,12 @@
 import {Constructor} from "@benev/slate"
 
 import {Data} from "./data.js"
+import {Archetype} from "./archetype.js"
 import {Component} from "./component.js"
+import {Access, Id, Selector} from "./types.js"
 import {inherits} from "../../tools/inherits.js"
 import {HybridComponent} from "./hybrid-component.js"
-import {Access, State, Id, Selector} from "./types.js"
 import {uncapitalize} from "../../tools/uncapitalize.js"
-import { Archetype } from "./archetype.js"
 
 export class Entity<Sel extends Selector = Selector> {
 	#realm: any
