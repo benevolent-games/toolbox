@@ -11,7 +11,6 @@ export * from "./ui/theater/view.js"
 export * from "./ui/theater/menus.js"
 export * from "./ui/nexus.js"
 
-export * from "./ecs7/ecs.js"
 export * as ecs from "./ecs7/ecs.js"
 
 export * from "./tact/tact.js"

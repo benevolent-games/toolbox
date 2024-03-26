@@ -39,27 +39,21 @@ export type State<Sel extends Selector> = {
 				: never
 }
 
-export type FnLogic<Realm, Tick> = ({}: {
-	realm: Realm
-	world: World<Realm>,
-}) => (tick: Tick) => void
+export type Basis<Realm> = {realm: Realm, world: World<Realm>}
 
-export type FnAlways<Realm, Tick> = ({}: {
-	realm: Realm
-	world: World<Realm>
-	tick: Tick
-}) => void
+export type FnLogic<Realm, Tick> = (
+	(basis: Basis<Realm>) => (tick: Tick) => void
+)
 
-export type FnBehavior<Realm, Tick, Sel extends Selector> = ({}: {
-	realm: Realm
-	world: World<Realm>
-	tick: Tick
-	entity: Entity<Sel>
-}) => void
+export type FnAlways<Realm, Tick> = (
+	(basis: Basis<Realm>) => (tick: Tick) => void
+)
 
-export type FnResponder<Realm, Sel extends Selector> = ({}: {
-	realm: Realm
-	world: World<Realm>
-	entity: Entity<Sel>
-}) => () => void
+export type FnBehavior<Realm, Tick, Sel extends Selector> = (
+	(basis: Basis<Realm>) => (tick: Tick) => (entity: Entity<Sel>) => void
+)
+
+export type FnResponder<Realm, Sel extends Selector> = (
+	(basis: Basis<Realm>) => (entity: Entity<Sel>) => (() => void)
+)
 
