@@ -15,3 +15,6 @@
 - `system` should be renamed to `group` or maybe `logic`
   - a new concept of `system` should be a blank-slate whereby `behavior`, `responder`, `always`, are all sub-types of `system`
 
+- world ergonomics
+  - we need to be able to search for entities without attaching persistent queries
+
