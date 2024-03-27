@@ -4,11 +4,17 @@ import {Logic} from "./logic.js"
 import {Entity} from "./entity.js"
 import {System} from "./system.js"
 import {HybridComponent} from "./hybrid-component.js"
-import {FnAlways, FnBehavior, FnLogic, FnResponder, Selector, Serializable} from "./types.js"
+import {FnBehavior, FnLogic, FnResponder, Selector, Serializable} from "./types.js"
 
 export class Hub<Realm, Tick> {
 	world = (realm: Realm) => new World<Realm>(realm)
-	HybridComponent = <State extends Serializable>() => HybridComponent<Realm, State>
+
+	HybridComponent = HybridComponent as (
+		new<State extends Serializable>(
+			...p: ConstructorParameters<typeof HybridComponent>
+		) => HybridComponent<Realm, State>
+		& typeof HybridComponent
+	)
 
 	system = (name: string, children: Logic<Realm, Tick>[]) => (
 		new System<Realm, Tick>(name, children)
@@ -17,15 +23,6 @@ export class Hub<Realm, Tick> {
 	logic = (name: string, fn: FnLogic<Realm, Tick>) => (
 		new Logic<Realm, Tick>(name, fn)
 	)
-
-	always = (name: string) => ({
-		logic: (fn: FnAlways<Realm, Tick>) => (
-			new Logic<Realm, Tick>(name, basis => {
-				const fn2 = fn(basis)
-				return tick => fn2(tick)
-			})
-		),
-	})
 
 	behavior = (name: string) => ({
 		select: <Sel extends Selector>(selector: Sel) => ({

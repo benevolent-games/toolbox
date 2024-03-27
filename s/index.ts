@@ -11,7 +11,7 @@ export * from "./ui/theater/view.js"
 export * from "./ui/theater/menus.js"
 export * from "./ui/nexus.js"
 
-export * as ecs from "./ecs7/ecs.js"
+export * as Ecs from "./ecs7/ecs.js"
 
 export * from "./tact/tact.js"
 
@@ -45,7 +45,7 @@ export * from "./tools/coordinates_in_rect.js"
 export * from "./tools/debug_colors.js"
 export * from "./tools/disposable.js"
 export * from "./tools/human.js"
-export * from "./tools/id_counter.js"
+export * from "./tools/id.js"
 export * from "./tools/label.js"
 export * from "./tools/limited_logger.js"
 export * from "./tools/loopy.js"

@@ -1,4 +1,5 @@
 
+export * from "./parts/archetype.js"
 export * from "./parts/component.js"
 export * from "./parts/entity.js"
 export * from "./parts/hub.js"

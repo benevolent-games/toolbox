@@ -1,7 +1,7 @@
 
 import {Constructor} from "@benev/slate"
 import {pubsub} from "../tools/pubsub.js"
-import {id_counter} from "../tools/id_counter.js"
+import {id_counter} from "../tools/id.js"
 
 // import {Vec3} from "../math/vec3.js"
 // import {Quat} from "../math/quat.js"

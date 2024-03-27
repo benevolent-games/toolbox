@@ -6,8 +6,6 @@ import {Entity} from "./entity.js"
 import {Component} from "./component.js"
 import {HybridComponent} from "./hybrid-component.js"
 
-export type Id = number
-
 export type Serializable = (
 	| string
 	| number
@@ -18,6 +16,8 @@ export type Serializable = (
 )
 
 export type Selector = Record<string, Constructor<Component>>
+
+export type ComponentState<C extends Component> = C["state"]
 
 export type Access<Sel extends Selector> = {
 	[K in keyof Sel as K extends string ? Uncapitalize<K> : never]:
@@ -42,10 +42,6 @@ export type State<Sel extends Selector> = {
 export type Basis<Realm> = {realm: Realm, world: World<Realm>}
 
 export type FnLogic<Realm, Tick> = (
-	(basis: Basis<Realm>) => (tick: Tick) => void
-)
-
-export type FnAlways<Realm, Tick> = (
 	(basis: Basis<Realm>) => (tick: Tick) => void
 )
 

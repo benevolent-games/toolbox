@@ -1,8 +1,9 @@
 
-import {Id, Selector} from "./types.js"
 import {Data} from "./data.js"
 import {Entity} from "./entity.js"
-import { Archetype } from "./archetype.js"
+import {Selector} from "./types.js"
+import {Id} from "../../tools/id.js"
+import {Archetype} from "./archetype.js"
 
 export class World<Realm> {
 	#realm: Realm

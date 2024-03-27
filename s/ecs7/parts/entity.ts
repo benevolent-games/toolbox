@@ -2,9 +2,10 @@
 import {Constructor} from "@benev/slate"
 
 import {Data} from "./data.js"
+import {Id} from "../../tools/id.js"
 import {Archetype} from "./archetype.js"
 import {Component} from "./component.js"
-import {Access, Id, Selector} from "./types.js"
+import {Access, Selector} from "./types.js"
 import {inherits} from "../../tools/inherits.js"
 import {HybridComponent} from "./hybrid-component.js"
 import {uncapitalize} from "../../tools/uncapitalize.js"
@@ -40,13 +41,14 @@ export class Entity<Sel extends Selector = Selector> {
 				if (inherits(constructor, HybridComponent)) {
 					const hybrid = new constructor(
 						this.#realm,
+						this.id,
 						state,
 					) as HybridComponent<any, any>
 					hybrid.created()
 					component = hybrid
 				}
 				else {
-					component = new constructor(state)
+					component = new constructor(this.id, state)
 				}
 				this.#componentsByName.set(name, component)
 				this.#componentsByConstructor.set(constructor, component)
