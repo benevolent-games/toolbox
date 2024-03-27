@@ -19,7 +19,10 @@ export class System<Realm, Tick> {
 
 	prepareExecutor(o: {realm: Realm, world: World<Realm>}) {
 		const logic = this.walk().map(fn => fn(o))
-		return (tick: Tick) => logic.forEach(fn => fn(tick))
+		return (tick: Tick) => logic.forEach(fn => {
+			if (fn)
+				fn(tick)
+		})
 	}
 }
 

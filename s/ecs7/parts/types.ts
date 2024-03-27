@@ -42,7 +42,7 @@ export type State<Sel extends Selector> = {
 export type Basis<Realm> = {realm: Realm, world: World<Realm>}
 
 export type FnLogic<Realm, Tick> = (
-	(basis: Basis<Realm>) => (tick: Tick) => void
+	(basis: Basis<Realm>) => (((tick: Tick) => void) | void)
 )
 
 export type FnBehavior<Realm, Tick, Sel extends Selector> = (
@@ -50,6 +50,6 @@ export type FnBehavior<Realm, Tick, Sel extends Selector> = (
 )
 
 export type FnResponder<Realm, Sel extends Selector> = (
-	(basis: Basis<Realm>) => (entity: Entity<Sel>) => (() => void)
+	(basis: Basis<Realm>) => (entity: Entity<Sel>) => ((() => void) | void)
 )
 

@@ -47,10 +47,13 @@ export class Hub<Realm, Tick> {
 					const fn2 = fn(basis)
 					const query = basis.world.query(selector)
 					const map = new Map<Entity, () => void>()
+
 					query.onAdded(entity => {
 						const dispose = fn2(entity)
-						map.set(entity, dispose)
+						if (dispose)
+							map.set(entity, dispose)
 					})
+
 					query.onRemoved(entity => {
 						const dispose = map.get(entity)
 						if (dispose) {
@@ -58,7 +61,6 @@ export class Hub<Realm, Tick> {
 							map.delete(entity)
 						}
 					})
-					return () => {}
 				})
 			),
 		}),
