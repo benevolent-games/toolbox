@@ -1,7 +1,12 @@
 
 import {Selector, State} from "./types.js"
 
-export class Archetype<Sel extends Selector> {
+export type Arch<Sel extends Selector> = {
+	selector: Sel
+	state: State<Sel>
+}
+
+export class Archetype<Sel extends Selector> implements Arch<Sel> {
 	constructor(
 		public selector: Sel,
 		public state: State<Sel>,

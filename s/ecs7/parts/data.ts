@@ -10,6 +10,10 @@ export class Data {
 	#queries = new Set<Query>()
 	#entities = new Map<Id, Entity>()
 
+	maybeEntity(id: Id) {
+		return this.#entities.get(id)
+	}
+
 	getEntity(id: Id) {
 		const entity = this.#entities.get(id)
 		if (!entity)

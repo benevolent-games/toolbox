@@ -3,7 +3,7 @@ import {Constructor} from "@benev/slate"
 
 import {Data} from "./data.js"
 import {Id} from "../../tools/id.js"
-import {Archetype} from "./archetype.js"
+import {Arch} from "./archetype.js"
 import {Component} from "./component.js"
 import {Access, Selector} from "./types.js"
 import {inherits} from "../../tools/inherits.js"
@@ -28,7 +28,7 @@ export class Entity<Sel extends Selector = Selector> {
 	}
 
 	/** add/update a group of components */
-	assign<Sel2 extends Selector>(archetype: Archetype<Sel2>) {
+	assign<Sel2 extends Selector>(archetype: Arch<Sel2>) {
 		const data = this.#data
 		for (const [key, constructor] of Object.entries(archetype.selector)) {
 			const name = uncapitalize(key) as any

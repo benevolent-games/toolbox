@@ -3,18 +3,10 @@ import {World} from "./world.js"
 import {Logic} from "./logic.js"
 import {Entity} from "./entity.js"
 import {System} from "./system.js"
-import {HybridComponent} from "./hybrid-component.js"
-import {FnBehavior, FnLogic, FnResponder, Selector, Serializable, Unit} from "./types.js"
+import {FnBehavior, FnLogic, FnResponder, Selector, Unit} from "./types.js"
 
 export class Hub<Realm, Tick> {
 	world = (realm: Realm) => new World<Realm>(realm)
-
-	HybridComponent = HybridComponent as (
-		new<State extends Serializable>(
-			...p: ConstructorParameters<typeof HybridComponent>
-		) => HybridComponent<Realm, State>
-		& typeof HybridComponent
-	)
 
 	system = (name: string, children: Unit<Realm, Tick>[]) => (
 		new System<Realm, Tick>(name, children)
