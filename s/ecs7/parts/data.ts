@@ -10,6 +10,10 @@ export class Data {
 	#queries = new Set<Query>()
 	#entities = new Map<Id, Entity>()
 
+	get allEntities() {
+		return this.#entities.values()
+	}
+
 	maybeEntity(id: Id) {
 		return this.#entities.get(id)
 	}
