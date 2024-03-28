@@ -1,9 +1,9 @@
 
 import {Data} from "./data.js"
 import {Entity} from "./entity.js"
+import {Arch} from "./archetype.js"
 import {Selector} from "./types.js"
 import {Id} from "../../tools/id.js"
-import {Archetype} from "./archetype.js"
 
 export class World<Realm> {
 	#realm: Realm
@@ -14,6 +14,10 @@ export class World<Realm> {
 	}
 
 	query = this.#data.query
+
+	get(id: Id) {
+		return this.#data.getEntity(id)
+	}
 
 	obtain(ids: Id[]) {
 		const requested = new Set(ids)
@@ -28,16 +32,12 @@ export class World<Realm> {
 		return matches
 	}
 
-	createEntity<Sel extends Selector>(archetype: Archetype<Sel>) {
+	create<Sel extends Selector>(arch: Arch<Sel>) {
 		const data = this.#data
 		const id = data.newId()
 		const entity = new Entity(this.#realm, id, data)
 		data.insertEntity(id, entity)
-		return entity.assign(archetype) as Entity<Sel>
-	}
-
-	getEntity(id: Id) {
-		return this.#data.getEntity(id)
+		return entity.assign(arch) as Entity<Sel>
 	}
 }
 
