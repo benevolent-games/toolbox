@@ -2,6 +2,8 @@
 import {Constructor} from "@benev/slate"
 
 import {World} from "./world.js"
+import {Logic} from "./logic.js"
+import {System} from "./system.js"
 import {Entity} from "./entity.js"
 import {Component} from "./component.js"
 import {HybridComponent} from "./hybrid-component.js"
@@ -38,6 +40,8 @@ export type State<Sel extends Selector> = {
 				? State
 				: never
 }
+
+export type Unit<Realm, Tick> = System<Realm, Tick> | Logic<Realm, Tick>
 
 export type Basis<Realm> = {realm: Realm, world: World<Realm>}
 

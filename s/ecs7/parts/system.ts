@@ -1,12 +1,11 @@
 
-import {Logic} from "./logic.js"
 import {World} from "./world.js"
-import {FnLogic} from "./types.js"
+import {FnLogic, Unit} from "./types.js"
 
 export class System<Realm, Tick> {
 	constructor(
 		public readonly name: string,
-		public readonly children: (System<Realm, Tick> | Logic<Realm, Tick>)[],
+		public readonly children: Unit<Realm, Tick>[],
 	) {}
 
 	walk(): FnLogic<Realm, Tick>[] {
