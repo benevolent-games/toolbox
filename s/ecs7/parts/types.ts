@@ -45,15 +45,19 @@ export type Unit<Realm, Tick> = System<Realm, Tick> | Logic<Realm, Tick>
 
 export type Basis<Realm> = {realm: Realm, world: World<Realm>}
 
+export type FnSystem<Realm, Tick> = (
+	(basis: Basis<Realm>) => Unit<Realm, Tick>[]
+)
+
 export type FnLogic<Realm, Tick> = (
 	(basis: Basis<Realm>) => (((tick: Tick) => void) | void)
 )
 
-export type FnBehavior<Realm, Tick, Sel extends Selector> = (
-	(basis: Basis<Realm>) => (tick: Tick) => (entity: Entity<Sel>) => void
+export type FnBehavior<Tick, Sel extends Selector> = (
+	(tick: Tick) => (entity: Entity<Sel>) => void
 )
 
-export type FnResponder<Realm, Sel extends Selector> = (
-	(basis: Basis<Realm>) => (entity: Entity<Sel>) => ((() => void) | void)
+export type FnResponder<Sel extends Selector> = (
+	(entity: Entity<Sel>) => ((() => void) | void)
 )
 

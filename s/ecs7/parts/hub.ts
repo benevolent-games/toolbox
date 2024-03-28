@@ -3,13 +3,13 @@ import {World} from "./world.js"
 import {Logic} from "./logic.js"
 import {Entity} from "./entity.js"
 import {System} from "./system.js"
-import {FnBehavior, FnLogic, FnResponder, Selector, Unit} from "./types.js"
+import {FnBehavior, FnLogic, FnResponder, FnSystem, Selector} from "./types.js"
 
 export class Hub<Realm, Tick> {
 	world = (realm: Realm) => new World<Realm>(realm)
 
-	system = (name: string, children: Unit<Realm, Tick>[]) => (
-		new System<Realm, Tick>(name, children)
+	system = (name: string, fn: FnSystem<Realm, Tick>) => (
+		new System<Realm, Tick>(name, fn)
 	)
 
 	logic = (name: string, fn: FnLogic<Realm, Tick>) => (
@@ -18,14 +18,13 @@ export class Hub<Realm, Tick> {
 
 	behavior = (name: string) => ({
 		select: <Sel extends Selector>(selector: Sel) => ({
-			logic: (fn: FnBehavior<Realm, Tick, Sel>) => (
+			logic: (fn: FnBehavior<Tick, Sel>) => (
 				new Logic<Realm, Tick>(name, basis => {
 					const query = basis.world.query(selector)
-					const fn2 = fn(basis)
 					return tick => {
-						const fn3 = fn2(tick)
+						const fn2 = fn(tick)
 						for (const entity of query.matches)
-							fn3(entity)
+							fn2(entity)
 					}
 				})
 			),
@@ -34,14 +33,13 @@ export class Hub<Realm, Tick> {
 
 	responder = (name: string) => ({
 		select: <Sel extends Selector>(selector: Sel) => ({
-			respond: (fn: FnResponder<Realm, Sel>) => (
+			respond: (fn: FnResponder<Sel>) => (
 				new Logic<Realm, Tick>(name, basis => {
-					const fn2 = fn(basis)
 					const query = basis.world.query(selector)
 					const map = new Map<Entity, () => void>()
 
 					query.onAdded(entity => {
-						const dispose = fn2(entity)
+						const dispose = fn(entity)
 						if (dispose)
 							map.set(entity, dispose)
 					})
