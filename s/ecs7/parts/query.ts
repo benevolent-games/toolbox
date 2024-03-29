@@ -28,14 +28,18 @@ export class Query<Sel extends Selector = Selector> {
 		return is_matching
 	}
 
-	add(entity: Entity) {
-		this.#matches.add(entity as Entity<Sel>)
-		this.onAdded.publish(entity as Entity<Sel>)
+	add(entity: Entity<any>) {
+		if (!this.#matches.has(entity)) {
+			this.#matches.add(entity)
+			this.onAdded.publish(entity)
+		}
 	}
 
-	remove(entity: Entity) {
-		this.#matches.delete(entity as Entity<Sel>)
-		this.onRemoved.publish(entity as Entity<Sel>)
+	remove(entity: Entity<any>) {
+		if (this.#matches.has(entity)) {
+			this.#matches.delete(entity)
+			this.onRemoved.publish(entity)
+		}
 	}
 }
 

@@ -27,10 +27,17 @@ export class Data {
 
 	insertEntity(id: Id, entity: Entity) {
 		this.#entities.set(id, entity)
+		this.reindex(entity)
 	}
 
 	removeEntity(id: Id) {
-		this.#entities.delete(id)
+		const entity = this.#entities.get(id)
+		if (entity) {
+			this.#entities.delete(id)
+			for (const query of this.#queries) {
+				query.remove(entity)
+			}
+		}
 	}
 
 	query = <Sel extends Selector>(selector: Sel) => {

@@ -19,6 +19,10 @@ export class World<Realm> {
 		return this.#data.getEntity(id)
 	}
 
+	maybe(id: Id) {
+		return this.#data.maybeEntity(id)
+	}
+
 	obtain(ids: Id[]) {
 		const requested = new Set(ids)
 		const matches: Entity[] = []
