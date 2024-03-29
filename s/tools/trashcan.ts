@@ -9,6 +9,10 @@ export class Trashcan {
 		}
 	})
 
+	mark = (fn: () => void) => {
+		this.#can.push(fn)
+	}
+
 	dispose = () => {
 		this.#can.forEach(destroy => destroy())
 		this.#can = []
