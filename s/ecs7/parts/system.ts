@@ -1,6 +1,7 @@
 
 import {World} from "./world.js"
-import {Basis, FnLogic, FnSystem} from "./types.js"
+import {Logic} from "./logic.js"
+import {Basis, FnSystem} from "./types.js"
 
 export class System<Realm, Tick> {
 	constructor(
@@ -8,17 +9,20 @@ export class System<Realm, Tick> {
 		public readonly fn: FnSystem<Realm, Tick>,
 	) {}
 
-	walk(basis: Basis<Realm>): FnLogic<Realm, Tick>[] {
+	walk(basis: Basis<Realm>): Logic<Realm, Tick>[] {
 		return this.fn(basis).flatMap(unit =>
 			unit instanceof System
 				? unit.walk(basis)
-				: unit.fn
+				: unit
 		)
 	}
 
 	prepareExecutor(basis: {realm: Realm, world: World<Realm>}) {
-		const logic = this.walk(basis).map(fn => fn(basis))
-		return (tick: Tick) => logic.forEach(fn => {
+		const logics = this.walk(basis).map(logic => ({
+			name: logic.name,
+			fn: logic.fn(basis),
+		}))
+		return (tick: Tick) => logics.forEach(({fn}) => {
 			if (fn)
 				fn(tick)
 		})
