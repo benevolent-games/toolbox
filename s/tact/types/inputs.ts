@@ -17,6 +17,5 @@ export type InputHandle<I extends Input.Whatever> = {
 
 export type InputButtonHandle = {
 	onPressed: (fn: (input: Input.Button) => void) => (() => void)
-	pressed: boolean
 } & InputHandle<Input.Button>
 

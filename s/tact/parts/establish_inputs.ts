@@ -30,7 +30,6 @@ export function establish_inputs<B extends Bindings.Catalog>(bindings: B): Input
 			return {
 				on,
 				input,
-				pressed: false,
 				onPressed: fn => on(input => {
 					if (input.down && !input.repeat)
 						fn(input)
