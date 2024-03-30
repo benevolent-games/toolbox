@@ -16,6 +16,7 @@ export * from "./types/input.js"
 
 export class Tact<B extends Bindings.Catalog> {
 	static devices = {Keyboard, MouseButtons, PointerMovements}
+
 	static bindings<B extends Bindings.Catalog>(fn: (h: BindingsHelpers) => B) {
 		return fn(bindings_helpers)
 	}

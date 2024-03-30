@@ -1,7 +1,7 @@
 
 import {Pub, pub} from "@benev/slate"
+import {id_counter} from "../tools/id.js"
 import {measure} from "../tools/measure.js"
-import {id_counter} from "../tools/id_counter.js"
 
 export namespace Ecs3 {
 	export type Id = number

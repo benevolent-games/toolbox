@@ -29,8 +29,10 @@ export namespace Input {
 		kind: "button"
 		code: string
 		down: boolean
-		mods: Modifiers
 		repeat: boolean
+
+		// TODO rename this to `modifiers`
+		mods: Modifiers
 	}
 
 	export interface Vector extends Base {
