@@ -5,23 +5,35 @@ import {nexus} from "../nexus.js"
 import {styles} from "./styles.js"
 import {Stage} from "../../stage/stage.js"
 import {Framerate} from "./views/framerate/view.js"
+import {pointerType} from "./utils/pointer_type.js"
 
 export const Theater = nexus.shadow_view(use => ({
-		stage, menus, leadButton,
-		onLeadToggled = () => {},
+		stage, menus, menuButton,
+		onMenuClick = () => {},
+		onMenuTouch = () => {},
+		onBackdropClick = () => {},
+		onBackdropTouch = () => {},
 	}: {
 		stage: Stage
 		menus: Menus
-		leadButton: any
-		onLeadToggled?: (open: boolean) => void
+		menuButton: any
+		onMenuClick?: (event: PointerEvent) => void
+		onMenuTouch?: (event: PointerEvent) => void
+		onBackdropClick?: (event: PointerEvent) => void
+		onBackdropTouch?: (event: PointerEvent) => void
 	}) => {
 
 	use.styles(styles)
 
-	function clickLead() {
-		menus.toggle()
-		onLeadToggled(menus.open.value)
-	}
+	const onBackdrop = pointerType({
+		onMouse: onBackdropClick,
+		onTouch: onBackdropTouch,
+	})
+
+	const onMenu = pointerType({
+		onMouse: onMenuClick,
+		onTouch: onMenuTouch,
+	})
 
 	return html`
 		${stage.porthole.canvas}
@@ -29,12 +41,12 @@ export const Theater = nexus.shadow_view(use => ({
 		<slot></slot>
 
 		<div class=overlay ?data-open="${menus.open.value}">
+			<div class=backdrop @pointerdown="${onBackdrop}"></div>
+
 			<div class=plate>
 				<nav>
-					<button
-						class=lead
-						@click="${clickLead}">
-						${leadButton}
+					<button class=menubutton @pointerdown="${onMenu}">
+						${menuButton}
 					</button>
 
 					<button
@@ -61,7 +73,9 @@ export const Theater = nexus.shadow_view(use => ({
 					</button>
 				</nav>
 
-				<div class=panel>${menus.panel({stage})}</div>
+				<div class=panel>
+					${menus.panel({stage})}
+				</div>
 			</div>
 
 			${Framerate([stage])}

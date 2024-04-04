@@ -1,8 +1,8 @@
 
+import {ev} from "@benev/slate"
+
 export class PointerLocker {
-	constructor(public element: HTMLElement) {
-		element.addEventListener("click", () => this.lock())
-	}
+	constructor(public element: HTMLElement) {}
 
 	get locked() {
 		return !!document.pointerLockElement
@@ -25,12 +25,12 @@ export class PointerLocker {
 			this.lock()
 	}
 
-	onLockChange(fn: (locked: boolean) => {}) {
+	onLockChange(fn: (locked: boolean) => void) {
 		const listener = () => fn(this.locked)
-		document.addEventListener("pointerlockchange", listener)
-		return () => {
-			document.removeEventListener("pointerlockchange", listener)
-		}
+		return ev(document, {
+			pointerlockchange: listener,
+			pointerlockerror: listener,
+		})
 	}
 }
 

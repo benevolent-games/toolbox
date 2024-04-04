@@ -18,16 +18,26 @@ canvas {
 	inset: 0;
 	width: 100%;
 	height: 100%;
+	&:focus { outline: 0; }
 }
 
 .overlay {
 	pointer-events: none;
+	z-index: 0;
 	position: absolute;
 	inset: 0;
 	width: 100%;
 	height: 100%;
 
+	> .backdrop {
+		z-index: 1;
+		position: absolute;
+		inset: 0;
+	}
+
 	> .plate {
+		z-index: 3;
+		position: relative;
 		width: 100%;
 		height: 100%;
 		padding: 0.5rem;
@@ -40,7 +50,6 @@ canvas {
 			display: flex;
 
 			> * {
-				pointer-events: all;
 				color: var(--text);
 				background: var(--bg2);
 				padding: 0.2em 0.6em;
@@ -54,7 +63,7 @@ canvas {
 				&:focus { outline: 0; }
 			}
 
-			.lead {
+			.menubutton {
 				opacity: 1;
 				background: var(--primary);
 				text-shadow: 1px 1px 2px #000;
@@ -78,7 +87,7 @@ canvas {
 		}
 
 		> .panel {
-			pointer-events: all;
+			z-index: 2;
 			flex: 1 1 auto;
 			padding: 0.5em;
 			overflow-y: auto;
@@ -99,11 +108,18 @@ canvas {
 		padding: 0.5rem;
 	}
 
+	&[data-open] {
+		.panel { pointer-events: all; }
+		.backdrop { pointer-events: all; }
+		.plate > nav > * { pointer-events: all; }
+	}
+
 	&:not([data-open]) {
 		:is(.panel, .arrow, .menu-item) {
 			opacity: 0 !important;
 		}
-		.lead {
+		.menubutton {
+			pointer-events: all;
 			opacity: 0.3 !important;
 			background: #0000 !important;
 		}

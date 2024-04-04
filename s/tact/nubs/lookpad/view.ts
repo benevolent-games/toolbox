@@ -19,6 +19,7 @@ export const NubLookpad = nub_nexus.shadow_view(use => (device: Movements) => {
 				vector: [event.movementX, event.movementY],
 			}),
 		}))
+		return pad
 	})
 
 	return html`${pad}`
