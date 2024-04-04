@@ -1,31 +1,29 @@
 
 import {litListener} from "@benev/slate"
-import {Vec2} from "../../../../math/vec2.js"
 
-export function make_pointer_listeners({
-		set_vector,
-		set_pointer_position,
+export function lookpad_listeners({
+		on_pointer_drag, get_pointer_capture_element,
 	}: {
-		set_vector: (vector: Vec2) => void
-		set_pointer_position: (position: Vec2) => void
+		on_pointer_drag: ({}: PointerEvent) => void
+		get_pointer_capture_element: () => HTMLElement
 	}) {
 
 	let pointer_id: number | undefined
 
 	return {
+
 		pointerdown: litListener<PointerEvent>({
 			handleEvent: event => {
 				event.preventDefault()
 
-				const element = event.currentTarget as HTMLElement
+				const element = get_pointer_capture_element()
 
 				if (pointer_id)
 					element.releasePointerCapture(pointer_id)
 
 				pointer_id = event.pointerId
 				element.setPointerCapture(pointer_id)
-				set_pointer_position([event.clientX, event.clientY])
-				set_vector([0, 0])
+				on_pointer_drag(event)
 			},
 		}),
 
@@ -35,15 +33,19 @@ export function make_pointer_listeners({
 				event.preventDefault()
 
 				if (event.pointerId === pointer_id)
-					set_pointer_position([event.clientX, event.clientY])
+					on_pointer_drag(event)
 			},
 		}),
 
 		pointerup: litListener<PointerEvent>({
 			handleEvent: event => {
 				event.preventDefault()
-				pointer_id = undefined
-				set_vector([0, 0])
+
+				if (event.pointerId === pointer_id) {
+					get_pointer_capture_element().releasePointerCapture(pointer_id)
+					pointer_id = undefined
+					on_pointer_drag(event)
+				}
 			},
 		}),
 	}

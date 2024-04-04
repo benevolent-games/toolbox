@@ -5,23 +5,36 @@ import {nexus} from "../nexus.js"
 import {styles} from "./styles.js"
 import {Stage} from "../../stage/stage.js"
 import {Framerate} from "./views/framerate/view.js"
+import {pointerType} from "./utils/pointer_type.js"
 
 export const Theater = nexus.shadow_view(use => ({
-		stage, menus, leadButton,
-		onLeadToggled = () => {},
+		stage, menus, menuButton, arrows,
+		onMenuClick = () => {},
+		onMenuTouch = () => {},
+		onBackdropClick = () => {},
+		onBackdropTouch = () => {},
 	}: {
 		stage: Stage
 		menus: Menus
-		leadButton: any
-		onLeadToggled?: (open: boolean) => void
+		menuButton: any
+		arrows: boolean
+		onMenuClick?: (event: PointerEvent) => void
+		onMenuTouch?: (event: PointerEvent) => void
+		onBackdropClick?: (event: PointerEvent) => void
+		onBackdropTouch?: (event: PointerEvent) => void
 	}) => {
 
 	use.styles(styles)
 
-	function clickLead() {
-		menus.toggle()
-		onLeadToggled(menus.open.value)
-	}
+	const onBackdrop = pointerType({
+		onMouse: onBackdropClick,
+		onTouch: onBackdropTouch,
+	})
+
+	const onMenu = pointerType({
+		onMouse: onMenuClick,
+		onTouch: onMenuTouch,
+	})
 
 	return html`
 		${stage.porthole.canvas}
@@ -29,42 +42,51 @@ export const Theater = nexus.shadow_view(use => ({
 		<slot></slot>
 
 		<div class=overlay ?data-open="${menus.open.value}">
-			<div class=plate>
-				<nav>
-					<button
-						class=lead
-						@click="${clickLead}">
-						${leadButton}
-					</button>
+			<div class=backdrop @pointerdown="${onBackdrop}"></div>
+			<div class=baseplate>
+				<slot name=baseplate></slot>
 
-					<button
-						class=arrow
-						title="press q"
-						@click="${() => menus.previous()}">
-						❮
-					</button>
-
-					${menus.names.map(({name, active, activate}) => html`
-						<button
-							class=menu-item
-							?data-active="${active}"
-							@click="${activate}">
-							${name}
+				<div class=plate>
+					<nav>
+						<button class=menubutton @pointerdown="${onMenu}">
+							${menuButton}
 						</button>
-					`)}
 
-					<button
-						class=arrow
-						title="press e"
-						@click="${() => menus.next()}">
-						❯
-					</button>
-				</nav>
+						${arrows ? html`
+							<button
+								class=arrow
+								title="press q"
+								@click="${() => menus.previous()}">
+								❮
+							</button>
+						` : html`<div class=spacer></div>`}
 
-				<div class=panel>${menus.panel({stage})}</div>
+						${menus.names.map(({name, active, activate}) => html`
+							<button
+								class=menu-item
+								?data-active="${active}"
+								@click="${activate}">
+								${name}
+							</button>
+						`)}
+
+						${arrows ? html`
+							<button
+								class=arrow
+								title="press e"
+								@click="${() => menus.next()}">
+								❯
+							</button>
+						` : null}
+					</nav>
+
+					<div class=panel>
+						${menus.panel({stage})}
+					</div>
+				</div>
+
+				${Framerate([stage])}
 			</div>
-
-			${Framerate([stage])}
 		</div>
 	`
 })

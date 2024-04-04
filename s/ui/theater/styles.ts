@@ -18,17 +18,40 @@ canvas {
 	inset: 0;
 	width: 100%;
 	height: 100%;
+	&:focus { outline: 0; }
 }
 
 .overlay {
 	pointer-events: none;
+	z-index: 0;
 	position: absolute;
 	inset: 0;
 	width: 100%;
 	height: 100%;
 
-	> .plate {
-		width: 100%;
+	.backdrop {
+		z-index: 1;
+		position: absolute;
+		inset: 0;
+	}
+
+	.baseplate {
+		position: absolute;
+		inset: 0;
+		margin: auto;
+		margin-top: 0;
+		aspect-ratio: 16 / 9;
+		max-height: 100%;
+		max-width: 100%;
+		width: auto;
+		height: 100%;
+		> slot { pointer-events: all; }
+	}
+
+	.plate {
+		z-index: 3;
+		position: relative;
+		width: 80%;
 		height: 100%;
 		padding: 0.5rem;
 		max-width: 40rem;
@@ -40,10 +63,9 @@ canvas {
 			display: flex;
 
 			> * {
-				pointer-events: all;
 				color: var(--text);
 				background: var(--bg2);
-				padding: 0.2em 0.6em;
+				padding: 0.5em;
 				transition: all var(--speed) linear;
 			}
 
@@ -54,13 +76,15 @@ canvas {
 				&:focus { outline: 0; }
 			}
 
-			.lead {
+			.menubutton {
 				opacity: 1;
+				padding-left: 1.2em;
+				padding-right: 1.2em;
 				background: var(--primary);
 				text-shadow: 1px 1px 2px #000;
 			}
 
-			:is(.menu-item, .arrow) {
+			:is(.menu-item, .arrow, .spacer) {
 				opacity: 0.5;
 				color: color-mix(in srgb, transparent, var(--text) 50%);
 				&:hover {
@@ -78,7 +102,7 @@ canvas {
 		}
 
 		> .panel {
-			pointer-events: all;
+			z-index: 2;
 			flex: 1 1 auto;
 			padding: 0.5em;
 			overflow-y: auto;
@@ -91,19 +115,26 @@ canvas {
 		}
 	}
 
-	> [view="framerate"] {
+	[view="framerate"] {
 		font-size: 0.8em;
 		position: absolute;
 		top: 0;
 		right: 0;
-		padding: 0.5rem;
+		padding: 1rem;
+	}
+
+	&[data-open] {
+		.panel { pointer-events: all; }
+		.backdrop { pointer-events: all; }
+		.plate > nav > * { pointer-events: all; }
 	}
 
 	&:not([data-open]) {
-		:is(.panel, .arrow, .menu-item) {
+		:is(.panel, .arrow, .menu-item, .spacer) {
 			opacity: 0 !important;
 		}
-		.lead {
+		.menubutton {
+			pointer-events: all;
 			opacity: 0.3 !important;
 			background: #0000 !important;
 		}

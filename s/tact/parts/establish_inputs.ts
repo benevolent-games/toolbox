@@ -2,6 +2,7 @@
 import {flat, ob} from "@benev/slate"
 
 import {Input} from "../types/input.js"
+import {isPressed} from "./is_pressed.js"
 import {vec2} from "../../math/exports.js"
 import {pubsub} from "../../tools/pubsub.js"
 import {Bindings} from "../types/bindings.js"
@@ -30,8 +31,9 @@ export function establish_inputs<B extends Bindings.Catalog>(bindings: B): Input
 			return {
 				on,
 				input,
+				pressed: null,
 				onPressed: fn => on(input => {
-					if (input.down && !input.repeat)
+					if (isPressed(input))
 						fn(input)
 				}),
 			}

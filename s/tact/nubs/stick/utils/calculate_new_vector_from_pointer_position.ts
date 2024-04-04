@@ -1,5 +1,5 @@
 
-import {Vec2} from "../../../../math/vec2.js"
+import {Vec2, zero} from "../../../../math/vec2.js"
 import {within_radius} from "./within_radius.js"
 import {Basis} from "../../stick-graphic/types/basis.js"
 import {find_closest_point_on_circle} from "./find_closest_point_on_circle.js"
@@ -16,7 +16,12 @@ export function calculate_new_vector_from_pointer_position(
 
 	if (!within_radius(radius, new_vector))
 		new_vector = find_closest_point_on_circle(radius, new_vector)
-
 	const [x, y] = new_vector
-	return [(x / radius), -(y / radius)]
+
+	const final: Vec2 = [(x / radius), -(y / radius)]
+
+	return final.some(isNaN)
+		? zero()
+		: final
 }
+

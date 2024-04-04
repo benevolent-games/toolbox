@@ -2,6 +2,7 @@
 import {Modes} from "./modes.js"
 import {Input} from "../types/input.js"
 import {Inputs} from "../types/inputs.js"
+import {isPressed} from "./is_pressed.js"
 import {Bindings} from "../types/bindings.js"
 import {input_matches_button, input_matches_vector} from "./matching.js"
 
@@ -22,6 +23,9 @@ export function consider_input<B extends Bindings.Catalog>(
 							const handle = buttons[name]
 							handle.input = input
 							handle.on.publish(input)
+							handle.pressed = isPressed(input)
+								? input
+								: null
 						}
 					}
 				} break
