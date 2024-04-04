@@ -65,7 +65,7 @@ canvas {
 			> * {
 				color: var(--text);
 				background: var(--bg2);
-				padding: 0.5em 1em;
+				padding: 0.5em;
 				transition: all var(--speed) linear;
 			}
 
@@ -78,11 +78,13 @@ canvas {
 
 			.menubutton {
 				opacity: 1;
+				padding-left: 1.2em;
+				padding-right: 1.2em;
 				background: var(--primary);
 				text-shadow: 1px 1px 2px #000;
 			}
 
-			:is(.menu-item, .arrow) {
+			:is(.menu-item, .arrow, .spacer) {
 				opacity: 0.5;
 				color: color-mix(in srgb, transparent, var(--text) 50%);
 				&:hover {
@@ -128,7 +130,7 @@ canvas {
 	}
 
 	&:not([data-open]) {
-		:is(.panel, .arrow, .menu-item) {
+		:is(.panel, .arrow, .menu-item, .spacer) {
 			opacity: 0 !important;
 		}
 		.menubutton {
