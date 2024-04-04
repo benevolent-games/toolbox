@@ -1,4 +1,5 @@
 
+export * from "./utils/cap_vector_to_magnitude_1.js"
 export * from "./types/cardinals.js"
 export * from "./types/modifiers.js"
 export * from "./types/speeds.js"
