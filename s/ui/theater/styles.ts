@@ -29,16 +29,28 @@ canvas {
 	width: 100%;
 	height: 100%;
 
-	> .backdrop {
+	.backdrop {
 		z-index: 1;
 		position: absolute;
 		inset: 0;
 	}
 
-	> .plate {
+	.baseplate {
+		position: absolute;
+		inset: 0;
+		margin: auto;
+		margin-top: 0;
+		aspect-ratio: 16 / 9;
+		max-height: 100%;
+		max-width: 100%;
+		width: auto;
+		height: 100%;
+	}
+
+	.plate {
 		z-index: 3;
 		position: relative;
-		width: 100%;
+		width: 80%;
 		height: 100%;
 		padding: 0.5rem;
 		max-width: 40rem;
@@ -100,7 +112,7 @@ canvas {
 		}
 	}
 
-	> [view="framerate"] {
+	[view="framerate"] {
 		font-size: 0.8em;
 		position: absolute;
 		top: 0;

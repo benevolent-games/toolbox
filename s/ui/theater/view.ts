@@ -42,43 +42,44 @@ export const Theater = nexus.shadow_view(use => ({
 
 		<div class=overlay ?data-open="${menus.open.value}">
 			<div class=backdrop @pointerdown="${onBackdrop}"></div>
-
-			<div class=plate>
-				<nav>
-					<button class=menubutton @pointerdown="${onMenu}">
-						${menuButton}
-					</button>
-
-					<button
-						class=arrow
-						title="press q"
-						@click="${() => menus.previous()}">
-						❮
-					</button>
-
-					${menus.names.map(({name, active, activate}) => html`
-						<button
-							class=menu-item
-							?data-active="${active}"
-							@click="${activate}">
-							${name}
+			<div class=baseplate>
+				<div class=plate>
+					<nav>
+						<button class=menubutton @pointerdown="${onMenu}">
+							${menuButton}
 						</button>
-					`)}
 
-					<button
-						class=arrow
-						title="press e"
-						@click="${() => menus.next()}">
-						❯
-					</button>
-				</nav>
+						<button
+							class=arrow
+							title="press q"
+							@click="${() => menus.previous()}">
+							❮
+						</button>
 
-				<div class=panel>
-					${menus.panel({stage})}
+						${menus.names.map(({name, active, activate}) => html`
+							<button
+								class=menu-item
+								?data-active="${active}"
+								@click="${activate}">
+								${name}
+							</button>
+						`)}
+
+						<button
+							class=arrow
+							title="press e"
+							@click="${() => menus.next()}">
+							❯
+						</button>
+					</nav>
+
+					<div class=panel>
+						${menus.panel({stage})}
+					</div>
 				</div>
-			</div>
 
-			${Framerate([stage])}
+				${Framerate([stage])}
+			</div>
 		</div>
 	`
 })
