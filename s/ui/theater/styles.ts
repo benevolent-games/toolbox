@@ -45,6 +45,7 @@ canvas {
 		max-width: 100%;
 		width: auto;
 		height: 100%;
+		> slot { pointer-events: all; }
 	}
 
 	.plate {
@@ -64,7 +65,7 @@ canvas {
 			> * {
 				color: var(--text);
 				background: var(--bg2);
-				padding: 0.2em 0.6em;
+				padding: 0.5em 1em;
 				transition: all var(--speed) linear;
 			}
 
@@ -117,7 +118,7 @@ canvas {
 		position: absolute;
 		top: 0;
 		right: 0;
-		padding: 0.5rem;
+		padding: 1rem;
 	}
 
 	&[data-open] {

@@ -8,7 +8,7 @@ import {Framerate} from "./views/framerate/view.js"
 import {pointerType} from "./utils/pointer_type.js"
 
 export const Theater = nexus.shadow_view(use => ({
-		stage, menus, menuButton,
+		stage, menus, menuButton, arrows,
 		onMenuClick = () => {},
 		onMenuTouch = () => {},
 		onBackdropClick = () => {},
@@ -17,6 +17,7 @@ export const Theater = nexus.shadow_view(use => ({
 		stage: Stage
 		menus: Menus
 		menuButton: any
+		arrows: boolean
 		onMenuClick?: (event: PointerEvent) => void
 		onMenuTouch?: (event: PointerEvent) => void
 		onBackdropClick?: (event: PointerEvent) => void
@@ -43,18 +44,22 @@ export const Theater = nexus.shadow_view(use => ({
 		<div class=overlay ?data-open="${menus.open.value}">
 			<div class=backdrop @pointerdown="${onBackdrop}"></div>
 			<div class=baseplate>
+				<slot name=baseplate></slot>
+
 				<div class=plate>
 					<nav>
 						<button class=menubutton @pointerdown="${onMenu}">
 							${menuButton}
 						</button>
 
-						<button
-							class=arrow
-							title="press q"
-							@click="${() => menus.previous()}">
-							❮
-						</button>
+						${(arrows || null) && html`
+							<button
+								class=arrow
+								title="press q"
+								@click="${() => menus.previous()}">
+								❮
+							</button>
+						`}
 
 						${menus.names.map(({name, active, activate}) => html`
 							<button
@@ -65,12 +70,14 @@ export const Theater = nexus.shadow_view(use => ({
 							</button>
 						`)}
 
-						<button
-							class=arrow
-							title="press e"
-							@click="${() => menus.next()}">
-							❯
-						</button>
+						${(arrows || null) && html`
+							<button
+								class=arrow
+								title="press e"
+								@click="${() => menus.next()}">
+								❯
+							</button>
+						`}
 					</nav>
 
 					<div class=panel>
