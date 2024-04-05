@@ -77,7 +77,7 @@ export class Stage {
 		scene.useRightHandedSystem = true
 		CompatibilityOptions.UseOpenGLOrientationForUV = true
 
-		const gameloop = this.gameloop = new Gameloop(engine, scene, tickrate_hz)
+		const gameloop = this.gameloop = new Gameloop(engine, scene, tickrate_hz, 288)
 		this.rendering = new Rendering(scene)
 		this.pointerLocker = new PointerLocker(porthole.canvas)
 		this.load_glb = async(url: string) => load_glb(scene, url)
