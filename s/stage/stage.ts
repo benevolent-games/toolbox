@@ -42,7 +42,12 @@ export class Stage {
 
 	constructor({background, tickrate_hz}: StageOptions) {
 		const porthole = this.porthole = new Porthole()
-		const engine = this.engine = new Engine(porthole.canvas)
+
+		const engine = this.engine = new Engine(porthole.canvas, undefined, {
+			alpha: false,
+			desynchronized: true,
+		})
+
 		const scene = this.scene = new Scene(engine)
 		scene.clearColor = new Color4(...background)
 
