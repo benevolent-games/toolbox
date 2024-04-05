@@ -1,4 +1,5 @@
 
+import {ev} from "@benev/slate"
 import {Movements} from "./movements.js"
 import {Vec2, add} from "../../math/vec2.js"
 
@@ -19,11 +20,11 @@ export class PointerMovements extends Movements {
 			this.dispatch({event, vector: movement})
 		}
 
-		target.addEventListener("pointermove", listener as any)
-
-		this.dispose = () => {
-			target.removeEventListener("pointermove", listener as any)
-		}
+		this.dispose = ev(target, (
+			"onpointerrawupdate" in document
+				? {pointerrawupdate: listener}
+				: {pointermove: listener}
+		))
 	}
 }
 

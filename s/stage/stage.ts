@@ -32,9 +32,31 @@ export class Stage {
 	pointerLocker: PointerLocker
 	load_glb: (url: string) => Promise<AssetContainer>
 
-	#last_tick_time: number
+	#last_tick_time: number = performance.now()
 	#tick_counter: number = 0
 	#tick_rate: number = 0
+
+	#calculate_tick_rate() {
+		this.#tick_counter++
+		const currentTime = performance.now()
+
+		if ((currentTime - this.#last_tick_time) >= 1000) {
+			this.#tick_rate = this.#tick_counter
+			this.#tick_counter = 0
+			this.#last_tick_time = currentTime
+		}
+	}
+
+	#rotate_fallback_camera() {
+		const {rendering} = this
+		if (rendering.camera === rendering.fallbackCamera) {
+			rendering.fallbackCamera.alpha = wrap(
+				rendering.fallbackCamera.alpha + radians.from.degrees(0.1),
+				0,
+				radians.circle,
+			)
+		}
+	}
 
 	get measured_tick_rate() {
 		return this.#tick_rate
@@ -42,7 +64,12 @@ export class Stage {
 
 	constructor({background, tickrate_hz}: StageOptions) {
 		const porthole = this.porthole = new Porthole()
-		const engine = this.engine = new Engine(porthole.canvas)
+
+		const engine = this.engine = new Engine(porthole.canvas, undefined, {
+			alpha: false,
+			desynchronized: true,
+		})
+
 		const scene = this.scene = new Scene(engine)
 		scene.clearColor = new Color4(...background)
 
@@ -50,29 +77,14 @@ export class Stage {
 		scene.useRightHandedSystem = true
 		CompatibilityOptions.UseOpenGLOrientationForUV = true
 
-		const gameloop = this.gameloop = new Gameloop(engine, scene, tickrate_hz)
-		const rendering = this.rendering = new Rendering(scene)
+		const gameloop = this.gameloop = new Gameloop(engine, scene, tickrate_hz, 288)
+		this.rendering = new Rendering(scene)
 		this.pointerLocker = new PointerLocker(porthole.canvas)
 		this.load_glb = async(url: string) => load_glb(scene, url)
 
-		this.#last_tick_time = performance.now()
 		gameloop.onTick(() => {
-			this.#tick_counter++
-			const currentTime = performance.now()
-
-			if (currentTime - this.#last_tick_time >= 1000) {
-				this.#tick_rate = this.#tick_counter
-				this.#tick_counter = 0
-				this.#last_tick_time = currentTime
-			}
-
-			if (rendering.camera === rendering.fallbackCamera) {
-				rendering.fallbackCamera.alpha = wrap(
-					rendering.fallbackCamera.alpha + radians.from.degrees(0.1),
-					0,
-					radians.circle,
-				)
-			}
+			this.#calculate_tick_rate()
+			this.#rotate_fallback_camera()
 		})
 	}
 }
