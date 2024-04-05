@@ -29,12 +29,12 @@ export class Physics {
 	constructor(o: PhysicsOptions) {
 		this.scene = o.scene
 		this.world = new Rapier.World(vec3.to.xyz(o.gravity))
-		this.world.timestep = 1 / o.hertz
 		this.bonding = new PhysicsBonding()
 		this.colors = o.colors ?? debug_colors(o.scene)
 	}
 
-	step() {
+	step(seconds: number) {
+		this.world.timestep = seconds
 		this.world.step(this.#queue)
 		this.bonding.synchronize()
 

@@ -10,7 +10,6 @@ import {DebugColors} from "../../tools/debug_colors.js"
 export type PhysicsOptions = {
 	scene: Scene
 	gravity: Vec3
-	hertz: number
 	colors?: DebugColors
 }
 
