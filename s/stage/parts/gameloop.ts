@@ -1,5 +1,4 @@
-
-import {interval, pub} from "@benev/slate"
+import {pub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 
@@ -28,14 +27,49 @@ export class Gameloop {
 		return this.#running
 	}
 
+	maximumFps = 250;
+	lastTick = performance.now();
+	lastRender = performance.now();
+
+	beforeRenderLoop = () => {
+		// Camera movement and anything here right before scene render
+		this.onRender.publish();
+		// Tick functions here
+		this.onTick.publish();
+	}
+
+	runTick = () => {
+		const tickDeltaTime = performance.now() - this.lastTick;
+		if (tickDeltaTime >= (1000 / 70)) {
+			// Reset lastTick
+			this.lastTick = performance.now();
+		}
+	}
+
+	renderFrame = () => {
+		const renderDeltaTime = performance.now() - this.lastRender;
+		if (renderDeltaTime >= (1000 / this.maximumFps)) {
+			// Render babylonjs
+			this.engine.beginFrame();
+			this.scene.render();
+			this.engine.endFrame();
+
+			// Reset lastRender
+			this.lastRender = performance.now();
+		}
+	}
+
+	renderLoop = () => {
+		this.runTick();
+		this.renderFrame();
+		requestAnimationFrame(this.renderLoop);
+	}
+
 	start() {
 		if (!this.#running) {
 			this.#running = true
-			this.#interval = interval(this.tickrate_hz, () => this.onTick.publish())
-			this.engine.runRenderLoop(() => {
-				this.onRender.publish()
-				this.scene.render()
-			})
+			requestAnimationFrame(this.renderLoop);
+			this.scene.registerBeforeRender(this.beforeRenderLoop);
 		}
 	}
 
