@@ -29,8 +29,13 @@ export const Framerate = nexus.shadow_view(use => (stage: Stage) => {
 
 	return html`
 		<span class=framerate>${Math.round(framerate.value)}</span>
-		<span class=spacer>::</span>
-		<span class=tickrate>${Math.round(tickrate.value)}</span>
 	`
 })
+
+/*
+
+<span class=spacer>::</span>
+<span class=tickrate>${Math.round(tickrate.value)}</span>
+
+*/
 
