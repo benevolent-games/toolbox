@@ -37,6 +37,7 @@ export * from "./math/noise.js"
 export * from "./math/rand.js"
 export * from "./math/exports.js"
 
+export * from "./tools/nametag/nametag.js"
 export * from "./tools/trajectory/exports.js"
 export * from "./tools/ascii_progress_bar.js"
 export * from "./tools/assert_babylon_quaternion.js"
