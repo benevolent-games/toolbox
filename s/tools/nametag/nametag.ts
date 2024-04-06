@@ -1,7 +1,7 @@
 
 export const nametag = (namestring: string) => new Nametag(namestring)
 
-export class Nametag extends Map<string, string | null> {
+export class Nametag extends Map<string, string | true> {
 	name: string
 	meta: string | null
 
@@ -22,9 +22,9 @@ export class Nametag extends Map<string, string | null> {
 		let namestring = `${this.name}`
 
 		for (const [tagName, tagValue] of this.entries())
-			namestring += tagValue
-				? `::${tagName}=${tagValue}`
-				: `::${tagName}`
+			namestring += (tagValue === true || tagValue === "")
+				? `::${tagName}`
+				: `::${tagName}=${tagValue}`
 
 		if (this.meta)
 			namestring += `.${this.meta}`
@@ -42,23 +42,23 @@ export class Nametag extends Map<string, string | null> {
 		else return [namestring, null]
 	}
 
-	static #parse_tags(alpha: string): [string, [string, string | null][]] {
+	static #parse_tags(alpha: string): [string, [string, string | true][]] {
 		if (alpha.includes("::")) {
 			const parts = alpha.split("::")
 			const [beta, ...tagBodies] = parts
 			const tags = tagBodies
-				.map((tagBody): null | [string, string | null] => {
+				.map((tagBody): null | [string, string | true] => {
 					if (!tagBody)
 						return null
 					if (tagBody.includes("=")) {
 						const [tagName, ...valuechunks] = tagBody.split("=")
 						return tagName
-							? [tagName, valuechunks.join("=")]
+							? [tagName, valuechunks.join("=") || true]
 							: null
 					}
-					else return [tagBody, null]
+					else return [tagBody, true]
 				})
-				.filter(t => t !== null) as [string, string | null][]
+				.filter(t => t !== null) as [string, string | true][]
 			return [beta, tags]
 		}
 		else return [alpha, []]
