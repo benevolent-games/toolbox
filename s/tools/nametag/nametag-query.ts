@@ -2,6 +2,7 @@
 import {nametag} from "./nametag.js"
 import {Meshoid} from "../../babyloid/types.js"
 
+/** obtain a nametag param on the mesh or its material */
 export function nametagQuery(mesh: Meshoid, paramName: string): true | string | null {
 	let value: true | string | null = null
 	const meshname = nametag(mesh.name)

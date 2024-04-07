@@ -6,6 +6,7 @@ export default {
 	async "we can parse name"() {
 		expect(nametag("").name).equals("")
 		expect(nametag("chase").name).equals("chase")
+		expect(nametag(" chase ").name).equals("chase")
 	},
 
 	async "we can parse params"() {
@@ -19,6 +20,7 @@ export default {
 		expect(nametag("::=").size).equals(0)
 		expect(nametag("::cool::lol").size).equals(2)
 		expect(nametag("::cool=1::lol=2").size).equals(2)
+		expect(nametag(":: cool ").has("cool")).equals(true)
 	},
 
 	async "we can parse meta"() {
@@ -26,6 +28,7 @@ export default {
 		expect(nametag(".").meta).equals("")
 		expect(nametag(".001").meta).equals("001")
 		expect(nametag(".lol.001").meta).equals("lol.001")
+		expect(nametag(". lol.001 ").meta).equals("lol.001")
 	},
 
 	async "we can parse wacky mixtures of stuff"() {
@@ -46,6 +49,12 @@ export default {
 			expect(x.name).equals("chase")
 			expect(x.size).equals(0)
 			expect(x.meta?.length)
+		}
+		{
+			const x = nametag("chase ::cool ::lol .rofl .001 ")
+			expect(x.name).equals("chase")
+			expect(x.size).equals(2)
+			expect(x.meta).equals("rofl .001")
 		}
 	},
 

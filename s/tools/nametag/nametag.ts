@@ -1,6 +1,34 @@
 
+/** nametag parsing/construction utility. see docs at the `Nametag` class. */
 export const nametag = (namestring: string) => new Nametag(namestring)
 
+/**
+ * nametag parsing and construction utility.
+ *
+ * artists use nametags to stuff meta-information into the name strings for glb meshes, materials, etc.
+ *
+ * - `Nametag` extend `Map`, so you can use get/set/clear methods, and iterator methods like `entries`, `keys`, and `values`.
+ * - the reason meta exists, is that blender auto-suffixes names with these `.123` numbers, so we simply parse this out so it can be safely ignored.
+ * - whitespace is trimmed off the name, meta, and each tag
+ *
+ * anatomy of a nametag:
+ *
+ * 	foliage::ghost::lod=2.001
+ * 	[  ↑  ][  ↑  ][  ↑  ][↑ ]
+ * 	 name    tag    tag  meta
+ *
+ * usage example:
+ *
+ * 	const tag = new Nametag(`foliage::ghost::lod=2.001`)
+ *
+ * 	tag.name // "foliage"
+ * 	tag.get("ghost") // true
+ * 	tag.get("lod") // "2"
+ * 	tag.get("unknown") // undefined
+ * 	tag.meta // "001"
+ *
+ * 	tag.toString() // "foliage::ghost::lod=2.001"
+ */
 export class Nametag extends Map<string, string | true> {
 	name: string
 	meta: string | null
@@ -11,11 +39,16 @@ export class Nametag extends Map<string, string | true> {
 		const [before, meta] = Nametag.#parse_meta(namestring)
 		const [name, params] = Nametag.#parse_params(before)
 
-		this.name = name
-		this.meta = meta
+		this.name = name.trim()
+		this.meta = meta ? meta.trim() : meta
 
 		for (const [paramName, paramValue] of params)
-			this.set(paramName, paramValue)
+			this.set(
+				paramName.trim(),
+				(typeof paramValue === "string")
+					? paramValue.trim()
+					: paramValue,
+			)
 	}
 
 	toString() {
