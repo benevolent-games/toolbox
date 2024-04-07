@@ -8,7 +8,7 @@ export default {
 		expect(nametag("chase").name).equals("chase")
 	},
 
-	async "we can parse tags"() {
+	async "we can parse params"() {
 		expect(nametag("::cool").has("cool")).equals(true)
 		expect(nametag("::cool").get("cool")).equals(true)
 		expect(nametag("::cool=").get("cool")).equals(true)
