@@ -1,10 +1,8 @@
 
-
 import {Suite, expect} from "cynic"
 import {nametag} from "./nametag.js"
 
 export default {
-
 	async "we can parse name"() {
 		expect(nametag("").name).equals("")
 		expect(nametag("chase").name).equals("chase")
