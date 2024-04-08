@@ -7,9 +7,8 @@ import {delete_meshes} from "./transforms/delete_meshes.js"
 import {std_transforms} from "./transforms/std_transforms.js"
 import {delete_all_normal_maps} from "./transforms/delete_all_normal_maps.js"
 
-export const tiers = [
-
-	["fancy", [
+export const tiers = {
+	fancy: [
 		textureCompress({
 			encoder: sharp,
 			targetFormat: "webp",
@@ -17,9 +16,8 @@ export const tiers = [
 			quality: 90,
 		}),
 		...std_transforms,
-	]],
-
-	["mid", [
+	],
+	mid: [
 		textureCompress({
 			encoder: sharp,
 			targetFormat: "webp",
@@ -28,9 +26,8 @@ export const tiers = [
 		}),
 		delete_meshes("#0"),
 		...std_transforms,
-	]],
-
-	["potato", [
+	],
+	potato: [
 		textureCompress({
 			encoder: sharp,
 			targetFormat: "webp",
@@ -40,7 +37,6 @@ export const tiers = [
 		delete_meshes("#0", "#1"),
 		delete_all_normal_maps(),
 		...std_transforms,
-	]],
-
-] satisfies [string, Transform[]][]
+	],
+} satisfies Record<string, Transform[]>
 
