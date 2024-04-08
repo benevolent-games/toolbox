@@ -6,15 +6,27 @@ import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {CompatibilityOptions} from "@babylonjs/core/Compat/compatibilityOptions.js"
 
 import {Vec4} from "../math/vec4.js"
-import {StageOptions} from "./types.js"
 import {Gameloop} from "./parts/gameloop.js"
 import {Porthole} from "./parts/porthole.js"
 import {load_glb} from "./utils/load_glb.js"
 import {radians, wrap} from "../math/scalar.js"
 import {Rendering} from "./rendering/rendering.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
+import {CreateStageOptions, StageOptions} from "./types.js"
+import {create_webgl_or_webgpu_engine} from "../tools/create_webgl_or_webgpu_engine.js"
 
 export class Stage {
+
+	static async create(options: CreateStageOptions) {
+		const porthole = new Porthole()
+		const engine = await create_webgl_or_webgpu_engine({
+			...options,
+			canvas: porthole.canvas,
+		})
+		const scene = new Scene(engine)
+		return new Stage({porthole, engine, scene, ...options})
+	}
+
 	static backgrounds = {
 		transparent: () => [0, 0, 0, 0] as Vec4,
 		black: () => [0, 0, 0, 1] as Vec4,
@@ -32,16 +44,11 @@ export class Stage {
 	pointerLocker: PointerLocker
 	load_glb: (url: string) => Promise<AssetContainer>
 
-	constructor({background}: StageOptions) {
-		const porthole = this.porthole = new Porthole()
+	constructor({porthole, engine, scene, background}: StageOptions) {
+		this.porthole = porthole
+		this.engine = engine
+		this.scene = scene
 
-		const engine = this.engine = new Engine(porthole.canvas, undefined, {
-			alpha: false,
-			desynchronized: true,
-			preserveDrawingBuffer: false,
-		})
-
-		const scene = this.scene = new Scene(engine)
 		scene.clearColor = new Color4(...background)
 
 		// we roll with opengl and gltf standards
