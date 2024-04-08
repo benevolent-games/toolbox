@@ -38,6 +38,7 @@ export class Stage {
 		const engine = this.engine = new Engine(porthole.canvas, undefined, {
 			alpha: false,
 			desynchronized: true,
+			preserveDrawingBuffer: false,
 		})
 
 		const scene = this.scene = new Scene(engine)
