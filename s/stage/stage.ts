@@ -53,7 +53,7 @@ export class Stage {
 		this.pointerLocker = new PointerLocker(porthole.canvas)
 		this.load_glb = async(url: string) => load_glb(scene, url)
 
-		gameloop.beforeRender(() => this.#rotate_fallback_camera())
+		gameloop.on(() => this.#rotate_fallback_camera())
 	}
 
 	#rotate_fallback_camera() {
