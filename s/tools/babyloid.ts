@@ -5,7 +5,6 @@ import {Node} from "@babylonjs/core/node.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
 
-import {nquery} from "../tools/nametag/nquery.js"
 import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 
@@ -14,9 +13,6 @@ export type Prop = TransformNode | Meshoid
 
 /** utilities for working with babylon objects. */
 export const babyloid = {
-
-	/** check the nametag of a babylon node or its material. */
-	nquery,
 
 	/** check what type of babylon node you'd dealing with. */
 	is: {
