@@ -1,6 +1,6 @@
 
-import {Quat} from "./quat.js"
-import {Vec3} from "./vec3.js"
+import {Quat} from "../math/quat.js"
+import {Vec3} from "../math/vec3.js"
 import {Node} from "@babylonjs/core/node.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {Quaternion, Vector3} from "@babylonjs/core/Maths/math.vector.js"
@@ -13,7 +13,7 @@ export type Meshoid = Mesh | InstancedMesh
 export type Prop = TransformNode | Meshoid
 
 /** utilities for working with babylon objects. */
-export const babylonian = {
+export const babyloid = {
 
 	/** check the nametag of a babylon node or its material. */
 	nquery,
@@ -44,7 +44,7 @@ export const babylonian = {
 	/** obtain a toolbox quat from a babylon transform node. */
 	ascertain: {
 		absoluteQuat: (transform: TransformNode) => {
-			return babylonian.to.quat(transform.absoluteRotationQuaternion ?? (
+			return babyloid.to.quat(transform.absoluteRotationQuaternion ?? (
 				Quaternion.RotationYawPitchRoll(
 					transform.rotation.y,
 					transform.rotation.x,
@@ -53,7 +53,7 @@ export const babylonian = {
 			))
 		},
 		quat: (transform: TransformNode) => {
-			return babylonian.to.quat(transform.rotationQuaternion ?? (
+			return babyloid.to.quat(transform.rotationQuaternion ?? (
 				Quaternion.RotationYawPitchRoll(
 					transform.rotation.y,
 					transform.rotation.x,

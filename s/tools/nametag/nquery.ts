@@ -1,7 +1,7 @@
 
 import {nametag} from "./nametag.js"
+import {babyloid} from "../babyloid.js"
 import {Node} from "@babylonjs/core/node.js"
-import {babylonian} from "../../math/babylonian.js"
 
 /** check the nametag of a babylon node or its material. */
 export const nquery = (node: Node) => ({
@@ -10,7 +10,7 @@ export const nquery = (node: Node) => ({
 		if (nametag(node.name).name === name)
 			return true
 		else if (
-			babylonian.is.meshoid(node) &&
+			babyloid.is.meshoid(node) &&
 			node.material &&
 			nametag(node.material.name).name === name
 		) return true
@@ -22,7 +22,7 @@ export const nquery = (node: Node) => ({
 		if (nodetag.has(param))
 			return nodetag.get(param)
 
-		else if (babylonian.is.meshoid(node) && node.material) {
+		else if (babyloid.is.meshoid(node) && node.material) {
 			const materialtag = nametag(node.material.name)
 			if (materialtag.has(param))
 				return materialtag.get(param)
