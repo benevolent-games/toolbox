@@ -38,6 +38,7 @@ export const radians = {
 // constraints and boundaries
 //
 
+// TODO rename to `under`
 /** clip a number so it "bottoms-out" (eg, return min if n is less than min). */
 export function bottom(n: number, min: number = 0) {
 	return n < min
@@ -45,6 +46,7 @@ export function bottom(n: number, min: number = 0) {
 		: n
 }
 
+// TODO rename to `over`
 /** clip a number so it "tops-out" (eg, return max if n is more than max). */
 export function top(n: number, max: number = 1) {
 	return n > max

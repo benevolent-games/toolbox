@@ -1,40 +1,54 @@
 
 import {pubsub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
+import {DeltaTimer} from "../../tools/delta_timer.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 
 export class Gameloop {
-	readonly beforeRender = pubsub<[number]>()
+	readonly on = pubsub<[number]>()
+	delta = new DeltaTimer({min_hertz: 10, max_hertz: 300})
 
-	#last = performance.now()
-	#running = false
-	get running() { return this.#running }
-	constructor(public engine: Engine, public scenes: Scene[]) {}
+	#starters: (() => () => void)[] = []
+	#stoppers: (() => void)[] = []
+
+	get running() {
+		return this.#stoppers.length > 0
+	}
+
+	constructor(public engine: Engine, public scenes: Scene[]) {
+		this.register(() => {
+			const fn = () => {
+				const ms = this.delta.measure()
+				this.on.publish(ms)
+				for (const scene of this.scenes)
+					scene.render()
+			}
+			engine.runRenderLoop(fn)
+			return () => engine.stopRenderLoop(fn)
+		})
+	}
+
+	register(fn: () => () => void) {
+		this.#starters.push(fn)
+	}
 
 	toggle() {
-		if (this.#running) this.stop()
+		if (this.running) this.stop()
 		else this.start()
-		return this.#running
+		return this.running
 	}
 
 	start() {
-		if (!this.#running) {
-			this.#last = performance.now()
-			this.engine.runRenderLoop(() => {
-				const now = performance.now()
-				const delta = now - this.#last
-				this.#last = now
-
-				this.beforeRender.publish(delta)
-
-				for (const scene of this.scenes)
-					scene.render()
-			})
+		if (!this.running) {
+			this.delta.measure()
+			for (const start of this.#starters)
+				this.#stoppers.push(start())
 		}
 	}
 
 	stop() {
-		this.engine.stopRenderLoop()
+		this.#stoppers.forEach(stop => stop())
+		this.#stoppers = []
 	}
 }
 
