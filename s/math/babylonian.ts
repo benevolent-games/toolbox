@@ -29,11 +29,13 @@ export const babylonian = {
 		),
 	},
 
+	/** convert to toolbox maths. */
 	to: {
 		vec3: ({x, y, z}: Vector3): Vec3 => [x, y, z],
 		quat: ({x, y, z, w}: Quaternion): Quat => [x, y, z, w],
 	},
 
+	/** convert to babylon maths. */
 	from: {
 		vec3: (v: Vec3) => new Vector3(...v),
 		quat: (q: Quat) => new Quaternion(...q),
