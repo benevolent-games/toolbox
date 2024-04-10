@@ -6,7 +6,7 @@ import {InstancedMesh} from "@babylonjs/core/Meshes/instancedMesh.js"
 
 import {Rapier} from "../rapier.js"
 import {prefab} from "../utils/prefab.js"
-import {Meshoid} from "../../babyloid/types.js"
+import {Meshoid} from "../../math/babylonian.js"
 import {Trashcan} from "../../tools/trashcan.js"
 import {transform_vertex_data} from "../utils/transform-vertex-data.js"
 

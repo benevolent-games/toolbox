@@ -1,7 +1,4 @@
 
-export * from "./babyloid/types.js"
-export * from "./babyloid/helpers.js"
-
 export * from "./ui/nui/checkbox.js"
 export * from "./ui/nui/color.js"
 export * from "./ui/nui/range.js"
@@ -37,7 +34,7 @@ export * from "./math/rand.js"
 export * from "./math/exports.js"
 
 export * from "./tools/nametag/nametag.js"
-export * from "./tools/nametag/nametag-query.js"
+export * from "./tools/nametag/nquery.js"
 export * from "./tools/trajectory/exports.js"
 export * from "./tools/ascii_progress_bar.js"
 export * from "./tools/assert_babylon_quaternion.js"
