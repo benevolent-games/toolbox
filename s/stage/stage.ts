@@ -24,6 +24,7 @@ export class Stage {
 			canvas: porthole.canvas,
 		})
 		const scene = new Scene(engine)
+		scene.detachControl()
 		return new Stage({porthole, engine, scene, ...options})
 	}
 
