@@ -91,6 +91,12 @@ export function wrap(n: number, a: number = 0, b: number = 1) {
 	return min + wrapped
 }
 
+export function proximal(a: number, b: number, epsilon: number) {
+	const diff = Math.abs(a - b)
+	return (diff <= epsilon)
+}
+
+// TODO rename to "nearclamp"
 /** enforce that a proposed number is near the base number. */
 export function nearby(base: number, proposal: number, maxDiff: number) {
 	const trueDiff = proposal - base
