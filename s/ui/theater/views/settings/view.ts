@@ -13,12 +13,13 @@ import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
 
-export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, prelude?: any) => {
+export const SettingsMenu = nexus.shadow_view(use => (stage: Stage) => {
 	use.name("settings-panel")
 	use.styles(styles)
 
 	const resolution = use.signal(stage.porthole.resolution * 100)
 
+	// establish flatstates for effects
 	const {effects, active} = use.once(() => {
 		const standard = Rendering.effects.everything()
 		const current = stage.rendering.effects
@@ -34,6 +35,8 @@ export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, prelude?: an
 		return {effects, active}
 	})
 
+	// collect a report about the current effects,
+	// deleting any inactive effect groups
 	function collect() {
 		const copy = clone(effects) as Partial<Effects>
 		for (const [key, value] of Object.entries(active))
@@ -42,18 +45,23 @@ export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, prelude?: an
 		return copy
 	}
 
+	// obtain the json string of the current collected effects
 	const json = use.signal(JSON.stringify(collect()))
 
+	// make a function that we can use to apply the groups,
+	// note that this is debounced
 	const apply_the_effects = use.once(() => debounce(500, (effects: Partial<Effects>) => {
 		json.value = JSON.stringify(effects)
 		stage.rendering.setEffects(effects)
 	}))
 
+	// react to any changes to effects by applying the effects
 	use.mount(() => reactor.reaction(
 		collect,
 		apply_the_effects,
 	))
 
+	// react to resolutions changes
 	use.mount(() => reactor.reaction(
 		() => stage.porthole.resolution = resolution.value / 100)
 	)
@@ -134,7 +142,7 @@ export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, prelude?: an
 	}
 
 	return html`
-		${prelude}
+		<slot></slot>
 
 		<article data-active>
 			<header>general</header>
