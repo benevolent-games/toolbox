@@ -7,44 +7,41 @@ import {nexus} from "../../../nexus.js"
 import {to} from "../../../../math/vec3.js"
 import {NuiColor} from "../../../nui/color.js"
 import {NuiRange} from "../../../nui/range.js"
+import {Bestorage} from "./parts/bestorage.js"
 import {NuiSelect} from "../../../nui/select.js"
 import {Stage} from "../../../../stage/stage.js"
-import {EffectsActuator} from "./parts/actuator.js"
 import {NuiCheckbox} from "../../../nui/checkbox.js"
+import {EffectsStates} from "./parts/effects-states.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
-import {JsonAllocators, JsonConfigurator} from "./parts/json-configurator.js"
 
-export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, allocators: JsonAllocators = {}) => {
+export type EffectsPanelData = {
+	resolution: number
+	effects: Partial<Effects>
+}
+
+export function defaultEffectsData(): EffectsPanelData {
+	return {
+		resolution: 100,
+		effects: {},
+	}
+}
+
+export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: Bestorage<EffectsPanelData>) => {
 	use.name("effects-panel")
 	use.styles(styles)
 
-	// resolution
-	const resolution = use.signal(stage.porthole.resolution * 100)
+	const states = use.once(() => new EffectsStates(stage))
+	const {effects} = states
 
-	// effects
-	const effectsActuator = use.once(() => new EffectsActuator(stage))
-	const {effects} = effectsActuator
-
-	const jsonConfigurator = use.once(() => new JsonConfigurator({
-		...allocators,
-		effects: JsonConfigurator.allocator({
-			get: () => effectsActuator.effectsData,
-			set: effectsData => effectsActuator.effectsData = effectsData,
-		}),
-		resolution: JsonConfigurator.allocator({
-			get: () => resolution.value,
-			set: x => resolution.value = x,
-		}),
+	use.mount(() => reactor.reaction(() => {
+		bestorage.data.effects = states.effectsData
+		bestorage.pulse()
 	}))
 
-	use.mount(jsonConfigurator.react_to_allocator_changes)
-	use.mount(() => reactor.reaction(
-		() => jsonConfigurator.data,
-		data => {
-			stage.porthole.resolution = resolution.value / 100
-			stage.rendering.setEffects(data.effects ?? null)
-		},
-	))
+	use.mount(() => reactor.reaction(() => {
+		stage.porthole.resolution = bestorage.data.resolution / 100
+		stage.rendering.setEffects(bestorage.data.effects)
+	}))
 
 	function render_input<G extends Effects[keyof Effects]>(group: G) {
 		return (metaGroup: Meta.Group<G>) => {
@@ -95,12 +92,12 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, allocators: 
 		return (metaGroup: Meta.Group<G>) => html`
 			<article
 				data-dynamic
-				?data-active="${effectsActuator.active[activeKey]}">
+				?data-active="${states.active[activeKey]}">
 				<header>
 					${NuiCheckbox([{
 						label: activeKey,
-						checked: effectsActuator.active[activeKey],
-						set: active => effectsActuator.active[activeKey] = active,
+						checked: states.active[activeKey],
+						set: active => states.active[activeKey] = active,
 					}])}
 					${docs}
 				</header>
@@ -113,7 +110,7 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, allocators: 
 
 	function handle_json_change(event: InputEvent) {
 		const textarea = event.currentTarget as HTMLTextAreaElement
-		jsonConfigurator.json = textarea.value
+		bestorage.json = textarea.value
 	}
 
 	return html`
@@ -125,8 +122,11 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, allocators: 
 				${NuiRange([{
 					label: "resolution",
 					min: 5, max: 100, step: 5,
-					value: resolution.value,
-					set: x => resolution.value = x,
+					value: bestorage.data.resolution,
+					set: x => {
+						bestorage.data.resolution = x
+						bestorage.pulse()
+					},
 				}])}
 			</section>
 		</article>
@@ -134,7 +134,7 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, allocators: 
 		<article data-active>
 			<header>data</header>
 			<textarea
-				.value="${jsonConfigurator.json}"
+				.value="${bestorage.json}"
 				@change="${handle_json_change}"
 				spellcheck="off"
 				autocorrect="off"

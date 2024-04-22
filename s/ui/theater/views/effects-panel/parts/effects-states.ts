@@ -5,7 +5,7 @@ import {Stage} from "../../../../../stage/stage.js"
 import {Rendering} from "../../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../../stage/rendering/effects/types.js"
 
-export class EffectsActuator {
+export class EffectsStates {
 	effects: Effects
 	active: {[K in keyof Effects]: boolean}
 
