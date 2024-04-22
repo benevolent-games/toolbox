@@ -1,5 +1,5 @@
 
-import {clone, flat, ob} from "@benev/slate"
+import {clone, flatstate, ob} from "@benev/slate"
 
 import {Stage} from "../../../../../stage/stage.js"
 import {Rendering} from "../../../../../stage/rendering/rendering.js"
@@ -41,10 +41,10 @@ export class EffectsStates {
 			.map((effect, key) => {
 				if (current && key in current && current[key])
 					Object.assign(effect, current[key])
-				return flat.state(effect)
+				return flatstate(effect)
 			}) as Effects
 
-		const active = flat.state(
+		const active = flatstate(
 			ob(standard).map((_effect, key) => !!(current && key in current && current[key]))
 		)
 

@@ -1,5 +1,5 @@
 
-import {TemplateResult, html, reactor} from "@benev/slate"
+import {TemplateResult, debounce, html, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
@@ -33,15 +33,25 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: B
 	const states = use.once(() => new EffectsStates(stage))
 	const {effects} = states
 
-	use.mount(() => reactor.reaction(() => {
-		bestorage.data.effects = states.effectsData
-		bestorage.pulse()
+	use.mount(() => reactor.reaction(
+		() => states.effectsData,
+		effects => bestorage.data.effects = effects,
+	))
+
+	const set = use.once(() => ({
+		resolution: debounce(333, (x: number) => stage.porthole.resolution = x),
+		effects: debounce(333, (effects: Partial<Effects>) => stage.rendering.setEffects(effects)),
 	}))
 
-	use.mount(() => reactor.reaction(() => {
-		stage.porthole.resolution = bestorage.data.resolution / 100
-		stage.rendering.setEffects(bestorage.data.effects)
-	}))
+	use.mount(() => reactor.reaction(() =>
+		bestorage.data.resolution / 100,
+		set.resolution,
+	))
+
+	use.mount(() => reactor.reaction(() =>
+		bestorage.data.effects,
+		set.effects,
+	))
 
 	function render_input<G extends Effects[keyof Effects]>(group: G) {
 		return (metaGroup: Meta.Group<G>) => {
@@ -114,23 +124,6 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: B
 	}
 
 	return html`
-		<slot></slot>
-
-		<article data-active>
-			<header>general</header>
-			<section>
-				${NuiRange([{
-					label: "resolution",
-					min: 5, max: 100, step: 5,
-					value: bestorage.data.resolution,
-					set: x => {
-						bestorage.data.resolution = x
-						bestorage.pulse()
-					},
-				}])}
-			</section>
-		</article>
-
 		<article data-active>
 			<header>data</header>
 			<textarea
@@ -142,6 +135,24 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: B
 				autocapitalize="off"
 			></textarea>
 		</article>
+
+		<article data-active>
+			<header>general</header>
+			<section>
+				${NuiRange([{
+					label: "resolution",
+					min: 5, max: 100, step: 5,
+					value: bestorage.data.resolution,
+					set: x => bestorage.data.resolution = x,
+				}])}
+			</section>
+		</article>
+
+		<hr/>
+
+		<slot></slot>
+
+		<hr/>
 
 		${render_section("scene", effects.scene, html`
 				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.Scene">ref</a>

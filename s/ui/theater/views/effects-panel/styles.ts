@@ -3,6 +3,14 @@ import {css} from "@benev/slate"
 
 export const styles = css`
 
+hr {
+	display: block;
+	margin: 1em;
+	border: none;
+	height: 2px;
+	background: #fff4;
+}
+
 article {
 	background: #0004;
 	transition: background 300ms linear;

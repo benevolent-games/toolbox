@@ -1,13 +1,15 @@
 
-import {Signal, clone, signal} from "@benev/slate"
+import {Signal, clone, flatstate, pubsub, signal} from "@benev/slate"
 
 export class Bestorage<Data extends Record<string, any>> {
 	#fallbackData: Data
 	#data: Signal<Data>
 
+	onJson = pubsub<[Data]>()
+
 	constructor(fallbackData: Data) {
 		this.#fallbackData = fallbackData
-		this.#data = signal(clone(fallbackData))
+		this.#data = signal(flatstate(clone(fallbackData)))
 	}
 
 	get json() {
@@ -15,12 +17,14 @@ export class Bestorage<Data extends Record<string, any>> {
 	}
 
 	set json(s: string) {
-		console.log("set json")
 		try {
-			this.#data.value = JSON.parse(s.trim())
+			this.#data.value = flatstate(JSON.parse(s.trim()))
 		}
 		catch (error) {
-			this.#data.value = clone(this.#fallbackData)
+			this.#data.value = flatstate(clone(this.#fallbackData))
+		}
+		finally {
+			this.onJson.publish(this.#data.value)
 		}
 	}
 
@@ -29,7 +33,6 @@ export class Bestorage<Data extends Record<string, any>> {
 	}
 
 	set data(d: Data) {
-		console.log("set data")
 		this.#data.value = d
 	}
 
