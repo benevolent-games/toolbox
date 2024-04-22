@@ -14,8 +14,8 @@ import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
 import {JsonAllocators, JsonConfigurator} from "./parts/json-configurator.js"
 
-export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, allocators: JsonAllocators = {}) => {
-	use.name("settings-panel")
+export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, allocators: JsonAllocators = {}) => {
+	use.name("effects-panel")
 	use.styles(styles)
 
 	// resolution
