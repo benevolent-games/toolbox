@@ -30,6 +30,7 @@ export const NuiRange = nexus.shadow_view(use => ({
 
 	const codeValue = (
 		(value % 1 === 0) ? value :
+		(value < 0.02) ? value.toFixed(9) :
 		(value < 0.2) ? value.toFixed(3) :
 		value.toFixed(2)
 	)
