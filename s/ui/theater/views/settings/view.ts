@@ -1,5 +1,5 @@
 
-import {TemplateResult, clone, debounce, flat, html, ob, reactor} from "@benev/slate"
+import {TemplateResult, html, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
@@ -9,62 +9,42 @@ import {NuiColor} from "../../../nui/color.js"
 import {NuiRange} from "../../../nui/range.js"
 import {NuiSelect} from "../../../nui/select.js"
 import {Stage} from "../../../../stage/stage.js"
+import {EffectsActuator} from "./parts/actuator.js"
 import {NuiCheckbox} from "../../../nui/checkbox.js"
-import {Rendering} from "../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../stage/rendering/effects/types.js"
+import {JsonAllocators, JsonConfigurator} from "./parts/json-configurator.js"
 
-export const SettingsMenu = nexus.shadow_view(use => (stage: Stage) => {
+export const SettingsMenu = nexus.shadow_view(use => (stage: Stage, allocators: JsonAllocators = {}) => {
 	use.name("settings-panel")
 	use.styles(styles)
 
+	// resolution
 	const resolution = use.signal(stage.porthole.resolution * 100)
 
-	// establish flatstates for effects
-	const {effects, active} = use.once(() => {
-		const standard = Rendering.effects.everything()
-		const current = stage.rendering.effects
-		const effects = ob(standard)
-			.map((effect, key) => {
-				if (current && key in current && current[key])
-					Object.assign(effect, current[key])
-				return flat.state(effect)
-			}) as Effects
-		const active = flat.state(
-			ob(standard).map((_effect, key) => !!(current && key in current && current[key]))
-		)
-		return {effects, active}
-	})
+	// effects
+	const effectsActuator = use.once(() => new EffectsActuator(stage))
+	const {effects} = effectsActuator
 
-	// collect a report about the current effects,
-	// deleting any inactive effect groups
-	function collect() {
-		const copy = clone(effects) as Partial<Effects>
-		for (const [key, value] of Object.entries(active))
-			if (value === false)
-				delete copy[key as keyof typeof copy]
-		return copy
-	}
-
-	// obtain the json string of the current collected effects
-	const json = use.signal(JSON.stringify(collect()))
-
-	// make a function that we can use to apply the groups,
-	// note that this is debounced
-	const apply_the_effects = use.once(() => debounce(500, (effects: Partial<Effects>) => {
-		json.value = JSON.stringify(effects)
-		stage.rendering.setEffects(effects)
+	const jsonConfigurator = use.once(() => new JsonConfigurator({
+		...allocators,
+		effects: JsonConfigurator.allocator({
+			get: () => effectsActuator.effectsData,
+			set: effectsData => effectsActuator.effectsData = effectsData,
+		}),
+		resolution: JsonConfigurator.allocator({
+			get: () => resolution.value,
+			set: x => resolution.value = x,
+		}),
 	}))
 
-	// react to any changes to effects by applying the effects
+	use.mount(jsonConfigurator.react_to_allocator_changes)
 	use.mount(() => reactor.reaction(
-		collect,
-		apply_the_effects,
+		() => jsonConfigurator.data,
+		data => {
+			stage.porthole.resolution = resolution.value / 100
+			stage.rendering.setEffects(data.effects ?? null)
+		},
 	))
-
-	// react to resolutions changes
-	use.mount(() => reactor.reaction(
-		() => stage.porthole.resolution = resolution.value / 100)
-	)
 
 	function render_input<G extends Effects[keyof Effects]>(group: G) {
 		return (metaGroup: Meta.Group<G>) => {
@@ -108,17 +88,19 @@ export const SettingsMenu = nexus.shadow_view(use => (stage: Stage) => {
 	}
 
 	function render_section<G extends Effects[keyof Effects]>(
-			activeKey: keyof typeof active,
+			activeKey: keyof Effects,
 			group: G,
 			docs?: TemplateResult,
 		) {
 		return (metaGroup: Meta.Group<G>) => html`
-			<article data-dynamic ?data-active="${active[activeKey]}">
+			<article
+				data-dynamic
+				?data-active="${effectsActuator.active[activeKey]}">
 				<header>
 					${NuiCheckbox([{
 						label: activeKey,
-						checked: active[activeKey],
-						set: x => active[activeKey] = x,
+						checked: effectsActuator.active[activeKey],
+						set: active => effectsActuator.active[activeKey] = active,
 					}])}
 					${docs}
 				</header>
@@ -131,14 +113,7 @@ export const SettingsMenu = nexus.shadow_view(use => (stage: Stage) => {
 
 	function handle_json_change(event: InputEvent) {
 		const textarea = event.currentTarget as HTMLTextAreaElement
-		const newEffects = JSON.parse(textarea.value.trim()) as Partial<Effects>
-		for (const [k, group] of Object.entries(newEffects)) {
-			const key = k as keyof Effects
-			active[key] = !!group
-			if (group)
-				Object.assign(effects[key], group)
-		}
-		apply_the_effects(newEffects)
+		jsonConfigurator.json = textarea.value
 	}
 
 	return html`
@@ -159,7 +134,7 @@ export const SettingsMenu = nexus.shadow_view(use => (stage: Stage) => {
 		<article data-active>
 			<header>data</header>
 			<textarea
-				.value="${json}"
+				.value="${jsonConfigurator.json}"
 				@change="${handle_json_change}"
 				spellcheck="off"
 				autocorrect="off"
