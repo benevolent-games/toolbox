@@ -30,7 +30,6 @@ export class EffectsStates {
 			if (group)
 				Object.assign(this.effects[key], group)
 		}
-		Object.assign(this.effects, newEffects)
 	}
 
 	#establish_flatstates() {

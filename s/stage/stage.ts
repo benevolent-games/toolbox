@@ -1,7 +1,6 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color4} from "@babylonjs/core/Maths/math.js"
-import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
 import {CompatibilityOptions} from "@babylonjs/core/Compat/compatibilityOptions.js"
 
@@ -12,7 +11,7 @@ import {load_glb} from "./utils/load_glb.js"
 import {radians, wrap} from "../math/scalar.js"
 import {Rendering} from "./rendering/rendering.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
-import {CreateStageOptions, StageOptions} from "./types.js"
+import {BabylonEngine, CreateStageOptions, StageOptions} from "./types.js"
 import {create_webgl_or_webgpu_engine} from "../tools/create_webgl_or_webgpu_engine.js"
 
 export class Stage {
@@ -37,7 +36,7 @@ export class Stage {
 	}
 
 	porthole: Porthole
-	engine: Engine
+	engine: BabylonEngine
 	scene: Scene
 
 	gameloop: Gameloop

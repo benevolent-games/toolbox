@@ -1,8 +1,9 @@
 
 import {pubsub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
+
+import {BabylonEngine} from "../types.js"
 import {DeltaTimer} from "../../tools/delta_timer.js"
-import {Engine} from "@babylonjs/core/Engines/engine.js"
 
 export class Gameloop {
 	readonly on = pubsub<[number]>()
@@ -15,7 +16,7 @@ export class Gameloop {
 		return this.#stoppers.length > 0
 	}
 
-	constructor(public engine: Engine, public scenes: Scene[]) {
+	constructor(public engine: BabylonEngine, public scenes: Scene[]) {
 		this.register(() => {
 			const fn = () => {
 				const ms = this.delta.measure()

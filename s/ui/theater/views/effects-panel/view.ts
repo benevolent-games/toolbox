@@ -1,5 +1,5 @@
 
-import {TemplateResult, debounce, html, reactor} from "@benev/slate"
+import {TemplateResult, clone, debounce, html, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
@@ -33,14 +33,16 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: B
 	const states = use.once(() => new EffectsStates(stage))
 	const {effects} = states
 
+	use.mount(() => bestorage.onJson(json => states.effectsData = json.effects))
+
 	use.mount(() => reactor.reaction(
 		() => states.effectsData,
 		effects => bestorage.data.effects = effects,
 	))
 
 	const set = use.once(() => ({
-		resolution: debounce(333, (x: number) => stage.porthole.resolution = x),
-		effects: debounce(333, (effects: Partial<Effects>) => stage.rendering.setEffects(effects)),
+		resolution: debounce(100, (x: number) => stage.porthole.resolution = x),
+		effects: debounce(100, (effects: Partial<Effects>) => stage.rendering.setEffects(effects)),
 	}))
 
 	use.mount(() => reactor.reaction(() =>

@@ -10,6 +10,7 @@ import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
 import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader.js"
 import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 
+import {pubsub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Camera} from "@babylonjs/core/Cameras/camera.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
@@ -22,8 +23,9 @@ import {standard_effects} from "./effects/standard.js"
 
 export class Rendering {
 	static effects = standard_effects
-
 	readonly fallbackCamera: ArcRotateCamera
+	readonly onEffectsChange = pubsub<[Partial<Effects> | null]>()
+
 	#scene: Scene
 	#camera!: Camera
 	#rig: EffectRig = {
@@ -104,6 +106,8 @@ export class Rendering {
 			if (!pipe.cameras.includes(camera))
 				this.#scene.postProcessRenderPipelineManager
 					.attachCamerasToRenderPipeline(pipe.name, camera)
+
+		this.onEffectsChange.publish(this.#rig.effects)
 	}
 }
 

@@ -4,7 +4,9 @@ import {Porthole} from "./parts/porthole.js"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {EngineOptions} from "@babylonjs/core/Engines/thinEngine.js"
-import {WebGPUEngineOptions} from "@babylonjs/core/Engines/webgpuEngine.js"
+import {WebGPUEngine, WebGPUEngineOptions} from "@babylonjs/core/Engines/webgpuEngine.js"
+
+export type BabylonEngine = Engine | WebGPUEngine
 
 export type EngineSettings = {
 	allow_webgpu: boolean
@@ -24,7 +26,7 @@ export interface StageExtras {
 
 export interface StageOptions extends StageExtras {
 	porthole: Porthole
-	engine: Engine
+	engine: BabylonEngine
 	scene: Scene
 }
 
