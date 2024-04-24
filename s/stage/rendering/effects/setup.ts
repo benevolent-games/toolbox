@@ -25,9 +25,9 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>, camera: C
 		})
 	}
 
-	const depth = scene.enableDepthRenderer(camera)
-	depth.useOnlyInActiveCamera = true
-	disposables.push(() => depth.dispose())
+	// const depth = scene.enableDepthRenderer(camera)
+	// depth.useOnlyInActiveCamera = true
+	// disposables.push(() => depth.dispose())
 
 	// SCENE EFFECTS
 	{

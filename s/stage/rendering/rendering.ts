@@ -42,7 +42,7 @@ export class Rendering {
 	constructor(scene: Scene) {
 		this.#scene = scene
 
-		scene.enablePrePassRenderer()
+		// scene.enablePrePassRenderer()
 
 		this.fallbackCamera = (() => {
 			const alpha = 0

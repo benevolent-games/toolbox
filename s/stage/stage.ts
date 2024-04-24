@@ -1,4 +1,6 @@
 
+import "@babylonjs/core/Rendering/depthPeelingSceneComponent.js"
+
 import {debounce, reactor} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color4} from "@babylonjs/core/Maths/math.js"
@@ -62,9 +64,12 @@ export class Stage {
 
 		scene.clearColor = new Color4(...background)
 
-		// we roll with opengl and gltf standards
+		// yes, we do roll with opengl and gltf standards
 		scene.useRightHandedSystem = true
 		CompatibilityOptions.UseOpenGLOrientationForUV = true
+
+		// apparently this makes alpha sorting work
+		scene.useOrderIndependentTransparency = true
 
 		const gameloop = this.gameloop = new Gameloop(engine, [scene])
 		this.rendering = new Rendering(scene)
