@@ -3,7 +3,6 @@ import {Signal, clone, flatstate, pubsub, signal} from "@benev/slate"
 
 export class Bestorage<Data extends Record<string, any>> {
 	#data: Signal<Data>
-
 	onJson = pubsub<[Data]>()
 
 	constructor(public fallback: Data) {
