@@ -13,10 +13,10 @@ import {radians, wrap} from "../math/scalar.js"
 import {Rendering} from "./rendering/rendering.js"
 import {Effects} from "./rendering/effects/types.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
-import {EffectsPanelData, defaultEffectsData} from "../ui/theater/views/effects-panel/view.js"
 import {BabylonEngine, CreateStageOptions, StageOptions} from "./types.js"
 import {Bestorage} from "../ui/theater/views/effects-panel/parts/bestorage.js"
 import {create_webgl_or_webgpu_engine} from "../tools/create_webgl_or_webgpu_engine.js"
+import {EffectsPanelData, defaultEffectsData} from "../ui/theater/views/effects-panel/view.js"
 
 export class Stage {
 
