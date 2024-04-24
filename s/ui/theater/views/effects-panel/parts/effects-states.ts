@@ -4,6 +4,9 @@ import {clone, flatstate, ob} from "@benev/slate"
 import {Stage} from "../../../../../stage/stage.js"
 import {Rendering} from "../../../../../stage/rendering/rendering.js"
 import {Effects} from "../../../../../stage/rendering/effects/types.js"
+import {assignSelectively} from "../../../../../tools/assign-selectively.js"
+
+const everything = Rendering.effects.everything()
 
 export class EffectsStates {
 	effects: Effects
@@ -24,11 +27,12 @@ export class EffectsStates {
 	}
 
 	set effectsData(newEffects: Partial<Effects>) {
-		for (const [k, group] of Object.entries(newEffects)) {
-			const key = k as keyof Effects
-			this.active[key] = !!group
-			if (group)
-				Object.assign(this.effects[key], group)
+		for (const [key, standardGroup] of Object.entries(everything)) {
+			const k = key as keyof Effects
+			const newGroup = newEffects[k]
+			this.active[k] = !!newGroup
+			if (newGroup)
+				assignSelectively(standardGroup, this.effects[k], newGroup)
 		}
 	}
 

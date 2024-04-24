@@ -33,9 +33,16 @@ export class Rendering {
 		pipelines: [],
 		dispose: () => {},
 	}
+	get #pipelines() {
+		return this.#rig
+			? this.#rig.pipelines
+			: []
+	}
 
 	constructor(scene: Scene) {
 		this.#scene = scene
+
+		scene.enablePrePassRenderer()
 
 		this.fallbackCamera = (() => {
 			const alpha = 0
@@ -52,12 +59,6 @@ export class Rendering {
 		this.setCamera(this.fallbackCamera)
 	}
 
-	get #pipelines() {
-		return this.#rig
-			? this.#rig.pipelines
-			: []
-	}
-
 	get camera() {
 		return this.#camera
 	}
@@ -65,19 +66,12 @@ export class Rendering {
 	setCamera(camera: Camera | null) {
 		camera ??= this.fallbackCamera
 		const previous = this.#camera
-		const pipelines = this.#pipelines
 
-		if (previous)
-			for (const pipe of pipelines)
-				this.#scene.postProcessRenderPipelineManager
-					.detachCamerasFromRenderPipeline(pipe.name, previous)
-
-		for (const pipe of pipelines)
-			this.#scene.postProcessRenderPipelineManager
-				.attachCamerasToRenderPipeline(pipe.name, camera)
-
+		this.#detachCamera(previous)
 		this.#camera = camera
 		this.#scene.activeCamera = camera
+		this.setEffects(this.effects)
+
 		return camera
 	}
 
@@ -87,27 +81,30 @@ export class Rendering {
 
 	setEffects(effects: Partial<Effects> | null) {
 		const camera = this.#camera
+		this.#detachCamera(camera)
 
-		// detach camera from old pipes
-		for (const pipe of this.#rig.pipelines)
-			this.#scene.postProcessRenderPipelineManager
-				.detachCamerasFromRenderPipeline(pipe.name, camera)
-
-		// dispose old stuff
 		this.#rig.dispose()
-
-		// create new stuff
 		this.#rig = effects
-			? setup_effects(this.#scene, effects)
+			? setup_effects(this.#scene, effects, camera)
 			: {effects: null, pipelines: [], dispose: () => {}}
 
-		// attach camera to new pipes
-		for (const pipe of this.#rig.pipelines)
-			if (!pipe.cameras.includes(camera))
-				this.#scene.postProcessRenderPipelineManager
-					.attachCamerasToRenderPipeline(pipe.name, camera)
-
+		this.#attachCamera(camera)
 		this.onEffectsChange.publish(this.#rig.effects)
+	}
+
+	#detachCamera(camera: Camera) {
+		const pipelines = this.#pipelines
+		const manager = this.#scene.postProcessRenderPipelineManager
+		for (const pipe of pipelines)
+			manager.detachCamerasFromRenderPipeline(pipe.name, camera)
+	}
+
+	#attachCamera(camera: Camera) {
+		const pipelines = this.#pipelines
+		const manager = this.#scene.postProcessRenderPipelineManager
+		for (const pipe of pipelines)
+			if (!pipe.cameras.includes(camera))
+				manager.attachCamerasToRenderPipeline(pipe.name, camera)
 	}
 }
 

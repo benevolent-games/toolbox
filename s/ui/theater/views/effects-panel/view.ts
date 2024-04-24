@@ -40,21 +40,6 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: B
 		effects => bestorage.data.effects = effects,
 	))
 
-	const set = use.once(() => ({
-		resolution: debounce(100, (x: number) => stage.porthole.resolution = x),
-		effects: debounce(100, (effects: Partial<Effects>) => stage.rendering.setEffects(effects)),
-	}))
-
-	use.mount(() => reactor.reaction(() =>
-		bestorage.data.resolution / 100,
-		set.resolution,
-	))
-
-	use.mount(() => reactor.reaction(() =>
-		bestorage.data.effects,
-		set.effects,
-	))
-
 	function render_input<G extends Effects[keyof Effects]>(group: G) {
 		return (metaGroup: Meta.Group<G>) => {
 			const g = group as any

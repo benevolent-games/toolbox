@@ -4,6 +4,8 @@ import {Porthole} from "./parts/porthole.js"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {EngineOptions} from "@babylonjs/core/Engines/thinEngine.js"
+import {EffectsPanelData} from "../ui/theater/views/effects-panel/view.js"
+import {Bestorage} from "../ui/theater/views/effects-panel/parts/bestorage.js"
 import {WebGPUEngine, WebGPUEngineOptions} from "@babylonjs/core/Engines/webgpuEngine.js"
 
 export type BabylonEngine = Engine | WebGPUEngine
@@ -21,6 +23,7 @@ export type CreateEngineOptions = {
 } & EngineSettings
 
 export interface StageExtras {
+	bestorage: Bestorage<EffectsPanelData>
 	background: Vec4
 }
 

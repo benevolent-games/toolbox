@@ -12,8 +12,9 @@ import {DefaultRenderingPipeline} from "@babylonjs/core/PostProcesses/RenderPipe
 
 import {EffectRig, Effects} from "./types.js"
 import {label} from "../../../tools/label.js"
+import {Camera} from "@babylonjs/core/Cameras/camera.js"
 
-export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRig {
+export function setup_effects(scene: Scene, effects: Partial<Effects>, camera: Camera): EffectRig {
 	const pipelines: PostProcessRenderPipeline[] = []
 	const disposables: (() => void)[] = []
 	const registerPipeline = (pipeline: PostProcessRenderPipeline) => {
@@ -24,15 +25,9 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>): EffectRi
 		})
 	}
 
-	scene.enableDepthRenderer()
-	scene.enablePrePassRenderer()
-	// scene.enableGeometryBufferRenderer()
-
-	disposables.push(() => {
-		scene.disableDepthRenderer()
-		scene.disablePrePassRenderer()
-		// scene.disableGeometryBufferRenderer()
-	})
+	const depth = scene.enableDepthRenderer(camera)
+	depth.useOnlyInActiveCamera = true
+	disposables.push(() => depth.dispose())
 
 	// SCENE EFFECTS
 	{

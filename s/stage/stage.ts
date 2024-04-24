@@ -1,4 +1,5 @@
 
+import {debounce, reactor} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color4} from "@babylonjs/core/Maths/math.js"
 import {AssetContainer} from "@babylonjs/core/assetContainer.js"
@@ -10,9 +11,12 @@ import {Porthole} from "./parts/porthole.js"
 import {load_glb} from "./utils/load_glb.js"
 import {radians, wrap} from "../math/scalar.js"
 import {Rendering} from "./rendering/rendering.js"
+import {Effects} from "./rendering/effects/types.js"
 import {PointerLocker} from "./parts/pointer_locker.js"
 import {BabylonEngine, CreateStageOptions, StageOptions} from "./types.js"
+import {Bestorage} from "../ui/theater/views/effects-panel/parts/bestorage.js"
 import {create_webgl_or_webgpu_engine} from "../tools/create_webgl_or_webgpu_engine.js"
+import {EffectsPanelData, defaultEffectsData} from "../ui/theater/views/effects-panel/view.js"
 
 export class Stage {
 
@@ -44,7 +48,14 @@ export class Stage {
 	pointerLocker: PointerLocker
 	load_glb: (url: string) => Promise<AssetContainer>
 
-	constructor({porthole, engine, scene, background}: StageOptions) {
+	constructor({
+			porthole,
+			engine,
+			scene,
+			background,
+			bestorage = new Bestorage(defaultEffectsData()),
+		}: StageOptions) {
+
 		this.porthole = porthole
 		this.engine = engine
 		this.scene = scene
@@ -60,7 +71,26 @@ export class Stage {
 		this.pointerLocker = new PointerLocker(porthole.canvas)
 		this.load_glb = async(url: string) => load_glb(scene, url)
 
+		this.#reactivity_for_effects_and_resolution(bestorage)
+
 		gameloop.on(() => this.#rotate_fallback_camera())
+	}
+
+	#reactivity_for_effects_and_resolution(bestorage: Bestorage<EffectsPanelData>) {
+		const set = {
+			resolution: debounce(100, (x: number) => this.porthole.resolution = x),
+			effects: debounce(100, (effects: Partial<Effects>) => this.rendering.setEffects(effects)),
+		}
+
+		reactor.reaction(() =>
+			bestorage.data.resolution / 100,
+			set.resolution,
+		)
+
+		reactor.reaction(() =>
+			bestorage.data.effects,
+			set.effects,
+		)
 	}
 
 	#rotate_fallback_camera() {
