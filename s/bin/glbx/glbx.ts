@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import {glob} from "glob"
-import {dedup} from "@gltf-transform/functions"
+import {cloneDocument, dedup} from "@gltf-transform/functions"
 import {join, relative, resolve, parse} from "path"
 
 import {args} from "./parts/args.js"
@@ -23,7 +23,7 @@ for (const inpath of await glob(inpattern, {nodir: true})) {
 	await original.document.transform(dedup())
 
 	for (const [quality, transforms] of Object.entries(tiers)) {
-		const document = original.document.clone()
+		const document = cloneDocument(original.document)
 		await document.transform(...transforms)
 		const report = await gio.write(outpath(quality), document)
 
