@@ -31,6 +31,15 @@ export default {
 		expect(nametag(". lol.001 ").meta).equals("lol.001")
 	},
 
+	async "we can parse underscored"() {
+		expect(nametag("").underscored).equals(null)
+		expect(nametag("_").underscored).equals("")
+		expect(nametag("_primitive0").underscored).equals("primitive0")
+		expect(nametag("_lol_primitive0").underscored).equals("lol_primitive0")
+		expect(nametag("_ lol_primitive0 ").underscored).equals("lol_primitive0")
+		expect(nametag("chase.wasd::cool::lol.rofl.001_primitive0").underscored).equals("primitive0")
+	},
+
 	async "we can parse wacky mixtures of stuff"() {
 		{
 			const x = nametag("::cool::lol.rofl.001")

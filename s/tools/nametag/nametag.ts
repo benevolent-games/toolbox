@@ -13,9 +13,9 @@ export const nametag = (namestring: string) => new Nametag(namestring)
  *
  * anatomy of a nametag:
  *
- * 	foliage::ghost::lod=2.001
- * 	[  ↑  ][  ↑  ][  ↑  ][↑ ]
- * 	 name    tag    tag  meta
+ * 	foliage::ghost::lod=2.001_primitive0
+ * 	[  ↑  ][  ↑  ][  ↑  ][↑ ][    ↑    ]
+ * 	 name    tag    tag  meta underscored
  *
  * usage example:
  *
@@ -32,15 +32,19 @@ export const nametag = (namestring: string) => new Nametag(namestring)
 export class Nametag extends Map<string, string | true> {
 	name: string
 	meta: string | null
+	underscored: string | null
 
 	constructor(namestring: string) {
 		super()
 
-		const [before, meta] = Nametag.#parse_meta(namestring)
-		const [name, params] = Nametag.#parse_params(before)
+		namestring = namestring.trim()
+		const [a, underscored] = Nametag.#parse_underscored(namestring)
+		const [b, meta] = Nametag.#parse_meta(a)
+		const [name, params] = Nametag.#parse_params(b)
 
 		this.name = name.trim()
-		this.meta = meta ? meta.trim() : meta
+		this.meta = meta
+		this.underscored = underscored
 
 		for (const [paramName, paramValue] of params)
 			this.set(
@@ -65,11 +69,21 @@ export class Nametag extends Map<string, string | true> {
 		return namestring
 	}
 
+	static #parse_underscored(namestring: string): [string, string | null] {
+		if (namestring.includes("_")) {
+			const parts = namestring.split("_")
+			const [before, ...after] = parts
+			const meta = after.join("_").trim()
+			return [before, meta]
+		}
+		else return [namestring, null]
+	}
+
 	static #parse_meta(namestring: string): [string, string | null] {
 		if (namestring.includes(".")) {
 			const parts = namestring.split(".")
 			const [before, ...after] = parts
-			const meta = after.join(".")
+			const meta = after.join(".").trim()
 			return [before, meta]
 		}
 		else return [namestring, null]
