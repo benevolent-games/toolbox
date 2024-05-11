@@ -25,10 +25,6 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>, camera: C
 		})
 	}
 
-	// const depth = scene.enableDepthRenderer(camera)
-	// depth.useOnlyInActiveCamera = true
-	// disposables.push(() => depth.dispose())
-
 	// SCENE EFFECTS
 	{
 		const e = effects.scene
@@ -50,26 +46,51 @@ export function setup_effects(scene: Scene, effects: Partial<Effects>, camera: C
 		scene.forceShowBoundingBoxes = e
 			? e.forceShowBoundingBoxes
 			: false
-		if (scene.prePassRenderer)
-			scene.prePassRenderer.disableGammaTransform = e
-				? e.disableGammaTransform
-				: false
+		scene.useOrderIndependentTransparency = e
+			? e.useOrderIndependentTransparency
+			: false
 	}
 
-	scene.fogEnabled = !!effects.fog
-	if (effects.fog) {
-		const e = effects.fog
-		scene.fogMode = (
-			e.mode === "none" ? Scene.FOGMODE_NONE :
-			e.mode === "exp" ? Scene.FOGMODE_EXP :
-			e.mode === "exp2" ? Scene.FOGMODE_EXP2 :
-			e.mode === "linear" ? Scene.FOGMODE_LINEAR :
-			Scene.FOGMODE_NONE
-		)
-		scene.fogColor = new Color3(...e.color)
-		scene.fogStart = e.start
-		scene.fogEnd = e.end
-		scene.fogDensity = e.density
+	// PREPASS RENDERER
+	{
+		const e = effects.prePassRenderer
+		if (e) {
+			const prepass = scene.enablePrePassRenderer()
+			disposables.push(() => scene.disablePrePassRenderer())
+			if (prepass) {
+				prepass.disableGammaTransform = e
+					? e.disableGammaTransform
+					: false
+			}
+		}
+	}
+
+	// DEPTH RENDERER
+	{
+		if (effects.depthRenderer) {
+			const depth = scene.enableDepthRenderer(camera)
+			depth.useOnlyInActiveCamera = true
+			disposables.push(() => scene.disableDepthRenderer())
+		}
+	}
+
+	// FOG EFFECT
+	{
+		scene.fogEnabled = !!effects.fog
+		if (effects.fog) {
+			const e = effects.fog
+			scene.fogMode = (
+				e.mode === "none" ? Scene.FOGMODE_NONE :
+				e.mode === "exp" ? Scene.FOGMODE_EXP :
+				e.mode === "exp2" ? Scene.FOGMODE_EXP2 :
+				e.mode === "linear" ? Scene.FOGMODE_LINEAR :
+				Scene.FOGMODE_NONE
+			)
+			scene.fogColor = new Color3(...e.color)
+			scene.fogStart = e.start
+			scene.fogEnd = e.end
+			scene.fogDensity = e.density
+		}
 	}
 
 	//

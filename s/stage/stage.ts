@@ -68,9 +68,6 @@ export class Stage {
 		scene.useRightHandedSystem = true
 		CompatibilityOptions.UseOpenGLOrientationForUV = true
 
-		// apparently this makes alpha sorting work
-		scene.useOrderIndependentTransparency = true
-
 		const gameloop = this.gameloop = new Gameloop(engine, [scene])
 		this.rendering = new Rendering(scene)
 		this.pointerLocker = new PointerLocker(porthole.canvas)

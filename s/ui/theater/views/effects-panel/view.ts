@@ -1,5 +1,5 @@
 
-import {TemplateResult, clone, debounce, html, reactor} from "@benev/slate"
+import {TemplateResult, html, reactor} from "@benev/slate"
 
 import {styles} from "./styles.js"
 import {Meta} from "./parts/meta.js"
@@ -150,8 +150,18 @@ export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: B
 			shadowsEnabled: Meta.boolean,
 			forceShowBoundingBoxes: Meta.boolean,
 			forceWireframe: Meta.boolean,
+			useOrderIndependentTransparency: Meta.boolean,
+		})}
+
+		${render_section("prePassRenderer", effects.prePassRenderer, html`
+				<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.PrePassRenderer">ref</a>
+			`)({
 			disableGammaTransform: Meta.boolean,
 		})}
+
+		${render_section("depthRenderer", effects.depthRenderer, html`
+			<a target=_blank href="https://doc.babylonjs.com/typedoc/classes/BABYLON.DepthRenderer">ref</a>
+		`)({})}
 
 		${render_section("fog", effects.fog, html`
 				<a target=_blank href="https://doc.babylonjs.com/features/featuresDeepDive/environment/environment_introduction#fog">doc</a>

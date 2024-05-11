@@ -62,8 +62,14 @@ export const standard_effects = {
 			environmentIntensity: 1,
 			forceWireframe: false,
 			forceShowBoundingBoxes: false,
+			useOrderIndependentTransparency: false,
+		},
+
+		prePassRenderer: {
 			disableGammaTransform: false,
 		},
+
+		depthRenderer: {},
 
 		fog: {
 			mode: "exp2",

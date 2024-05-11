@@ -64,8 +64,14 @@ export type Effects = {
 		shadowsEnabled: boolean
 		forceWireframe: boolean
 		forceShowBoundingBoxes: boolean
+		useOrderIndependentTransparency: boolean
+	}
+
+	prePassRenderer: {
 		disableGammaTransform: boolean
 	}
+
+	depthRenderer: {}
 
 	fog: {
 		mode: "none" | "exp" | "exp2" | "linear"
