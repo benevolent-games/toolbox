@@ -26,7 +26,7 @@ export const NubStickGraphic = nub_nexus.shadow_view(use => (
 		return basis
 	})
 
-	const pixels = stick_vector_to_pixels(basis?.radius, vector)
+	const pixels = stick_vector_to_pixels(basis.value?.radius, vector)
 	const over_style = transform(pixels)
 	const under_style = transform(multiplyBy(pixels, 0.5))
 
