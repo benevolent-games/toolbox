@@ -50,3 +50,5 @@ tact.devices
 
 ```
 
+## TODO: finish this readme -- i kinda got side-tracked
+
