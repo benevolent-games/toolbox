@@ -7,6 +7,7 @@ type Mod = ("ctrl" | "meta" | "alt" | "shift")
 
 export const bindings_helpers = ({
 	mode: <M extends Bindings.BindGroup>(m: M) => m,
+	buttonGroup: <B extends Bindings.ButtonBinds>(b: B) => b,
 	buttons: <B extends Bindings.Btn[]>(...btns: B) => btns,
 	b: (name: string): Bindings.Btn => [name, {modless: true}],
 	mod: (name: string, ...mods: Mod[]): Bindings.Btn => [name, {
