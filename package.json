@@ -16,8 +16,12 @@
 	},
 	"scripts": {
 		"prepare": "./s/bin/babylon-cleanup",
-		"build": "turtle-ts-app && turtle-ts-app-bundle x/iso/main.js && turtle-web && npm run links",
-		"start": "turtle-standard-watch",
+		"build": "run-s build-ts build-ssg",
+		"build-ts": "turtle build --out=x -v",
+		"build-ssg": "turtle ssg --in=s,x --out=x -v",
+		"start": "run-p start-http start-turtle",
+		"start-http": "http-server x",
+		"start-turtle": "turtle watch --in=s,x --out=x -v",
 		"links": "ln -s \"$(realpath temp)\" x/temp",
 		"test": "cynic node x/tests.test.js",
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
@@ -42,7 +46,7 @@
 		"@babylonjs/loaders": "^7.12.0"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.6.0-1",
+		"@benev/turtle": "^0.6.0-2",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-wasm": "^6.2.2",
 		"chokidar": "^3.6.0",

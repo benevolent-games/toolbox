@@ -1,5 +1,5 @@
 
-import {template, html, easypage, startup_scripts_with_dev_mode, default_script_locations} from "@benev/turtle"
+import {template, html, easypage, startup_scripts_with_dev_mode} from "@benev/turtle"
 
 export default template(async basic => {
 	const path = basic.path(import.meta.url)
@@ -10,10 +10,13 @@ export default template(async basic => {
 		title: "iso (@benev/toolbox)",
 		head: html`
 			<link rel="icon" href="https://benevolent.games/assets/benevolent.svg"/>
-			${startup_scripts_with_dev_mode(path, {
-				...default_script_locations(),
-				script: "iso/main.js",
-				script_bundle: "iso/main.bundle.min.js",
+			${startup_scripts_with_dev_mode({
+				path,
+				scripts: [{
+					module: "iso/main.js",
+					bundle: "iso/main.bundle.min.js",
+					hash: true,
+				}],
 			})}
 		`,
 		body: html`

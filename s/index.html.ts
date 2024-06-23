@@ -10,7 +10,14 @@ export default template(async basic => {
 		title: "@benev/toolbox",
 		head: html`
 			<link rel="icon" href="https://benevolent.games/assets/benevolent.svg"/>
-			${startup_scripts_with_dev_mode(path)}
+			${startup_scripts_with_dev_mode({
+				path,
+				scripts: [{
+					module: "main.bundle.js",
+					bundle: "main.bundle.min.js",
+					hash: true,
+				}],
+			})}
 		`,
 		body: html`
 			<header>
