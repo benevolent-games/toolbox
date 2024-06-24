@@ -16,7 +16,7 @@
 	},
 	"scripts": {
 		"prepare": "./s/bin/babylon-cleanup",
-		"build": "run-s build-ts build-ssg",
+		"build": "rm -rf x && run-s build-ts build-ssg",
 		"build-ts": "turtle build --out=x -v",
 		"build-ssg": "turtle ssg --in=s,x --out=x -v",
 		"start": "run-p start-http start-turtle",

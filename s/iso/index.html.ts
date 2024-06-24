@@ -13,7 +13,7 @@ export default template(async basic => {
 			${startup_scripts_with_dev_mode({
 				path,
 				scripts: [{
-					module: "iso/main.js",
+					module: "iso/main.bundle.js",
 					bundle: "iso/main.bundle.min.js",
 					hash: true,
 				}],
