@@ -2,7 +2,7 @@
 import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
 
-export const NuiRange = nexus.shadow_view(use => ({
+export const NuiRange = nexus.shadowView(use => ({
 		label, min, max, step, value, set,
 	}: {
 		label: string

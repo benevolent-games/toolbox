@@ -7,7 +7,7 @@ import {Stage} from "../../stage/stage.js"
 import {Framerate} from "./views/framerate/view.js"
 import {pointerType} from "./utils/pointer_type.js"
 
-export const Theater = nexus.shadow_view(use => ({
+export const Theater = nexus.shadowView(use => ({
 		stage, menus, menuButton, arrows,
 		onMenuClick = () => {},
 		onMenuTouch = () => {},

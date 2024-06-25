@@ -2,7 +2,7 @@
 import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
 
-export const NuiCheckbox = nexus.shadow_view(use => ({
+export const NuiCheckbox = nexus.shadowView(use => ({
 		label, checked, set,
 	}: {
 		label: string

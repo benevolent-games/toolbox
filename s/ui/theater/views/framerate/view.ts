@@ -3,7 +3,7 @@ import {nexus} from "../../../nexus.js"
 import {Stage} from "../../../../stage/stage.js"
 import {html, css, interval} from "@benev/slate"
 
-export const Framerate = nexus.shadow_view(use => (stage: Stage) => {
+export const Framerate = nexus.shadowView(use => (stage: Stage) => {
 	use.name("framerate")
 	use.styles(css`
 		:host {

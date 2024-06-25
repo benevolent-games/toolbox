@@ -9,7 +9,7 @@ import {NubStickGraphic} from "../stick-graphic/view.js"
 import {make_pointer_listeners} from "./utils/make_pointer_listeners.js"
 import {calculate_new_vector_from_pointer_position} from "./utils/calculate_new_vector_from_pointer_position.js"
 
-export const NubStick = nub_nexus.shadow_view(use => (stick: Stick) => {
+export const NubStick = nub_nexus.shadowView(use => (stick: Stick) => {
 	use.name("nub-stick")
 	use.styles(styles)
 

@@ -3,7 +3,7 @@ import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
 import {Vec3, from} from "../../math/vec3.js"
 
-export const NuiColor = nexus.shadow_view(use => ({
+export const NuiColor = nexus.shadowView(use => ({
 		label, initial_hex_color, set,
 	}: {
 		label: string

@@ -4,7 +4,7 @@ import {html} from "@benev/slate"
 import {styles} from "./styles.js"
 import {nexus} from "../../../nexus.js"
 
-export const BenevIso = nexus.shadow_component(use => {
+export const BenevIso = nexus.shadowComponent(use => {
 	use.styles(styles)
 	const {base} = use.context
 

@@ -1,6 +1,6 @@
 
+import {pub} from "@benev/slate"
 import {id_counter} from "../tools/id.js"
-import {pub} from "@benev/slate/x/pure.js"
 import {RunningAverage} from "../tools/running_average.js"
 
 export namespace Ecs4 {

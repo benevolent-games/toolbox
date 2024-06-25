@@ -1,6 +1,6 @@
 
 import {Ecs4} from "./ecs4.js"
-import {is} from "@benev/slate/x/pure.js"
+import {is} from "@benev/slate"
 import {Suite, expect, assert} from "cynic"
 
 type MyBase = {}
