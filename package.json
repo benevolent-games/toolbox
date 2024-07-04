@@ -42,8 +42,8 @@
 		"sparrow-rtc": "^0.0.0"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.12.0",
-		"@babylonjs/loaders": "^7.12.0"
+		"@babylonjs/core": "^7.13.3",
+		"@babylonjs/loaders": "^7.13.3"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.0-4",
@@ -59,7 +59,7 @@
 		"rimraf": "^5.0.7",
 		"rollup": "^4.18.0",
 		"terser": "^5.31.1",
-		"typescript": "^5.5.2",
+		"typescript": "^5.5.3",
 		"wrap-ansi": "^9.0.0"
 	},
 	"keywords": [
