@@ -27,13 +27,13 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.2.0-3",
+		"@benev/slate": "^0.2.0-4",
 		"@dimforge/rapier3d": "^0.13.1",
 		"@dimforge/rapier3d-compat": "^0.13.1",
-		"@gltf-transform/cli": "^4.0.2",
-		"@gltf-transform/core": "^4.0.2",
-		"@gltf-transform/extensions": "^4.0.2",
-		"@gltf-transform/functions": "^4.0.2",
+		"@gltf-transform/cli": "^4.0.4",
+		"@gltf-transform/core": "^4.0.4",
+		"@gltf-transform/extensions": "^4.0.4",
+		"@gltf-transform/functions": "^4.0.4",
 		"draco3dgltf": "^1.5.7",
 		"es-module-shims": "^1.10.0",
 		"glob": "^10.4.2",
@@ -42,8 +42,8 @@
 		"sparrow-rtc": "^0.0.0"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.13.3",
-		"@babylonjs/loaders": "^7.13.3"
+		"@babylonjs/core": "^7.14.0",
+		"@babylonjs/loaders": "^7.14.0"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.0-4",
