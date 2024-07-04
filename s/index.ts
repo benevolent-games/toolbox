@@ -26,6 +26,8 @@ export * from "./stage/utils/load_glb.js"
 export * from "./stage/stage.js"
 export * from "./stage/types.js"
 
+export * from "./vista/exports.js"
+
 export * from "./rapier/rapier.js"
 export * from "./rapier/physics.js"
 

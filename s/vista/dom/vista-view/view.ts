@@ -1,45 +1,26 @@
 
+import {loading} from "@benev/slate"
+
+import {styles} from "./css.js"
 import {Vista} from "../../vista.js"
 import {nexus} from "../../../ui/nexus.js"
-import {css, html, signals, loading} from "@benev/slate"
+import {FlexCanvas} from "../../parts/flex-canvas.js"
+import {EngineSettings} from "../../parts/start-engine.js"
 
-const styles = css`
-
-:host { display: contents; }
-
-canvas {
-	display: block;
-	width: 100%;
-	height: 100%;
-}
-
-`
-
-export const VistaView = nexus.shadowView(use => () => {
+export const VistaView = nexus.shadowView(use => (settings: EngineSettings.Auto) => {
 	use.name("vista")
 	use.styles(styles)
 
-	const {canvas, vistaOp} = use.init(() => {
+	const op = use.load(async() => {
 		const canvas = document.createElement("canvas")
-		const vistaOp = signals.op<Vista>()
-		const disposed = signals.signal(false)
-
-		vistaOp.load(async() => {
-			const vista = await Vista.create({canvas})
-			if (disposed.value)
-				vista.dispose()
-			return vista
+		const flexCanvas = new FlexCanvas(canvas)
+		const vista = new Vista({
+			canvas,
+			engine: await Vista.engine(settings),
 		})
-
-		return [{canvas, vistaOp}, () => {
-			disposed.value = true
-			if (vistaOp.isReady())
-				vistaOp.payload.dispose()
-		}]
+		return {vista, flexCanvas}
 	})
 
-	return loading.binary(vistaOp.value, () => html`
-		${canvas}
-	`)
+	return loading.binary(op, ({vista}) => vista.canvas)
 })
 
