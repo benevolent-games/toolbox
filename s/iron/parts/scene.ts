@@ -1,6 +1,6 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
-import {Color4} from "@babylonjs/core/Maths/math.color"
+import {Color4} from "@babylonjs/core/Maths/math.color.js"
 import {CompatibilityOptions} from "@babylonjs/core/Compat/compatibilityOptions.js"
 
 import {AnyEngine} from "./types.js"
