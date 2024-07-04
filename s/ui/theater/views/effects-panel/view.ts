@@ -26,7 +26,7 @@ export function defaultEffectsData(): EffectsPanelData {
 	}
 }
 
-export const EffectsPanel = nexus.shadow_view(use => (stage: Stage, bestorage: Bestorage<EffectsPanelData>) => {
+export const EffectsPanel = nexus.shadowView(use => (stage: Stage, bestorage: Bestorage<EffectsPanelData>) => {
 	use.name("effects-panel")
 	use.styles(styles)
 

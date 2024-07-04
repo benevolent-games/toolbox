@@ -6,7 +6,7 @@ import {nub_nexus} from "../nexus.js"
 import {Movements} from "../../devices/movements.js"
 import {lookpad_listeners} from "./utils/listeners.js"
 
-export const NubLookpad = nub_nexus.shadow_view(use => (device: Movements) => {
+export const NubLookpad = nub_nexus.shadowView(use => (device: Movements) => {
 	use.name("nub-lookpad")
 	use.styles(styles)
 

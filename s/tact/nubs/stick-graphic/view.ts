@@ -9,7 +9,7 @@ import {Vec2, multiplyBy} from "../../../math/vec2.js"
 import {calculate_basis} from "./utils/calculate_basis.js"
 import {stick_vector_to_pixels} from "./utils/stick_vector_to_pixels.js"
 
-export const NubStickGraphic = nub_nexus.shadow_view(use => (
+export const NubStickGraphic = nub_nexus.shadowView(use => (
 		vector: Vec2,
 		updateBasis: (basis: Basis) => void,
 	) => {

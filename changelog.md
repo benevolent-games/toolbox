@@ -1,6 +1,17 @@
 
 # changelog
 
+## v0.6.0-13
+- ! removed `op_effect`
+  - use `loading` from `@benev/slate` instead
+- ! removed `plainNexus`
+  - use `defaultNexus` from `@benev/slate` instead
+- ! removed `cssReset`
+  - use `defaultTheme` from `@benev/slate` instead
+
+## v0.6.0-12
+- honestly i kinda stopped recording changes for a long time here
+
 ## v0.5.0-dev.0 - 2023-06-30
 - ! <benev-theater> mobile controls default to being *disabled*, and can be enabled by adding the `mobile-controls` attribute
 

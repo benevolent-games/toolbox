@@ -2,7 +2,7 @@
 import {nexus} from "../nexus.js"
 import {css, html} from "@benev/slate"
 
-export const NuiSelect = nexus.shadow_view(use => ({
+export const NuiSelect = nexus.shadowView(use => ({
 		label, options, selected, set,
 	}: {
 		label: string

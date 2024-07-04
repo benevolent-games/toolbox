@@ -26,6 +26,8 @@ export * from "./stage/utils/load_glb.js"
 export * from "./stage/stage.js"
 export * from "./stage/types.js"
 
+export * from "./vista/exports.js"
+
 export * from "./rapier/rapier.js"
 export * from "./rapier/physics.js"
 
@@ -54,8 +56,6 @@ export * from "./tools/loopy.js"
 export * from "./tools/loosen.js"
 export * from "./tools/measure.js"
 export * from "./tools/obtain_babylon_quaternion_from_mesh.js"
-export * from "./tools/op_effect.js"
-export * from "./tools/plain_nexus.js"
 export * from "./tools/pubsub.js"
 export * from "./tools/quick_hash.js"
 export * from "./tools/running_average.js"
