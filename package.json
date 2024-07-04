@@ -23,6 +23,8 @@
 		"start-http": "http-server x",
 		"start-turtle": "turtle watch --in=s,x --out=x -v",
 		"links": "ln -s \"$(realpath temp)\" x/temp",
+		"devlinks": "run-s devlinks-slate",
+		"devlinks-slate": "rm -rf node_modules/@benev/slate && ln -s \"$(realpath ../slate)\" node_modules/@benev/slate",
 		"test": "cynic node x/tests.test.js",
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
