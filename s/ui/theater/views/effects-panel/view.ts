@@ -9,10 +9,10 @@ import {NuiColor} from "../../../nui/color.js"
 import {NuiRange} from "../../../nui/range.js"
 import {Bestorage} from "./parts/bestorage.js"
 import {NuiSelect} from "../../../nui/select.js"
-import {Stage} from "../../../../stage/stage.js"
 import {NuiCheckbox} from "../../../nui/checkbox.js"
 import {EffectsStates} from "./parts/effects-states.js"
-import {Effects} from "../../../../stage/rendering/effects/types.js"
+import {Rendering} from "../../../../iron/parts/rendering/rendering.js"
+import {Effects} from "../../../../iron/parts/rendering/effects/types.js"
 
 export type EffectsPanelData = {
 	resolution: number
@@ -26,11 +26,11 @@ export function defaultEffectsData(): EffectsPanelData {
 	}
 }
 
-export const EffectsPanel = nexus.shadowView(use => (stage: Stage, bestorage: Bestorage<EffectsPanelData>) => {
+export const EffectsPanel = nexus.shadowView(use => (rendering: Rendering, bestorage: Bestorage<EffectsPanelData>) => {
 	use.name("effects-panel")
 	use.styles(styles)
 
-	const states = use.once(() => new EffectsStates(stage))
+	const states = use.once(() => new EffectsStates(rendering))
 	const {effects} = states
 
 	use.mount(() => bestorage.onJson(json => states.effectsData = json.effects))

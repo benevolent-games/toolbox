@@ -1,10 +1,9 @@
 
 import {clone, flatstate, ob} from "@benev/slate"
 
-import {Stage} from "../../../../../stage/stage.js"
-import {Rendering} from "../../../../../stage/rendering/rendering.js"
-import {Effects} from "../../../../../stage/rendering/effects/types.js"
+import {Rendering} from "../../../../../iron/parts/rendering/rendering.js"
 import {assignSelectively} from "../../../../../tools/assign-selectively.js"
+import {Effects} from "../../../../../iron/parts/rendering/effects/types.js"
 
 const everything = Rendering.effects.everything()
 
@@ -12,7 +11,7 @@ export class EffectsStates {
 	effects: Effects
 	active: {[K in keyof Effects]: boolean}
 
-	constructor(public stage: Stage) {
+	constructor(public rendering: Rendering) {
 		const flats = this.#establish_flatstates()
 		this.effects = flats.effects
 		this.active = flats.active
@@ -38,7 +37,7 @@ export class EffectsStates {
 
 	#establish_flatstates() {
 		const standard = Rendering.effects.everything()
-		const current = this.stage.rendering.effects
+		const current = this.rendering.effects
 
 		const effects = ob(standard)
 			.map((effect, key) => {

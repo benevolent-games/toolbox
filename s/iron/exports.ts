@@ -5,6 +5,7 @@ export * from "./parts/load-glb/fix_animation_quaternions.js"
 export * from "./parts/load-glb/fix_emissive_colors_by_converting_them_to_gamma_space.js"
 
 export * from "./parts/rendering/rendering.js"
+export * from "./parts/rendering/effects/types.js"
 
 export * from "./parts/canvas.js"
 export * from "./parts/engine.js"

@@ -1,20 +1,22 @@
 
 import {html} from "@benev/slate"
+
 import {Menus} from "./menus.js"
 import {nexus} from "../nexus.js"
 import {styles} from "./styles.js"
-import {Stage} from "../../stage/stage.js"
 import {Framerate} from "./views/framerate/view.js"
 import {pointerType} from "./utils/pointer_type.js"
+import {AnyEngine} from "../../iron/parts/types.js"
 
 export const Theater = nexus.shadowView(use => ({
-		stage, menus, menuButton, arrows,
+		canvas, engine, menus, menuButton, arrows,
 		onMenuClick = () => {},
 		onMenuTouch = () => {},
 		onBackdropClick = () => {},
 		onBackdropTouch = () => {},
 	}: {
-		stage: Stage
+		canvas: HTMLCanvasElement
+		engine: AnyEngine
 		menus: Menus
 		menuButton: any
 		arrows: boolean
@@ -37,7 +39,7 @@ export const Theater = nexus.shadowView(use => ({
 	})
 
 	return html`
-		${stage.porthole.canvas}
+		${canvas}
 
 		<slot></slot>
 
@@ -81,11 +83,11 @@ export const Theater = nexus.shadowView(use => ({
 					</nav>
 
 					<div class=panel>
-						${menus.panel({stage})}
+						${menus.panel()}
 					</div>
 				</div>
 
-				${Framerate([stage])}
+				${Framerate([engine])}
 			</div>
 		</div>
 	`

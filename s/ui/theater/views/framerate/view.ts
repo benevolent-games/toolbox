@@ -1,9 +1,10 @@
 
-import {nexus} from "../../../nexus.js"
-import {Stage} from "../../../../stage/stage.js"
 import {html, css, interval} from "@benev/slate"
 
-export const Framerate = nexus.shadowView(use => (stage: Stage) => {
+import {nexus} from "../../../nexus.js"
+import {AnyEngine} from "../../../../iron/parts/types.js"
+
+export const Framerate = nexus.shadowView(use => (engine: AnyEngine) => {
 	use.name("framerate")
 	use.styles(css`
 		:host {
@@ -23,7 +24,7 @@ export const Framerate = nexus.shadowView(use => (stage: Stage) => {
 	// const tickrate = use.signal(0)
 
 	use.mount(() => interval(10, () => {
-		framerate.value = stage?.engine.getFps() ?? 0
+		framerate.value = engine.getFps() ?? 0
 		// tickrate.value = stage?.measured_tick_rate ?? 0
 	}))
 

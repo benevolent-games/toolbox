@@ -1,13 +1,12 @@
 
 import {signals} from "@benev/slate"
-import {Stage} from "../../stage/stage.js"
 
 export type MenuItem = {
 	name: string
-	panel: ({}: {stage: Stage}) => any
+	panel: () => any
 }
 
-export function menu<P>(name: string, panel: ({}: {stage: Stage}) => P): MenuItem {
+export function menu<P>(name: string, panel: () => P): MenuItem {
 	return {name, panel}
 }
 

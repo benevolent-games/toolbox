@@ -2,7 +2,7 @@
 import {pubsub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 
-import {AnyEngine} from "../../vista/parts/types.js"
+import {AnyEngine} from "./types.js"
 import {DeltaTimer} from "../../tools/delta_timer.js"
 
 export class Gameloop {

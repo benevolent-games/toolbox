@@ -1,5 +1,5 @@
 
-import {Effects} from "../../../../../stage/rendering/effects/types.js"
+import {Effects} from "../../../../../iron/parts/rendering/effects/types.js"
 
 export function effectsMetas<M extends Meta.All>(metas: M) {
 	return metas

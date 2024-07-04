@@ -16,21 +16,6 @@ export * from "./tact/tact.js"
 
 export * from "./iron/exports.js"
 
-// export * from "./stage/parts/gameloop.js"
-// export * from "./stage/parts/pointer_locker.js"
-// export * from "./stage/parts/porthole.js"
-// export * from "./stage/rendering/rendering.js"
-// export * from "./stage/rendering/effects/setup.js"
-// export * from "./stage/rendering/effects/standard.js"
-// export * from "./stage/rendering/effects/types.js"
-// export * from "./stage/utils/fix_animation_groups.js"
-// export * from "./stage/utils/fix_animation_quaternions.js"
-// export * from "./stage/utils/load_glb.js"
-// export * from "./stage/stage.js"
-// export * from "./stage/types.js"
-
-// export * from "./vista/exports.js"
-
 export * from "./rapier/rapier.js"
 export * from "./rapier/physics.js"
 
