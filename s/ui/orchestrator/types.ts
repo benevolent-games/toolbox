@@ -2,7 +2,7 @@
 import {RenderResult} from "@benev/slate"
 
 export type Exhibit = {
-	template: RenderResult
+	template: () => RenderResult
 	dispose: () => void
 }
 
@@ -13,7 +13,8 @@ export type LoadingScreen = {
 }
 
 export type LoadingState = {
+	isLoading: boolean
 	active: boolean
-	template: RenderResult
+	template: () => RenderResult
 }
 

@@ -3,22 +3,22 @@ import {css} from "@benev/slate"
 
 export const styles = css`
 
-:host {
+.orchestrator {
 	position: relative;
 	display: block;
 	width: 100%;
 	height: 100%;
+
+	> * {
+		display: block;
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
 }
 
-slot {
-	display: block;
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-}
-
-slot[name="loading"] {
+.orchestrator-loading {
 	z-index: 1;
 	pointer-events: none;
 
