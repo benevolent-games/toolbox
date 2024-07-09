@@ -29,7 +29,7 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.2.0-4",
+		"@benev/slate": "^0.2.0-5",
 		"@dimforge/rapier3d": "^0.13.1",
 		"@dimforge/rapier3d-compat": "^0.13.1",
 		"@gltf-transform/cli": "^4.0.4",
@@ -38,7 +38,7 @@
 		"@gltf-transform/functions": "^4.0.4",
 		"draco3dgltf": "^1.5.7",
 		"es-module-shims": "^1.10.0",
-		"glob": "^10.4.2",
+		"glob": "^11.0.0",
 		"lit": "^3.1.4",
 		"simplex-noise": "^4.0.1",
 		"sparrow-rtc": "^0.0.0"
@@ -48,7 +48,7 @@
 		"@babylonjs/loaders": "^7.14.0"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.6.0-4",
+		"@benev/turtle": "^0.6.0-6",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-wasm": "^6.2.2",
 		"chokidar": "^3.6.0",
@@ -58,8 +58,8 @@
 		"importly": "^0.2.3",
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
-		"rimraf": "^5.0.7",
-		"rollup": "^4.18.0",
+		"rimraf": "^6.0.0",
+		"rollup": "^4.18.1",
 		"terser": "^5.31.1",
 		"typescript": "^5.5.3",
 		"wrap-ansi": "^9.0.0"
