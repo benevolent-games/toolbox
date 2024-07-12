@@ -72,7 +72,7 @@ export function lerp(fraction: number, a: number, b: number) {
 	return a + value
 }
 
-/** return true is n is between a and b, otherwise return false. */
+/** return true is n is between a and b (inclusive), otherwise return false. */
 export function within(n: number, a: number = 0, b: number = 1) {
 	const min = Math.min(a, b)
 	const max = Math.max(a, b)
