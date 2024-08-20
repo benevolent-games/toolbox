@@ -23,7 +23,7 @@ export const Framerate = nexus.shadowView(use => (engine: AnyEngine) => {
 	const framerate = use.signal(0)
 	// const tickrate = use.signal(0)
 
-	use.mount(() => interval(10, () => {
+	use.mount(() => interval.hz(10, () => {
 		framerate.value = engine.getFps() ?? 0
 		// tickrate.value = stage?.measured_tick_rate ?? 0
 	}))

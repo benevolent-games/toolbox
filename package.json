@@ -29,23 +29,23 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.2.0-5",
-		"@dimforge/rapier3d": "^0.13.1",
-		"@dimforge/rapier3d-compat": "^0.13.1",
-		"@gltf-transform/cli": "^4.0.4",
-		"@gltf-transform/core": "^4.0.4",
-		"@gltf-transform/extensions": "^4.0.4",
-		"@gltf-transform/functions": "^4.0.4",
+		"@benev/slate": "^0.2.0-6",
+		"@dimforge/rapier3d": "^0.14.0",
+		"@dimforge/rapier3d-compat": "^0.14.0",
+		"@gltf-transform/cli": "^4.0.8",
+		"@gltf-transform/core": "^4.0.8",
+		"@gltf-transform/extensions": "^4.0.8",
+		"@gltf-transform/functions": "^4.0.8",
 		"draco3dgltf": "^1.5.7",
 		"es-module-shims": "^1.10.0",
 		"glob": "^11.0.0",
-		"lit": "^3.1.4",
-		"simplex-noise": "^4.0.1",
+		"lit": "^3.2.0",
+		"simplex-noise": "^4.0.3",
 		"sparrow-rtc": "^0.0.0"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.14.0",
-		"@babylonjs/loaders": "^7.14.0"
+		"@babylonjs/core": "^7.21.5",
+		"@babylonjs/loaders": "^7.21.5"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.0-6",
@@ -58,10 +58,10 @@
 		"importly": "^0.2.3",
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
-		"rimraf": "^6.0.0",
-		"rollup": "^4.18.1",
-		"terser": "^5.31.1",
-		"typescript": "^5.5.3",
+		"rimraf": "^6.0.1",
+		"rollup": "^4.21.0",
+		"terser": "^5.31.6",
+		"typescript": "^5.5.4",
 		"wrap-ansi": "^9.0.0"
 	},
 	"keywords": [
