@@ -6,7 +6,7 @@ export type Exhibit = {
 	dispose: () => void
 }
 
-export type ExhibitFn = () => Promise<Exhibit>
+export type ExhibitFn = (...args: any[]) => Promise<Exhibit>
 
 export type LoadingScreen = {
 	render: ({}: {active: boolean}) => RenderResult

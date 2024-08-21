@@ -32,7 +32,7 @@ export class Orchestrator {
 		return false
 	}
 
-	makeNavFn(screen: LoadingScreen, exhibitFn: ExhibitFn) {
+	makeNavFn<Fn extends ExhibitFn>(screen: LoadingScreen, exhibitFn: Fn) {
 		const setLoadingState = (active: boolean) => {
 			this.loading.value = {
 				active,
@@ -41,7 +41,7 @@ export class Orchestrator {
 			}
 		}
 
-		return async() => {
+		return async(...args: Parameters<Fn>) => {
 			if (this.alreadyBusy)
 				return
 
@@ -53,7 +53,7 @@ export class Orchestrator {
 
 			// load the exhibit, and also wait for animation to be done
 			const [exhibit] = await Promise.all([
-				exhibitFn(),
+				exhibitFn(...args),
 				nap(this.animTime.value),
 			])
 
@@ -73,6 +73,8 @@ export class Orchestrator {
 				isLoading: false,
 				template: () => undefined,
 			}
+
+			return exhibit
 		}
 	}
 }
