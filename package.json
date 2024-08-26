@@ -29,7 +29,7 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.2.0-6",
+		"@benev/slate": "^0.2.0-7",
 		"@dimforge/rapier3d": "^0.14.0",
 		"@dimforge/rapier3d-compat": "^0.14.0",
 		"@gltf-transform/cli": "^4.0.8",
@@ -44,11 +44,11 @@
 		"sparrow-rtc": "^0.0.0"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.21.5",
-		"@babylonjs/loaders": "^7.21.5"
+		"@babylonjs/core": "^7.22.4",
+		"@babylonjs/loaders": "^7.22.4"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.6.0-6",
+		"@benev/turtle": "^0.6.0-7",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-wasm": "^6.2.2",
 		"chokidar": "^3.6.0",
@@ -59,7 +59,7 @@
 		"mkdirp": "^3.0.1",
 		"npm-run-all": "^4.1.5",
 		"rimraf": "^6.0.1",
-		"rollup": "^4.21.0",
+		"rollup": "^4.21.1",
 		"terser": "^5.31.6",
 		"typescript": "^5.5.4",
 		"wrap-ansi": "^9.0.0"
