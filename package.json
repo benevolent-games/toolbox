@@ -44,11 +44,11 @@
 		"sparrow-rtc": "^0.0.0"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.22.4",
-		"@babylonjs/loaders": "^7.22.4"
+		"@babylonjs/core": "^7.22.5",
+		"@babylonjs/loaders": "^7.22.5"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.6.0-7",
+		"@benev/turtle": "^0.6.0-8",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-wasm": "^6.2.2",
 		"chokidar": "^3.6.0",
