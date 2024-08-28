@@ -1,6 +1,13 @@
 
 # changelog
 
+## v0.6.0
+
+- ! delete: `stage` and `vista`, in favor of new `iron`
+- removed obsolete emission fix from loadGlb
+- add orchestrator
+- add 'smooth' tool
+
 ## v0.6.0-13
 - ! removed `op_effect`
   - use `loading` from `@benev/slate` instead
