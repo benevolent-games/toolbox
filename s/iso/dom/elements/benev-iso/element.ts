@@ -16,7 +16,7 @@ export const BenevIso = nexus.shadowComponent(use => {
 		}
 		const observer = new ResizeObserver(resize)
 		setTimeout(resize, 0)
-		observer.observe(base.canvas)
+		observer.observe(base.canvas as any)
 		return () => observer.disconnect()
 	})
 

@@ -11,7 +11,7 @@ export class CanvasScaler {
 		canvas.width = 400
 		canvas.height = 400
 		new ResizeObserver(() => this.#recompute_resolution_for_size())
-			.observe(canvas)
+			.observe(canvas as any)
 	}
 
 	get resolution() {
