@@ -37,7 +37,7 @@ export class Orchestrator {
 			this.loading.value = {
 				active,
 				isLoading: true,
-				template: () => screen.render({active}),
+				template: () => screen.render({active: this.loading.value.active}),
 			}
 		}
 
@@ -48,7 +48,12 @@ export class Orchestrator {
 			// initially render loading and flip the active switch
 			// to play the intro animation
 			setLoadingState(false)
+
+			// yielding multiple loops, to surely defeat debouncers
 			await nap(0)
+			await nap(0)
+			await nap(0)
+
 			setLoadingState(true)
 
 			// load the exhibit, and also wait for animation to be done
