@@ -2,15 +2,13 @@
 export type Vec2Array = [number, number]
 export type Xy = {x: number, y: number}
 
-export class Vec2 {
+export class Vec2 implements Xy {
 	constructor(
 		public x = 0,
 		public y = 0,
 	) {}
 
-	//
-	// statics
-	//
+	///////////////////////////////////////////////////////////////////////
 
 	static new(x: number, y: number) {
 		return new this(x, y)
@@ -28,9 +26,14 @@ export class Vec2 {
 		return new this(x, y)
 	}
 
-	//
-	// fundamentals
-	//
+	static equal(...vecs: Xy[]) {
+		const [vec] = vecs
+		if (!vec)
+			return true
+		return vecs.every(({x, y}) => x === vec.x && y === vec.y)
+	}
+
+	///////////////////////////////////////////////////////////////////////
 
 	clone() {
 		return new Vec2(this.x, this.y)
@@ -46,74 +49,75 @@ export class Vec2 {
 		return this
 	}
 
-	//
-	// queries
-	//
+	setV({x, y}: Xy) {
+		this.x = x
+		this.y = y
+		return this
+	}
 
-	equal(a: Vec2, ...b: Vec2[]) {
+	///////////////////////////////////////////////////////////////////////
+
+	magnitudeSquared() {
 		const {x, y} = this
-		for (const {x: x2, y: y2} of [a, ...b]) {
-			if (x !== x2 || y !== y2)
-				return false
-		}
-		return true
+		return (x * x) + (y * y)
 	}
 
-	dot(b: Vec2): number {
-		return (this.x * b.x) + (this.y * b.y)
+	magnitude() {
+		return Math.sqrt(this.magnitudeSquared())
 	}
 
-	distance(b: Vec2): number {
-		const x = this.x - b.x
-		const y = this.y - b.y
-		return Math.sqrt((x * x) + (y * y))
+	///////////////////////////////////////////////////////////////////////
+
+	equals(x: number, y: number) {
+		return (
+			this.x === x &&
+			this.y === y
+		)
 	}
 
-	atan2(b: Vec2): number {
-		return Math.atan2(b.y, b.x) - Math.atan2(this.y, this.x)
+	equalsV(a: Xy, ...b: Xy[]) {
+		return [a, ...b].every(({x, y}) => this.equals(x, y))
 	}
 
-	magnitude(): number {
-		return Math.sqrt(this.x * this.x + this.y * this.y)
+	dot(x: number, y: number) {
+		return (this.x * x) + (this.y * y)
 	}
 
-	distanceSquared(b: Vec2): number {
-		const dx = this.x - b.x
-		const dy = this.y - b.y
-		return dx * dx + dy * dy
+	dotV({x, y}: Xy) {
+		return this.dot(x, y)
 	}
 
-	//
-	// chainable transforms
-	//
-
-	rotate(radians: number) {
-		const {x, y} = this
-		this.x = (x * Math.cos(radians)) - (y * Math.sin(radians))
-		this.y = (x * Math.sin(radians)) + (y * Math.cos(radians))
-		return this
+	distanceSquared(x: number, y: number) {
+		x = this.x - x
+		y = this.y - y
+		return (x * x) + (y * y)
 	}
 
-	add(...vectors: Vec2[]) {
-		for (const vector of vectors) {
-			this.x += vector.x
-			this.y += vector.y
-		}
-		return this
+	distanceSquaredV({x, y}: Xy) {
+		return this.distanceSquared(x, y)
 	}
 
-	subtract(b: Vec2) {
-		this.x -= b.x
-		this.y -= b.y
-		return this
+	distance(x: number, y: number) {
+		return Math.sqrt(this.distanceSquared(x, y))
 	}
 
-	multiply(b: Vec2) {
-		this.x *= b.x
-		this.y *= b.y
-		return this
+	distanceV({x, y}: Xy) {
+		return this.distance(x, y)
 	}
 
+	angleBetween(x: number, y: number) {
+		const dot = this.dot(x, y)
+		const magnitudes = this.magnitude() * Vec2.new(x, y).magnitude()
+		return Math.acos(dot / magnitudes)
+	}
+
+	angleBetweenV({x, y}: Xy) {
+		return this.angleBetween(x, y)
+	}
+
+	///////////////////////////////////////////////////////////////////////
+
+	/** mutator */
 	normalize() {
 		const length = this.magnitude()
 		if (length !== 0) {
@@ -123,12 +127,66 @@ export class Vec2 {
 		return this
 	}
 
-	lerp(target: Vec2, fraction: number) {
-		this.x += (target.x - this.x) * fraction
-		this.y += (target.y - this.y) * fraction
+	/** mutator */
+	rotate(radians: number) {
+		const {x, y} = this
+		this.x = (x * Math.cos(radians)) - (y * Math.sin(radians))
+		this.y = (x * Math.sin(radians)) + (y * Math.cos(radians))
 		return this
 	}
 
+	/** mutator */
+	add(x: number, y: number) {
+		this.x += x
+		this.y += y
+		return this
+	}
+
+	/** mutator */
+	addV(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.add(x, y)
+		return this
+	}
+
+	/** mutator */
+	subtract(x: number, y: number) {
+		this.x -= x
+		this.y -= y
+		return this
+	}
+
+	/** mutator */
+	subtractV(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.subtract(x, y)
+		return this
+	}
+
+	/** mutator */
+	multiply(x: number, y: number) {
+		this.x *= x
+		this.y *= y
+		return this
+	}
+
+	/** mutator */
+	multiplyV(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.multiply(x, y)
+		return this
+	}
+
+	/** mutator */
+	lerp(x: number, y: number, fraction: number) {
+		this.x += (x - this.x) * fraction
+		this.y += (y - this.y) * fraction
+		return this
+	}
+
+	/** mutator */
+	lerpV({x, y}: Xy, fraction: number) {
+		return this.lerp(x, y, fraction)
+	}
+
+	/** mutator */
 	perpendicular() {
 		const {x, y} = this
 		this.x = -y
@@ -136,80 +194,90 @@ export class Vec2 {
 		return this
 	}
 
-	reflect(normal: Vec2): this {
-		const dotProduct = 2 * this.dot(normal)
-		this.x -= dotProduct * normal.x
-		this.y -= dotProduct * normal.y
+	/** mutator */
+	reflect(x: number, y: number) {
+		const dot = 2 * this.dot(x, y)
+		this.x -= dot * x
+		this.y -= dot * y
 		return this
 	}
 
-	angleBetween(b: Vec2): number {
-		const dotProduct = this.dot(b)
-		const magnitudes = this.magnitude() * b.magnitude()
-		return Math.acos(dotProduct / magnitudes)
+	/** mutator */
+	reflectV({x, y}: Xy) {
+		return this.reflect(x, y)
 	}
 
-	clampMagnitude(max: number): this {
+	/** mutator */
+	leash(max: number) {
 		const mag = this.magnitude()
-		if (mag > max) {
+		if (mag > max)
 			this.normalize().multiplyBy(max)
-		}
 		return this
 	}
 
-	floor(): this {
+	/** mutator */
+	floor() {
 		this.x = Math.floor(this.x)
 		this.y = Math.floor(this.y)
 		return this
 	}
 
-	ceil(): this {
+	/** mutator */
+	ceil() {
 		this.x = Math.ceil(this.x)
 		this.y = Math.ceil(this.y)
 		return this
 	}
 
-	round(): this {
+	/** mutator */
+	round() {
 		this.x = Math.round(this.x)
 		this.y = Math.round(this.y)
 		return this
 	}
 
-	rotateAroundPoint(point: Vec2, radians: number): this {
-		const dx = this.x - point.x
-		const dy = this.y - point.y
+	/** mutator */
+	rotateAroundPoint(x: number, y: number, radians: number) {
+		const dx = this.x - x
+		const dy = this.y - y
 		const cos = Math.cos(radians)
 		const sin = Math.sin(radians)
-		this.x = cos * dx - sin * dy + point.x
-		this.y = sin * dx + cos * dy + point.y
+		this.x = cos * dx - sin * dy + x
+		this.y = sin * dx + cos * dy + y
 		return this
 	}
 
-	applyBy(change: (a: number) => number) {
+	/** mutator */
+	each(change: (a: number) => number) {
 		this.x = change(this.x)
 		this.y = change(this.y)
 		return this
 	}
 
+	/** mutator */
 	clamp(min: number, max: number) {
 		const clamp = (val: number) => Math.max(min, Math.min(max, val))
-		return this.applyBy(clamp)
+		return this.each(clamp)
 	}
 
+	/** mutator */
 	negate() {
-		return this.applyBy(a => a * -1)
+		return this.each(a => a * -1)
 	}
 
+	/** mutator */
 	multiplyBy(factor: number) {
-		return this.applyBy(a => a * factor)
+		return this.each(a => a * factor)
 	}
 
+	/** mutator */
 	divideBy(factor: number) {
-		return this.applyBy(a => a / factor)
+		return this.each(a => a / factor)
 	}
 
+	/** mutator */
 	addBy(amount: number) {
-		return this.applyBy(a => a + amount)
+		return this.each(a => a + amount)
 	}
 }
 
