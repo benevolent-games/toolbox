@@ -287,6 +287,7 @@ export class Vec2 implements Xy {
 
 	/** mutator */
 	divideBy(divisor: number) {
+		if (divisor === 0) return this
 		this.x /= divisor
 		this.y /= divisor
 		return this

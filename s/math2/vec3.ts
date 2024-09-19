@@ -230,12 +230,11 @@ export class Vec3 {
 	}
 
 	/** mutator */
-	divideBy(delta: number) {
-		if (delta !== 0) {
-			this.x /= delta
-			this.y /= delta
-			this.z /= delta
-		}
+	divideBy(divisor: number) {
+		if (divisor === 0) return this
+		this.x /= divisor
+		this.y /= divisor
+		this.z /= divisor
 		return this
 	}
 
