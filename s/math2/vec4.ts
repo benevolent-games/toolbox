@@ -28,7 +28,11 @@ export class Vec4 {
 		return [x, y, z, w]
 	}
 
-	copy() {
+	toString() {
+		return `(Vec4 x${this.x.toFixed(2)}, y${this.y.toFixed(2)}, z${this.z.toFixed(2)}, w${this.w.toFixed(2)})`
+	}
+
+	clone() {
 		return new Vec4(...this.array())
 	}
 

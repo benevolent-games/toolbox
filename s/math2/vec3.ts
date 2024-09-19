@@ -62,6 +62,10 @@ export class Vec3 {
 		return [this.x, this.y, this.z]
 	}
 
+	toString() {
+		return `(Vec3 x${this.x.toFixed(2)}, y${this.y.toFixed(2)}, z${this.z.toFixed(2)})`
+	}
+
 	set(x: number, y: number, z: number) {
 		this.x = x
 		this.y = y

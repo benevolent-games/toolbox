@@ -44,6 +44,10 @@ export class Vec2 implements Xy {
 		return [this.x, this.y]
 	}
 
+	toString() {
+		return `(Vec2 x${this.x.toFixed(2)}, z${this.y.toFixed(2)})`
+	}
+
 	/** mutator */
 	set(x: number, y: number) {
 		this.x = x

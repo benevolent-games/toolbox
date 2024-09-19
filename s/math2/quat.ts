@@ -31,6 +31,10 @@ export class Quat {
 		return [x, y, z, w]
 	}
 
+	toString() {
+		return `(Quat x${this.x.toFixed(2)}, y${this.y.toFixed(2)}, z${this.z.toFixed(2)}, w${this.w.toFixed(2)})`
+	}
+
 	clone() {
 		return new Quat(...this.array())
 	}
