@@ -1,6 +1,23 @@
 
 # changelog
 
+## v0.7.0
+
+- ! **new math2**
+  - vector math, scalar math, etc, it's all been redone
+  - the old math has been deprecated
+  - to keep using the old deprecated math, for now,
+    - change imports like `import {vec3} from "@benev/toolbox"`
+    - to `import {vec3} from "@benev/toolbox/x/math/exports.js"`
+  - to use the new math, import the new utilities
+    - `import {Vec3, Scalar, Randy} from "@benev/toolbox"`
+  - i'm not gonna document every change so read the source
+  - but i will say:
+    - the new vector classes are objects with methods, allowing us to use nicer chaining syntax
+    - all methods will operate on the values *in-place* which is a bold move
+    - i wanted the chainability, but it's also a serious performance concern to not clutter the gc with bazillions of stupid vector objects
+    - you need to use `.clone()` when you wanna make a copy of something
+
 ## v0.6.0
 
 - ! delete: `stage` and `vista`, in favor of new `iron`
