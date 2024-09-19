@@ -4,13 +4,13 @@ export type Xyzw = {x: number, y: number, z: number, w: number}
 
 export class Quat {
 	constructor(
-		public x: number = 0,
-		public y: number = 0,
-		public z: number = 0,
-		public w: number = 1,
+		public x: number,
+		public y: number,
+		public z: number,
+		public w: number,
 	) {}
 
-	static new(x = 0, y = 0, z = 0, w = 1) {
+	static new(x: number, y: number, z: number, w: number) {
 		return new this(x, y, z, w)
 	}
 
@@ -19,7 +19,7 @@ export class Quat {
 	}
 
 	static identity() {
-		return new this()
+		return new this(0, 0, 0, 1)
 	}
 
 	static import({x, y, z, w}: Xyzw) {
@@ -43,15 +43,26 @@ export class Quat {
 		return this
 	}
 
-	multiply(...quats: Quat[]): Quat {
-		let {x, y, z, w} = this
-		for (const {x: x2, y: y2, z: z2, w: w2} of quats) {
-			x = w * x2 + x * w2 + y * z2 - z * y2
-			y = w * y2 - x * z2 + y * w2 + z * x2
-			z = w * z2 + x * y2 - y * x2 + z * w2
-			w = w * w2 - x * x2 - y * y2 - z * z2
-		}
-		return this.set(x, y, z, w)
+	setQ({x, y, z, w}: Xyzw) {
+		this.x = x
+		this.y = y
+		this.z = z
+		this.w = w
+		return this
+	}
+
+	multiply(x2: number, y2: number, z2: number, w2: number): Quat {
+		const {x, y, z, w} = this
+		this.x = w * x2 + x * w2 + y * z2 - z * y2
+		this.y = w * y2 - x * z2 + y * w2 + z * x2
+		this.z = w * z2 + x * y2 - y * x2 + z * w2
+		this.w = w * w2 - x * x2 - y * y2 - z * z2
+		return this
+	}
+
+	multiplyQ(...quats: Quat[]) {
+		for (const {x, y, z, w} of quats) this.multiply(x, y, z, w)
+		return this
 	}
 }
 

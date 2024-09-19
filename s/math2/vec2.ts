@@ -4,8 +4,8 @@ export type Xy = {x: number, y: number}
 
 export class Vec2 implements Xy {
 	constructor(
-		public x = 0,
-		public y = 0,
+		public x: number,
+		public y: number,
 	) {}
 
 	///////////////////////////////////////////////////////////////////////
@@ -26,11 +26,12 @@ export class Vec2 implements Xy {
 		return new this(x, y)
 	}
 
-	static equal(...vecs: Xy[]) {
-		const [vec] = vecs
-		if (!vec)
-			return true
-		return vecs.every(({x, y}) => x === vec.x && y === vec.y)
+	static magnitudeSquared(x: number, y: number) {
+		return (x * x) + (y * y)
+	}
+
+	static magnitude(x: number, y: number) {
+		return Math.sqrt(this.magnitudeSquared(x, y))
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -43,12 +44,14 @@ export class Vec2 implements Xy {
 		return [this.x, this.y]
 	}
 
+	/** mutator */
 	set(x: number, y: number) {
 		this.x = x
 		this.y = y
 		return this
 	}
 
+	/** mutator */
 	setV({x, y}: Xy) {
 		this.x = x
 		this.y = y
@@ -58,15 +61,12 @@ export class Vec2 implements Xy {
 	///////////////////////////////////////////////////////////////////////
 
 	magnitudeSquared() {
-		const {x, y} = this
-		return (x * x) + (y * y)
+		return Vec2.magnitudeSquared(this.x, this.y)
 	}
 
 	magnitude() {
-		return Math.sqrt(this.magnitudeSquared())
+		return Vec2.magnitude(this.x, this.y)
 	}
-
-	///////////////////////////////////////////////////////////////////////
 
 	equals(x: number, y: number) {
 		return (
@@ -75,8 +75,8 @@ export class Vec2 implements Xy {
 		)
 	}
 
-	equalsV(a: Xy, ...b: Xy[]) {
-		return [a, ...b].every(({x, y}) => this.equals(x, y))
+	equalsV(...vecs: Xy[]) {
+		return vecs.every(({x, y}) => this.equals(x, y))
 	}
 
 	dot(x: number, y: number) {
@@ -107,7 +107,7 @@ export class Vec2 implements Xy {
 
 	angleBetween(x: number, y: number) {
 		const dot = this.dot(x, y)
-		const magnitudes = this.magnitude() * Vec2.new(x, y).magnitude()
+		const magnitudes = this.magnitude() * Vec2.magnitude(x, y)
 		return Math.acos(dot / magnitudes)
 	}
 
@@ -119,12 +119,7 @@ export class Vec2 implements Xy {
 
 	/** mutator */
 	normalize() {
-		const length = this.magnitude()
-		if (length !== 0) {
-			this.x /= length
-			this.y /= length
-		}
-		return this
+		return this.divideBy(this.magnitude())
 	}
 
 	/** mutator */
@@ -208,7 +203,7 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
-	leash(max: number) {
+	clampMagnitude(max: number) {
 		const mag = this.magnitude()
 		if (mag > max)
 			this.normalize().multiplyBy(max)
@@ -248,9 +243,9 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
-	each(change: (a: number) => number) {
-		this.x = change(this.x)
-		this.y = change(this.y)
+	each(fn: (a: number) => number) {
+		this.x = fn(this.x)
+		this.y = fn(this.y)
 		return this
 	}
 
@@ -266,18 +261,31 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
-	multiplyBy(factor: number) {
-		return this.each(a => a * factor)
+	addBy(delta: number) {
+		this.x += delta
+		this.y += delta
+		return this
 	}
 
 	/** mutator */
-	divideBy(factor: number) {
-		return this.each(a => a / factor)
+	subtractBy(delta: number) {
+		this.x -= delta
+		this.y -= delta
+		return this
 	}
 
 	/** mutator */
-	addBy(amount: number) {
-		return this.each(a => a + amount)
+	multiplyBy(coefficient: number) {
+		this.x *= coefficient
+		this.y *= coefficient
+		return this
+	}
+
+	/** mutator */
+	divideBy(divisor: number) {
+		this.x /= divisor
+		this.y /= divisor
+		return this
 	}
 }
 
