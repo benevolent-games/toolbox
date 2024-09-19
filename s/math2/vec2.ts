@@ -20,6 +20,10 @@ export class Vec2 {
 		return new this(0, 0)
 	}
 
+	static array(v: Vec2Array) {
+		return new this(...v)
+	}
+
 	static import({x, y}: Xy) {
 		return new this(x, y)
 	}

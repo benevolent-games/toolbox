@@ -17,6 +17,10 @@ export class Vec4 {
 		return new this(0, 0, 0, 0)
 	}
 
+	static array(v: Vec4Array) {
+		return new this(...v)
+	}
+
 	array(): Vec4Array {
 		const {x, y, z, w} = this
 		return [x, y, z, w]

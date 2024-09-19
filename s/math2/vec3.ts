@@ -21,6 +21,10 @@ export class Vec3 {
 		return new this(0, 0, 0)
 	}
 
+	static array(v: Vec3Array) {
+		return new this(...v)
+	}
+
 	static import({x, y, z}: Xyz): Vec3 {
 		return new this(x, y, z)
 	}
@@ -82,7 +86,7 @@ export class Vec3 {
 	}
 
 	withinCircle(center: Vec3, radius: number): boolean {
-		const distanceSquared = this.copy().subtract(center).magnitude() ** 2
+		const distanceSquared = this.clone().subtract(center).magnitude() ** 2
 		return distanceSquared < radius ** 2
 	}
 

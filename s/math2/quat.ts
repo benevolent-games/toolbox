@@ -14,6 +14,10 @@ export class Quat {
 		return new this(x, y, z, w)
 	}
 
+	static array(q: QuatArray) {
+		return new this(...q)
+	}
+
 	static identity() {
 		return new this()
 	}

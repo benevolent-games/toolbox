@@ -19,9 +19,7 @@ export * from "./iron/exports.js"
 export * from "./rapier/rapier.js"
 export * from "./rapier/physics.js"
 
-export * from "./math/noise.js"
-export * from "./math/rand.js"
-export * from "./math/exports.js"
+export * from "./math2/exports.js"
 
 export * from "./tools/nametag/nametag.js"
 export * from "./tools/nametag/nquery.js"
