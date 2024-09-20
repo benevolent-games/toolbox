@@ -78,7 +78,7 @@ export class Scalar {
 		return this
 	}
 
-	static leash(x: number, y: number, range: number) {
+	static constrainProximity(x: number, y: number, range: number) {
 		const trueDiff = y - x
 		const positiveDiff = Math.abs(trueDiff)
 		const cappedDiff = (positiveDiff > range)
@@ -86,8 +86,8 @@ export class Scalar {
 			: positiveDiff
 		const newDiff = (trueDiff < 0) ? -cappedDiff : cappedDiff
 		return x + newDiff
-	} leash(y: number, range: number) {
-		this.x = Scalar.leash(this.x, y, range)
+	} constrainProximity(y: number, range: number) {
+		this.x = Scalar.constrainProximity(this.x, y, range)
 		return this
 	}
 
