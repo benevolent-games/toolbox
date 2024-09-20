@@ -13,10 +13,5 @@ import "@babylonjs/core/Materials/Node/Blocks/index.js"
 import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader.js"
 
 import "@babylonjs/core/Rendering/edgesRenderer.js"
-import "@babylonjs/core/Rendering/boundingBoxRenderer.js"
-import "@babylonjs/core/Rendering/depthPeelingSceneComponent.js"
-import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
-import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
-import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
 import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
 

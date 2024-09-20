@@ -16,9 +16,6 @@ export * from "./tact/tact.js"
 
 export * from "./iron/exports.js"
 
-export * from "./rapier/rapier.js"
-export * from "./rapier/physics.js"
-
 export * from "./math2/exports.js"
 
 export * from "./tools/nametag/nametag.js"

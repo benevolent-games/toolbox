@@ -1,5 +1,6 @@
 
-export * from "./side-effects.js"
+
+import "./required-side-effects.js"
 
 export * from "./parts/load-glb/load-glb.js"
 export * from "./parts/load-glb/fix_animation_groups.js"
