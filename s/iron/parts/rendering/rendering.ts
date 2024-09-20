@@ -1,15 +1,4 @@
 
-import "@babylonjs/core/Culling/ray.js"
-import "@babylonjs/loaders/glTF/index.js"
-import "@babylonjs/core/Engines/index.js"
-import "@babylonjs/core/Animations/index.js"
-import "@babylonjs/core/Rendering/edgesRenderer.js"
-import "@babylonjs/core/Rendering/boundingBoxRenderer.js"
-import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
-import "@babylonjs/core/Rendering/prePassRendererSceneComponent.js"
-import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader.js"
-import "@babylonjs/core/Rendering/geometryBufferRendererSceneComponent.js"
-
 import {pubsub} from "@benev/slate"
 import {Scene} from "@babylonjs/core/scene.js"
 import {Camera} from "@babylonjs/core/Cameras/camera.js"

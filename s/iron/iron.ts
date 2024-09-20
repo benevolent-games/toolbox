@@ -1,6 +1,4 @@
 
-import "@babylonjs/core/Rendering/depthPeelingSceneComponent.js"
-
 import {make_scene} from "./parts/scene.js"
 import {Gameloop} from "./parts/gameloop.js"
 import {make_engine} from "./parts/engine.js"
