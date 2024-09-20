@@ -48,7 +48,7 @@
 		"@babylonjs/loaders": "^7.26.1"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.6.0-8",
+		"@benev/turtle": "^0.6.0-9",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-wasm": "^6.2.2",
 		"chokidar": "^4.0.0",
