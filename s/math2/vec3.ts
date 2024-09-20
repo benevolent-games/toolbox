@@ -37,11 +37,11 @@ export class Vec3 {
 
 	static average(...vecs: Xyz[]) {
 		return Vec3.zero()
-			.addV(...vecs)
+			.add(...vecs)
 			.divideBy(vecs.length)
 	}
 
-	static fromHexColor(hex: string): Vec3 {
+	static hexColor(hex: string): Vec3 {
 		if (hex.startsWith("#") && hex.length === 7) {
 			const r = parseInt(hex.slice(1, 3), 16) / 255
 			const g = parseInt(hex.slice(3, 5), 16) / 255
@@ -66,14 +66,14 @@ export class Vec3 {
 		return `(Vec3 x${this.x.toFixed(2)}, y${this.y.toFixed(2)}, z${this.z.toFixed(2)})`
 	}
 
-	set(x: number, y: number, z: number) {
+	set_(x: number, y: number, z: number) {
 		this.x = x
 		this.y = y
 		this.z = z
 		return this
 	}
 
-	setV({x, y, z}: Xyz) {
+	set({x, y, z}: Xyz) {
 		this.x = x
 		this.y = y
 		this.z = z
@@ -90,7 +90,15 @@ export class Vec3 {
 		return Vec3.magnitude(this.x, this.y, this.z)
 	}
 
-	equals(x: number, y: number, z: number) {
+	hexColor() {
+		const to255 = (val: number) => Math.round(val * 255)
+		const toHex = (val: number) => to255(val).toString(16).padStart(2, '0')
+		return `#${toHex(this.x)}${toHex(this.y)}${toHex(this.z)}`
+	}
+
+	///////////////////////////////////////////////////////////////////////
+
+	equals_(x: number, y: number, z: number) {
 		return (
 			this.x === x &&
 			this.y === y &&
@@ -98,66 +106,60 @@ export class Vec3 {
 		)
 	}
 
-	equalsV(...vecs: Xyz[]) {
-		return vecs.every(v => this.equals(v.x, v.y, v.z))
+	equals(...vecs: Xyz[]) {
+		return vecs.every(v => this.equals_(v.x, v.y, v.z))
 	}
 
-	distanceSquared(x: number, y: number, z: number) {
+	distanceSquared_(x: number, y: number, z: number) {
 		const dx = this.x - x
 		const dy = this.y - y
 		const dz = this.z - z
 		return (dx ** 2) + (dy ** 2) + (dz ** 2)
 	}
 
-	distanceSquaredV({x, y, z}: Xyz) {
-		return this.distanceSquared(x, y, z)
+	distanceSquared({x, y, z}: Xyz) {
+		return this.distanceSquared_(x, y, z)
 	}
 
-	distance(x: number, y: number, z: number) {
-		return Math.sqrt(this.distanceSquared(x, y, z))
+	distance_(x: number, y: number, z: number) {
+		return Math.sqrt(this.distanceSquared_(x, y, z))
 	}
 
-	distanceV({x, y, z}: Xyz) {
-		return this.distance(x, y, z)
+	distance({x, y, z}: Xyz) {
+		return this.distance_(x, y, z)
 	}
 
-	dot(x: number, y: number, z: number) {
+	dot_(x: number, y: number, z: number) {
 		return (this.x * x) + (this.y * y) + (this.z * z)
 	}
 
-	dotV({x, y, z}: Xyz) {
-		return this.dot(x, y, z)
+	dot({x, y, z}: Xyz) {
+		return this.dot_(x, y, z)
 	}
 
-	inRange(x: number, y: number, z: number, radius: number) {
-		const d2 = this.distanceSquared(x, y, z)
+	inRange_(x: number, y: number, z: number, radius: number) {
+		const d2 = this.distanceSquared_(x, y, z)
 		return d2 < (radius ** 2)
 	}
 
-	inRangeV({x, y, z}: Xyz, radius: number) {
-		return this.inRange(x, y, z, radius)
+	inRange({x, y, z}: Xyz, radius: number) {
+		return this.inRange_(x, y, z, radius)
 	}
 
-	toHexColor() {
-		const to255 = (val: number) => Math.round(val * 255)
-		const toHex = (val: number) => to255(val).toString(16).padStart(2, '0')
-		return `#${toHex(this.x)}${toHex(this.y)}${toHex(this.z)}`
-	}
-
-	angleBetween(x: number, y: number, z: number) {
-		const dotProduct = this.dot(x, y, z)
+	angleBetween_(x: number, y: number, z: number) {
+		const dotProduct = this.dot_(x, y, z)
 		const magnitudes = this.magnitude() * Vec3.new(x, y, z).magnitude()
 		return Math.acos(dotProduct / magnitudes)
 	}
 
-	angleBetweenV({x, y, z}: Xyz) {
-		return this.angleBetween(x, y, z)
+	angleBetween({x, y, z}: Xyz) {
+		return this.angleBetween_(x, y, z)
 	}
 
 	///////////////////////////////////////////////////////////////////////
 
 	/** mutator */
-	add(x: number, y: number, z: number) {
+	add_(x: number, y: number, z: number) {
 		this.x += x
 		this.y += y
 		this.z += z
@@ -165,13 +167,13 @@ export class Vec3 {
 	}
 
 	/** mutator */
-	addV(...vecs: Xyz[]) {
-		for (const {x, y, z} of vecs) this.add(x, y, z)
+	add(...vecs: Xyz[]) {
+		for (const {x, y, z} of vecs) this.add_(x, y, z)
 		return this
 	}
 
 	/** mutator */
-	subtract(x: number, y: number, z: number) {
+	subtract_(x: number, y: number, z: number) {
 		this.x -= x
 		this.y -= y
 		this.z -= z
@@ -179,13 +181,13 @@ export class Vec3 {
 	}
 
 	/** mutator */
-	subtractV(...vecs: Xyz[]) {
-		for (const {x, y, z} of vecs) this.subtract(x, y, z)
+	subtract(...vecs: Xyz[]) {
+		for (const {x, y, z} of vecs) this.subtract_(x, y, z)
 		return this
 	}
 
 	/** mutator */
-	multiply(x: number, y: number, z: number) {
+	multiply_(x: number, y: number, z: number) {
 		this.x *= x
 		this.y *= y
 		this.z *= z
@@ -193,10 +195,12 @@ export class Vec3 {
 	}
 
 	/** mutator */
-	multiplyV(...vecs: Vec3[]) {
-		for (const {x, y, z} of vecs) this.multiply(x, y, z)
+	multiply(...vecs: Vec3[]) {
+		for (const {x, y, z} of vecs) this.multiply_(x, y, z)
 		return this
 	}
+
+	///////////////////////////////////////////////////////////////////////
 
 	/** mutator */
 	each(fn: (a: number) => number) {
@@ -244,65 +248,10 @@ export class Vec3 {
 	}
 
 	/** mutator */
-	cross(x2: number, y2: number, z2: number) {
-		const {x: x1, y: y1, z: z1} = this
-		this.x = (y1 * z2) - (z1 * y2)
-		this.y = (z1 * x2) - (x1 * z2)
-		this.z = (x1 * y2) - (y1 * x2)
-		return this
-	}
-
-	/** mutator */
-	crossV({x, y, z}: Xyz) {
-		return this.cross(x, y, z)
-	}
-
-	/** mutator */
-	lerp(x: number, y: number, z: number, fraction: number): this {
-		this.x += (x - this.x) * fraction
-		this.y += (y - this.y) * fraction
-		this.z += (z - this.z) * fraction
-		return this
-	}
-
-	/** mutator */
-	lerpV({x, y, z}: Xyz, fraction: number) {
-		return this.lerp(x, y, z, fraction)
-	}
-
-	/** mutator */
-	projectOnto(x: number, y: number, z: number) {
-		const scalar = this.dot(x, y, z) / Vec3.magnitudeSquared(x, y, z)
-		this.x = scalar * x
-		this.y = scalar * y
-		this.z = scalar * z
-		return this
-	}
-
-	/** mutator */
-	projectOntoV({x, y, z}: Vec3) {
-		return this.projectOnto(x, y, z)
-	}
-
-	/** mutator */
 	clampMagnitude(max: number) {
 		const magnitude = this.magnitude()
 		if (magnitude > max) this.normalize().multiplyBy(max)
 		return this
-	}
-
-	/** mutator */
-	reflect(x: number, y: number, z: number) {
-		const dot = this.dot(x, y, z) * 2
-		this.x -= dot * x
-		this.y -= dot * y
-		this.z -= dot * z
-		return this
-	}
-
-	/** mutator */
-	reflectV({x, y, z}: Xyz) {
-		return this.reflect(x, y, z)
 	}
 
 	/** mutator */
@@ -329,8 +278,65 @@ export class Vec3 {
 		return this
 	}
 
+	///////////////////////////////////////////////////////////////////////
+
 	/** mutator */
-	rotateAroundAxis(ux: number, uy: number, uz: number, angle: number): this {
+	cross_(x2: number, y2: number, z2: number) {
+		const {x: x1, y: y1, z: z1} = this
+		this.x = (y1 * z2) - (z1 * y2)
+		this.y = (z1 * x2) - (x1 * z2)
+		this.z = (x1 * y2) - (y1 * x2)
+		return this
+	}
+
+	/** mutator */
+	cross({x, y, z}: Xyz) {
+		return this.cross_(x, y, z)
+	}
+
+	/** mutator */
+	lerp_(x: number, y: number, z: number, fraction: number): this {
+		this.x += (x - this.x) * fraction
+		this.y += (y - this.y) * fraction
+		this.z += (z - this.z) * fraction
+		return this
+	}
+
+	/** mutator */
+	lerp({x, y, z}: Xyz, fraction: number) {
+		return this.lerp_(x, y, z, fraction)
+	}
+
+	/** mutator */
+	projectOnto_(x: number, y: number, z: number) {
+		const scalar = this.dot_(x, y, z) / Vec3.magnitudeSquared(x, y, z)
+		this.x = scalar * x
+		this.y = scalar * y
+		this.z = scalar * z
+		return this
+	}
+
+	/** mutator */
+	projectOnto({x, y, z}: Vec3) {
+		return this.projectOnto_(x, y, z)
+	}
+
+	/** mutator */
+	reflect_(x: number, y: number, z: number) {
+		const dot = this.dot_(x, y, z) * 2
+		this.x -= dot * x
+		this.y -= dot * y
+		this.z -= dot * z
+		return this
+	}
+
+	/** mutator */
+	reflect({x, y, z}: Xyz) {
+		return this.reflect_(x, y, z)
+	}
+
+	/** mutator */
+	rotateAroundAxis_(ux: number, uy: number, uz: number, angle: number): this {
 		const cos = Math.cos(angle)
 		const sin = Math.sin(angle)
 		const {x, y, z} = this
@@ -341,8 +347,8 @@ export class Vec3 {
 	}
 
 	/** mutator */
-	rotateAroundAxisV({x, y, z}: Xyz, angle: number) {
-		return this.rotateAroundAxis(x, y, z, angle)
+	rotateAroundAxis({x, y, z}: Xyz, angle: number) {
+		return this.rotateAroundAxis_(x, y, z, angle)
 	}
 }
 

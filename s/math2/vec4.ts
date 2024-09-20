@@ -36,7 +36,7 @@ export class Vec4 {
 		return new Vec4(...this.array())
 	}
 
-	set(x: number, y: number, z: number, w: number) {
+	set_(x: number, y: number, z: number, w: number) {
 		this.x = x
 		this.y = y
 		this.z = z
@@ -44,7 +44,7 @@ export class Vec4 {
 		return this
 	}
 
-	setV({x, y, z, w}: Xyzw) {
+	set({x, y, z, w}: Xyzw) {
 		this.x = x
 		this.y = y
 		this.z = z

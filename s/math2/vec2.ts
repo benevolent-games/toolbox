@@ -49,14 +49,14 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
-	set(x: number, y: number) {
+	set_(x: number, y: number) {
 		this.x = x
 		this.y = y
 		return this
 	}
 
 	/** mutator */
-	setV({x, y}: Xy) {
+	set({x, y}: Xy) {
 		this.x = x
 		this.y = y
 		return this
@@ -72,51 +72,51 @@ export class Vec2 implements Xy {
 		return Vec2.magnitude(this.x, this.y)
 	}
 
-	equals(x: number, y: number) {
+	equals_(x: number, y: number) {
 		return (
 			this.x === x &&
 			this.y === y
 		)
 	}
 
-	equalsV(...vecs: Xy[]) {
-		return vecs.every(({x, y}) => this.equals(x, y))
+	equals(...vecs: Xy[]) {
+		return vecs.every(({x, y}) => this.equals_(x, y))
 	}
 
-	dot(x: number, y: number) {
+	dot_(x: number, y: number) {
 		return (this.x * x) + (this.y * y)
 	}
 
-	dotV({x, y}: Xy) {
-		return this.dot(x, y)
+	dot({x, y}: Xy) {
+		return this.dot_(x, y)
 	}
 
-	distanceSquared(x: number, y: number) {
+	distanceSquared_(x: number, y: number) {
 		x = this.x - x
 		y = this.y - y
 		return (x * x) + (y * y)
 	}
 
-	distanceSquaredV({x, y}: Xy) {
-		return this.distanceSquared(x, y)
+	distanceSquared({x, y}: Xy) {
+		return this.distanceSquared_(x, y)
 	}
 
-	distance(x: number, y: number) {
-		return Math.sqrt(this.distanceSquared(x, y))
+	distance_(x: number, y: number) {
+		return Math.sqrt(this.distanceSquared_(x, y))
 	}
 
-	distanceV({x, y}: Xy) {
-		return this.distance(x, y)
+	distance({x, y}: Xy) {
+		return this.distance_(x, y)
 	}
 
-	angleBetween(x: number, y: number) {
-		const dot = this.dot(x, y)
+	angleBetween_(x: number, y: number) {
+		const dot = this.dot_(x, y)
 		const magnitudes = this.magnitude() * Vec2.magnitude(x, y)
 		return Math.acos(dot / magnitudes)
 	}
 
-	angleBetweenV({x, y}: Xy) {
-		return this.angleBetween(x, y)
+	angleBetween({x, y}: Xy) {
+		return this.angleBetween_(x, y)
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -135,75 +135,11 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
-	add(x: number, y: number) {
-		this.x += x
-		this.y += y
-		return this
-	}
-
-	/** mutator */
-	addV(...vecs: Xy[]) {
-		for (const {x, y} of vecs) this.add(x, y)
-		return this
-	}
-
-	/** mutator */
-	subtract(x: number, y: number) {
-		this.x -= x
-		this.y -= y
-		return this
-	}
-
-	/** mutator */
-	subtractV(...vecs: Xy[]) {
-		for (const {x, y} of vecs) this.subtract(x, y)
-		return this
-	}
-
-	/** mutator */
-	multiply(x: number, y: number) {
-		this.x *= x
-		this.y *= y
-		return this
-	}
-
-	/** mutator */
-	multiplyV(...vecs: Xy[]) {
-		for (const {x, y} of vecs) this.multiply(x, y)
-		return this
-	}
-
-	/** mutator */
-	lerp(x: number, y: number, fraction: number) {
-		this.x += (x - this.x) * fraction
-		this.y += (y - this.y) * fraction
-		return this
-	}
-
-	/** mutator */
-	lerpV({x, y}: Xy, fraction: number) {
-		return this.lerp(x, y, fraction)
-	}
-
-	/** mutator */
 	perpendicular() {
 		const {x, y} = this
 		this.x = -y
 		this.y = x
 		return this
-	}
-
-	/** mutator */
-	reflect(x: number, y: number) {
-		const dot = 2 * this.dot(x, y)
-		this.x -= dot * x
-		this.y -= dot * y
-		return this
-	}
-
-	/** mutator */
-	reflectV({x, y}: Xy) {
-		return this.reflect(x, y)
 	}
 
 	/** mutator */
@@ -232,17 +168,6 @@ export class Vec2 implements Xy {
 	round() {
 		this.x = Math.round(this.x)
 		this.y = Math.round(this.y)
-		return this
-	}
-
-	/** mutator */
-	rotateAroundPoint(x: number, y: number, radians: number) {
-		const dx = this.x - x
-		const dy = this.y - y
-		const cos = Math.cos(radians)
-		const sin = Math.sin(radians)
-		this.x = cos * dx - sin * dy + x
-		this.y = sin * dx + cos * dy + y
 		return this
 	}
 
@@ -291,6 +216,88 @@ export class Vec2 implements Xy {
 		this.x /= divisor
 		this.y /= divisor
 		return this
+	}
+
+	///////////////////////////////////////////////////////////////////////
+
+	/** mutator */
+	add_(x: number, y: number) {
+		this.x += x
+		this.y += y
+		return this
+	}
+
+	/** mutator */
+	add(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.add_(x, y)
+		return this
+	}
+
+	/** mutator */
+	subtract_(x: number, y: number) {
+		this.x -= x
+		this.y -= y
+		return this
+	}
+
+	/** mutator */
+	subtract(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.subtract_(x, y)
+		return this
+	}
+
+	/** mutator */
+	multiply_(x: number, y: number) {
+		this.x *= x
+		this.y *= y
+		return this
+	}
+
+	/** mutator */
+	multiply(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.multiply_(x, y)
+		return this
+	}
+
+	/** mutator */
+	lerp_(x: number, y: number, fraction: number) {
+		this.x += (x - this.x) * fraction
+		this.y += (y - this.y) * fraction
+		return this
+	}
+
+	/** mutator */
+	lerp({x, y}: Xy, fraction: number) {
+		return this.lerp_(x, y, fraction)
+	}
+
+	/** mutator */
+	reflect_(x: number, y: number) {
+		const dot = 2 * this.dot_(x, y)
+		this.x -= dot * x
+		this.y -= dot * y
+		return this
+	}
+
+	/** mutator */
+	reflect({x, y}: Xy) {
+		return this.reflect_(x, y)
+	}
+
+	/** mutator */
+	rotateAroundPoint_(x: number, y: number, radians: number) {
+		const dx = this.x - x
+		const dy = this.y - y
+		const cos = Math.cos(radians)
+		const sin = Math.sin(radians)
+		this.x = cos * dx - sin * dy + x
+		this.y = sin * dx + cos * dy + y
+		return this
+	}
+
+	/** mutator */
+	rotateAroundPoint({x, y}: Vec2, radians: number) {
+		return this.rotateAroundPoint_(x, y, radians)
 	}
 }
 

@@ -39,7 +39,7 @@ export class Quat {
 		return new Quat(...this.array())
 	}
 
-	set(x: number, y: number, z: number, w: number) {
+	set_(x: number, y: number, z: number, w: number) {
 		this.x = x
 		this.y = y
 		this.z = z
@@ -47,7 +47,7 @@ export class Quat {
 		return this
 	}
 
-	setQ({x, y, z, w}: Xyzw) {
+	set({x, y, z, w}: Xyzw) {
 		this.x = x
 		this.y = y
 		this.z = z
@@ -55,7 +55,7 @@ export class Quat {
 		return this
 	}
 
-	multiply(x2: number, y2: number, z2: number, w2: number): Quat {
+	multiply_(x2: number, y2: number, z2: number, w2: number): Quat {
 		const {x, y, z, w} = this
 		this.x = w * x2 + x * w2 + y * z2 - z * y2
 		this.y = w * y2 - x * z2 + y * w2 + z * x2
@@ -64,8 +64,8 @@ export class Quat {
 		return this
 	}
 
-	multiplyQ(...quats: Quat[]) {
-		for (const {x, y, z, w} of quats) this.multiply(x, y, z, w)
+	multiply(...quats: Quat[]) {
+		for (const {x, y, z, w} of quats) this.multiply_(x, y, z, w)
 		return this
 	}
 }
