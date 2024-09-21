@@ -38,7 +38,7 @@ export class Vec3 {
 	}
 
 	static average(...vecs: Xyz[]) {
-		return Vec3.zero()
+		return this.zero()
 			.add(...vecs)
 			.divideBy(vecs.length)
 	}
