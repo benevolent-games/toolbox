@@ -4,6 +4,9 @@ import {Scalar} from "./scalar.js"
 export type Vec2Array = [number, number]
 export type Xy = {x: number, y: number}
 
+/** https://github.com/microsoft/TypeScript/issues/5863 */
+type TsHack<T> = {new(...a: ConstructorParameters<typeof Vec2>): T}
+
 export class Vec2 implements Xy {
 	constructor(
 		public x: number,
@@ -12,19 +15,19 @@ export class Vec2 implements Xy {
 
 	///////////////////////////////////////////////////////////////////////
 
-	static new(x: number, y: number) {
+	static new<T extends Vec2>(this: TsHack<T>, x: number, y: number): T {
 		return new this(x, y)
 	}
 
-	static zero() {
+	static zero<T extends Vec2>(this: TsHack<T>) {
 		return new this(0, 0)
 	}
 
-	static array(v: Vec2Array) {
+	static array<T extends Vec2>(this: TsHack<T>, v: Vec2Array) {
 		return new this(...v)
 	}
 
-	static import({x, y}: Xy) {
+	static import<T extends Vec2>(this: TsHack<T>, {x, y}: Xy) {
 		return new this(x, y)
 	}
 
