@@ -156,5 +156,14 @@ export class Scalar {
 		this.x = Scalar.round(this.x)
 		return this
 	}
+
+	static smooth(x: number, y: number, smoothing: number) {
+		return smoothing <= 1
+			? y
+			: x + ((y - x) / smoothing)
+	} smooth(y: number, smoothing: number) {
+		this.x = Scalar.smooth(this.x, y, smoothing)
+		return this
+	}
 }
 

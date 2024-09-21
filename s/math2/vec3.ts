@@ -1,4 +1,6 @@
 
+import {Scalar} from "./scalar.js"
+
 export type Vec3Array = [number, number, number]
 export type Xyz = {x: number, y: number, z: number}
 
@@ -349,6 +351,19 @@ export class Vec3 {
 	/** mutator */
 	rotateAroundAxis({x, y, z}: Xyz, angle: number) {
 		return this.rotateAroundAxis_(x, y, z, angle)
+	}
+
+	/** mutator */
+	smooth_(x: number, y: number, z: number, smoothing: number) {
+		this.x = Scalar.smooth(this.x, x, smoothing)
+		this.y = Scalar.smooth(this.y, y, smoothing)
+		this.z = Scalar.smooth(this.z, z, smoothing)
+		return this
+	}
+
+	/** mutator */
+	smooth({x, y, z}: Xyz, smoothing: number) {
+		return this.smooth_(x, y, z, smoothing)
 	}
 }
 

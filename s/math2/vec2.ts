@@ -1,4 +1,6 @@
 
+import {Scalar} from "./scalar.js"
+
 export type Vec2Array = [number, number]
 export type Xy = {x: number, y: number}
 
@@ -298,6 +300,18 @@ export class Vec2 implements Xy {
 	/** mutator */
 	rotateAroundPoint({x, y}: Vec2, radians: number) {
 		return this.rotateAroundPoint_(x, y, radians)
+	}
+
+	/** mutator */
+	smooth_(x: number, y: number, smoothing: number) {
+		this.x = Scalar.smooth(this.x, x, smoothing)
+		this.y = Scalar.smooth(this.y, y, smoothing)
+		return this
+	}
+
+	/** mutator */
+	smooth({x, y}: Xy, smoothing: number) {
+		return this.smooth_(x, y, smoothing)
 	}
 }
 
