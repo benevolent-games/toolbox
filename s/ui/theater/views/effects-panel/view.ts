@@ -33,7 +33,9 @@ export const EffectsPanel = nexus.shadowView(use => (rendering: Rendering, besto
 	const states = use.once(() => new EffectsStates(rendering))
 	const {effects} = states
 
-	use.mount(() => bestorage.onJson(json => states.effectsData = json.effects))
+	use.mount(() => bestorage.onJson(json => {
+		states.effectsData = json.effects
+	}))
 
 	use.mount(() => reactor.reaction(
 		() => states.effectsData,
