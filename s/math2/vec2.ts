@@ -50,7 +50,7 @@ export class Vec2 implements Xy {
 	}
 
 	toString() {
-		return `(Vec2 x${this.x.toFixed(2)}, z${this.y.toFixed(2)})`
+		return `(Vec2 x${this.x.toFixed(2)}, y${this.y.toFixed(2)})`
 	}
 
 	/** mutator */
