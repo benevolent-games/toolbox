@@ -29,7 +29,7 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.2.13",
+		"@benev/slate": "^0.3.0-1",
 		"@dimforge/rapier3d-compat": "^0.14.0",
 		"@gltf-transform/cli": "^4.1.0",
 		"@gltf-transform/core": "^4.1.0",
@@ -41,8 +41,8 @@
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.33.0",
-		"@babylonjs/loaders": "^7.33.0"
+		"@babylonjs/core": "^7.36.0",
+		"@babylonjs/loaders": "^7.36.0"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.3",
@@ -51,7 +51,7 @@
 		"cynic": "^0.2.1",
 		"http-server": "^14.1.1",
 		"npm-run-all": "^4.1.5",
-		"typescript": "^5.6.3"
+		"typescript": "^5.7.2"
 	},
 	"keywords": [
 		"web-games",
