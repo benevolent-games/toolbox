@@ -1,4 +1,6 @@
 
+import {Vec3} from "./vec3.js"
+
 export type QuatArray = [number, number, number, number]
 export type Xyzw = {x: number, y: number, z: number, w: number}
 
@@ -26,6 +28,14 @@ export class Quat {
 		return new this(x, y, z, w)
 	}
 
+	static rotated_(yaw: number, pitch: number, roll: number) {
+		return this.identity().rotate_(yaw, pitch, roll)
+	}
+
+	static rotated(vec: Vec3) {
+		return this.identity().rotate(vec)
+	}
+
 	array(): QuatArray {
 		const {x, y, z, w} = this
 		return [x, y, z, w]
@@ -37,6 +47,21 @@ export class Quat {
 
 	clone() {
 		return new Quat(...this.array())
+	}
+
+	rotate_(yaw: number, pitch: number, roll: number): Quat {
+		const cy = Math.cos(yaw * 0.5), sy = Math.sin(yaw * 0.5)
+		const cp = Math.cos(pitch * 0.5), sp = Math.sin(pitch * 0.5)
+		const cr = Math.cos(roll * 0.5), sr = Math.sin(roll * 0.5)
+		const x = sr * cp * cy - cr * sp * sy
+		const y = cr * sp * cy + sr * cp * sy
+		const z = cr * cp * sy - sr * sp * cy
+		const w = cr * cp * cy + sr * sp * sy
+		return this.multiply_(x, y, z, w)
+	}
+
+	rotate({y: yaw, x: pitch, z: roll}: Vec3) {
+		return this.rotate_(yaw, pitch, roll)
 	}
 
 	set_(x: number, y: number, z: number, w: number) {
