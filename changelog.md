@@ -1,9 +1,22 @@
 
 # changelog
 
-## v0.7.0
+- 🟥 *harmful -- breaking change*
+- 🔶 *maybe harmful -- deprecation, or possible breaking change*
+- 🍏 *harmless -- addition, fix, or enhancement*
 
-- ! **new math2**
+<br/>
+
+## v0.7
+
+### 0.7.7
+- 🔶 deprecate `Radians.to` and `Radians.from`
+  - `Radians.to.degrees(3.14)` becomes `Radians.toDegrees(3.14)`
+  - `Radians.from.degrees(180)` becomes `Degrees.toRadians(180)`
+  - similar pattern as new `Degrees.toRadians` with new `Turns.toRadians` and `Arcseconds.toRadians`
+
+### v0.7.0 to v0.7.6
+- 🍏 **new math2**
   - vector math, scalar math, etc, it's all been redone
   - the old math has been deprecated
   - to keep using the old deprecated math, for now,

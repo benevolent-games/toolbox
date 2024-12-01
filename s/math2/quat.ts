@@ -1,4 +1,6 @@
 
+import {Xyz} from "./vec3.js"
+
 export type QuatArray = [number, number, number, number]
 export type Xyzw = {x: number, y: number, z: number, w: number}
 
@@ -26,6 +28,14 @@ export class Quat {
 		return new this(x, y, z, w)
 	}
 
+	static rotate_(yaw: number, pitch: number, roll: number) {
+		return this.identity().rotate_(yaw, pitch, roll)
+	}
+
+	static rotate(vec: Xyz) {
+		return this.identity().rotate(vec)
+	}
+
 	array(): QuatArray {
 		const {x, y, z, w} = this
 		return [x, y, z, w]
@@ -37,6 +47,49 @@ export class Quat {
 
 	clone() {
 		return new Quat(...this.array())
+	}
+
+	transform_(x: number, y: number, z: number, w: number, global = false) {
+		if (global) {
+			const original = this.array()
+			return this.set_(x, y, z, w).multiply_(...original)
+		}
+		else {
+			return this.multiply_(x, y, z, w)
+		}
+	}
+
+	transform({x, y, z, w}: Xyzw, global = false) {
+		return this.transform_(x, y, z, w, global)
+	}
+
+	rotate_(yaw: number, pitch: number, roll: number, global = false): Quat {
+		const cx = Math.cos(pitch * 0.5), sx = Math.sin(pitch * 0.5)
+		const cy = Math.cos(yaw * 0.5), sy = Math.sin(yaw * 0.5)
+		const cz = Math.cos(roll * 0.5), sz = Math.sin(roll * 0.5)
+		const x = sx * cy * cz + cx * sy * sz
+		const y = cx * sy * cz - sx * cy * sz
+		const z = cx * cy * sz + sx * sy * cz
+		const w = cx * cy * cz - sx * sy * sz
+		return this.transform_(x, y, z, w, global)
+	}
+
+	rotate({y: yaw, x: pitch, z: roll}: Xyz, global = false) {
+		return this.rotate_(yaw, pitch, roll, global)
+	}
+
+	rotateAroundAxis_(angle: number, axisX: number, axisY: number, axisZ: number, global = false): Quat {
+		const halfAngle = angle * 0.5
+		const sinHalf = Math.sin(halfAngle)
+		const x = axisX * sinHalf
+		const y = axisY * sinHalf
+		const z = axisZ * sinHalf
+		const w = Math.cos(halfAngle)
+		return this.transform_(x, y, z, w, global)
+	}
+
+	rotateAroundAxis(angle: number, axis: Xyz, global = false): Quat {
+		return this.rotateAroundAxis_(angle, axis.x, axis.y, axis.z, global)
 	}
 
 	set_(x: number, y: number, z: number, w: number) {
