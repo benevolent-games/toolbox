@@ -23,6 +23,16 @@ export class Vec4 {
 		return new this(...v)
 	}
 
+	static import({x, y, z, w}: Xyzw) {
+		return new this(x, y, z, w)
+	}
+
+	static from(v: Vec4Array | Xyzw) {
+		return Array.isArray(v)
+			? this.array(v)
+			: this.import(v)
+	}
+
 	array(): Vec4Array {
 		const {x, y, z, w} = this
 		return [x, y, z, w]

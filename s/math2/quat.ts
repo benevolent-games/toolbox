@@ -16,16 +16,22 @@ export class Quat {
 		return new this(x, y, z, w)
 	}
 
-	static array(q: QuatArray) {
-		return new this(...q)
-	}
-
 	static identity() {
 		return new this(0, 0, 0, 1)
 	}
 
+	static array(q: QuatArray) {
+		return new this(...q)
+	}
+
 	static import({x, y, z, w}: Xyzw) {
 		return new this(x, y, z, w)
+	}
+
+	static from(q: QuatArray | Xyzw) {
+		return Array.isArray(q)
+			? this.array(q)
+			: this.import(q)
 	}
 
 	static rotate_(pitch: number, yaw: number, roll: number) {

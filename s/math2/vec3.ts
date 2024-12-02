@@ -32,6 +32,12 @@ export class Vec3 {
 		return new this(x, y, z)
 	}
 
+	static from(v: Vec3Array | Xyz) {
+		return Array.isArray(v)
+			? this.array(v)
+			: this.import(v)
+	}
+
 	static magnitudeSquared(x: number, y: number, z: number) {
 		return (x ** 2) + (y ** 2) + (z ** 2)
 	}

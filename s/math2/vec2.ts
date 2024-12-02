@@ -31,6 +31,12 @@ export class Vec2 implements Xy {
 		return new this(x, y)
 	}
 
+	static from(v: Vec2Array | Xy) {
+		return Array.isArray(v)
+			? this.array(v)
+			: this.import(v)
+	}
+
 	static magnitudeSquared(x: number, y: number) {
 		return (x * x) + (y * y)
 	}
