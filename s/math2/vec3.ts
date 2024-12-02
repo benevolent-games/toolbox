@@ -214,9 +214,10 @@ export class Vec3 {
 	///////////////////////////////////////////////////////////////////////
 
 	/** mutator */
-	each(fn: (a: number) => number) {
-		this.x = fn(this.x)
-		this.y = fn(this.y)
+	map(fn: (a: number, index: number) => number) {
+		this.x = fn(this.x, 0)
+		this.y = fn(this.y, 1)
+		this.z = fn(this.z, 2)
 		return this
 	}
 

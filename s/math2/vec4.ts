@@ -61,5 +61,14 @@ export class Vec4 {
 		this.w = w
 		return this
 	}
+
+	/** mutator */
+	map(fn: (a: number, index: number) => number) {
+		this.x = fn(this.x, 0)
+		this.y = fn(this.y, 1)
+		this.z = fn(this.z, 2)
+		this.w = fn(this.w, 3)
+		return this
+	}
 }
 

@@ -183,21 +183,21 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
-	each(fn: (a: number) => number) {
-		this.x = fn(this.x)
-		this.y = fn(this.y)
+	map(fn: (a: number, index: number) => number) {
+		this.x = fn(this.x, 0)
+		this.y = fn(this.y, 1)
 		return this
 	}
 
 	/** mutator */
 	clamp(min: number, max: number) {
 		const clamp = (val: number) => Math.max(min, Math.min(max, val))
-		return this.each(clamp)
+		return this.map(clamp)
 	}
 
 	/** mutator */
 	negate() {
-		return this.each(a => a * -1)
+		return this.map(a => a * -1)
 	}
 
 	/** mutator */
