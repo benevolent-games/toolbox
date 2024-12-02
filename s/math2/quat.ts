@@ -28,8 +28,8 @@ export class Quat {
 		return new this(x, y, z, w)
 	}
 
-	static rotate_(yaw: number, pitch: number, roll: number) {
-		return this.identity().rotate_(yaw, pitch, roll)
+	static rotate_(pitch: number, yaw: number, roll: number) {
+		return this.identity().rotate_(pitch, yaw, roll)
 	}
 
 	static rotate(vec: Xyz) {
@@ -63,7 +63,7 @@ export class Quat {
 		return this.transform_(x, y, z, w, global)
 	}
 
-	rotate_(yaw: number, pitch: number, roll: number, global = false): Quat {
+	rotate_(pitch: number, yaw: number, roll: number, global = false): Quat {
 		const cx = Math.cos(pitch * 0.5), sx = Math.sin(pitch * 0.5)
 		const cy = Math.cos(yaw * 0.5), sy = Math.sin(yaw * 0.5)
 		const cz = Math.cos(roll * 0.5), sz = Math.sin(roll * 0.5)
@@ -74,8 +74,8 @@ export class Quat {
 		return this.transform_(x, y, z, w, global)
 	}
 
-	rotate({y: yaw, x: pitch, z: roll}: Xyz, global = false) {
-		return this.rotate_(yaw, pitch, roll, global)
+	rotate({x: pitch, y: yaw, z: roll}: Xyz, global = false) {
+		return this.rotate_(pitch, yaw, roll, global)
 	}
 
 	rotateAroundAxis_(angle: number, axisX: number, axisY: number, axisZ: number, global = false): Quat {
