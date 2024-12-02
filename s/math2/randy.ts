@@ -3,11 +3,11 @@ export type Random = () => number
 
 /** utility for generating and using random numbers. */
 export class Randy {
-	constructor(public readonly random: Random = Randy.makeFn(0)) {}
+	constructor(public readonly random: Random = Randy.makeFn(1)) {}
 
 	/** make a pseudo-random number generator function that produces numbers between 0 and 1. */
 	static makeFn(seed: number): Random {
-		seed = 1_234 + Math.floor(seed * 1_234)
+		seed = 123456789 + Math.floor(seed * 123456789)
 		function random() {
 			seed = Math.imul(48271, seed) | 0 % 2147483647
 			return (seed & 2147483647) / 2147483648
