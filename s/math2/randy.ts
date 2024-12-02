@@ -26,16 +26,16 @@ export class Randy {
 		return this.random() <= chance
 	}
 
-	/** generate a random number in between two numbers. */
-	between(a: number, b: number) {
+	/** generate a random number between two numbers. */
+	range(a: number, b: number) {
 		const difference = b - a
 		const value = difference * this.random()
 		return a + value
 	}
 
-	/** generate a random integer in between two numbers (inclusive). */
-	integerBetween(a: number, b: number) {
-		return Math.round(this.between(a, b))
+	/** generate a random integer between two numbers (inclusive). */
+	integerRange(a: number, b: number) {
+		return Math.round(this.range(a, b))
 	}
 
 	/** randomly choose an index given an array length. */
@@ -56,7 +56,7 @@ export class Randy {
 	}
 
 	/** remove and return multiple items from the given array. */
-	extract<T>(count: number, array: T[]) {
+	take<T>(count: number, array: T[]) {
 		const copy = [...array]
 
 		if (count >= array.length)
@@ -69,5 +69,14 @@ export class Randy {
 
 		return selection
 	}
+
+	/** @deprecated renamed to `take` */
+	extract<T>(count: number, array: T[]) { return this.take(count, array) }
+
+	/** @deprecated renamed to `range` */
+	between(a: number, b: number) { return this.range(a, b) }
+
+	/** @deprecated renamed to `integerRange` */
+	integerBetween(a: number, b: number) { return this.integerRange(a, b) }
 }
 
