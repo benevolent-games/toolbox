@@ -33,6 +33,11 @@ export class Randy {
 		return a + value
 	}
 
+	/** generate a random integer in between two numbers (inclusive). */
+	integerBetween(a: number, b: number) {
+		return Math.round(this.between(a, b))
+	}
+
 	/** randomly choose an index given an array length. */
 	index(length: number) {
 		return Math.floor(this.random() * length)
