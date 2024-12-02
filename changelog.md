@@ -7,6 +7,25 @@
 
 <br/>
 
+## v0.8
+
+### 0.8.0-0
+- 🟥 changed Quat rotate param ordering
+  - ❌ old `Quat.rotate_(yaw, pitch, roll)`
+  - ✅ new `Quat.rotate_(pitch, yaw, roll)`
+- 🟥 renamed vector methods `.each` to `.map`
+  - ❌ old `Vec3.each(x => x * 2)`
+  - ✅ new `Vec3.map(x => x * 2)`
+- 🔶 Randy renames
+  - `randy.between(1, 10)` renamed to `randy.range(1, 10)`
+  - `randy.integerBetween(1, 10)` renamed to `randy.integerRange(1, 10)`
+  - `randy.extract(5, array)` renamed to `randy.take(5, array)`
+- 🍏 tweaks to Randy
+  - added new method `randy.integerRange(1, 10)`
+  - changed the way randy seeds are processed
+
+<br/>
+
 ## v0.7
 
 ### 0.7.7
