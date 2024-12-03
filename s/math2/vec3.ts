@@ -214,6 +214,16 @@ export class Vec3 {
 	///////////////////////////////////////////////////////////////////////
 
 	/** mutator */
+	half() {
+		return this.divideBy(2)
+	}
+
+	/** mutator */
+	double() {
+		return this.multiplyBy(2)
+	}
+
+	/** mutator */
 	map(fn: (a: number, index: number) => number) {
 		this.x = fn(this.x, 0)
 		this.y = fn(this.y, 1)

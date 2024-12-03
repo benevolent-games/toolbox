@@ -26,6 +26,9 @@
   - added `randy.select` method
   - added new method `randy.integerRange(1, 10)`
   - changed the way randy seeds are processed
+- 🍏 add handy vector methods
+  - `vector.half()`
+  - `vector.double()`
 
 <br/>
 
