@@ -20,7 +20,10 @@
   - `randy.between(1, 10)` renamed to `randy.range(1, 10)`
   - `randy.integerBetween(1, 10)` renamed to `randy.integerRange(1, 10)`
   - `randy.extract(5, array)` renamed to `randy.take(5, array)`
+- 🔶 Randy take actually takes
+  - fixed a bug where `take/extract` didn't actually remove items from the array
 - 🍏 tweaks to Randy
+  - added `randy.select` method
   - added new method `randy.integerRange(1, 10)`
   - changed the way randy seeds are processed
 

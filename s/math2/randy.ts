@@ -55,18 +55,26 @@ export class Randy {
 		return item
 	}
 
-	/** remove and return multiple items from the given array. */
-	take<T>(count: number, array: T[]) {
+	/** randomly select a number of array items. */
+	select<T>(count: number, array: T[]) {
 		const copy = [...array]
-
 		if (count >= array.length)
 			return copy
 
 		const selection: T[] = []
-
 		for (let i = 0; i < count; i++)
 			selection.push(this.yoink(copy))
+		return selection
+	}
 
+	/** remove and return a number of items from the given array. */
+	take<T>(count: number, array: T[]) {
+		const selection: T[] = []
+		for (let i = 0; i < count; i++) {
+			if (array.length === 0)
+				return selection
+			selection.push(this.yoink(array))
+		}
 		return selection
 	}
 
