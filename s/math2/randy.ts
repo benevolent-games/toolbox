@@ -3,22 +3,34 @@ export type Random = () => number
 
 /** utility for generating and using random numbers. */
 export class Randy {
-	constructor(public readonly random: Random = Randy.makeFn(1)) {}
+	random: Random
 
-	/** make a pseudo-random number generator function that produces numbers between 0 and 1. */
-	static makeFn(seed: number): Random {
-		seed = 123456789 + Math.floor(seed * 123456789)
+	constructor(public readonly seed: number = Randy.randomSeed()) {
+		this.random = Randy.makeRandom(seed)
+	}
+
+	/** obtain a random positive 32 bit integer. */
+	static randomSeed() {
+		return Math.floor(Math.random() * 2147483647)
+	}
+
+	/** seed a pseudo-random number generator function that produces numbers between 0 and 1. */
+	static makeRandom(seed: number): Random {
+		seed = (seed ^ 0x6D2B79F5) + 0x1E35A7BD
+		seed = (Math.abs(seed | 0) % 2147483647) || 1
+
 		function random() {
-			seed = Math.imul(48271, seed) | 0 % 2147483647
+			seed = (Math.imul(48271, seed) | 0) % 2147483647
 			return (seed & 2147483647) / 2147483648
 		}
+
 		random() // discard first value
 		return random
 	}
 
-	/** create a Rand instance with the given seed number. */
+	/** @deprecated create an instance with the given seed number. */
 	static seed(seed: number): Randy {
-		return new this(this.makeFn(seed))
+		return new this(seed)
 	}
 
 	/** return true or false, given a 0 to 1 probability fraction. */

@@ -9,23 +9,25 @@
 
 ## v0.8
 
-### 0.8.0-0
+### 0.8.0-3
 - 🟥 changed Quat rotate param ordering
   - ❌ old `Quat.rotate_(yaw, pitch, roll)`
   - ✅ new `Quat.rotate_(pitch, yaw, roll)`
 - 🟥 renamed vector methods `.each` to `.map`
   - ❌ old `Vec3.each(x => x * 2)`
   - ✅ new `Vec3.map(x => x * 2)`
-- 🔶 Randy renames
-  - `randy.between(1, 10)` renamed to `randy.range(1, 10)`
-  - `randy.integerBetween(1, 10)` renamed to `randy.integerRange(1, 10)`
+- 🟥 Randy rework
+  - the PRNG algorithm has been tweaked, all seeds will now produce new values
+  - renamed `Randy.makeFn(123)` to `Randy.makeRandom(123)`
+  - renamed `randy.between(1, 10)` to `randy.range(1, 10)`
+  - renamed `randy.integerBetween(1, 10)` to `randy.integerRange(1, 10)`
   - `randy.extract(5, array)` renamed to `randy.take(5, array)`
-- 🔶 Randy take actually takes
+  - added `Randy.randomSeed()` for making random seed integers
+  - deprecated `Randy.seed()`
   - fixed a bug where `take/extract` didn't actually remove items from the array
-- 🍏 tweaks to Randy
+- 🍏 Randy additions
   - added `randy.select` method
   - added new method `randy.integerRange(1, 10)`
-  - changed the way randy seeds are processed
 - 🍏 add handy vector methods
   - `vector.half()`
   - `vector.double()`
