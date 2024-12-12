@@ -1,4 +1,6 @@
 
+import {Scalar} from "./scalar.js"
+
 const pi = Math.PI
 const circle = 2 * Math.PI
 
@@ -44,6 +46,11 @@ export const Radians = {
 	},
 	toTurns(r: number) {
 		return r / circle
+	},
+
+	circleDistance(radiansA: number, radiansB: number): number {
+		const diff = Math.abs(Scalar.wrap(radiansA - radiansB, 0, Radians.circle))
+		return Math.min(diff, Radians.circle - diff)
 	},
 }
 
