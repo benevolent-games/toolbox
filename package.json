@@ -31,18 +31,18 @@
 	"dependencies": {
 		"@benev/slate": "^0.3.0-2",
 		"@dimforge/rapier3d-compat": "^0.14.0",
-		"@gltf-transform/cli": "^4.1.0",
-		"@gltf-transform/core": "^4.1.0",
-		"@gltf-transform/extensions": "^4.1.0",
-		"@gltf-transform/functions": "^4.1.0",
+		"@gltf-transform/cli": "^4.1.1",
+		"@gltf-transform/core": "^4.1.1",
+		"@gltf-transform/extensions": "^4.1.1",
+		"@gltf-transform/functions": "^4.1.1",
 		"draco3dgltf": "^1.5.7",
 		"es-module-shims": "^1.10.1",
 		"glob": "^11.0.0",
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.39.1",
-		"@babylonjs/loaders": "^7.39.1"
+		"@babylonjs/core": "^7.40.1",
+		"@babylonjs/loaders": "^7.40.1"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.3",
