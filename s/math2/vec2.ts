@@ -23,6 +23,10 @@ export class Vec2 implements Xy {
 		return new this(0, 0)
 	}
 
+	static all<T extends Vec2>(this: TsHack<T>, value: number) {
+		return new this(value, value)
+	}
+
 	static array<T extends Vec2>(this: TsHack<T>, v: Vec2Array) {
 		return new this(...v)
 	}
@@ -277,6 +281,19 @@ export class Vec2 implements Xy {
 	/** mutator */
 	multiply(...vecs: Xy[]) {
 		for (const {x, y} of vecs) this.multiply_(x, y)
+		return this
+	}
+
+	/** mutator */
+	divide_(x: number, y: number) {
+		this.x /= x
+		this.y /= y
+		return this
+	}
+
+	/** mutator */
+	divide(...vecs: Xy[]) {
+		for (const {x, y} of vecs) this.divide_(x, y)
 		return this
 	}
 
