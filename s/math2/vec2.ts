@@ -49,6 +49,20 @@ export class Vec2 implements Xy {
 		return Math.sqrt(this.magnitudeSquared(x, y))
 	}
 
+	static min(...vecs: Vec2[]) {
+		return new Vec2(
+			Math.min(...vecs.map(v => v.x)),
+			Math.min(...vecs.map(v => v.y)),
+		)
+	}
+
+	static max(...vecs: Vec2[]) {
+		return new Vec2(
+			Math.max(...vecs.map(v => v.x)),
+			Math.max(...vecs.map(v => v.y)),
+		)
+	}
+
 	///////////////////////////////////////////////////////////////////////
 
 	clone() {

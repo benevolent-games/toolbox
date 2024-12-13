@@ -56,6 +56,22 @@ export class Vec3 {
 			.divideBy(vecs.length)
 	}
 
+	static min(...vecs: Vec3[]) {
+		return new Vec3(
+			Math.min(...vecs.map(v => v.x)),
+			Math.min(...vecs.map(v => v.y)),
+			Math.min(...vecs.map(v => v.z)),
+		)
+	}
+
+	static max(...vecs: Vec3[]) {
+		return new Vec3(
+			Math.max(...vecs.map(v => v.x)),
+			Math.max(...vecs.map(v => v.y)),
+			Math.max(...vecs.map(v => v.z)),
+		)
+	}
+
 	static hexColor(hex: string): Vec3 {
 		if (hex.startsWith("#") && hex.length === 7) {
 			const r = parseInt(hex.slice(1, 3), 16) / 255
