@@ -28,9 +28,9 @@ export class Randy {
 		return random
 	}
 
-	/** @deprecated create an instance with the given seed number. */
-	static seed(seed: number): Randy {
-		return new this(seed)
+	/** obtain a random positive integer. */
+	integer() {
+		return Math.floor(this.random() * 2147483647)
 	}
 
 	/** return true or false, given a 0 to 1 probability fraction. */
@@ -88,6 +88,20 @@ export class Randy {
 			selection.push(this.yoink(array))
 		}
 		return selection
+	}
+
+	/** shuffle an array in-place using (fisher-yates) */
+	shuffle<T>(array: T[]) {
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(this.random() * (i + 1))
+			;[array[i], array[j]] = [array[j], array[i]]
+		}
+		return array
+	}
+
+	/** @deprecated create an instance with the given seed number. */
+	static seed(seed: number): Randy {
+		return new this(seed)
 	}
 
 	/** @deprecated renamed to `take` */
