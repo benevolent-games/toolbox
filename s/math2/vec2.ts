@@ -49,6 +49,12 @@ export class Vec2 implements Xy {
 		return Math.sqrt(this.magnitudeSquared(x, y))
 	}
 
+	static average(...vectors: Xy[]) {
+		return this.zero()
+			.add(...vectors)
+			.divideBy(vectors.length)
+	}
+
 	static min(...vecs: Vec2[]) {
 		return new Vec2(
 			Math.min(...vecs.map(v => v.x)),
