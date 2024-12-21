@@ -172,6 +172,11 @@ export class Vec2 implements Xy {
 	}
 
 	/** mutator */
+	abs() {
+		return this.map(x => Math.abs(x))
+	}
+
+	/** mutator */
 	rotate(radians: number) {
 		const {x, y} = this
 		this.x = (x * Math.cos(radians)) - (y * Math.sin(radians))
