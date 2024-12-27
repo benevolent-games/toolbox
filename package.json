@@ -41,12 +41,12 @@
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.40.2",
-		"@babylonjs/loaders": "^7.40.2"
+		"@babylonjs/core": "^7.42.0",
+		"@babylonjs/loaders": "^7.42.0"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.4",
-		"chokidar": "^4.0.1",
+		"chokidar": "^4.0.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
 		"http-server": "^14.1.1",
