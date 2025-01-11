@@ -37,7 +37,7 @@
 		"@gltf-transform/functions": "^4.1.1",
 		"draco3dgltf": "^1.5.7",
 		"es-module-shims": "^2.0.0",
-		"glob": "^11.0.0",
+		"glob": "^11.0.1",
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
