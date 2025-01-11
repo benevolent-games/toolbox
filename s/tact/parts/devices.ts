@@ -10,6 +10,10 @@ export class Devices {
 		this.#onInput = considerInput
 	}
 
+	list() {
+		return [...this.#map.keys()]
+	}
+
 	add(...devices: Device[]) {
 		for (const device of devices)
 			if (!this.#map.has(device))
@@ -29,9 +33,15 @@ export class Devices {
 	}
 
 	clear() {
-		for (const device of [...this.#map.keys()])
+		for (const device of this.#map.keys())
 			this.remove(device)
 		return this
+	}
+
+	dispose() {
+		for (const device of this.#map.keys())
+			device.dispose()
+		this.clear()
 	}
 }
 

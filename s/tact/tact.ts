@@ -30,12 +30,23 @@ export class Tact<B extends Bindings.Catalog> {
 	readonly modes = new Modes<Bindings.Mode<B>>()
 	readonly considerInput: (input: Input.Whatever) => void
 
+	dispose: () => void
+
 	constructor(target: EventTarget, public bindings: B) {
 		this.inputs = establish_inputs(bindings)
 		this.considerInput = consider_input(bindings, this.modes, this.inputs)
 		this.devices = new Devices(this.considerInput)
-		this.modes.onDisabled(mode => unstick_stuck_keys_for_mode(this.inputs, mode))
-		target.addEventListener("blur", () => unstick_stuck_keys(this.inputs))
+
+		const stop1 = this.modes.onDisabled(mode => unstick_stuck_keys_for_mode(this.inputs, mode))
+
+		const blurFn = () => unstick_stuck_keys(this.inputs)
+		target.addEventListener("blur", blurFn)
+		const stop2 = () => target.removeEventListener("blur", blurFn)
+
+		this.dispose = () => {
+			stop1()
+			stop2()
+		}
 	}
 }
 
