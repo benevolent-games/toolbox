@@ -18,12 +18,13 @@ export const NubStickGraphic = nub_nexus.shadowView(use => (
 	use.styles(styles)
 
 	const basis = use.defer(() => {
-		const basis = calculate_basis(
-			use.shadow.querySelector<HTMLElement>(`[part="base"]`)!,
-			use.shadow.querySelector<HTMLElement>(`[part="over"]`)!,
-		)
-		updateBasis(basis)
-		return basis
+		const base = use.shadow.querySelector<HTMLElement>(`[part="base"]`)
+		const over = use.shadow.querySelector<HTMLElement>(`[part="over"]`)
+		if (base && over) {
+			const basis = calculate_basis(base, over)
+			updateBasis(basis)
+			return basis
+		}
 	})
 
 	const pixels = stick_vector_to_pixels(basis.value?.radius, vector)

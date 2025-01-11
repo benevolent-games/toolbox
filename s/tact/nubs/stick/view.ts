@@ -27,6 +27,13 @@ export const NubStick = nub_nexus.shadowView(use => (stick: Stick) => {
 		},
 	}))
 
+	use.mount(() => {
+		stick.vector = [0, 0]
+		return () => {
+			stick.vector = [0, 0]
+		}
+	})
+
 	return html`
 		<div
 			class=container
