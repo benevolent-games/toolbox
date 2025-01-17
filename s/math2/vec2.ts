@@ -107,6 +107,10 @@ export class Vec2 implements Xy {
 		return Vec2.magnitude(this.x, this.y)
 	}
 
+	rotation() {
+		return Math.atan2(this.y, this.x)
+	}
+
 	equals_(x: number, y: number) {
 		return (
 			this.x === x &&
