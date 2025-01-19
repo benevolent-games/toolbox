@@ -1,7 +1,8 @@
 
+export * from "./angles.js"
+export * from "./circular.js"
 export * from "./noise.js"
 export * from "./quat.js"
-export * from "./angles.js"
 export * from "./randy.js"
 export * from "./scalar.js"
 export * from "./spline.js"
