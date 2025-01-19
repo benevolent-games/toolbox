@@ -55,12 +55,14 @@ export class Scalar {
 		return this
 	}
 
-	static lerp(x: number, y: number, fraction: number) {
+	static lerp(x: number, y: number, fraction: number, max?: number) {
 		const difference = y - x
-		const value = difference * fraction
-		return x + value
-	} lerp(y: number, fraction: number) {
-		this.x = Scalar.lerp(this.x, y, fraction)
+		let delta = difference * fraction
+		if (max !== undefined && Math.abs(delta) > max)
+			delta = Math.sign(delta) * max
+		return x + delta
+	} lerp(y: number, fraction: number, max?: number) {
+		this.x = Scalar.lerp(this.x, y, fraction, max)
 		return this
 	}
 

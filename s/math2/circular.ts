@@ -6,36 +6,51 @@ export class Circular {
 
 	static normalize(x: number) {
 		return Scalar.wrap(x, 0, 2 * Math.PI)
-	} normalize(x: number) {
-		return Circular.normalize(x)
+	} normalize() {
+		this.x = Circular.normalize(this.x)
+		return this
 	}
 
-	static distance(x: number, y: number) {
+	static difference(x: number, y: number) {
 		x = this.normalize(x)
 		y = this.normalize(y)
 		let delta = y - x
 		if (delta > Math.PI) delta -= 2 * Math.PI
 		if (delta < -Math.PI) delta += 2 * Math.PI
 		return delta
-	} distance(x: number, y: number) {
-		return Circular.distance(x, y)
+	} distance(y: number) {
+		return Circular.difference(this.x, y)
 	}
 
-	static lerp(x: number, y: number, fraction: number) {
-		const delta = this.distance(x, y)
-		return this.normalize(x + (delta * fraction))
-	} lerp(x: number, y: number, fraction: number) {
-		return Circular.lerp(x, y, fraction)
+	static lerp(x: number, y: number, fraction: number, max?: number) {
+		const difference = this.difference(x, y)
+		let delta = difference * fraction
+		if (max !== undefined && Math.abs(delta) > max)
+			delta = Math.sign(delta) * max
+		return this.normalize(x + delta)
+	} lerp(y: number, fraction: number, max?: number) {
+		this.x = Circular.lerp(this.x, y, fraction, max)
+		return this
 	}
+
+	// static lerp(x: number, y: number, fraction: number) {
+	// 	const delta = this.distance(x, y)
+	// 	return this.normalize(x + (delta * fraction))
+	// } lerp(y: number, fraction: number) {
+	// 	this.x = Circular.lerp(this.x, y, fraction)
+	// 	return this
+	// }
 
 	static step(x: number, y: number, delta: number) {
-		const difference = this.distance(x, y)
+		const difference = this.difference(x, y)
 		return this.normalize(
 			Math.abs(difference) <= delta
 				? y
 				: x + (Math.sign(difference) * delta)
 		)
-	} step(x: number, y: number, delta: number) {
-		return Circular.step(x, y, delta)
+	} step(y: number, delta: number) {
+		this.x = Circular.step(this.x, y, delta)
+		return this
 	}
 }
+
