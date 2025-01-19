@@ -64,6 +64,16 @@ export class Scalar {
 		return this
 	}
 
+	static step(x: number, y: number, delta: number) {
+		const difference = y - x
+		return (Math.abs(difference) <= delta)
+			? y
+			: x + (Math.sign(difference) * delta)
+	} step(y: number, delta: number) {
+		this.x = Scalar.step(this.x, y, delta)
+		return this
+	}
+
 	static wrap(x: number, a: number = 0, b: number = 1) {
 		const min = Math.min(a, b)
 		const max = Math.max(a, b)
