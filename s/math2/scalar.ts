@@ -121,11 +121,14 @@ export class Scalar {
 		return this
 	}
 
-	static remap(x: number, a1: number, a2: number, b1: number = 0, b2: number = 1) {
+	static remap(x: number, a1: number, a2: number, b1: number = 0, b2: number = 1, clamp = false) {
 		const fraction = (x - a1) / (a2 - a1)
-		return (fraction * (b2 - b1)) + b1
-	} remap(a1: number, a2: number, b1: number = 0, b2: number = 1) {
-		this.x = Scalar.remap(this.x, a1, a2, b1, b2)
+		const result = (fraction * (b2 - b1)) + b1
+		return clamp
+			? Scalar.clamp(result, b1, b2)
+			: result
+	} remap(a1: number, a2: number, b1: number = 0, b2: number = 1, clamp = false) {
+		this.x = Scalar.remap(this.x, a1, a2, b1, b2, clamp)
 		return this
 	}
 
