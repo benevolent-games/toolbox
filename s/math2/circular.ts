@@ -33,14 +33,6 @@ export class Circular {
 		return this
 	}
 
-	// static lerp(x: number, y: number, fraction: number) {
-	// 	const delta = this.distance(x, y)
-	// 	return this.normalize(x + (delta * fraction))
-	// } lerp(y: number, fraction: number) {
-	// 	this.x = Circular.lerp(this.x, y, fraction)
-	// 	return this
-	// }
-
 	static step(x: number, y: number, delta: number) {
 		const difference = this.difference(x, y)
 		return this.normalize(
