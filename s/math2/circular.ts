@@ -4,6 +4,10 @@ import {Scalar} from "./scalar.js"
 export class Circular {
 	constructor(public x: number) {}
 
+	clone() {
+		return new Circular(this.x)
+	}
+
 	static normalize(x: number) {
 		return Scalar.wrap(x, 0, 2 * Math.PI)
 	} normalize() {
