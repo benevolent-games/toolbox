@@ -10,6 +10,11 @@ export class Scalar {
 		return new Scalar(this.x)
 	}
 
+	set(x: number) {
+		this.x = x
+		return this
+	}
+
 	//
 	// queries
 	//

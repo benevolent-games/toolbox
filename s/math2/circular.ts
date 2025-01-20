@@ -8,6 +8,11 @@ export class Circular {
 		return new Circular(this.x)
 	}
 
+	set(x: number) {
+		this.x = x
+		return this
+	}
+
 	static value(x: number | Circular) {
 		return typeof x === "number"
 			? x
