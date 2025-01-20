@@ -8,6 +8,12 @@ export class Circular {
 		return new Circular(this.x)
 	}
 
+	static value(x: number | Circular) {
+		return typeof x === "number"
+			? x
+			: x.x
+	}
+
 	static normalize(x: number) {
 		return Scalar.wrap(x, 0, 2 * Math.PI)
 	} normalize() {
@@ -22,8 +28,8 @@ export class Circular {
 		if (delta > Math.PI) delta -= 2 * Math.PI
 		if (delta < -Math.PI) delta += 2 * Math.PI
 		return delta
-	} distance(y: number) {
-		return Circular.difference(this.x, y)
+	} difference(y: number | Circular) {
+		return Circular.difference(this.x, Circular.value(y))
 	}
 
 	static lerp(x: number, y: number, fraction: number, max?: number) {
@@ -32,8 +38,8 @@ export class Circular {
 		if (max !== undefined && Math.abs(delta) > max)
 			delta = Math.sign(delta) * max
 		return this.normalize(x + delta)
-	} lerp(y: number, fraction: number, max?: number) {
-		this.x = Circular.lerp(this.x, y, fraction, max)
+	} lerp(y: number | Circular, fraction: number, max?: number) {
+		this.x = Circular.lerp(this.x, Circular.value(y), fraction, max)
 		return this
 	}
 
@@ -44,8 +50,8 @@ export class Circular {
 				? y
 				: x + (Math.sign(difference) * delta)
 		)
-	} step(y: number, delta: number) {
-		this.x = Circular.step(this.x, y, delta)
+	} step(y: number | Circular, delta: number) {
+		this.x = Circular.step(this.x, Circular.value(y), delta)
 		return this
 	}
 }
