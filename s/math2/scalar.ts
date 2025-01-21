@@ -37,6 +37,22 @@ export class Scalar {
 	// chainable transforms
 	//
 
+	static add(...nums: number[]) {
+		let x = 0
+		for (const n of nums)
+			x += n
+		return x
+	} add(...nums: number[]) {
+		this.x = Scalar.add(...nums)
+		return this
+	}
+
+	subtract(...nums: number[]) {
+		for (const n of nums)
+			this.x -= n
+		return this
+	}
+
 	static min(x: number, minimum: number = 0) {
 		return Math.max(x, minimum)
 	} min(minimum: number = 0) {
