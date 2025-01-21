@@ -81,6 +81,25 @@ export class Scalar {
 		return this
 	}
 
+	static creep(difference: number, speed: number, deltaTime: number, speedLimit?: number) {
+		let change = (difference * (1 - Math.exp(-speed * deltaTime)))
+		if (speedLimit !== undefined) {
+			const changeLimit = speedLimit * deltaTime
+			if (Math.abs(change) > changeLimit)
+				change = Math.sign(change) * changeLimit
+		}
+		return change
+	}
+
+	static approach(x: number, y: number, speed: number, deltaTime: number, speedLimit?: number) {
+		const difference = y - x
+		const change = this.creep(difference, speed, deltaTime, speedLimit)
+		return x + change
+	} approach(y: number, speed: number, deltaTime: number, speedLimit?: number) {
+		this.x = Scalar.approach(this.x, y, speed, deltaTime, speedLimit)
+		return this
+	}
+
 	static wrap(x: number, a: number = 0, b: number = 1) {
 		const min = Math.min(a, b)
 		const max = Math.max(a, b)

@@ -59,5 +59,14 @@ export class Circular {
 		this.x = Circular.step(this.x, Circular.value(y), delta)
 		return this
 	}
+
+	static approach(x: number, y: number, speed: number, deltaTime: number, speedLimit?: number) {
+		const difference = this.difference(x, y)
+		const change = Scalar.creep(difference, speed, deltaTime, speedLimit)
+		return this.normalize(x + change)
+	} approach(y: number | Circular, speed: number, deltaTime: number, speedLimit?: number) {
+		this.x = Circular.approach(this.x, Circular.value(y), speed, deltaTime, speedLimit)
+		return this
+	}
 }
 

@@ -368,6 +368,17 @@ export class Vec3 {
 		return this.lerp_(x, y, z, fraction)
 	}
 
+	approach_(x: number, y: number, z: number, speed: number, deltaTime: number, speedLimit?: number) {
+		this.x = Scalar.approach(this.x, x, speed, deltaTime, speedLimit)
+		this.y = Scalar.approach(this.y, y, speed, deltaTime, speedLimit)
+		this.z = Scalar.approach(this.z, z, speed, deltaTime, speedLimit)
+		return this
+	}
+
+	approach({x, y, z}: Xyz, speed: number, deltaTime: number, speedLimit?: number) {
+		return this.approach_(x, y, z, speed, deltaTime, speedLimit)
+	}
+
 	/** mutator */
 	projectOnto_(x: number, y: number, z: number) {
 		const scalar = this.dot_(x, y, z) / Vec3.magnitudeSquared(x, y, z)

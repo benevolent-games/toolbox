@@ -338,6 +338,16 @@ export class Vec2 implements Xy {
 		return this.lerp_(x, y, fraction)
 	}
 
+	approach_(x: number, y: number, speed: number, deltaTime: number, speedLimit?: number) {
+		this.x = Scalar.approach(this.x, x, speed, deltaTime, speedLimit)
+		this.y = Scalar.approach(this.y, y, speed, deltaTime, speedLimit)
+		return this
+	}
+
+	approach({x, y}: Xy, speed: number, deltaTime: number, speedLimit?: number) {
+		return this.approach_(x, y, speed, deltaTime, speedLimit)
+	}
+
 	/** mutator */
 	reflect_(x: number, y: number) {
 		const dot = 2 * this.dot_(x, y)
