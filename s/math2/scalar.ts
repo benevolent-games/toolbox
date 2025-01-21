@@ -39,14 +39,14 @@ export class Scalar {
 
 	static min(x: number, minimum: number = 0) {
 		return Math.max(x, minimum)
-	} min(minimum: number) {
+	} min(minimum: number = 0) {
 		this.x = Scalar.min(this.x, minimum)
 		return this
 	}
 
 	static max(x: number, maximum: number = 1) {
 		return Math.min(x, maximum)
-	} max(maximum: number) {
+	} max(maximum: number = 1) {
 		this.x = Scalar.max(this.x, maximum)
 		return this
 	}
@@ -55,7 +55,7 @@ export class Scalar {
 		x = Scalar.min(x, Math.min(a, b))
 		x = Scalar.max(x, Math.max(a, b))
 		return x
-	} clamp(a: number, b: number) {
+	} clamp(a: number = 0, b: number = 1) {
 		this.x = Scalar.clamp(this.x, a, b)
 		return this
 	}
