@@ -29,14 +29,14 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.3.0-5",
+		"@benev/slate": "^0.3.0-6",
 		"@dimforge/rapier3d-compat": "^0.14.0",
 		"@gltf-transform/cli": "^4.1.1",
 		"@gltf-transform/core": "^4.1.1",
 		"@gltf-transform/extensions": "^4.1.1",
 		"@gltf-transform/functions": "^4.1.1",
 		"draco3dgltf": "^1.5.7",
-		"es-module-shims": "^2.0.3",
+		"es-module-shims": "^2.0.5",
 		"glob": "^11.0.1",
 		"simplex-noise": "^4.0.3"
 	},
@@ -45,7 +45,7 @@
 		"@babylonjs/loaders": "^7.44.0"
 	},
 	"devDependencies": {
-		"@benev/turtle": "^0.6.6",
+		"@benev/turtle": "^0.6.8",
 		"chokidar": "^4.0.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
