@@ -1,7 +1,7 @@
 
 import {Scene} from "@babylonjs/core/scene.js"
 import {Color4} from "@babylonjs/core/Maths/math.color.js"
-import {CompatibilityOptions} from "@babylonjs/core/Compat/compatibilityOptions.js"
+import {setOpenGLOrientationForUV} from "@babylonjs/core/Compat/compatibilityOptions.js"
 
 import {AnyEngine} from "./types.js"
 import {Vec4} from "../../math/vec4.js"
@@ -25,7 +25,7 @@ export function make_scene({
 		useGeometryUniqueIdsMap: true,
 	})
 
-	CompatibilityOptions.UseOpenGLOrientationForUV = true
+	setOpenGLOrientationForUV(true)
 	scene.clearColor = new Color4(...background)
 	scene.detachControl()
 	scene.useRightHandedSystem = true
