@@ -36,13 +36,13 @@
 		"@gltf-transform/extensions": "^4.1.1",
 		"@gltf-transform/functions": "^4.1.1",
 		"draco3dgltf": "^1.5.7",
-		"es-module-shims": "^2.0.5",
+		"es-module-shims": "^2.0.9",
 		"glob": "^11.0.1",
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.44.0",
-		"@babylonjs/loaders": "^7.44.0"
+		"@babylonjs/core": "^7.47.1",
+		"@babylonjs/loaders": "^7.47.1"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.8",
