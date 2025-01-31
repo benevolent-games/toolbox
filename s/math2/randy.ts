@@ -34,7 +34,7 @@ export class Randy {
 	}
 
 	/** return true or false, given a 0 to 1 probability fraction. */
-	roll(chance: number) {
+	roll(chance = 0.5) {
 		return this.random() <= chance
 	}
 
