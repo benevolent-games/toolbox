@@ -64,13 +64,14 @@ jobs:
         rm -rf x/temp
 
     - name: 📝 configure pages
-      uses: actions/configure-pages@v2
+      uses: actions/configure-pages@v5
 
     - name: 📤 upload pages artifact
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v3
       with:
         path: 'x'
 
     - name: 🚀 deploy to github pages
       id: deployment
-      uses: actions/deploy-pages@v1
+      uses: actions/deploy-pages@v4
+
