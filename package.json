@@ -29,7 +29,7 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.3.0-6",
+		"@benev/slate": "^0.3.0-7",
 		"@dimforge/rapier3d-compat": "^0.14.0",
 		"@gltf-transform/cli": "^4.1.1",
 		"@gltf-transform/core": "^4.1.1",
@@ -41,8 +41,8 @@
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.47.1",
-		"@babylonjs/loaders": "^7.47.1"
+		"@babylonjs/core": "^7.47.2",
+		"@babylonjs/loaders": "^7.47.2"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.8",
