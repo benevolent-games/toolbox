@@ -29,20 +29,20 @@
 		"test-watch": "chokidar \"x/**/*.js\" -c \"clear && npm test\""
 	},
 	"dependencies": {
-		"@benev/slate": "^0.3.0-11",
+		"@benev/slate": "^0.3.0-13",
 		"@dimforge/rapier3d-compat": "^0.14.0",
-		"@gltf-transform/cli": "^4.1.1",
-		"@gltf-transform/core": "^4.1.1",
-		"@gltf-transform/extensions": "^4.1.1",
-		"@gltf-transform/functions": "^4.1.1",
+		"@gltf-transform/cli": "^4.1.2",
+		"@gltf-transform/core": "^4.1.2",
+		"@gltf-transform/extensions": "^4.1.2",
+		"@gltf-transform/functions": "^4.1.2",
 		"draco3dgltf": "^1.5.7",
-		"es-module-shims": "^2.0.9",
+		"es-module-shims": "^2.0.10",
 		"glob": "^11.0.1",
 		"simplex-noise": "^4.0.3"
 	},
 	"peerDependencies": {
-		"@babylonjs/core": "^7.49.0",
-		"@babylonjs/loaders": "^7.49.0"
+		"@babylonjs/core": "^7.50.0",
+		"@babylonjs/loaders": "^7.50.0"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.8",
